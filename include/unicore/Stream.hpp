@@ -1,0 +1,35 @@
+#pragma once
+#include "unicore/Defs.hpp"
+
+namespace unicore
+{
+	enum class SeekMethod
+	{
+		Begin,
+		Current,
+		End,
+	};
+
+	class BasicStream : public Object
+	{
+	public:
+		virtual bool can_seek() const = 0;
+
+		virtual int64_t size() const = 0;
+		virtual int64_t seek(int64_t offset, SeekMethod method = SeekMethod::Begin) = 0;
+	};
+
+	class ReadStream : public BasicStream
+	{
+	public:
+		virtual bool eof() const = 0;
+		virtual size_t read(void* buffer, size_t size, size_t count = 1) = 0;
+	};
+
+	class WriteStream : public BasicStream
+	{
+	public:
+		virtual size_t write(const void* buffer, size_t size, size_t count = 1) = 0;
+		virtual bool flush() = 0;
+	};
+}
