@@ -1,14 +1,13 @@
 #include "unicore/Color.hpp"
-#include "unicore/Random.hpp"
 
 namespace unicore
 {
-	Color Color::create_random()
+	Color Color::create_random(Random& random)
 	{
 		return Color(
-			Random::value_limit<uint8_t>(),
-			Random::value_limit<uint8_t>(),
-			Random::value_limit<uint8_t>()
+			random.value_limit<uint8_t>(),
+			random.value_limit<uint8_t>(),
+			random.value_limit<uint8_t>()
 		);
 	}
 
@@ -20,7 +19,7 @@ namespace unicore
 			a.b == b.b &&
 			a.a == b.a;
 	}
-
+	
 	bool operator!=(const Color& a, const Color& b)
 	{
 		return !(a == b);

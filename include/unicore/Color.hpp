@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Defs.hpp"
+#include "unicore/Random.hpp"
 
 namespace unicore
 {
@@ -23,7 +23,7 @@ namespace unicore
 			return Color((rgba >> 16) & 0xFF, (rgba >> 8) & 0xFF, rgba & 0xFF, rgba >> 24);
 		}
 
-		static Color create_random();
+		static Color create_random(Random& random);
 	};
 
 	static bool operator==(const Color& a, const Color& b);

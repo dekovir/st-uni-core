@@ -1,26 +1,41 @@
 #pragma once
-#include "unicore/Defs.hpp"
+#include "unicore/Object.hpp"
+#include <random>
 
 namespace unicore
 {
-	namespace Random
+	class Random : public Object
 	{
-		extern void set_seed(unsigned int seed);
+	public:
+		virtual uint32_t next() = 0;
 
-		extern void set_random_seed();
+		virtual uint32_t range(uint32_t count);
+		virtual bool boolean();
 
-		extern int value();
-
-		extern int range(int min, int max);
-
-		extern bool boolean();
-
-		template<typename T>
-		extern inline T value_limit()
+		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+		T range(T min, T max)
 		{
-			return (T)Random::range(
-				std::numeric_limits<T>::min(),
-				std::numeric_limits<T>::max());
+			const auto value = range(max - min);
+			return value + min;
 		}
-	}
+
+		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+		inline T value_limit()
+		{
+			return static_cast<T>(Random::range(
+				std::numeric_limits<T>::min(),
+				std::numeric_limits<T>::max()));
+		}
+	};
+
+	class DefaultRandom : public Random
+	{
+	public:
+		DefaultRandom() = default;
+
+		uint32_t next() override;
+
+	protected:
+		std::random_device _rd;
+	};
 }
