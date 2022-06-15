@@ -1,9 +1,15 @@
 #pragma once
-#include "unicore/PrimitiveType.hpp"
 #include "unicore/Texture.hpp"
 
 namespace unicore
 {
+	enum class PrimitiveType
+	{
+		Points,
+		LineList,
+		TriangleList
+	};
+
 	struct RenderState
 	{
 		PrimitiveType primitiveType = PrimitiveType::TriangleList;
