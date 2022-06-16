@@ -1,6 +1,8 @@
 #include "SDL2Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include "SDL2Stream.hpp"
+#include "SDL2Utils.hpp"
+#include "unicore/LogHelper.hpp"
 #if defined(EMSCRIPTEN)
 #	include <emscripten/emscripten.h>
 #endif
@@ -28,6 +30,10 @@ namespace unicore
 		, _render(settings.render)
 	{
 		file_system.add_provider(std::make_shared<SDL2StreamProvider>());
+
+		SDL_version ver;
+		SDL_GetVersion(&ver);
+		UNICORE_LOG_INFO(logger) << L"SDL version " << ver;
 	}
 
 	SDL2Platform::~SDL2Platform()

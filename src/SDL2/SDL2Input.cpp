@@ -3,9 +3,9 @@
 
 namespace unicore
 {
-	bool SDL2Input::mouse_button(int button) const
+	bool SDL2Input::mouse_button(uint8_t button) const
 	{
-		return button >= 0 && button < _mouseBtn.size() && _mouseBtn[button];
+		return button < _mouseBtn.size() && _mouseBtn[button];
 	}
 
 	const Vector2i& SDL2Input::mouse_position() const

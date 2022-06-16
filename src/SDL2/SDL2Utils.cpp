@@ -80,11 +80,16 @@ namespace unicore
 			c->read = &read_func;
 			c->write = &write_func;
 			c->close = &close_func;
-			c->type = 0xdeadbeef;
+			c->type = 0;
 			c->hidden.unknown.data1 = handle;
 		}
 
 		return c;
+	}
+
+	LogHelper& operator<<(LogHelper& helper, const SDL_version& item)
+	{
+		return helper << item.major << L"." << item.minor << L"." << item.patch;
 	}
 }
 

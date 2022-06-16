@@ -18,8 +18,8 @@ namespace unicore
 		LogHelper& operator << (const char value) { append(value); return *this; }
 		LogHelper& operator << (const wchar_t value) { append(value); return *this; }
 
-		LogHelper& operator << (const StringView value) { append(value.data()); return *this; }
-		LogHelper& operator << (const WStringView value) { append(value.data()); return *this; }
+		LogHelper& operator << (const char* value) { append(value); return *this; }
+		LogHelper& operator << (const wchar_t* value) { append(value); return *this; }
 
 		template<typename T, std::enable_if_t<std::is_enum_v<T>>* = nullptr>
 		LogHelper& operator<<(T value)
@@ -61,6 +61,11 @@ namespace unicore
 		static LogHelper create(Logger* logger, LogType type)
 		{
 			return { logger, type };
+		}
+
+		static LogHelper create(Logger& logger, LogType type)
+		{
+			return { &logger, type };
 		}
 
 		struct DebugSource

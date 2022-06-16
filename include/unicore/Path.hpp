@@ -11,11 +11,11 @@ namespace unicore
 		Path(const WString& path);
 
 		[[nodiscard]] bool absolute() const;
-		[[nodiscard]] bool empty() const { return _path.empty(); }
+		[[nodiscard]] bool empty() const { return _data.empty(); }
 		void clear();
 
 		[[nodiscard]] size_t hash() const { return _hash; }
-		[[nodiscard]] const WString& data() const { return _path; }
+		[[nodiscard]] const WString& data() const { return _data; }
 
 		[[nodiscard]] bool has_extension() const;
 
@@ -62,7 +62,7 @@ namespace unicore
 		static const Path Empty;
 
 	protected:
-		WString _path;
+		WString _data;
 		size_t _hash = 0;
 
 		Path(const WString& path, size_t hash);

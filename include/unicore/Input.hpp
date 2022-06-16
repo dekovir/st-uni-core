@@ -7,7 +7,7 @@ namespace unicore
 	class Input : public Module
 	{
 	public:
-		virtual bool mouse_button(int button) const = 0;
+		virtual bool mouse_button(uint8_t button) const = 0;
 		virtual const Vector2i& mouse_position() const = 0;
 	};
 }

@@ -10,7 +10,7 @@ namespace unicore
 	public:
 		SDL2Input() = default;
 
-		bool mouse_button(int button) const override;
+		bool mouse_button(uint8_t button) const override;
 		const Vector2i& mouse_position() const override;
 
 	protected:

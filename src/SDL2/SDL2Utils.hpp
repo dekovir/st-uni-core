@@ -1,4 +1,5 @@
 #pragma once
+#include "unicore/LogHelper.hpp"
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include <SDL.h>
@@ -34,6 +35,8 @@ namespace unicore
 			return dst;
 		}
 	}
+
+	LogHelper& operator<<(LogHelper& helper, const SDL_version& item);
 }
 
 #endif
