@@ -69,10 +69,10 @@ namespace unicore
 
 	RenderQueue& RenderQueue::set_texture(const Shared<Texture>& texture)
 	{
-		if (_cmd.texture != texture)
+		if (_cmd.state.texture != texture)
 		{
 			flush();
-			_cmd.texture = texture;
+			_cmd.state.texture = texture;
 		}
 
 		return *this;

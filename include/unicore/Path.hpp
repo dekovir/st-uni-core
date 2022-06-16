@@ -7,7 +7,7 @@ namespace unicore
 	{
 	public:
 		Path() = default;
-		explicit Path(const WString& path);
+		explicit Path(const WStringView path);
 
 		[[nodiscard]] bool absolute() const;
 		[[nodiscard]] bool empty() const { return _path.empty(); }
@@ -69,7 +69,7 @@ namespace unicore
 		static WString::size_type find_filename_pos(const WString& str);
 		static WString::size_type find_extension_pos(const WString& str);
 
-		static WString prepare(const WString& str);
+		static WString prepare(const WStringView str);
 		static size_t calc_hash(const WString& str);
 	};
 

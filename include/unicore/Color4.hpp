@@ -35,6 +35,9 @@ namespace unicore
 		constexpr Color4(T _r, T _g, T _b, T _a)
 			: r(_r), g(_g), b(_b), a(_a) {}
 
+		constexpr Color4(const Color4& other)
+			: r(other.r), g(other.g), b(other.b), a(other.a) {}
+
 		template<
 			typename DataType,
 			typename ComponentType>
@@ -160,6 +163,8 @@ namespace unicore
 		static constexpr auto Magenta = Color4<T>::from_rgb(0xFF00FF);
 		static constexpr auto Yellow = Color4<T>::from_rgb(0xFFFF00);
 		static constexpr auto Cyan = Color4<T>::from_rgb(0x00FFFF);
+
+		Color4Table() = delete;
 	};
 
 	using Colors4b = Color4Table<uint8_t>;

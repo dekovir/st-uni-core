@@ -115,6 +115,14 @@ function(unicore_init_executable target_name)
 	target_link_libraries(${target_name} PRIVATE unicore unicore-main)
 endfunction()
 
+function(unicore_init_assets target_name directory)
+	if(EMSCRIPTEN)
+		target_link_libraries(${target_name} PRIVATE
+			"--preload-file ../../${directory}@/${directory}"
+		)
+	endif()
+endfunction()
+
 # TESTBED ######################################################################
 if (UNICORE_TESTBED)
 	set(TESTBED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/testbed")
@@ -123,8 +131,12 @@ if (UNICORE_TESTBED)
 	add_executable(testbed "${TESTBED_SRC}")
 	unicore_init_executable(testbed)
 	unicore_group_sources_by_folder(testbed)
+	unicore_init_assets(testbed assets)
 
 	if (MSVC)
 		set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT testbed)
+		set_target_properties(${target_name} PROPERTIES
+			VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assets
+		)
 	endif()
 endif()

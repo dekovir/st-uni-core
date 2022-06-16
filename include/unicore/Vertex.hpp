@@ -7,27 +7,23 @@ namespace unicore
 	struct Vertex
 	{
 		Vector2f pos;
+		Vector2f uv;
 		Color4b col;
 
-		constexpr Vertex()
-			: pos(0, 0), col(Colors4b::White)
-		{}
+		static constexpr Vertex from_pos(const Vector2f& pos)
+		{
+			return { pos, Vector2f::Zero, Colors4b::White };
+		}
 
-		constexpr Vertex(const Vector2f& pos_)
-			: pos(pos_), col(Colors4b::White)
-		{}
+		static constexpr Vertex from_pos(const Vector2i& pos)
+		{
+			return { pos.cast<float>(), Vector2f::Zero, Colors4b::White };
+		}
 
-		constexpr Vertex(const Vector2i& pos_)
-			: pos(static_cast<float>(pos_.x), static_cast<float>(pos_.y)), col(Colors4b::White)
-		{}
-
-		constexpr Vertex(const Vector2f& pos_, const Color4b& col_)
-			: pos(pos_), col(col_)
-		{}
-
-		constexpr Vertex(const Vector2i& pos_, const Color4b& col_)
-			: pos(static_cast<float>(pos_.x), static_cast<float>(pos_.y)), col(col_)
-		{}
+		static constexpr Vertex from_pos(const Vector2f& pos, const Color4b& color)
+		{
+			return { pos, pos, color };
+		}
 	};
 
 	using VertexList = List<Vertex>;

@@ -163,13 +163,17 @@ namespace unicore
 			points.resize(num_vertices);
 			for (size_t i = 0; i < num_vertices; i++)
 			{
-				auto& vert = points[i];
-				vert.position.x = vertices[i].pos.x;
-				vert.position.y = vertices[i].pos.y;
-				vert.color.r = vertices[i].col.r;
-				vert.color.g = vertices[i].col.g;
-				vert.color.b = vertices[i].col.b;
-				vert.color.a = vertices[i].col.a;
+				const auto& vertex = vertices[i];
+				auto& [position, color, uv] = points[i];
+
+				position.x = vertex.pos.x;
+				position.y = vertex.pos.y;
+				uv.x = vertex.uv.x;
+				uv.y = vertex.uv.y;
+				color.r = vertex.col.r;
+				color.g = vertex.col.g;
+				color.b = vertex.col.b;
+				color.a = vertex.col.a;
 			}
 
 			SDL_RenderGeometry(_renderer, tex_handle,

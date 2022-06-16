@@ -22,7 +22,7 @@ namespace unicore
 	static const wchar_t WrongDirSeparator = L'\\';
 	static const wchar_t DriveSeparator = L':';
 
-	Path::Path(const WString& path)
+	Path::Path(const WStringView path)
 		: _path(prepare(path))
 	{
 		_hash = calc_hash(_path);
@@ -272,12 +272,12 @@ namespace unicore
 		return str.find_last_of(U'.');
 	}
 
-	WString Path::prepare(const WString& _path)
+	WString Path::prepare(const WStringView _path)
 	{
 		static const WString DoubleDirSeparator
 			= { DirSeparator, DirSeparator };
 
-		auto path = _path;
+		auto path = WString(_path);
 #if defined (UNICORE_PLATFORM_WINDOWS)
 		{
 			wchar_t BUFFER[MAX_PATH];

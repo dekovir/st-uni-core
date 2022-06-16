@@ -5,8 +5,6 @@ namespace unicore
 {
 	struct RenderCommand
 	{
-		Shared<Texture> texture;
-
 		RenderState state;
 		size_t vstart = 0;
 		size_t vcount = 0;

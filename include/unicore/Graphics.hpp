@@ -25,6 +25,8 @@ namespace unicore
 		Graphics& draw_line(const Vector2i& p0, const Vector2i& p1);
 		Graphics& draw_line(const Vector2f& p0, const Vector2f& p1);
 
+		Graphics& draw_poly_line(std::initializer_list<Vector2f> points);
+
 		Graphics& draw_tri(
 			const Vertex& v0, const Vertex& v1, const Vertex& v2,
 			const Shared<Texture>& texture = nullptr);

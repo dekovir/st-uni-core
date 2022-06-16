@@ -25,7 +25,7 @@ namespace unicore
 	{
 		_queue
 			.set_primitive_type(PrimitiveType::Points)
-			.add_vertex({ p, _color })
+			.add_vertex({ p.cast<float>(), Vector2f::Zero, _color })
 			;
 		return *this;
 	}
@@ -34,7 +34,7 @@ namespace unicore
 	{
 		_queue
 			.set_primitive_type(PrimitiveType::Points)
-			.add_vertex({ p, _color })
+			.add_vertex({ p, Vector2f::Zero, _color })
 			;
 		return *this;
 	}
@@ -43,8 +43,8 @@ namespace unicore
 	{
 		_queue
 			.set_primitive_type(PrimitiveType::LineList)
-			.add_vertex({ p0, _color })
-			.add_vertex({ p1, _color })
+			.add_vertex({ p0.cast<float>(), Vector2f::Zero, _color })
+			.add_vertex({ p1.cast<float>(), Vector2f::Zero, _color })
 			;
 		return *this;
 	}
@@ -53,9 +53,26 @@ namespace unicore
 	{
 		_queue
 			.set_primitive_type(PrimitiveType::LineList)
-			.add_vertex({ p0, _color })
-			.add_vertex({ p1, _color })
+			.add_vertex({ p0, Vector2f::Zero, _color })
+			.add_vertex({ p1, Vector2f::Zero, _color })
 			;
+		return *this;
+	}
+
+	Graphics& Graphics::draw_poly_line(std::initializer_list<Vector2f> points)
+	{
+		if (points.size() > 1)
+		{
+			_queue.set_primitive_type(PrimitiveType::LineList);
+			auto data = points.begin();
+			for (size_t i = 0; i + 1 < points.size(); i++)
+			{
+				_queue
+					.add_vertex({ data[i + 0], Vector2f::Zero, _color })
+					.add_vertex({ data[i + 1], Vector2f::Zero, _color });
+			}
+		}
+
 		return *this;
 	}
 
@@ -90,10 +107,10 @@ namespace unicore
 		const auto hx = static_cast<float>(size.x) / 2;
 		const auto hy = static_cast<float>(size.y) / 2;
 
-		const Vertex v0{ Vector2f(center.x + hx, center.y + hy), _color };
-		const Vertex v1{ Vector2f(center.x + hx, center.y + hy), _color };
-		const Vertex v2{ Vector2f(center.x + hx, center.y + hy), _color };
-		const Vertex v3{ Vector2f(center.x + hx, center.y + hy), _color };
+		const Vertex v0{ Vector2f(center.x - hx, center.y - hy), Vector2f(0, 0), _color};
+		const Vertex v1{ Vector2f(center.x + hx, center.y - hy), Vector2f(1, 0), _color};
+		const Vertex v2{ Vector2f(center.x + hx, center.y + hy), Vector2f(1, 1), _color};
+		const Vertex v3{ Vector2f(center.x - hx, center.y + hy), Vector2f(0, 1), _color};
 
 		return draw_quad(v0, v1, v2, v3, texture);
 	}

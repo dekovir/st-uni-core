@@ -11,11 +11,17 @@ namespace unicore
 
 		constexpr Vector2() = default;
 		constexpr Vector2(T x, T y);
+		constexpr Vector2(const Vector2& other)
+			: x(other.x), y(other.y)
+		{}
 
 		constexpr T area() const { return x * y; }
 
 		template<typename U>
-		Vector2<U> cast() const;
+		constexpr Vector2<U> cast() const
+		{
+			return Vector2<U>(static_cast<U>(x), static_cast<U>(y));
+		}
 
 		static const Vector2<T> Zero;
 		static const Vector2<T> One;
@@ -35,13 +41,6 @@ namespace unicore
 	constexpr Vector2<T>::Vector2(T _x, T _y)
 		: x(_x), y(_y)
 	{
-	}
-
-	template <typename T>
-	template <typename U>
-	Vector2<U> Vector2<T>::cast() const
-	{
-		return Vector2<U>(static_cast<U>(x), static_cast<U>(y));
 	}
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
