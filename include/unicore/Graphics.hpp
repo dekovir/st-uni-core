@@ -17,7 +17,7 @@ namespace unicore
 		Graphics(RenderQueue& queue, GraphicsFlags flags = GraphicsFlags::Zero);
 		~Graphics();
 
-		Graphics& set_color(const Color& color);
+		Graphics& set_color(const Color4b& color);
 
 		Graphics& draw_point(const Vector2i& p);
 		Graphics& draw_point(const Vector2f& p);
@@ -37,7 +37,7 @@ namespace unicore
 
 	protected:
 		RenderQueue& _queue;
-		Color _color;
+		Color4b _color;
 		GraphicsFlags _flags;
 	};
 }

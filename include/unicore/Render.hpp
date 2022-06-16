@@ -1,5 +1,5 @@
 #pragma once
-#include "Color.hpp"
+#include "unicore/Color4.hpp"
 #include "unicore/Rect.hpp"
 #include "unicore/Angle.hpp"
 #include "unicore/FileSystem.hpp"
@@ -26,7 +26,7 @@ namespace unicore
 		virtual bool begin_scene() = 0;
 		virtual void end_scene() = 0;
 
-		virtual void clear(const Color& color) = 0;
+		virtual void clear(const Color4b& color) = 0;
 
 		virtual void draw_geometry(
 			const Vertex* vertices, size_t num_vertices

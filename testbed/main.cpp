@@ -16,10 +16,10 @@ namespace unicore
 		Graphics graphics(_queue, GraphicsFlag::CallBeginEnd);
 		graphics
 			.draw_tri(
-				{ Vector2f(100, 100), Colors::Yellow },
-				{ Vector2f(200, 100), Colors::Cyan },
-				{ Vector2f(100, 200), Colors::Magenta })
-			.set_color(Colors::Red)
+				{ Vector2f(100, 100), Colors4b::Yellow },
+				{ Vector2f(200, 100), Colors4b::Cyan },
+				{ Vector2f(100, 200), Colors4b::Magenta })
+			.set_color(Colors4b::Red)
 			.draw_line(Vector2i::Zero, size)
 			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))
 			;
@@ -29,7 +29,7 @@ namespace unicore
 	{
 		auto& size = render.screen_size();
 
-		render.clear(Colors::Black);
+		render.clear(Colors4b::Black);
 		_queue.draw(render);
 	}
 

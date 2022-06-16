@@ -71,7 +71,7 @@ namespace unicore
 		bool begin_scene() override;
 		void end_scene() override;
 
-		void clear(const Color& color) override;
+		void clear(const Color4b& color) override;
 
 		void draw_geometry(const Vertex* vertices, size_t num_vertices) override;
 

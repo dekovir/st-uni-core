@@ -3,7 +3,7 @@
 namespace unicore
 {
 	Graphics::Graphics(RenderQueue& queue, GraphicsFlags flags)
-		: _queue(queue), _color(Colors::White), _flags(flags)
+		: _queue(queue), _color(Colors4b::White), _flags(flags)
 	{
 		if (_flags.HasFlag(GraphicsFlag::CallBegin))
 			_queue.begin();
@@ -15,7 +15,7 @@ namespace unicore
 			_queue.end();
 	}
 
-	Graphics& Graphics::set_color(const Color& color)
+	Graphics& Graphics::set_color(const Color4b& color)
 	{
 		_color = color;
 		return *this;

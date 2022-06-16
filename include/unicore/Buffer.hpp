@@ -1,7 +1,6 @@
 #pragma once
 #include "unicore/Vector2.hpp"
 #include "unicore/Vector3.hpp"
-#include "unicore/Color.hpp"
 
 namespace unicore
 {
@@ -59,6 +58,4 @@ namespace unicore
 	protected:
 		Vector3i _size;
 	};
-
-	using ColorBuffer = Buffer2<Color>;
 }

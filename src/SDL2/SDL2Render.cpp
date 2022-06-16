@@ -132,7 +132,7 @@ namespace unicore
 		SDL_RenderPresent(_renderer);
 	}
 
-	void SDL2Render::clear(const Color& color)
+	void SDL2Render::clear(const Color4b& color)
 	{
 		SDL_SetRenderDrawColor(_renderer,
 			color.r, color.g, color.b, color.a);
