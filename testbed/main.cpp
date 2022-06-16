@@ -9,8 +9,9 @@ namespace unicore
 	{
 		logger.info("Start");
 
-		if (const auto stream = file_system.open_read(Path(L"assets/zazaka.bmp")))
+		if (const auto stream = file_system.open_read(L"assets/zazaka.bmp"))
 			_tex = render.load_texture(stream);
+
 	}
 
 	void MyCore::on_update()

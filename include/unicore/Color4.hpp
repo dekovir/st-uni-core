@@ -110,9 +110,9 @@ namespace unicore
 	protected:
 		static constexpr T convert_component_from_uint8(uint8_t value)
 		{
-			if (std::is_same_v<T, uint8_t>) return value;
+			if constexpr (std::is_same_v<T, uint8_t>) return value;
 
-			if (std::is_floating_point_v<T>)
+			if constexpr (std::is_floating_point_v<T>)
 				return static_cast<T>((static_cast<T>(value) / 255.0f) * color_limits<T>::max());
 
 			return static_cast<T>((static_cast<double>(value) / 255.0) * color_limits<T>::range()) + color_limits<T>::min();
@@ -120,9 +120,9 @@ namespace unicore
 
 		[[nodiscard]] constexpr uint8_t convert_component_to_uint8(T value) const
 		{
-			if (std::is_same_v<T, uint8_t>) return value;
+			if constexpr (std::is_same_v<T, uint8_t>) return value;
 
-			if (std::is_floating_point_v<T>)
+			if constexpr (std::is_floating_point_v<T>)
 				return static_cast<uint8_t>((value / color_limits<T>::max()) * 0xFF);
 
 			return static_cast<uint8_t>((static_cast<double>(value) / static_cast<double>(color_limits<T>::range())) * 0xFF);

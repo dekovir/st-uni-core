@@ -7,7 +7,8 @@ namespace unicore
 	{
 	public:
 		Path() = default;
-		explicit Path(const WStringView path);
+		Path(const wchar_t* path);
+		Path(const WString& path);
 
 		[[nodiscard]] bool absolute() const;
 		[[nodiscard]] bool empty() const { return _path.empty(); }
@@ -30,9 +31,10 @@ namespace unicore
 		void explode(Path& parentDir, WString& fileName) const;
 		void explode(Path& parentDir, WString& fileName, WString& extension) const;
 		void explode(List<WString>& elements) const;
+		[[nodiscard]] List<WString> explode() const;
 
-		void replace_filename(const WString& filename);
-		void replace_extension(const WString& ext);
+		void replace_filename(WStringView filename);
+		void replace_extension(WStringView ext);
 		void remove_extension(const List<WString>& extensions);
 
 		[[nodiscard]] bool equals(const Path& other) const;
@@ -51,8 +53,8 @@ namespace unicore
 
 		[[nodiscard]] Path to_lower() const;
 
-		static Path combine(const WString& a, const WString& b);
-		static Path combine(const WString& a, const WString& b, const WString& c);
+		static Path combine(WStringView a, WStringView b);
+		static Path combine(WStringView a, WStringView b, WStringView c);
 
 		static const wchar_t DirSeparator;
 		static const wchar_t NativeDirSeparator;
@@ -65,12 +67,12 @@ namespace unicore
 
 		Path(const WString& path, size_t hash);
 
-		static WString::size_type find_drive_pos(const WString& str);
-		static WString::size_type find_filename_pos(const WString& str);
-		static WString::size_type find_extension_pos(const WString& str);
+		static WString::size_type find_drive_pos(WStringView str);
+		static WString::size_type find_filename_pos(WStringView str);
+		static WString::size_type find_extension_pos(WStringView str);
 
-		static WString prepare(const WStringView str);
-		static size_t calc_hash(const WString& str);
+		static WString prepare(WStringView str);
+		static size_t calc_hash(WStringView str);
 	};
 
 	class LogHelper;

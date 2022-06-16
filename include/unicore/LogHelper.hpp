@@ -21,9 +21,8 @@ namespace unicore
 		LogHelper& operator << (const StringView value) { append(value.data()); return *this; }
 		LogHelper& operator << (const WStringView value) { append(value.data()); return *this; }
 
-		template<typename T>
-		typename std::enable_if<std::is_enum<T>::value, LogHelper&>::type
-			operator<<(T value)
+		template<typename T, std::enable_if_t<std::is_enum_v<T>>* = nullptr>
+		LogHelper& operator<<(T value)
 		{
 			const auto tmp = static_cast<int>(value);
 			const auto str = std::to_wstring(tmp);
@@ -31,9 +30,8 @@ namespace unicore
 			return *this;
 		}
 
-		template<typename T>
-		typename std::enable_if<std::is_integral<T>::value, LogHelper&>::type
-			operator<<(T value)
+		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+		LogHelper& operator<<(T value)
 		{
 			const auto str = std::to_wstring(value);
 			append(str.c_str());

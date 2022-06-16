@@ -11,18 +11,24 @@ namespace unicore
 {
 	const Path Path::Empty;
 
-	const wchar_t Path::DirSeparator = L'/';
+	constexpr wchar_t Path::DirSeparator = L'/';
 
 #if defined (ENG_PLATFORM_WIN)
-	const wchar_t Path::NativeDirSeparator = L'\\';
+	constexpr wchar_t Path::NativeDirSeparator = L'\\';
 #else
-	const wchar_t Path::NativeDirSeparator = L'/';
+	constexpr wchar_t Path::NativeDirSeparator = L'/';
 #endif
 
-	static const wchar_t WrongDirSeparator = L'\\';
-	static const wchar_t DriveSeparator = L':';
+	constexpr wchar_t WrongDirSeparator = L'\\';
+	constexpr wchar_t DriveSeparator = L':';
 
-	Path::Path(const WStringView path)
+	Path::Path(const wchar_t* path)
+		: _path(prepare(path))
+	{
+		_hash = calc_hash(_path);
+	}
+
+	Path::Path(const WString& path)
 		: _path(prepare(path))
 	{
 		_hash = calc_hash(_path);
@@ -137,7 +143,14 @@ namespace unicore
 		elements.push_back(_path.substr(prev));
 	}
 
-	void Path::replace_filename(const WString& filename)
+	List<WString> Path::explode() const
+	{
+		List<WString> elements;
+		explode(elements);
+		return elements;
+	}
+
+	void Path::replace_filename(WStringView filename)
 	{
 		const auto pos = find_filename_pos(_path);
 		if (pos != WString::npos)
@@ -153,7 +166,7 @@ namespace unicore
 		_hash = calc_hash(_path);
 	}
 
-	void Path::replace_extension(const WString& ext)
+	void Path::replace_extension(WStringView ext)
 	{
 		const auto pos = find_extension_pos(_path);
 		if (pos != WString::npos)
@@ -200,9 +213,9 @@ namespace unicore
 			return *this;
 
 		if (empty())
-			return Path(file);
+			return { file };
 
-		return Path(_path + DirSeparator + file);
+		return combine(_path, file);
 	}
 
 	Path Path::operator/(const Path& path) const
@@ -213,13 +226,13 @@ namespace unicore
 		if (empty())
 			return path;
 
-		return Path(_path + DirSeparator + path._path);
+		return combine(_path, path._path);
 	}
 
 	void Path::native_path(WString& nativePath) const
 	{
 		nativePath = _path;
-		if (DirSeparator != NativeDirSeparator)
+		if constexpr (DirSeparator != NativeDirSeparator)
 		{
 			std::u32string::size_type pos;
 			while ((pos = nativePath.find(DirSeparator)) != std::u32string::npos)
@@ -245,28 +258,40 @@ namespace unicore
 #endif
 	}
 
-	Path Path::combine(const WString& a, const WString& b)
+	Path Path::combine(WStringView a, WStringView b)
 	{
-		return Path(a + DirSeparator + b);
+		WString builder;
+		builder.reserve(a.size() + b.size() + 1);
+		builder += a;
+		builder += DirSeparator;
+		builder += b;
+		return { builder };
 	}
 
-	Path Path::combine(const WString& a, const WString& b, const WString& c)
+	Path Path::combine(WStringView a, WStringView b, WStringView c)
 	{
-		return Path(a + DirSeparator + b + DirSeparator + c);
+		WString builder;
+		builder.reserve(a.size() + b.size() + 1);
+		builder += a;
+		builder += DirSeparator;
+		builder += b;
+		builder += DirSeparator;
+		builder += c;
+		return { builder };
 	}
 
 	// =========================================================================
-	WString::size_type Path::find_drive_pos(const WString& str)
+	WString::size_type Path::find_drive_pos(WStringView str)
 	{
 		return str.find_last_of(DriveSeparator);
 	}
 
-	WString::size_type Path::find_filename_pos(const WString& str)
+	WString::size_type Path::find_filename_pos(WStringView str)
 	{
 		return str.find_last_of(DirSeparator);
 	}
 
-	WString::size_type Path::find_extension_pos(const WString& str)
+	WString::size_type Path::find_extension_pos(WStringView str)
 	{
 		// TODO: Fix for './test' case
 		return str.find_last_of(U'.');
@@ -304,14 +329,14 @@ namespace unicore
 		return path;
 	}
 
-	size_t Path::calc_hash(const WString& str)
+	size_t Path::calc_hash(const WStringView str)
 	{
-		static const HashFunc<WString> hash_func;
-		return !str.empty() ? hash_func(str) : 0;
+		static constexpr HashFunc<WString> hash_func;
+		return !str.empty() ? hash_func(str.data()) : 0;
 	}
 
 	LogHelper& operator<<(LogHelper& helper, const Path& path)
 	{
-		return helper << path.data();
+		return helper << WStringView(path.data());
 	}
 }

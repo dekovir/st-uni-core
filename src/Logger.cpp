@@ -1,18 +1,12 @@
 #include "unicore/Logger.hpp"
 #include "Windows/WinLogger.hpp"
-#include <stdio.h>
+#include <cstdio>
 
 namespace unicore
 {
 	void PrintLogger::write(LogType type, const StringView text)
 	{
 		printf("%s %s\n", type_to_str(type), text.data());
-	}
-
-	void MultiLogger::write(LogType type, const StringView text)
-	{
-		for (const auto& logger : _loggers)
-			logger->write(type, text);
 	}
 
 	Shared<Logger> Logger::create()
@@ -33,5 +27,15 @@ namespace unicore
 		case LogType::Warning: return "w";
 		case LogType::Error: return "e";
 		}
+	}
+
+	MultiLogger::MultiLogger(std::initializer_list<std::shared_ptr<Logger>> loggers)
+		: _loggers(loggers)
+	{}
+
+	void MultiLogger::write(LogType type, const StringView text)
+	{
+		for (const auto& logger : _loggers)
+			logger->write(type, text);
 	}
 }
