@@ -153,15 +153,17 @@ namespace unicore
 		p3 = Vector2f(center.x - hx, center.y + hy);
 	}
 
-	static Vector2f rotate_and_scale(float x, float y, float angle_cos, float angle_sin, float scale_x, float scale_y)
+	static Vector2f rotate_and_scale(float x, float y,
+		float a_cos, float a_sin, float scale_x, float scale_y)
 	{
 		return {
-			angle_cos * scale_x * x + angle_sin * scale_y * y,
-			angle_cos * scale_y * y - angle_sin * scale_x * x
+			a_cos * scale_x * x + a_sin * scale_y * y,
+			a_cos * scale_y * y - a_sin * scale_x * x
 		};
 	}
 
-	void Graphics::calc_quad_position(const Vector2f& center, const Vector2i& size, const Radians& angle,
+	void Graphics::calc_quad_position(
+		const Vector2f& center, const Vector2i& size, const Radians& angle,
 		const Vector2f& scale, Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3)
 	{
 		const auto hx = static_cast<float>(size.x) / 2;

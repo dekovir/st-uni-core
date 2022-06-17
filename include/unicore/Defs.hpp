@@ -62,5 +62,5 @@ namespace unicore
 #define UC_ASSERT(cond) assert(cond)
 #define UC_ASSERT_MSG(cond, msg) assert(cond && msg)
 
-#define UC_ASSERT_ALWAYS() assert(true)
-#define UC_ASSERT_ALWAYS_MSG(msg) assert(true && msg)
+#define UC_ASSERT_ALWAYS() assert(false)
+#define UC_ASSERT_ALWAYS_MSG(msg) assert(false && msg)

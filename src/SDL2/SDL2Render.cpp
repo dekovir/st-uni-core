@@ -156,6 +156,15 @@ namespace unicore
 
 		switch (_state.primitiveType)
 		{
+		case PrimitiveType::Points:
+			for (size_t i = 0; i < num_vertices; i ++)
+			{
+				auto& v = vertices[i];
+				SDL_SetRenderDrawColor(_renderer, v.col.r, v.col.g, v.col.b, v.col.a);
+				SDL_RenderDrawPointF(_renderer, v.pos.x, v.pos.y);
+			}
+			break;
+
 		case PrimitiveType::LineList:
 			//SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
 			for (size_t i = 0; i + 1 < num_vertices; i += 2)
