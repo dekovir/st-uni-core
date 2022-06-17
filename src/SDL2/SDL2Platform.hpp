@@ -16,8 +16,8 @@ namespace unicore
 
 	protected:
 		Uint32 _prevTicks = 0;
-		TimeSpan _elapsed = TimeSpan::Zero;
-		TimeSpan _delta = TimeSpan::Zero;
+		TimeSpan _elapsed = TimeSpanConst::Zero;
+		TimeSpan _delta = TimeSpanConst::Zero;
 
 		void Update();
 

@@ -7,22 +7,30 @@ namespace unicore
 	class TimeSpan
 	{
 	public:
-		TimeSpan() = default;
+		constexpr TimeSpan() : _data(0) {}
+		explicit constexpr TimeSpan(std::chrono::nanoseconds value) : _data(value) {}
 
-		template<typename TRep, typename TPeriod>
-		explicit TimeSpan(std::chrono::duration<TRep, TPeriod> duration)
+		UC_NODISCARD constexpr auto data() const { return _data; }
+
+		UC_NODISCARD constexpr TimeSpan add(const TimeSpan& other) const
 		{
-			_data = std::chrono::duration_cast<decltype(_data)>(duration);
+			return TimeSpan(_data + other._data);
 		}
 
-		UC_NODISCARD TimeSpan add(const TimeSpan& ts) const;
-		UC_NODISCARD TimeSpan sub(const TimeSpan& ts) const;
+		UC_NODISCARD constexpr TimeSpan sub(const TimeSpan& other) const
+		{
+			return TimeSpan(_data + other._data);
+		}
 
-		UC_NODISCARD uint64_t total_milliseconds() const;
-		UC_NODISCARD double total_seconds() const;
+		UC_NODISCARD constexpr uint64_t total_milliseconds() const
+		{
+			return std::chrono::duration_cast<std::chrono::milliseconds>(_data).count();
+		}
 
-		TimeSpan operator + (const TimeSpan& ts) const { return add(ts); }
-		TimeSpan operator - (const TimeSpan& ts) const { return sub(ts); }
+		UC_NODISCARD constexpr double total_seconds() const
+		{
+			return static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(_data).count()) / 1000;
+		}
 
 		TimeSpan& operator += (const TimeSpan& ts)
 		{
@@ -30,18 +38,68 @@ namespace unicore
 			return *this;
 		}
 
-		bool operator == (const TimeSpan& other) const;
-		bool operator != (const TimeSpan& other) const;
+		template<typename TRep, typename TPeriod>
+		static  constexpr TimeSpan from_duration(std::chrono::duration<TRep, TPeriod> value)
+		{
+			return TimeSpan(std::chrono::duration_cast<decltype(_data)>(value));
+		}
 
-		static TimeSpan from_microseconds(uint64_t ms);
-		static TimeSpan from_milliseconds(uint64_t ms);
+		static constexpr TimeSpan from_microseconds(uint64_t ms)
+		{
+			return TimeSpan(std::chrono::duration<uint64_t, std::micro>(ms));
+		}
 
-		static TimeSpan from_seconds(float seconds);
-		static TimeSpan from_seconds(double seconds);
+		static constexpr TimeSpan from_milliseconds(uint64_t ms)
+		{
+			return TimeSpan(std::chrono::duration<uint64_t, std::milli>(ms));
+		}
 
-		static const TimeSpan Zero;
+		static constexpr TimeSpan from_seconds(float value)
+		{
+			return from_duration(std::chrono::duration<float>(value));
+		}
+
+		static constexpr TimeSpan from_seconds(double value)
+		{
+			return from_duration(std::chrono::duration<double>(value));
+		}
+
+		static constexpr TimeSpan from_minutes(double value)
+		{
+			return from_duration(std::chrono::duration<double, std::ratio<60>>(value));
+		}
+
+		static constexpr TimeSpan from_hours(double value)
+		{
+			return from_duration(std::chrono::duration<double, std::ratio<3600>>(value));
+		}
 
 	protected:
 		std::chrono::nanoseconds _data;
+	};
+
+	static constexpr bool operator==(const TimeSpan& a, const TimeSpan& b)
+	{
+		return a.data() == b.data();
+	}
+
+	static constexpr bool operator!=(const TimeSpan& a, const TimeSpan& b)
+	{
+		return a.data() != b.data();
+	}
+
+	static constexpr TimeSpan operator +(const TimeSpan& a, const TimeSpan& b)
+	{
+		return a.add(b);
+	}
+
+	static constexpr TimeSpan operator -(const TimeSpan& a, const TimeSpan& b)
+	{
+		return a.sub(b);
+	}
+
+	struct TimeSpanConst
+	{
+		static constexpr TimeSpan Zero;
 	};
 }
