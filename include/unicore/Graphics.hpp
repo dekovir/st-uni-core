@@ -14,7 +14,7 @@ namespace unicore
 	class Graphics
 	{
 	public:
-		Graphics(RenderQueue& queue, GraphicsFlags flags = GraphicsFlags::Zero);
+		explicit Graphics(RenderQueue& queue, GraphicsFlags flags = GraphicsFlags::Zero);
 		~Graphics();
 
 		Graphics& set_color(const Color4b& color);
@@ -35,11 +35,20 @@ namespace unicore
 			const Vertex& v0, const Vertex& v1, const Vertex& v2, const Vertex& v3,
 			const Shared<Texture>& texture = nullptr);
 
-		Graphics& draw_sprite(const Shared<Texture>& texture, const Vector2f& center);
+		Graphics& draw_sprite_at(const Shared<Texture>& texture, const Vector2f& center);
+		Graphics& draw_sprite_at(const Shared<Texture>& texture,
+			const Vector2f& center, const Radians& angle, const Vector2f& scale = Vector2fConst::One);
 
 	protected:
 		RenderQueue& _queue;
 		Color4b _color;
 		GraphicsFlags _flags;
+
+		static void calc_quad_position(const Vector2f& center, const Vector2i& size,
+			Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3);
+
+		static void calc_quad_position(const Vector2f& center, const Vector2i& size,
+			const Radians& angle, const Vector2f& scale,
+			Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3);
 	};
 }

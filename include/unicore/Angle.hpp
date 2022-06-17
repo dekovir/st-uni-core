@@ -33,6 +33,23 @@ namespace unicore
 		UC_NODISCARD inline float cos() const { return TypeTag::cos(_value); }
 		UC_NODISCARD inline float sin() const { return TypeTag::sin(_value); }
 
+		Angle& operator+=(const Angle& other)
+		{
+			_value += other.value();
+			return *this;
+		}
+
+		Angle& operator-=(const Angle& other)
+		{
+			_value -= other.value();
+			return *this;
+		}
+
+		constexpr Angle operator-() const
+		{
+			return Angle(-_value);
+		}
+
 		template<typename OtherTag>
 		constexpr Angle<OtherTag> cast() const;
 
@@ -44,7 +61,7 @@ namespace unicore
 	template <typename OtherTag>
 	constexpr Angle<OtherTag> Angle<TypeTag>::cast() const
 	{
-		static_assert(true);
+		UC_ASSERT_ALWAYS_MSG("Unimplemented cast");
 	}
 
 	template <>
@@ -83,6 +100,24 @@ namespace unicore
 	static constexpr bool operator<(const Angle<TypeTag>& a, const Angle<TypeTag>& b)
 	{
 		return a.value() < b.value();
+	}
+
+	template<typename TypeTag>
+	static constexpr Angle<TypeTag> operator+(const Angle<TypeTag>& a, const Angle<TypeTag>& b)
+	{
+		return Angle<TypeTag>(a.value() + b.value());
+	}
+
+	template<typename TypeTag>
+	static constexpr Angle<TypeTag> operator-(const Angle<TypeTag>& a, const Angle<TypeTag>& b)
+	{
+		return Angle<TypeTag>(a.value() - b.value());
+	}
+
+	template<typename TypeTag>
+	static constexpr Angle<TypeTag> operator*(const Angle<TypeTag>& a, float value)
+	{
+		return Angle<TypeTag>(a.value() * value);
 	}
 
 	using Degrees = Angle<AngleTypeDeg>;

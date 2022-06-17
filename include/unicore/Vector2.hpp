@@ -92,4 +92,16 @@ namespace unicore
 	{
 		return Vector2<T>(a.x / value, a.y / value);
 	}
+
+	template<typename T>
+	struct Vector2Const
+	{
+		static constexpr Vector2<T> Zero = Vector2<T>(0, 0);
+		static constexpr Vector2<T> One = Vector2<T>(1, 1);
+
+		static constexpr Vector2<T> AxisX = Vector2<T>(1, 0);
+		static constexpr Vector2<T> AxisY = Vector2<T>(0, 1);
+	};
+
+	using Vector2fConst = Vector2Const<float>;
 }

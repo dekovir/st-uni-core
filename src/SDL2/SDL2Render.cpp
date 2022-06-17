@@ -105,15 +105,14 @@ namespace unicore
 
 	Shared<Surface> SDL2Render::load_surface(const Shared<ReadStream>& stream)
 	{
-		auto sdl_stream = std::dynamic_pointer_cast<SDL2Stream>(stream);
 		SDL_Surface* surface;
-		if (sdl_stream)
+		if (const auto sdl_stream = std::dynamic_pointer_cast<SDL2Stream>(stream))
 		{
 			surface = SDL_LoadBMP_RW(sdl_stream->get_context(), SDL_FALSE);
 		}
 		else
 		{
-			auto c = SDL2Utils::from_stream(stream);
+			const auto c = SDL2Utils::from_stream(stream);
 			surface = c != nullptr ? SDL_LoadBMP_RW(c, SDL_TRUE) : nullptr;
 		}
 
@@ -122,11 +121,9 @@ namespace unicore
 
 	Shared<Texture> SDL2Render::create_texture(Surface& surface)
 	{
-		auto sdl = dynamic_cast<SDL2Surface*>(&surface);
-		if (sdl)
+		if (const auto sdl = dynamic_cast<SDL2Surface*>(&surface))
 		{
-			auto texture = SDL_CreateTextureFromSurface(_renderer, sdl->_context);
-			if (texture)
+			if (auto texture = SDL_CreateTextureFromSurface(_renderer, sdl->_context))
 				return make_shared<SDL2Texture>(texture);
 		}
 
