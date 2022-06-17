@@ -17,6 +17,8 @@ namespace unicore
 
 	void MyCore::on_update()
 	{
+		_angle += 3.14_rad * static_cast<float>(time.delta().total_seconds());
+
 		auto& size = render.screen_size();
 		Graphics graphics(_queue, GraphicsFlag::CallBeginEnd);
 		graphics
@@ -28,7 +30,9 @@ namespace unicore
 			.draw_line(Vector2i::Zero, size)
 			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))
 			.set_color(ColorConst4b::White)
-			.draw_sprite(_tex, input.mouse_position().cast<float>())
+			.draw_sprite_at(_tex, input.mouse_position().cast<float>(), _angle, { 2, 2 })
+			.set_color(0x20FF00FF_rgba)
+			.draw_point(Vector2f(400, 400))
 			;
 	}
 
