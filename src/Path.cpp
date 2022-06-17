@@ -22,6 +22,11 @@ namespace unicore
 	constexpr wchar_t WrongDirSeparator = L'\\';
 	constexpr wchar_t DriveSeparator = L':';
 
+	Path::Path()
+		: _hash(0)
+	{
+	}
+
 	Path::Path(const WStringView path)
 		: _data(prepare(path))
 	{

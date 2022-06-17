@@ -6,38 +6,38 @@ namespace unicore
 	class Path
 	{
 	public:
-		Path() = default;
+		Path();
 		explicit Path(const WStringView path);
 
-		[[nodiscard]] bool absolute() const;
-		[[nodiscard]] bool empty() const { return _data.empty(); }
+		UC_NODISCARD bool absolute() const;
+		UC_NODISCARD bool empty() const { return _data.empty(); }
 		void clear();
 
-		[[nodiscard]] size_t hash() const { return _hash; }
-		[[nodiscard]] const WString& data() const { return _data; }
+		UC_NODISCARD size_t hash() const { return _hash; }
+		UC_NODISCARD const WString& data() const { return _data; }
 
-		[[nodiscard]] bool has_extension() const;
+		UC_NODISCARD bool has_extension() const;
 
 		void parent_path(Path& parentPath) const;
-		[[nodiscard]] Path parent_path() const;
+		UC_NODISCARD Path parent_path() const;
 
 		void filename(WString& fileName) const;
-		[[nodiscard]] WString filename() const;
+		UC_NODISCARD WString filename() const;
 
 		void extension(WString& ext) const;
-		[[nodiscard]] WString extension() const;
+		UC_NODISCARD WString extension() const;
 
 		void explode(Path& parentDir, WString& fileName) const;
 		void explode(Path& parentDir, WString& fileName, WString& extension) const;
 		void explode(List<WString>& elements) const;
-		[[nodiscard]] List<WString> explode() const;
+		UC_NODISCARD List<WString> explode() const;
 
 		void replace_filename(WStringView filename);
 		void replace_extension(WStringView ext);
 		void remove_extension(const List<WString>& extensions);
 
-		[[nodiscard]] bool equals(const Path& other) const;
-		[[nodiscard]] int compare(const Path& other) const;
+		UC_NODISCARD bool equals(const Path& other) const;
+		UC_NODISCARD int compare(const Path& other) const;
 
 		bool operator==(const Path& other) const { return equals(other); }
 		bool operator!=(const Path& other) const { return !equals(other); }
@@ -62,7 +62,7 @@ namespace unicore
 
 	protected:
 		WString _data;
-		size_t _hash = 0;
+		size_t _hash;
 
 		Path(const WStringView path, size_t hash);
 
@@ -76,9 +76,8 @@ namespace unicore
 
 	static Path operator"" _path(const wchar_t* path, size_t len)
 	{
-		return Path(path);
+		return Path(WStringView(path, len));
 	}
-
 
 	class LogHelper;
 	extern LogHelper& operator << (LogHelper& helper, const Path& path);
