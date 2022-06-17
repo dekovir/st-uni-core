@@ -1,4 +1,5 @@
 #pragma once
+#include "unicore/Range.hpp"
 #include "unicore/Vector2.hpp"
 
 namespace unicore
@@ -19,6 +20,9 @@ namespace unicore
 		UC_NODISCARD constexpr T max_x() const { return x + w; }
 		UC_NODISCARD constexpr T min_y() const { return y; }
 		UC_NODISCARD constexpr T max_y() const { return y + h; }
+
+		UC_NODISCARD constexpr Range<T> range_x() const { return { min_x(), max_x() }; }
+		UC_NODISCARD constexpr Range<T> range_y() const { return { min_y(), max_y() }; }
 
 		UC_NODISCARD constexpr T get_left() const { return x; }
 		UC_NODISCARD constexpr T get_right() const { return x + w; }
