@@ -1,45 +1,103 @@
 #pragma once
 #include "unicore/Defs.hpp"
+#include "unicore/Math.hpp"
 
 namespace unicore
 {
-	class Degrees;
+	struct AngleTypeRad
+	{
+		static inline float cos(float value) { return Math::cos(value); }
+		static inline float sin(float value) { return Math::sin(value); }
+	};
 
-	class Radians
+	struct AngleTypeDeg
+	{
+		static inline float to_rad(float value) { return Math::DEG_TO_RAD * value; }
+		static inline float cos(float value) { return Math::cos(to_rad(value)); }
+		static inline float sin(float value) { return Math::sin(to_rad(value)); }
+	};
+
+	template<typename TypeTag>
+	class Angle
 	{
 	public:
-		constexpr Radians() : _value(0) {}
-		explicit constexpr Radians(float value) : _value(value) {}
-		explicit Radians(const Degrees& value);
+		constexpr Angle() : _value(0) {}
+		explicit constexpr Angle(float value) : _value(value) {}
 
-		UC_NODISCARD constexpr float get_value() const { return _value; }
+		template<typename OtherTag>
+		constexpr Angle(const Angle<OtherTag>& other)
+			: _value(other.cast<TypeTag>().value()) {}
 
-		constexpr bool operator < (const Radians& angle) const { return _value < angle._value; }
-		constexpr bool operator > (const Radians& angle) const { return _value > angle._value; }
+		UC_NODISCARD constexpr float value() const { return _value; }
 
-		static const Radians Zero;
+		UC_NODISCARD inline float cos() const { return TypeTag::cos(value); }
+		UC_NODISCARD inline float sin() const { return TypeTag::sin(value); }
+
+		template<typename OtherTag>
+		constexpr Angle<OtherTag> cast() const;
 
 	protected:
 		float _value;
 	};
 
-	class Degrees
+	template <typename TypeTag>
+	template <typename OtherTag>
+	constexpr Angle<OtherTag> Angle<TypeTag>::cast() const
 	{
-	public:
-		constexpr Degrees() : _value(0) {}
-		explicit constexpr Degrees(float value) : _value(value) {}
-		explicit Degrees(const Radians& angle);
+		static_assert(true);
+	}
 
-		UC_NODISCARD constexpr float get_value() const { return _value; }
+	template <>
+	template <>
+	constexpr Angle<AngleTypeRad> Angle<AngleTypeDeg>::cast() const
+	{
+		return Angle<AngleTypeRad>(Math::DEG_TO_RAD * _value);
+	}
 
-		constexpr bool operator < (const Degrees& angle) const { return _value < angle._value; }
-		constexpr bool operator > (const Degrees& angle) const { return _value > angle._value; }
+	template <>
+	template <>
+	constexpr Angle<AngleTypeDeg> Angle<AngleTypeRad>::cast() const
+	{
+		return Angle<AngleTypeDeg>(Math::RAD_TO_DEG * _value);
+	}
 
-		static const Degrees Zero;
+	template<typename TypeTag>
+	static constexpr bool operator==(const Angle<TypeTag>& a, const Angle<TypeTag>& b)
+	{
+		return a.value() == b.value();
+	}
 
-	protected:
-		float _value;
+	template<typename TypeTag>
+	static constexpr bool operator!=(const Angle<TypeTag>& a, const Angle<TypeTag>& b)
+	{
+		return a.value() != b.value();
+	}
+
+	template<typename TypeTag>
+	static constexpr bool operator>(const Angle<TypeTag>& a, const Angle<TypeTag>& b)
+	{
+		return a.value() > b.value();
+	}
+
+	template<typename TypeTag>
+	static constexpr bool operator<(const Angle<TypeTag>& a, const Angle<TypeTag>& b)
+	{
+		return a.value() < b.value();
+	}
+
+	using Degrees = Angle<AngleTypeDeg>;
+	using Radians = Angle<AngleTypeRad>;
+
+	template<typename AngleTag>
+	struct AngleConst
+	{
+		static constexpr auto Zero = Angle<AngleTag>(0);
+		static constexpr auto Pi = Angle<AngleTag>(Angle<AngleTypeRad>(Math::PI));
+		static constexpr auto PiHalf = Angle<AngleTag>(Angle<AngleTypeRad>(Math::PI / 2));
 	};
+
+	using DegreesConst = AngleConst<AngleTypeDeg>;
+	using RadiansConst = AngleConst<AngleTypeRad>;
 
 	static constexpr Radians operator"" _rad(unsigned long long value)
 	{
