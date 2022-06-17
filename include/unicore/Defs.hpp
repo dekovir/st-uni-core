@@ -17,7 +17,7 @@
 #	define UNICORE_PLATFORM_EMSCRIPTEN
 #	include <emscripten/emscripten.h>
 #else
-static_assert(true, "Unknown platform");
+static_assert(false, "Unknown platform");
 #endif
 
 namespace unicore

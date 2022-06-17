@@ -76,19 +76,21 @@ namespace unicore
 
 		struct DebugSource
 		{
-			DebugSource(const char* _file, int _line)
+			constexpr DebugSource(StringView _file, int _line)
 				: file(_file), line(_line)
-			{}
+			{
+				
+			}
 
-			const char* file;
+			const StringView file;
 			const int line;
 		};
 
 		struct DebugFunction
 		{
-			DebugFunction(const char* func) : _func(func) {}
+			explicit constexpr DebugFunction(StringView func) : _func(func) {}
 
-			const char* _func;
+			StringView _func;
 		};
 
 		LogHelper& operator << (const DebugSource& source);

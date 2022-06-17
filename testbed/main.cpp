@@ -17,7 +17,7 @@ namespace unicore
 
 	void MyCore::on_update()
 	{
-		_angle += 3.14_rad * static_cast<float>(time.delta().total_seconds());
+		_angle += RadiansConst::Pi * static_cast<float>(time.delta().total_seconds());
 
 		auto& size = render.screen_size();
 		Graphics graphics(_queue, GraphicsFlag::CallBeginEnd);

@@ -29,10 +29,11 @@ namespace unicore
 
 	LogHelper& LogHelper::operator<<(const DebugSource& source)
 	{
+		// TODO: Replace with constexpr
 #if defined (ENG_PLATFORM_WIN) || defined(ENG_PLATFORM_ANDROID)
 		const auto* pos = strrchr(source.file, '\\');
 #else
-		const auto* pos = strrchr(source.file, '/');
+		const auto* pos = strrchr(source.file.data(), '/');
 #endif
 		if (pos != nullptr)
 			append(pos + 1);
