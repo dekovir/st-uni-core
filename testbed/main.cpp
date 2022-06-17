@@ -2,17 +2,17 @@
 #include "UnicoreMain.h"
 #include "unicore/Graphics.hpp"
 #include "unicore/LogHelper.hpp"
+#include "unicore/Input.hpp"
 
 namespace unicore
 {
-	MyCore::MyCore(Platform& platform)
-		: Core(platform)
+	MyCore::MyCore(Platform& _platform)
+		: Core(_platform)
 	{
-		logger.info("Start");
+		UC_LOG_INFO(logger) << "Info";
 
 		if (const auto stream = file_system.open_read(L"assets/zazaka.bmp"_path))
 			_tex = render.load_texture(stream);
-
 	}
 
 	void MyCore::on_update()
@@ -21,22 +21,20 @@ namespace unicore
 		Graphics graphics(_queue, GraphicsFlag::CallBeginEnd);
 		graphics
 			.draw_tri(
-				Vertex::from_pos(Vector2f(100, 100), Colors4b::Yellow),
-				Vertex::from_pos(Vector2f(200, 100), Colors4b::Cyan),
-				Vertex::from_pos(Vector2f(100, 200), Colors4b::Magenta))
-			.set_color(Colors4b::Red)
+				Vertex::from_pos({ 100, 100 }, ColorConst4b::Yellow),
+				Vertex::from_pos({ 200, 100 }, ColorConst4b::Cyan),
+				Vertex::from_pos({ 100, 200 }, ColorConst4b::Magenta))
+			.set_color(ColorConst4b::Red)
 			.draw_line(Vector2i::Zero, size)
 			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))
-			.set_color(Colors4b::White)
-			.draw_sprite(_tex, Vector2f(400, 400))
+			.set_color(ColorConst4b::White)
+			.draw_sprite(_tex, input.mouse_position().cast<float>())
 			;
 	}
 
 	void MyCore::on_draw()
 	{
-		auto& size = render.screen_size();
-
-		render.clear(Colors4b::Black);
+		render.clear(ColorConst4b::Black);
 		_queue.draw(render);
 	}
 

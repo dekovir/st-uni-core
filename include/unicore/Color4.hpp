@@ -149,7 +149,7 @@ namespace unicore
 	using Color4f = Color4<float>;
 
 	template<typename T>
-	struct Color4Table
+	struct ColorConst4
 	{
 		static constexpr auto Clear = Color4<T>::from_argb(0);
 
@@ -164,9 +164,9 @@ namespace unicore
 		static constexpr auto Yellow = Color4<T>::from_rgb(0xFFFF00);
 		static constexpr auto Cyan = Color4<T>::from_rgb(0x00FFFF);
 
-		Color4Table() = delete;
+		ColorConst4() = delete;
 	};
 
-	using Colors4b = Color4Table<uint8_t>;
-	using Colors4f = Color4Table<float>;
+	using ColorConst4b = ColorConst4<uint8_t>;
+	using ColorConst4f = ColorConst4<float>;
 }

@@ -28,17 +28,17 @@ namespace unicore
 	typedef Vector2<int>   Vector2i;
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
-	template<typename T>
-	const Vector2<T> Vector2<T>::Zero{ 0, 0 };
-
-	template<typename T>
-	const Vector2<T> Vector2<T>::One{ 1, 1 };
-
 	template <typename T>
 	constexpr Vector2<T>::Vector2(T _x, T _y)
 		: x(_x), y(_y)
 	{
 	}
+
+	template<typename T>
+	const Vector2<T> Vector2<T>::Zero{ 0, 0 };
+
+	template<typename T>
+	const Vector2<T> Vector2<T>::One{ 1, 1 };
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>
