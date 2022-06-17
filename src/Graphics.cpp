@@ -5,13 +5,13 @@ namespace unicore
 	Graphics::Graphics(RenderQueue& queue, GraphicsFlags flags)
 		: _queue(queue), _color(Colors4b::White), _flags(flags)
 	{
-		if (_flags.HasFlag(GraphicsFlag::CallBegin))
+		if (_flags.has(GraphicsFlag::CallBegin))
 			_queue.begin();
 	}
 
 	Graphics::~Graphics()
 	{
-		if (_flags.HasFlag(GraphicsFlag::CallEnd))
+		if (_flags.has(GraphicsFlag::CallEnd))
 			_queue.end();
 	}
 

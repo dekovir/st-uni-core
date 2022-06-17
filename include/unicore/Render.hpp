@@ -1,6 +1,5 @@
 #pragma once
 #include "unicore/Color4.hpp"
-#include "unicore/Rect.hpp"
 #include "unicore/Angle.hpp"
 #include "unicore/FileSystem.hpp"
 #include "unicore/Surface.hpp"
@@ -13,8 +12,8 @@ namespace unicore
 	class Render : public Module
 	{
 	public:
-		virtual const Vector2i& screen_size() const = 0;
-		virtual const RenderState& state() const = 0;
+		UC_NODISCARD virtual const Vector2i& screen_size() const = 0;
+		UC_NODISCARD virtual const RenderState& state() const = 0;
 
 		virtual void set_state(const RenderState& state) = 0;
 

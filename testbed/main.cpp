@@ -1,6 +1,7 @@
 #include "main.h"
 #include "UnicoreMain.h"
 #include "unicore/Graphics.hpp"
+#include "unicore/LogHelper.hpp"
 
 namespace unicore
 {
@@ -9,7 +10,7 @@ namespace unicore
 	{
 		logger.info("Start");
 
-		if (const auto stream = file_system.open_read(L"assets/zazaka.bmp"))
+		if (const auto stream = file_system.open_read(L"assets/zazaka.bmp"_path))
 			_tex = render.load_texture(stream);
 
 	}

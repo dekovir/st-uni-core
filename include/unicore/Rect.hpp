@@ -15,25 +15,25 @@ namespace unicore
 		constexpr Rect(const Vector2<T>& position, T w, T h);
 		constexpr Rect(const Vector2<T>& position, const Vector2<T>& size);
 
-		constexpr T min_x() const { return x; }
-		constexpr T max_x() const { return x + w; }
-		constexpr T min_y() const { return y; }
-		constexpr T max_y() const { return y + h; }
+		UC_NODISCARD constexpr T min_x() const { return x; }
+		UC_NODISCARD constexpr T max_x() const { return x + w; }
+		UC_NODISCARD constexpr T min_y() const { return y; }
+		UC_NODISCARD constexpr T max_y() const { return y + h; }
 
-		constexpr T get_left() const { return x; }
-		constexpr T get_right() const { return x + w; }
-		constexpr T get_bottom() const { return y; }
-		constexpr T get_top() const { return y + h; }
+		UC_NODISCARD constexpr T get_left() const { return x; }
+		UC_NODISCARD constexpr T get_right() const { return x + w; }
+		UC_NODISCARD constexpr T get_bottom() const { return y; }
+		UC_NODISCARD constexpr T get_top() const { return y + h; }
 
-		constexpr Vector2<T> get_position() const { return Vector2<T>(x, y); }
-		constexpr Vector2<T> get_size() const { return Vector2<T>(w, h); }
-		constexpr Vector2<T> get_center() const { return Vector2<T>(x + w / 2, y + h / 2); }
+		UC_NODISCARD constexpr Vector2<T> get_position() const { return Vector2<T>(x, y); }
+		UC_NODISCARD constexpr Vector2<T> get_size() const { return Vector2<T>(w, h); }
+		UC_NODISCARD constexpr Vector2<T> get_center() const { return Vector2<T>(x + w / 2, y + h / 2); }
 
-		constexpr Vector2<T> top_left() const { return Vector2<T>(x, y + h); }
-		constexpr Vector2<T> top_right() const { return Vector2<T>(x + w, y + h); }
+		UC_NODISCARD constexpr Vector2<T> top_left() const { return Vector2<T>(x, y + h); }
+		UC_NODISCARD constexpr Vector2<T> top_right() const { return Vector2<T>(x + w, y + h); }
 
-		constexpr Vector2<T> bottom_left() const { return Vector2<T>(x, y); }
-		constexpr Vector2<T> bottom_right() const { return Vector2<T>(x + w, y); }
+		UC_NODISCARD constexpr Vector2<T> bottom_left() const { return Vector2<T>(x, y); }
+		UC_NODISCARD constexpr Vector2<T> bottom_right() const { return Vector2<T>(x + w, y); }
 
 		constexpr bool operator== (const Rect<T>& other) const
 		{

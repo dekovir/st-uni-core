@@ -7,7 +7,7 @@ namespace unicore
 	class Time : public Module
 	{
 	public:
-		virtual const TimeSpan& elapsed() const = 0;
-		virtual const TimeSpan& delta() const = 0;
+		UC_NODISCARD virtual const TimeSpan& elapsed() const = 0;
+		UC_NODISCARD virtual const TimeSpan& delta() const = 0;
 	};
 }

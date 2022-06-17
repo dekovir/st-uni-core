@@ -2,6 +2,10 @@
 
 namespace unicore
 {
+	StreamLogger::StreamLogger(const Shared<WriteStream>& stream)
+		: _stream(stream), _writer(*stream.get())
+	{}
+
 	void StreamLogger::write(LogType type, const StringView text)
 	{
 		_writer.write(type_to_str(type));

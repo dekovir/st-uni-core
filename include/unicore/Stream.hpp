@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Defs.hpp"
+#include "unicore/Object.hpp"
 
 namespace unicore
 {
@@ -13,16 +13,16 @@ namespace unicore
 	class BasicStream : public Object
 	{
 	public:
-		virtual bool can_seek() const = 0;
+		UC_NODISCARD virtual bool can_seek() const = 0;
 
-		virtual int64_t size() const = 0;
+		UC_NODISCARD virtual int64_t size() const = 0;
 		virtual int64_t seek(int64_t offset, SeekMethod method = SeekMethod::Begin) = 0;
 	};
 
 	class ReadStream : public BasicStream
 	{
 	public:
-		virtual bool eof() const = 0;
+		UC_NODISCARD virtual bool eof() const = 0;
 		virtual size_t read(void* buffer, size_t size, size_t count = 1) = 0;
 	};
 

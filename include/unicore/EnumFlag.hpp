@@ -6,55 +6,57 @@ namespace unicore
 	template<typename T>
 	class EnumFlag
 	{
-		static_assert(std::is_enum<T>::value, "Must be enum");
+		static_assert(std::is_enum_v<T>, "Must be enum");
 	public:
-		typedef typename std::underlying_type<T>::type TValue;
+		typedef std::underlying_type_t<T> TValue;
 
 		EnumFlag() : _value(0) {}
 		EnumFlag(T value) : _value(static_cast<TValue>(value)) {}
 		explicit EnumFlag(TValue value) : _value(value) {}
 
-		bool IsFlag(T flag) const
+		UC_NODISCARD bool empty() const { return _value == 0; }
+
+		UC_NODISCARD bool has(T flag) const
 		{
 			return (_value & static_cast<TValue>(flag)) == static_cast<TValue>(flag);
 		}
 
-		bool HasFlag(T flag) const
-		{
-			return (_value & static_cast<TValue>(flag)) == static_cast<TValue>(flag);
-		}
-
-		void SetFlag(T flag)
+		void set(T flag)
 		{
 			_value |= static_cast<TValue>(flag);
 		}
 
-		void RemoveFlag(T flag)
+		void remove(T flag)
 		{
 			_value &= ~static_cast<TValue>(flag);
 		}
 
-		void SetFlag(T flag, bool value)
+		void set(T flag, bool value)
 		{
 			if (value)
-				SetFlag(flag);
-			else RemoveFlag(flag);
+				set(flag);
+			else remove(flag);
 		}
 
-		bool IsEmpty() const { return _value == 0; }
+		void toggle(T flag)
+		{
+			if (flag(flag))
+				remove(flag);
+			else set(flag);
+		}
 
-		bool operator[](T flag) const { return HasFlag(flag); }
+		bool operator[](T flag) const { return flag(flag); }
 
 		EnumFlag<T> operator|(T flag) const
 		{
 			EnumFlag<T> flags(_value);
-			flags.SetFlag(flag);
+			flags.set(flag);
 			return flags;
 		}
 
 		EnumFlag<T>& operator|=(T flag)
 		{
-			SetFlag(flag);
+			set(flag);
 			return *this;
 		}
 
@@ -80,9 +82,9 @@ namespace unicore
 			return _value != other._value;
 		}
 
-		static bool IsFlagChanged(const EnumFlag<T>& a, const EnumFlag<T>& b, T flag)
+		static bool is_changed(const EnumFlag<T>& a, const EnumFlag<T>& b, T flag)
 		{
-			return a.IsFlag(flag) != b.IsFlag(flag);
+			return a.has(flag) != b.has(flag);
 		}
 
 		static const EnumFlag<T> Zero;

@@ -7,19 +7,11 @@ namespace unicore
 	class StreamWriter : public Object
 	{
 	public:
-		explicit StreamWriter(WriteStream& stream) : _stream(stream) {}
+		explicit StreamWriter(WriteStream& stream);
 
-		inline StreamWriter& write(const StringView text)
-		{
-			_stream.write(text.data(), sizeof(char), text.size());
-			return *this;
-		}
+		StreamWriter& write(const StringView text);
 
-		inline StreamWriter& write(const WStringView text)
-		{
-			_stream.write(text.data(), sizeof(wchar_t), text.size());
-			return *this;
-		}
+		StreamWriter& write(const WStringView text);
 
 		template<typename T, std::enable_if_t<std::is_integral<T>::type>>
 		inline StreamWriter& write(const T value)

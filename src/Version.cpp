@@ -18,16 +18,34 @@ namespace unicore
 	{
 	}
 
-	LogHelper& operator << (LogHelper& helper, const Version& ver)
+	bool Version::operator==(const Version& other) const
 	{
-		helper << ver.major << L"." << ver.minor;
+		return data == other.data;
+	}
 
-		if (ver.build > 0 || ver.revision > 0)
-			helper << L"." << ver.build;
-		if (ver.revision > 0)
-			helper << L"." << ver.revision;
+	bool Version::operator!=(const Version& other) const
+	{
+		return data != other.data;
+	}
 
-		return helper;
+	bool Version::operator<=(const Version& other) const
+	{
+		return data <= other.data;
+	}
+
+	bool Version::operator>=(const Version& other) const
+	{
+		return data >= other.data;
+	}
+
+	bool Version::operator<(const Version& other) const
+	{
+		return data < other.data;
+	}
+
+	bool Version::operator>(const Version& other) const
+	{
+		return data > other.data;
 	}
 
 	Version Version::parse(uint64_t value)
@@ -38,5 +56,17 @@ namespace unicore
 				static_cast<uint16_t>((value >> 16) & 0xFFFF),
 				static_cast<uint16_t>(value & 0xFFFF)
 		};
+	}
+
+	LogHelper& operator << (LogHelper& helper, const Version& ver)
+	{
+		helper << ver.major << L"." << ver.minor;
+
+		if (ver.build > 0 || ver.revision > 0)
+			helper << L"." << ver.build;
+		if (ver.revision > 0)
+			helper << L"." << ver.revision;
+
+		return helper;
 	}
 }

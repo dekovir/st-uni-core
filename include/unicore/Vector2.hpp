@@ -11,11 +11,8 @@ namespace unicore
 
 		constexpr Vector2() = default;
 		constexpr Vector2(T x, T y);
-		constexpr Vector2(const Vector2& other)
-			: x(other.x), y(other.y)
-		{}
 
-		constexpr T area() const { return x * y; }
+		UC_NODISCARD constexpr T area() const { return x * y; }
 
 		template<typename U>
 		constexpr Vector2<U> cast() const
@@ -45,14 +42,14 @@ namespace unicore
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>
-	static typename std::enable_if<std::is_integral<T>::value, bool>::type
+	static std::enable_if_t<std::is_integral_v<T>, bool>
 		operator == (const Vector2<T>& a, const Vector2<T>& b)
 	{
 		return a.x == b.x && a.y == b.y;
 	}
 
 	template<typename T>
-	static typename std::enable_if<std::is_integral<T>::value, bool>::type
+	static std::enable_if_t<std::is_integral_v<T>, bool>
 		operator != (const Vector2<T>& a, const Vector2<T>& b)
 	{
 		return a.x != b.x || a.y != b.y;
@@ -77,8 +74,22 @@ namespace unicore
 	}
 
 	template<typename T>
-	static Vector2<T> operator / (const Vector2<T>& a, const Vector2<T>& b)
+	static std::enable_if_t<std::is_floating_point_v<T>, Vector2<T>>
+		operator / (const Vector2<T>& a, const Vector2<T>& b)
 	{
 		return Vector2<T>(a.x / b.x, a.y / b.y);
+	}
+
+	template<typename T>
+	static Vector2<T> operator * (const Vector2<T>& a, T value)
+	{
+		return Vector2<T>(a.x * value, a.y * value);
+	}
+
+	template<typename T>
+	static std::enable_if_t<std::is_floating_point_v<T>, Vector2<T>>
+		operator / (const Vector2<T>& a, T value)
+	{
+		return Vector2<T>(a.x / value, a.y / value);
 	}
 }

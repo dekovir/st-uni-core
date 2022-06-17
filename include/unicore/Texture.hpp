@@ -7,6 +7,6 @@ namespace unicore
 	class Texture : public RenderObject
 	{
 	public:
-		virtual const Vector2i& size() const = 0;
+		UC_NODISCARD virtual const Vector2i& size() const = 0;
 	};
 }

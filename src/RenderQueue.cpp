@@ -88,11 +88,7 @@ namespace unicore
 
 	RenderQueue& RenderQueue::add_vertices(const Vertex* data, size_t count)
 	{
-		//_vertices.insert(_vertices.end(), &data[0], &data[count]);
-
-		for (auto i = 0; i < count; i++)
-			vertices.push_back(data[i]);
-
+		vertices.insert(vertices.end(), &data[0], &data[count]);
 		_cmd.vcount += count;
 		return *this;
 	}

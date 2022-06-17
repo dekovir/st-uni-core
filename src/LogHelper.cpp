@@ -3,15 +3,14 @@
 
 namespace unicore
 {
-	LogHelper::LogHelper(Logger* logger, LogType type)
+	LogHelper::LogHelper(Logger& logger, LogType type)
 		: _logger(logger), _type(type)
 	{
 	}
 
 	LogHelper::~LogHelper()
 	{
-		if (_logger)
-			_logger->write(_type, _text);
+		_logger.write(_type, _text);
 	}
 
 	LogHelper& LogHelper::operator<<(bool value)

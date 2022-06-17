@@ -5,7 +5,7 @@ namespace unicore
 {
 	struct StreamHandle
 	{
-		BasicStream* basic;
+		BasicStream* basic = nullptr;
 		Shared<ReadStream> read;
 		Shared<WriteStream> write;
 	};
@@ -50,7 +50,7 @@ namespace unicore
 		SDL_RWops* c = SDL_AllocRW();
 		if (c != nullptr)
 		{
-			auto handle = new StreamHandle;
+			const auto handle = new StreamHandle;
 			handle->read = stream;
 			handle->basic = stream.get();
 
@@ -71,7 +71,7 @@ namespace unicore
 		SDL_RWops* c = SDL_AllocRW();
 		if (c != nullptr)
 		{
-			auto handle = new StreamHandle;
+			const auto handle = new StreamHandle;
 			handle->write = stream;
 			handle->basic = stream.get();
 

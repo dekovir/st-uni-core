@@ -9,6 +9,7 @@
 #include <optional>
 #include <memory>
 #include <functional>
+#include <cassert>
 
 #if defined (_WIN32)
 #	define UNICORE_PLATFORM_WINDOWS
@@ -55,3 +56,11 @@ namespace unicore
 		return std::make_shared<T>(args...);
 	}
 }
+
+#define UC_NODISCARD [[nodiscard]]
+
+#define UC_ASSERT(cond) assert(cond)
+#define UC_ASSERT_MSG(cond, msg) assert(cond && msg)
+
+#define UC_ASSERT_ALWAYS() assert(true)
+#define UC_ASSERT_ALWAYS_MSG(msg) assert(true && msg)

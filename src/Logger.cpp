@@ -27,6 +27,9 @@ namespace unicore
 		case LogType::Warning: return "w";
 		case LogType::Error: return "e";
 		}
+
+		UC_ASSERT_ALWAYS_MSG("Invalid LogType");
+		return "";
 	}
 
 	MultiLogger::MultiLogger(std::initializer_list<std::shared_ptr<Logger>> loggers)

@@ -33,6 +33,7 @@ namespace unicore
 		void write(LogType type, const StringView text) override;
 	};
 
+	// TODO: Add format library to implement
 	/*class ProxyLogger : public Logger
 	{
 	public:

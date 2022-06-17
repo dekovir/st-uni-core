@@ -7,8 +7,7 @@ namespace unicore
 	class StreamLogger : public Logger
 	{
 	public:
-		explicit StreamLogger(const Shared<WriteStream>& stream)
-		: _stream(stream), _writer(*stream.get()) {}
+		explicit StreamLogger(const Shared<WriteStream>& stream);
 
 		void write(LogType type, const StringView text) override;
 

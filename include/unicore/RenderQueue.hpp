@@ -1,4 +1,5 @@
 #pragma once
+#include "unicore/Rect.hpp"
 #include "unicore/Render.hpp"
 
 namespace unicore

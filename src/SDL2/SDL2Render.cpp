@@ -5,10 +5,22 @@
 
 namespace unicore
 {
+	SDL2Surface::SDL2Surface(SDL_Surface* context)
+		: _context(context)
+	{
+		update_size();
+	}
+
 	void SDL2Surface::update_size()
 	{
 		_size.x = _context->w;
 		_size.y = _context->h;
+	}
+
+	SDL2Texture::SDL2Texture(SDL_Texture* context)
+		: _context(context)
+	{
+		update_size();
 	}
 
 	void SDL2Texture::update_size()
@@ -183,7 +195,7 @@ namespace unicore
 			break;
 
 		default:
-			SDL_assert(true);
+			UC_ASSERT_ALWAYS_MSG("Unimplemented primitive type");
 			break;
 		}
 	}

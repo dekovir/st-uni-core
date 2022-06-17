@@ -9,8 +9,8 @@ namespace unicore
 	class BasicStreamProvider : public Object
 	{
 	public:
-		virtual Optional<FileStats> stats(const Path& path) = 0;
-		virtual bool exists(const Path& path);
+		UC_NODISCARD virtual Optional<FileStats> stats(const Path& path) = 0;
+		UC_NODISCARD virtual bool exists(const Path& path);
 
 		virtual uint16_t enumerate(
 			const Path& path, List<Path>& name_list,

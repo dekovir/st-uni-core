@@ -1,8 +1,8 @@
 #include "SDL2Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
-#include "SDL2Stream.hpp"
-#include "SDL2Utils.hpp"
 #include "unicore/LogHelper.hpp"
+#include "SDL2Utils.hpp"
+#include "SDL2StreamProvider.hpp"
 #if defined(EMSCRIPTEN)
 #	include <emscripten/emscripten.h>
 #endif
@@ -33,7 +33,7 @@ namespace unicore
 
 		SDL_version ver;
 		SDL_GetVersion(&ver);
-		UNICORE_LOG_INFO(logger) << L"SDL version " << ver;
+		UC_LOG_INFO(logger) << L"SDL version " << ver;
 	}
 
 	SDL2Platform::~SDL2Platform()

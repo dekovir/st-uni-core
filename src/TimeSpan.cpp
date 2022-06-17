@@ -21,7 +21,7 @@ namespace unicore
 
 	double TimeSpan::total_seconds() const
 	{
-		return static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(_data).count()) / 1000.f;
+		return static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(_data).count()) / 1000;
 	}
 
 	bool TimeSpan::operator==(const TimeSpan& other) const

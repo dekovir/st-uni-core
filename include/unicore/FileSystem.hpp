@@ -7,6 +7,8 @@ namespace unicore
 	class FileSystem : public Module, public BasicStreamProvider
 	{
 	public:
+		FileSystem() = default;
+		
 		bool exists(const Path& path) override;
 		Optional<FileStats> stats(const Path& path) override;
 		

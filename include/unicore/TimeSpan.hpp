@@ -15,11 +15,11 @@ namespace unicore
 			_data = std::chrono::duration_cast<decltype(_data)>(duration);
 		}
 
-		TimeSpan add(const TimeSpan& ts) const;
-		TimeSpan sub(const TimeSpan& ts) const;
+		UC_NODISCARD TimeSpan add(const TimeSpan& ts) const;
+		UC_NODISCARD TimeSpan sub(const TimeSpan& ts) const;
 
-		uint64_t total_milliseconds() const;
-		double total_seconds() const;
+		UC_NODISCARD uint64_t total_milliseconds() const;
+		UC_NODISCARD double total_seconds() const;
 
 		TimeSpan operator + (const TimeSpan& ts) const { return add(ts); }
 		TimeSpan operator - (const TimeSpan& ts) const { return sub(ts); }

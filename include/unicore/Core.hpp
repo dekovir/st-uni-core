@@ -6,7 +6,7 @@ namespace unicore
 	class Core
 	{
 	public:
-		Core(Platform& platform);
+		explicit Core(Platform& platform);
 
 		Logger& logger;
 		Time& time;

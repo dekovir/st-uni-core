@@ -22,19 +22,13 @@ namespace unicore
 	constexpr wchar_t WrongDirSeparator = L'\\';
 	constexpr wchar_t DriveSeparator = L':';
 
-	Path::Path(const wchar_t* path)
+	Path::Path(const WStringView path)
 		: _data(prepare(path))
 	{
 		_hash = calc_hash(_data);
 	}
 
-	Path::Path(const WString& path)
-		: _data(prepare(path))
-	{
-		_hash = calc_hash(_data);
-	}
-
-	Path::Path(const WString& path, std::size_t hash)
+	Path::Path(const WStringView path, std::size_t hash)
 		: _data(path), _hash(hash)
 	{
 	}
@@ -182,7 +176,7 @@ namespace unicore
 	{
 		for (const auto& ext : extensions)
 		{
-			if (!Strings::ends_with(_data, ext, true))
+			if (!Strings::ends_with<wchar_t>(_data, ext, true))
 				continue;
 
 			_data = _data.substr(0, _data.size() - ext.length());
@@ -213,7 +207,7 @@ namespace unicore
 			return *this;
 
 		if (empty())
-			return { file };
+			return Path(file);
 
 		return combine(_data, file);
 	}
@@ -265,7 +259,7 @@ namespace unicore
 		builder += a;
 		builder += DirSeparator;
 		builder += b;
-		return { builder };
+		return Path(builder);
 	}
 
 	Path Path::combine(WStringView a, WStringView b, WStringView c)
@@ -277,7 +271,7 @@ namespace unicore
 		builder += b;
 		builder += DirSeparator;
 		builder += c;
-		return { builder };
+		return Path(builder);
 	}
 
 	// =========================================================================

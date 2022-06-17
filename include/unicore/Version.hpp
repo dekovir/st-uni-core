@@ -22,14 +22,14 @@ namespace unicore
 		Version(uint16_t major, uint16_t minor, uint16_t build);
 		Version(uint16_t major, uint16_t minor, uint16_t build, uint16_t revision);
 
-		bool operator ==(const Version& other) const { return data == other.data; }
-		bool operator !=(const Version& other) const { return data != other.data; }
+		inline bool operator ==(const Version& other) const;
+		inline bool operator !=(const Version& other) const;
 
-		bool operator <=(const Version& other) const { return data <= other.data; }
-		bool operator >=(const Version& other) const { return data >= other.data; }
+		inline bool operator <=(const Version& other) const;
+		inline bool operator >=(const Version& other) const;
 
-		bool operator <(const Version& other) const { return data < other.data; }
-		bool operator >(const Version& other) const { return data > other.data; }
+		inline bool operator <(const Version& other) const;
+		inline bool operator >(const Version& other) const;
 
 		static Version parse(uint64_t value);
 	};

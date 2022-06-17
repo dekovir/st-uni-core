@@ -7,8 +7,7 @@ namespace unicore
 	{
 	public:
 		Path() = default;
-		Path(const wchar_t* path);
-		Path(const WString& path);
+		explicit Path(const WStringView path);
 
 		[[nodiscard]] bool absolute() const;
 		[[nodiscard]] bool empty() const { return _data.empty(); }
@@ -65,7 +64,7 @@ namespace unicore
 		WString _data;
 		size_t _hash = 0;
 
-		Path(const WString& path, size_t hash);
+		Path(const WStringView path, size_t hash);
 
 		static WString::size_type find_drive_pos(WStringView str);
 		static WString::size_type find_filename_pos(WStringView str);
@@ -74,6 +73,12 @@ namespace unicore
 		static WString prepare(WStringView str);
 		static size_t calc_hash(WStringView str);
 	};
+
+	static Path operator"" _path(const wchar_t* path, size_t len)
+	{
+		return Path(path);
+	}
+
 
 	class LogHelper;
 	extern LogHelper& operator << (LogHelper& helper, const Path& path);

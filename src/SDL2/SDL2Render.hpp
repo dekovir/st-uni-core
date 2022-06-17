@@ -8,8 +8,9 @@ namespace unicore
 	class SDL2Surface : public Surface
 	{
 	public:
-		explicit SDL2Surface(SDL_Surface* context) : _context(context) { update_size(); }
-		~SDL2Surface()
+		explicit SDL2Surface(SDL_Surface* context);
+
+		~SDL2Surface() override
 		{
 			SDL_FreeSurface(_context);
 		}
@@ -18,7 +19,7 @@ namespace unicore
 
 	protected:
 		SDL_Surface* _context;
-		Vector2i _size;
+		Vector2i _size = Vector2i::Zero;
 
 		void update_size();
 
@@ -28,8 +29,9 @@ namespace unicore
 	class SDL2Texture : public Texture
 	{
 	public:
-		explicit SDL2Texture(SDL_Texture* context) : _context(context) { update_size(); }
-		~SDL2Texture()
+		explicit SDL2Texture(SDL_Texture* context);
+
+		~SDL2Texture() override
 		{
 			SDL_DestroyTexture(_context);
 		}
@@ -38,7 +40,7 @@ namespace unicore
 
 	protected:
 		SDL_Texture* _context;
-		Vector2i _size;
+		Vector2i _size = Vector2i::Zero;
 
 		void update_size();
 
@@ -78,7 +80,7 @@ namespace unicore
 	protected:
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
-		Vector2i _size;
+		Vector2i _size = Vector2i::Zero;
 		RenderState _state;
 
 		void update_size();
