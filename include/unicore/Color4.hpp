@@ -169,4 +169,14 @@ namespace unicore
 
 	using ColorConst4b = ColorConst4<uint8_t>;
 	using ColorConst4f = ColorConst4<float>;
+
+	static constexpr Color4b operator"" _argb(unsigned long long value)
+	{
+		return Color4b::from_argb(static_cast<uint32_t>(value));
+	}
+
+	static constexpr Color4b operator"" _rgba(unsigned long long value)
+	{
+		return Color4b::from_rgba(static_cast<uint32_t>(value));
+	}
 }

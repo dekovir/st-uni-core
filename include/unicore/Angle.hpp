@@ -26,12 +26,12 @@ namespace unicore
 
 		template<typename OtherTag>
 		constexpr Angle(const Angle<OtherTag>& other)
-			: _value(other.cast<TypeTag>().value()) {}
+			: _value(other.template cast<TypeTag>().value()) {}
 
 		UC_NODISCARD constexpr float value() const { return _value; }
 
-		UC_NODISCARD inline float cos() const { return TypeTag::cos(value); }
-		UC_NODISCARD inline float sin() const { return TypeTag::sin(value); }
+		UC_NODISCARD inline float cos() const { return TypeTag::cos(_value); }
+		UC_NODISCARD inline float sin() const { return TypeTag::sin(_value); }
 
 		template<typename OtherTag>
 		constexpr Angle<OtherTag> cast() const;
