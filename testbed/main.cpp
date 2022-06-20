@@ -17,15 +17,15 @@ namespace unicore
 
 	void MyCore::on_update()
 	{
-		_angle += RadiansConst::Pi * static_cast<float>(time.delta().total_seconds());
+		_angle += 180_deg * static_cast<float>(time.delta().total_seconds());
 
 		auto& size = render.screen_size();
 		Graphics graphics(_queue, GraphicsFlag::CallBeginEnd);
 		graphics
 			.draw_tri(
-				Vertex::from_pos({ 100, 100 }, ColorConst4b::Yellow),
-				Vertex::from_pos({ 200, 100 }, ColorConst4b::Cyan),
-				Vertex::from_pos({ 100, 200 }, ColorConst4b::Magenta))
+				Vertex2::from_pos({ 100, 100 }, ColorConst4b::Yellow),
+				Vertex2::from_pos({ 200, 100 }, ColorConst4b::Cyan),
+				Vertex2::from_pos({ 100, 200 }, ColorConst4b::Magenta))
 			.set_color(ColorConst4b::Red)
 			.draw_line(Vector2i::Zero, size)
 			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))

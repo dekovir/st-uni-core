@@ -5,7 +5,7 @@
 #include "unicore/Surface.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/RenderState.hpp"
-#include "unicore/Vertex.hpp"
+#include "unicore/Vertex2.hpp"
 
 namespace unicore
 {
@@ -28,7 +28,7 @@ namespace unicore
 		virtual void clear(const Color4b& color) = 0;
 
 		virtual void draw_geometry(
-			const Vertex* vertices, size_t num_vertices
+			const Vertex2* vertices, size_t num_vertices
 		) = 0;
 	};
 }

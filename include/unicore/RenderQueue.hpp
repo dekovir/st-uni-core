@@ -29,8 +29,8 @@ namespace unicore
 		RenderQueue& set_clip(const Optional<Recti>& rect);
 		RenderQueue& set_texture(const Shared<Texture>& texture);
 
-		RenderQueue& add_vertex(const Vertex& v);
-		RenderQueue& add_vertices(const Vertex* data, size_t count);
+		RenderQueue& add_vertex(const Vertex2& v);
+		RenderQueue& add_vertices(const Vertex2* data, size_t count);
 
 	protected:
 		RenderCommand _cmd;

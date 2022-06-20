@@ -75,7 +75,7 @@ namespace unicore
 
 		void clear(const Color4b& color) override;
 
-		void draw_geometry(const Vertex* vertices, size_t num_vertices) override;
+		void draw_geometry(const Vertex2* vertices, size_t num_vertices) override;
 
 	protected:
 		SDL_Window* _window;

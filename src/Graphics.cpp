@@ -77,7 +77,7 @@ namespace unicore
 	}
 
 	Graphics& Graphics::draw_tri(
-		const Vertex& v0, const Vertex& v1, const Vertex& v2,
+		const Vertex2& v0, const Vertex2& v1, const Vertex2& v2,
 		const Shared<Texture>& texture)
 	{
 		_queue
@@ -89,7 +89,7 @@ namespace unicore
 	}
 
 	Graphics& Graphics::draw_quad(
-		const Vertex& v0, const Vertex& v1, const Vertex& v2, const Vertex& v3,
+		const Vertex2& v0, const Vertex2& v1, const Vertex2& v2, const Vertex2& v3,
 		const Shared<Texture>& texture)
 	{
 		_queue
@@ -101,7 +101,7 @@ namespace unicore
 		return *this;
 	}
 
-	static Vertex s_quad[4];
+	static Vertex2 s_quad[4];
 
 	Graphics& Graphics::draw_sprite_at(const Shared<Texture>& texture, const Vector2f& center)
 	{

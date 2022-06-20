@@ -148,7 +148,7 @@ namespace unicore
 		SDL_RenderClear(_renderer);
 	}
 
-	void SDL2Render::draw_geometry(const Vertex* vertices, size_t num_vertices)
+	void SDL2Render::draw_geometry(const Vertex2* vertices, size_t num_vertices)
 	{
 		static std::vector<SDL_Vertex> points;
 		const auto tex = std::dynamic_pointer_cast<SDL2Texture>(_state.texture);

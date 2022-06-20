@@ -78,7 +78,7 @@ namespace unicore
 		return *this;
 	}
 
-	RenderQueue& RenderQueue::add_vertex(const Vertex& v)
+	RenderQueue& RenderQueue::add_vertex(const Vertex2& v)
 	{
 		vertices.push_back(v);
 		_cmd.vcount++;
@@ -86,7 +86,7 @@ namespace unicore
 		return *this;
 	}
 
-	RenderQueue& RenderQueue::add_vertices(const Vertex* data, size_t count)
+	RenderQueue& RenderQueue::add_vertices(const Vertex2* data, size_t count)
 	{
 		vertices.insert(vertices.end(), &data[0], &data[count]);
 		_cmd.vcount += count;
