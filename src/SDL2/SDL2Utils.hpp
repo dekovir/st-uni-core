@@ -34,6 +34,34 @@ namespace unicore
 			dst = { src.x, src.y };
 			return dst;
 		}
+
+		static void convert(const Vector2i* src, size_t count, List<SDL_Point>& dst)
+		{
+			dst.resize(count);
+			for (auto i = 0; i < count; i++)
+				convert(src[i], dst[i]);
+		}
+
+		static void convert(const Vector2f* src, size_t count, List<SDL_FPoint>& dst)
+		{
+			dst.resize(count);
+			for (auto i = 0; i < count; i++)
+				convert(src[i], dst[i]);
+		}
+
+		static void convert(const Recti* src, size_t count, List<SDL_Rect>& dst)
+		{
+			dst.resize(count);
+			for (auto i = 0; i < count; i++)
+				convert(src[i], dst[i]);
+		}
+
+		static void convert(const Rectf* src, size_t count, List<SDL_FRect>& dst)
+		{
+			dst.resize(count);
+			for (auto i = 0; i < count; i++)
+				convert(src[i], dst[i]);
+		}
 	}
 
 	LogHelper& operator<<(LogHelper& helper, const SDL_version& item);

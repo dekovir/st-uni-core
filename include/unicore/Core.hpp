@@ -11,7 +11,7 @@ namespace unicore
 		Logger& logger;
 		Time& time;
 		Input& input;
-		Render& render;
+		Render2D& render;
 		FileSystem& file_system;
 		Platform& platform;
 

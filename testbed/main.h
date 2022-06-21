@@ -1,6 +1,5 @@
 #pragma once
 #include "unicore/Core.hpp"
-#include "unicore/RenderQueue.hpp"
 
 namespace unicore
 {
@@ -10,7 +9,6 @@ namespace unicore
 		explicit MyCore(Platform& platform);
 
 	protected:
-		RenderQueue _queue;
 		Shared<Texture> _tex;
 		Radians _angle;
 

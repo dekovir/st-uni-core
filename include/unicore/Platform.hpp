@@ -2,7 +2,7 @@
 #include "unicore/Logger.hpp"
 #include "unicore/FileSystem.hpp"
 #include "unicore/Input.hpp"
-#include "unicore/Render.hpp"
+#include "unicore/Render2D.hpp"
 #include "unicore/Time.hpp"
 
 namespace unicore
@@ -11,7 +11,7 @@ namespace unicore
 	{
 		Time& time;
 		Input& input;
-		Render& render;
+		Render2D& render;
 	};
 
 	class Platform
@@ -26,7 +26,7 @@ namespace unicore
 		Logger& logger;
 		Time& time;
 		Input& input;
-		Render& render;
+		Render2D& render;
 		FileSystem file_system;
 
 		[[nodiscard]] virtual bool running() const = 0;

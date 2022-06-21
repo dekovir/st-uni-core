@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Render.hpp"
+#include "unicore/Render2D.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include <SDL.h>
 
@@ -56,16 +56,13 @@ namespace unicore
 		bool fullscreen = false;
 	};
 
-	class SDL2Render : public Render
+	class SDL2Render : public Render2D
 	{
 	public:
 		explicit SDL2Render(const SDL2RenderSettings& settings);
 		~SDL2Render() override;
 
-		const Vector2i& screen_size() const override { return _size; }
-		const RenderState& state() const override { return _state; }
-
-		void set_state(const RenderState& state) override;
+		UC_NODISCARD const Vector2i& screen_size() const override { return _size; }
 
 		Shared<Surface> load_surface(const Shared<ReadStream>& stream) override;
 		Shared<Texture> create_texture(Surface& surface) override;
@@ -75,15 +72,47 @@ namespace unicore
 
 		void clear(const Color4b& color) override;
 
-		void draw_geometry(const Vertex2* vertices, size_t num_vertices) override;
+		void set_clip(Optional<Recti> clip_rect) override;
+		UC_NODISCARD Optional<Recti> get_clip() const override { return _clip_rect; }
+
+		void set_color(const Color4b& color) override;
+		UC_NODISCARD const Color4b& get_color() const override { return _color; }
+
+		void draw_points(const Vector2i* points, size_t count) override;
+		void draw_points_f(const Vector2f* points, size_t count) override;
+
+		void draw_lines(const Vector2i* points, size_t count) override;
+		void draw_lines_f(const Vector2f* points, size_t count) override;
+
+		void draw_rects(const Recti* rect, size_t count, bool filled) override;
+		void draw_rects_f(const Rectf* rect, size_t count, bool filled) override;
+
+		void draw_texture(const Texture& texture,
+			const RenderDrawTextureOptionsI& options) override;
+
+		void draw_texture_f(const Texture& texture,
+			const RenderDrawTextureOptionsF& options) override;
+
+		void draw_texture_ex(const Texture& texture,
+			const RenderDrawTextureOptionsExI& options) override;
+
+		void draw_texture_exf(const Texture& texture,
+			const RenderDrawTextureOptionsExF& options) override;
+
+		void draw_triangles(const Vertex2* vertices,
+			size_t num_vertices, const Texture* texture) override;
 
 	protected:
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
+
 		Vector2i _size = Vector2i::Zero;
-		RenderState _state;
+		Color4b _color = ColorConst4b::White;
+		Optional<Recti> _clip_rect;
 
 		void update_size();
+
+		static SDL_RendererFlip convert_flip(RenderFlags flags);
 
 		friend class SDL2Platform;
 	};

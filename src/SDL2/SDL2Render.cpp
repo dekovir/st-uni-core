@@ -5,6 +5,12 @@
 
 namespace unicore
 {
+	static List<SDL_Point> s_points;
+	static List<SDL_FPoint> s_points_f;
+
+	static List<SDL_Rect> s_rects;
+	static List<SDL_FRect> s_rects_f;
+
 	SDL2Surface::SDL2Surface(SDL_Surface* context)
 		: _context(context)
 	{
@@ -69,6 +75,10 @@ namespace unicore
 
 		_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
 
+		//SDL_RendererInfo info;
+		//SDL_GetRendererInfo(_renderer, &info);
+		//UC_LOG_INFO(_logger) << "Created " << info.name;
+
 		update_size();
 	}
 
@@ -76,31 +86,6 @@ namespace unicore
 	{
 		SDL_DestroyRenderer(_renderer);
 		SDL_DestroyWindow(_window);
-	}
-
-	void SDL2Render::set_state(const RenderState& state)
-	{
-		_state.primitiveType = state.primitiveType;
-
-		if (_state.texture != state.texture)
-		{
-			_state.texture = state.texture;
-		}
-
-		if (_state.clip_rect != state.clip_rect)
-		{
-			_state.clip_rect = state.clip_rect;
-			if (_state.clip_rect.has_value())
-			{
-				SDL_Rect rect;
-				SDL2Utils::convert(_state.clip_rect.value(), rect);
-				SDL_RenderSetClipRect(_renderer, &rect);
-			}
-			else
-			{
-				SDL_RenderSetClipRect(_renderer, nullptr);
-			}
-		}
 	}
 
 	Shared<Surface> SDL2Render::load_surface(const Shared<ReadStream>& stream)
@@ -132,7 +117,8 @@ namespace unicore
 
 	bool SDL2Render::begin_scene()
 	{
-		set_state({});
+		set_color(ColorConst4b::White);
+		set_clip(std::nullopt);
 		return true;
 	}
 
@@ -148,67 +134,171 @@ namespace unicore
 		SDL_RenderClear(_renderer);
 	}
 
-	void SDL2Render::draw_geometry(const Vertex2* vertices, size_t num_vertices)
+	void SDL2Render::set_clip(Optional<Recti> clip_rect)
+	{
+		_clip_rect = clip_rect;
+		if (_clip_rect.has_value())
+		{
+			SDL_Rect rect;
+			SDL2Utils::convert(clip_rect.value(), rect);
+			SDL_RenderSetClipRect(_renderer, &rect);
+		}
+		else
+		{
+			SDL_RenderSetClipRect(_renderer, nullptr);
+		}
+	}
+
+	void SDL2Render::set_color(const Color4b& color)
+	{
+		_color = color;
+		SDL_SetRenderDrawColor(_renderer, _color.r, _color.g, _color.b, _color.a);
+	}
+
+	void SDL2Render::draw_points(const Vector2i* points, size_t count)
+	{
+		SDL2Utils::convert(points, count, s_points);
+		SDL_RenderDrawPoints(_renderer, s_points.data(), static_cast<int>(count));
+	}
+
+	void SDL2Render::draw_points_f(const Vector2f* points, size_t count)
+	{
+		SDL2Utils::convert(points, count, s_points_f);
+		SDL_RenderDrawPointsF(_renderer, s_points_f.data(), static_cast<int>(count));
+	}
+
+	void SDL2Render::draw_lines(const Vector2i* points, size_t count)
+	{
+		SDL2Utils::convert(points, count, s_points);
+		SDL_RenderDrawLines(_renderer, s_points.data(), static_cast<int>(count));
+	}
+
+	void SDL2Render::draw_lines_f(const Vector2f* points, size_t count)
+	{
+		SDL2Utils::convert(points, count, s_points_f);
+		SDL_RenderDrawLinesF(_renderer, s_points_f.data(), static_cast<int>(count));
+	}
+
+	void SDL2Render::draw_rects(const Recti* rect, size_t count, bool filled)
+	{
+		SDL2Utils::convert(rect, count, s_rects);
+		SDL_RenderDrawRects(_renderer, s_rects.data(), static_cast<int>(count));
+	}
+
+	void SDL2Render::draw_rects_f(const Rectf* rect, size_t count, bool filled)
+	{
+		SDL2Utils::convert(rect, count, s_rects_f);
+		SDL_RenderDrawRectsF(_renderer, s_rects_f.data(), static_cast<int>(count));
+	}
+
+	void SDL2Render::draw_texture(const Texture& texture,
+		const RenderDrawTextureOptionsI& options)
+	{
+		const auto tex = dynamic_cast<const SDL2Texture*>(&texture);
+		if (const auto tex_handle = tex ? tex->_context : nullptr; tex_handle != nullptr)
+		{
+			SDL_Rect src, dst;
+			const auto src_p = options.src_rect.has_value()
+				? &SDL2Utils::convert(options.src_rect.value(), src) : nullptr;
+			const auto dst_p = options.dst_rect.has_value()
+				? &SDL2Utils::convert(options.dst_rect.value(), dst) : nullptr;
+			SDL_RenderCopy(_renderer, tex_handle, src_p, dst_p);
+		}
+	}
+
+	void SDL2Render::draw_texture_f(const Texture& texture,
+		const RenderDrawTextureOptionsF& options)
+	{
+		const auto tex = dynamic_cast<const SDL2Texture*>(&texture);
+		if (const auto tex_handle = tex ? tex->_context : nullptr; tex_handle != nullptr)
+		{
+			SDL_Rect src; SDL_FRect dst;
+			const auto src_p = options.src_rect.has_value()
+				? &SDL2Utils::convert(options.src_rect.value(), src) : nullptr;
+			const auto dst_p = options.dst_rect.has_value()
+				? &SDL2Utils::convert(options.dst_rect.value(), dst) : nullptr;
+			SDL_RenderCopyF(_renderer, tex_handle, src_p, dst_p);
+		}
+	}
+
+	void SDL2Render::draw_texture_ex(const Texture& texture,
+		const RenderDrawTextureOptionsExI& options)
+	{
+		const auto tex = dynamic_cast<const SDL2Texture*>(&texture);
+		if (const auto tex_handle = tex ? tex->_context : nullptr; tex_handle != nullptr)
+		{
+			SDL_Point c; SDL_Rect src, dst;
+			const auto src_p = options.src_rect.has_value()
+				? &SDL2Utils::convert(options.src_rect.value(), src) : nullptr;
+			const auto dst_p = options.dst_rect.has_value()
+				? &SDL2Utils::convert(options.dst_rect.value(), dst) : nullptr;
+			const auto c_p = options.center.has_value()
+				? &SDL2Utils::convert(options.center.value(), c) : nullptr;
+			SDL_RenderCopyEx(_renderer, tex_handle, src_p, dst_p,
+				options.angle.value(), c_p, convert_flip(options.flags));
+		}
+	}
+
+	void SDL2Render::draw_texture_exf(const Texture& texture,
+		const RenderDrawTextureOptionsExF& options)
+	{
+		const auto tex = dynamic_cast<const SDL2Texture*>(&texture);
+		if (const auto tex_handle = tex ? tex->_context : nullptr; tex_handle != nullptr)
+		{
+			SDL_FPoint c; SDL_Rect src; SDL_FRect dst;
+			const auto src_p = options.src_rect.has_value()
+				? &SDL2Utils::convert(options.src_rect.value(), src) : nullptr;
+			const auto dst_p = options.dst_rect.has_value()
+				? &SDL2Utils::convert(options.dst_rect.value(), dst) : nullptr;
+			const auto c_p = options.center.has_value()
+				? &SDL2Utils::convert(options.center.value(), c) : nullptr;
+			SDL_RenderCopyExF(_renderer, tex_handle, src_p, dst_p,
+				options.angle.value(), c_p, convert_flip(options.flags));
+		}
+	}
+
+	void SDL2Render::draw_triangles(const Vertex2* vertices,
+		size_t num_vertices, const Texture* texture)
 	{
 		static std::vector<SDL_Vertex> points;
-		const auto tex = std::dynamic_pointer_cast<SDL2Texture>(_state.texture);
+		const auto tex = dynamic_cast<const SDL2Texture*>(texture);
 		const auto tex_handle = tex ? tex->_context : nullptr;
 
-		switch (_state.primitiveType)
+		points.resize(num_vertices);
+		for (size_t i = 0; i < num_vertices; i++)
 		{
-		case PrimitiveType::Points:
-			for (size_t i = 0; i < num_vertices; i ++)
-			{
-				auto& v = vertices[i];
-				SDL_SetRenderDrawColor(_renderer, v.col.r, v.col.g, v.col.b, v.col.a);
-				SDL_RenderDrawPointF(_renderer, v.pos.x, v.pos.y);
-			}
-			break;
+			const auto& vertex = vertices[i];
+			auto& [position, color, uv] = points[i];
 
-		case PrimitiveType::LineList:
-			//SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
-			for (size_t i = 0; i + 1 < num_vertices; i += 2)
-			{
-				auto& v0 = vertices[i];
-				auto& v1 = vertices[i + 1];
-
-				SDL_SetRenderDrawColor(_renderer, v0.col.r, v0.col.g, v0.col.b, v0.col.a);
-				SDL_RenderDrawLineF(_renderer, v0.pos.x, v0.pos.y, v1.pos.x, v1.pos.y);
-			}
-			break;
-
-		case PrimitiveType::TriangleList:
-			points.resize(num_vertices);
-			for (size_t i = 0; i < num_vertices; i++)
-			{
-				const auto& vertex = vertices[i];
-				auto& [position, color, uv] = points[i];
-
-				position.x = vertex.pos.x;
-				position.y = vertex.pos.y;
-				uv.x = vertex.uv.x;
-				uv.y = vertex.uv.y;
-				color.r = vertex.col.r;
-				color.g = vertex.col.g;
-				color.b = vertex.col.b;
-				color.a = vertex.col.a;
-			}
-
-			SDL_RenderGeometry(_renderer, tex_handle,
-				points.data(), static_cast<int>(num_vertices),
-				nullptr, 0
-			);
-			break;
-
-		default:
-			UC_ASSERT_ALWAYS_MSG("Unimplemented primitive type");
-			break;
+			position.x = vertex.pos.x;
+			position.y = vertex.pos.y;
+			uv.x = vertex.uv.x;
+			uv.y = vertex.uv.y;
+			color.r = vertex.col.r;
+			color.g = vertex.col.g;
+			color.b = vertex.col.b;
+			color.a = vertex.col.a;
 		}
+
+		SDL_RenderGeometry(_renderer, tex_handle,
+			points.data(), static_cast<int>(num_vertices),
+			nullptr, 0
+		);
 	}
 
 	void SDL2Render::update_size()
 	{
 		SDL_GetRendererOutputSize(_renderer, &_size.x, &_size.y);
+	}
+
+	SDL_RendererFlip SDL2Render::convert_flip(RenderFlags flags)
+	{
+		int value = SDL_FLIP_NONE;
+		if (flags.has(RenderFlag::FlipX))
+			value |= SDL_FLIP_HORIZONTAL;
+		if (flags.has(RenderFlag::FlipY))
+			value |= SDL_FLIP_VERTICAL;
+		return static_cast<SDL_RendererFlip>(value);
 	}
 }
 

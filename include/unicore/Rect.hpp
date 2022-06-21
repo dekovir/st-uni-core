@@ -39,6 +39,16 @@ namespace unicore
 		UC_NODISCARD constexpr Vector2<T> bottom_left() const { return Vector2<T>(x, y); }
 		UC_NODISCARD constexpr Vector2<T> bottom_right() const { return Vector2<T>(x + w, y); }
 
+		template<typename U>
+		constexpr Rect<U> cast() const
+		{
+			if constexpr (std::is_same_v<U, T>) return this;
+
+			return Rect<U>(
+				static_cast<U>(x), static_cast<U>(y),
+				static_cast<U>(w), static_cast<U>(h));
+		}
+
 		constexpr bool operator== (const Rect<T>& other) const
 		{
 			return x == other.x && y == other.y
