@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <cassert>
+#include <typeindex>
 
 #if defined (_WIN32)
 #	define UNICORE_PLATFORM_WINDOWS
@@ -47,6 +48,9 @@ namespace unicore
 	template<typename T>
 	using HashFunc = std::hash<T>;
 
+	template <class This, class... Rest>
+	using Tuple = std::tuple<This, Rest...>;
+
 	template<typename T>
 	using Shared = std::shared_ptr<T>;
 
@@ -54,6 +58,21 @@ namespace unicore
 	static inline Shared<T> make_shared(Types&&... args)
 	{
 		return std::make_shared<T>(args...);
+	}
+
+	using TypeInfo = std::type_info;
+
+	template<typename T>
+	static inline const TypeInfo& get_type_info()
+	{
+		return typeid(T);
+	}
+
+	using TypeIndex = std::type_index;
+	template<typename T>
+	static inline TypeIndex get_type_index()
+	{
+		return TypeIndex(get_type_info<T>());
 	}
 }
 

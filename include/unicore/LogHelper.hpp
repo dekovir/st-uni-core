@@ -116,6 +116,9 @@ namespace unicore
 		const LogType _type;
 		String _text;
 	};
+
+	extern LogHelper& operator << (LogHelper& helper, const TypeInfo& type);
+	extern LogHelper& operator << (LogHelper& helper, const TypeIndex& type);
 }
 
 #define UC_LOG_INFO(logger) \

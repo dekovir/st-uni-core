@@ -72,4 +72,14 @@ namespace unicore
 	{
 		_text.append(Strings::to_utf8(text.data()));
 	}
+
+	LogHelper& operator<<(LogHelper& helper, const TypeInfo& type)
+	{
+		return helper << type.name();
+	}
+
+	LogHelper& operator<<(LogHelper& helper, const TypeIndex& type)
+	{
+		return helper << type.name();
+	}
 }
