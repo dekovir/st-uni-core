@@ -11,8 +11,6 @@ namespace unicore
 		explicit SDL2Stream(SDL_RWops* context);
 		~SDL2Stream() override;
 
-		UC_NODISCARD bool can_seek() const override { return true; }
-
 		UC_NODISCARD int64_t size() const override;
 		int64_t seek(int64_t offset, SeekMethod method) override;
 

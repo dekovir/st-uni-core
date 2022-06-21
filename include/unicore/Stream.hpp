@@ -13,8 +13,6 @@ namespace unicore
 	class BasicStream : public Object
 	{
 	public:
-		UC_NODISCARD virtual bool can_seek() const = 0;
-
 		UC_NODISCARD virtual int64_t size() const = 0;
 		virtual int64_t seek(int64_t offset, SeekMethod method = SeekMethod::Begin) = 0;
 	};
