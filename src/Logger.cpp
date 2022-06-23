@@ -32,4 +32,17 @@ namespace unicore
 		UC_ASSERT_ALWAYS_MSG("Invalid LogType");
 		return "";
 	}
+
+	ProxyLogger::ProxyLogger(const StringView prefix, Logger& logger)
+		: _prefix(prefix), _logger(logger)
+	{}
+
+	void ProxyLogger::write(LogType type, const StringView text)
+	{
+		String str;
+		str.reserve(_prefix.size() + text.size());
+		str += _prefix;
+		str += text;
+		_logger.write(type, str);
+	}
 }

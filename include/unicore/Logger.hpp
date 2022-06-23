@@ -37,18 +37,9 @@ namespace unicore
 	class ProxyLogger : public Logger
 	{
 	public:
-		ProxyLogger(const StringView prefix, Logger& logger)
-			: _prefix(prefix), _logger(logger)
-		{}
+		ProxyLogger(const StringView prefix, Logger& logger);
 
-		void write(LogType type, const StringView text) override
-		{
-			String str;
-			str.reserve(_prefix.size() + text.size());
-			str += _prefix;
-			str += text;
-			_logger.write(type, str);
-		}
+		void write(LogType type, const StringView text) override;
 
 	protected:
 		String _prefix;
