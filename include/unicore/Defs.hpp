@@ -12,6 +12,7 @@
 #include <functional>
 #include <cassert>
 #include <typeindex>
+#include <algorithm>
 
 #if defined (_WIN32)
 #	define UNICORE_PLATFORM_WINDOWS

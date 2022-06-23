@@ -23,6 +23,17 @@ namespace unicore
 		_providers.push_back(&provider);
 	}
 
+	Shared<ReadStream> ResourceCache::open_read(const Path& path) const
+	{
+		for (const auto& provider : _providers)
+		{
+			if (auto stream = provider->open_read(path))
+				return stream;
+		}
+
+		return nullptr;
+	}
+
 	Shared<Resource> ResourceCache::find(const Path& path, TypeIndex type) const
 	{
 		const auto find_it = _cached.find(path);
@@ -49,30 +60,32 @@ namespace unicore
 		}
 
 		const auto extension = path.extension();
+		Shared<ReadStream> stream;
 
-		for (const auto& provider : _providers)
+		for (const auto& loader : loaders)
 		{
-			auto stream = provider->open_read(path);
-			if (!stream) continue;
-
 			// TODO: Implement loading stack for prevent recursive loading
+			if (!loader->can_load_extension(extension))
+				continue;
 
-			ResourceLoaderContext context{ path, *this, *stream, &_logger };
-
-			for (const auto& loader : loaders)
+			if (!stream)
 			{
-				if (!loader->can_load_extension(extension))
-					continue;
-
-				if (auto resource = loader->load(context))
+				stream = open_read(path);
+				if (!stream)
 				{
-					_cached[path][type] = resource;
-					UC_LOG_DEBUG(_logger) << "Loaded " << type << " from " << path;
-					return resource;
+					UC_LOG_ERROR(_logger) << "Failed to open file at " << path;
+					return nullptr;
 				}
-
-				UC_LOG_ERROR(_logger) << "Can't load " << type << " from " << path;
 			}
+
+			if (auto resource = loader->load({ path, *this, *stream, &_logger }))
+			{
+				_cached[path][type] = resource;
+				UC_LOG_DEBUG(_logger) << "Loaded " << type << " from " << path;
+				return resource;
+			}
+
+			UC_LOG_ERROR(_logger) << "Can't load " << type << " from " << path;
 		}
 
 		return nullptr;

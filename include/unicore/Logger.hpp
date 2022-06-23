@@ -21,7 +21,7 @@ namespace unicore
 		inline void warn(const StringView text) { write(LogType::Warning, text); }
 		inline void err(const StringView text) { write(LogType::Error, text); }
 
-		static Shared<Logger> create();
+		static Logger& get_native();
 
 	protected:
 		static const char* type_to_str(LogType type);
@@ -34,30 +34,24 @@ namespace unicore
 	};
 
 	// TODO: Add format library to implement
-	/*class ProxyLogger : public Logger
+	class ProxyLogger : public Logger
 	{
 	public:
-		ProxyLogger(const StringView prefix, const Shared<Logger>& logger)
+		ProxyLogger(const StringView prefix, Logger& logger)
 			: _prefix(prefix), _logger(logger)
 		{}
 
 		void write(LogType type, const StringView text) override
 		{
+			String str;
+			str.reserve(_prefix.size() + text.size());
+			str += _prefix;
+			str += text;
+			_logger.write(type, str);
 		}
 
 	protected:
 		String _prefix;
-		Shared<Logger> _logger;
-	};*/
-
-	class MultiLogger : public Logger
-	{
-	public:
-		explicit MultiLogger(std::initializer_list<std::shared_ptr<Logger>> loggers);
-
-		void write(LogType type, const StringView text) override;
-
-	protected:
-		List<Shared<Logger>> _loggers;
+		Logger& _logger;
 	};
 }

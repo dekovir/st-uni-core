@@ -63,7 +63,7 @@ namespace unicore
 	class SDL2Render : public Render2D
 	{
 	public:
-		explicit SDL2Render(const SDL2RenderSettings& settings);
+		explicit SDL2Render(Logger& logger, const SDL2RenderSettings& settings);
 		~SDL2Render() override;
 
 		UC_NODISCARD const Vector2i& screen_size() const override { return _size; }

@@ -17,6 +17,8 @@ namespace unicore
 
 		void add_provider(BasicStreamProvider& provider);
 
+		Shared<ReadStream> open_read(const Path& path) const;
+
 		UC_NODISCARD Shared<Resource> find(const Path& path, TypeIndex type) const;
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>

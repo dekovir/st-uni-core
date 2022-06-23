@@ -19,6 +19,8 @@ namespace unicore
 		Platform& platform;
 
 		Context context;
+
+		ProxyLogger resources_logger;
 		ResourceCache resources;
 
 		void update();
@@ -29,5 +31,5 @@ namespace unicore
 		virtual void on_draw() = 0;
 	};
 
-	typedef Shared<Core> (*CoreFactory)(Platform& platform);
+	typedef Shared<Core>(*CoreFactory)(Platform& platform);
 }

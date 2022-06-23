@@ -16,9 +16,6 @@ namespace unicore
 
 	class Platform : public Module
 	{
-	protected:
-		Shared<Logger> _system_logger;
-
 	public:
 		explicit Platform(const PlatformSettings& settings);
 
@@ -28,7 +25,7 @@ namespace unicore
 		Render2D& render;
 		FileSystem file_system;
 
-		[[nodiscard]] virtual bool running() const = 0;
+		UC_NODISCARD virtual bool running() const = 0;
 
 		virtual void poll_events() = 0;
 

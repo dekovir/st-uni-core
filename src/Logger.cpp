@@ -9,13 +9,14 @@ namespace unicore
 		printf("%s %s\n", type_to_str(type), text.data());
 	}
 
-	Shared<Logger> Logger::create()
+	Logger& Logger::get_native()
 	{
 #if defined(UNICORE_PLATFORM_WINDOWS)
-		return make_shared<WinLogger>();
+		static WinLogger logger;
 #else
-		return make_shared<PrintLogger>();
+		static PrintLogger logger;
 #endif
+		return logger;
 	}
 
 	const char* Logger::type_to_str(LogType type)
@@ -30,15 +31,5 @@ namespace unicore
 
 		UC_ASSERT_ALWAYS_MSG("Invalid LogType");
 		return "";
-	}
-
-	MultiLogger::MultiLogger(std::initializer_list<std::shared_ptr<Logger>> loggers)
-		: _loggers(loggers)
-	{}
-
-	void MultiLogger::write(LogType type, const StringView text)
-	{
-		for (const auto& logger : _loggers)
-			logger->write(type, text);
 	}
 }

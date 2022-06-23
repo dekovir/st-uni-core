@@ -19,6 +19,11 @@ namespace unicore
 		Render2D& _render;
 	};
 
+	Render2D::Render2D(Logger& logger)
+		: Render(logger)
+	{
+	}
+
 	void Render2D::register_module(Context& context)
 	{
 		static Render2DTextureLoader loader(*this);

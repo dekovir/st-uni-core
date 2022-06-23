@@ -9,7 +9,8 @@ namespace unicore
 		, file_system(_platform.file_system)
 		, render(_platform.render)
 		, platform(_platform)
-		, resources(context, logger)
+		, resources_logger("[Cache] ", logger)
+		, resources(context, resources_logger)
 	{
 		time.register_module(context);
 		input.register_module(context);

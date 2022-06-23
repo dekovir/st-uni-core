@@ -4,8 +4,7 @@
 namespace unicore
 {
 	Platform::Platform(const PlatformSettings& settings)
-		: _system_logger(Logger::create())
-		, logger(*_system_logger)
+		: logger(Logger::get_native())
 		, time(settings.time)
 		, input(settings.input)
 		, render(settings.render)

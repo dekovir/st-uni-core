@@ -34,11 +34,12 @@ namespace unicore
 		SDL_QueryTexture(_context, nullptr, nullptr, &_size.x, &_size.y);
 	}
 
-	SDL2Render::SDL2Render(const SDL2RenderSettings& settings)
+	SDL2Render::SDL2Render(Logger& logger, const SDL2RenderSettings& settings)
+		: Render2D(logger)
 	{
 		SDL_Init(SDL_INIT_VIDEO);
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+		//SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
 		Uint32 flags = SDL_WINDOW_OPENGL;
 		if (settings.resizeable)
@@ -75,9 +76,9 @@ namespace unicore
 
 		_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
 
-		//SDL_RendererInfo info;
-		//SDL_GetRendererInfo(_renderer, &info);
-		//UC_LOG_INFO(_logger) << "Created " << info.name;
+		SDL_RendererInfo info;
+		SDL_GetRendererInfo(_renderer, &info);
+		UC_LOG_INFO(_logger) << "Using " << info.name;
 
 		update_size();
 	}

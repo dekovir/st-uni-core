@@ -41,6 +41,8 @@ namespace unicore
 	class Render2D : public Render
 	{
 	public:
+		explicit Render2D(Logger& logger);
+
 		virtual Shared<Texture> create_texture(Surface& surface) = 0;
 
 		virtual void clear(const Color4b& color) = 0;

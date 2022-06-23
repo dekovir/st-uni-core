@@ -10,9 +10,9 @@ namespace unicore
 	MyCore::MyCore(Platform& _platform)
 		: Core(_platform)
 	{
-		UC_LOG_INFO(logger) << "Info";
+		UC_LOG_INFO(logger) << "Starting";
 
-_tex = resources.load<Texture>(L"assets/zazaka.bmp"_path);
+		_tex = resources.load<Texture>(L"assets/zazaka.bmp"_path);
 	}
 
 	void MyCore::on_update()

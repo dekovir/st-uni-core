@@ -28,7 +28,8 @@ namespace unicore
 	// ===========================================================================
 	SDL2Platform::SDL2Platform(const SDLPlatformSettings& settings)
 		: Platform({ _time, _input, _render })
-		, _render(settings.render)
+		, _render_logger("[Render] ", logger)
+		, _render(_render_logger, settings.render)
 	{
 		file_system.add_provider(std::make_shared<SDL2StreamProvider>());
 

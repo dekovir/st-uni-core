@@ -42,6 +42,7 @@ namespace unicore
 	protected:
 		SDL2Timer _time;
 		SDL2Input _input;
+		ProxyLogger _render_logger;
 		SDL2Render _render;
 
 		bool _running = true;
