@@ -1,20 +1,21 @@
 #pragma once
-#include "unicore/Module.hpp"
 #include "unicore/Logger.hpp"
 #include "unicore/StreamProvider.hpp"
 #include "unicore/ResourceLoader.hpp"
 
 namespace unicore
 {
-	class ResourceCache : public Module
+	class Context;
+
+	class ResourceCache : public Object
 	{
 	public:
-		explicit ResourceCache(const Shared<Logger>& logger) : _logger(logger) {}
+		explicit ResourceCache(Context& context, Logger& logger);
 
-		void add_provider(const Shared<BasicStreamProvider>& provider);
+		void unload_all();
+		void clear();
 
-		void add_loader(const Shared<ResourceLoader>& loader);
-		UC_NODISCARD const List<Shared<ResourceLoader>>& get_loaders(TypeIndex index) const;
+		void add_provider(BasicStreamProvider& provider);
 
 		UC_NODISCARD Shared<Resource> find(const Path& path, TypeIndex type) const;
 
@@ -32,10 +33,12 @@ namespace unicore
 			return std::dynamic_pointer_cast<T>(load(path, get_type_index<T>()));
 		}
 
+		void calc_memory_use(size_t* system, size_t* video) const;
+
 	protected:
-		Shared<Logger> _logger;
-		List<Shared<BasicStreamProvider>> _providers;
-		Dictionary<TypeIndex, List<Shared<ResourceLoader>>> _loaders_dict;
+		Context& _context;
+		Logger& _logger;
+		List<BasicStreamProvider*> _providers;
 
 		Dictionary<Path, Dictionary<TypeIndex, Shared<Resource>>> _cached;
 	};

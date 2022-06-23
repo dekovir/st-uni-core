@@ -30,16 +30,19 @@ namespace unicore
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
 		const Vertex2& v0, const Vertex2& v1, const Vertex2& v2)
 	{
-		if (_current.texture != texture)
+		if (texture != nullptr)
 		{
-			flush();
-			_current.texture = texture;
-		}
+			if (_current.texture != texture)
+			{
+				flush();
+				_current.texture = texture;
+			}
 
-		_vertices.push_back(v0);
-		_vertices.push_back(v1);
-		_vertices.push_back(v2);
-		_current.vcount += 3;
+			_vertices.push_back(v0);
+			_vertices.push_back(v1);
+			_vertices.push_back(v2);
+			_current.vcount += 3;
+		}
 
 		return *this;
 	}
@@ -47,20 +50,23 @@ namespace unicore
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
 		const Vertex2& v0, const Vertex2& v1, const Vertex2& v2, const Vertex2& v3)
 	{
-		if (_current.texture != texture)
+		if (texture != nullptr)
 		{
-			flush();
-			_current.texture = texture;
+			if (_current.texture != texture)
+			{
+				flush();
+				_current.texture = texture;
+			}
+
+			_vertices.push_back(v0);
+			_vertices.push_back(v1);
+			_vertices.push_back(v3);
+
+			_vertices.push_back(v3);
+			_vertices.push_back(v1);
+			_vertices.push_back(v2);
+			_current.vcount += 6;
 		}
-
-		_vertices.push_back(v0);
-		_vertices.push_back(v1);
-		_vertices.push_back(v3);
-
-		_vertices.push_back(v3);
-		_vertices.push_back(v1);
-		_vertices.push_back(v2);
-		_current.vcount += 6;
 
 		return *this;
 	}
@@ -69,18 +75,21 @@ namespace unicore
 
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture, const Vector2f& center, const Color4b& color)
 	{
-		calc_quad_position(center, texture->size(),
-			s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
+		if (texture != nullptr)
+		{
+			calc_quad_position(center, texture->size(),
+				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 
-		s_quad[0].uv = Vector2f(0, 0);
-		s_quad[1].uv = Vector2f(1, 0);
-		s_quad[2].uv = Vector2f(1, 1);
-		s_quad[3].uv = Vector2f(0, 1);
+			s_quad[0].uv = Vector2f(0, 0);
+			s_quad[1].uv = Vector2f(1, 0);
+			s_quad[2].uv = Vector2f(1, 1);
+			s_quad[3].uv = Vector2f(0, 1);
 
-		s_quad[0].col = color;
-		s_quad[1].col = color;
-		s_quad[2].col = color;
-		s_quad[3].col = color;
+			s_quad[0].col = color;
+			s_quad[1].col = color;
+			s_quad[2].col = color;
+			s_quad[3].col = color;
+		}
 
 		return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
 	}
@@ -89,18 +98,21 @@ namespace unicore
 		const Vector2f& center, const Radians& angle,
 		const Vector2f& scale, const Color4b& color)
 	{
-		calc_quad_position(center, texture->size(), angle, scale,
-			s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
+		if (texture != nullptr)
+		{
+			calc_quad_position(center, texture->size(), angle, scale,
+				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 
-		s_quad[0].uv = Vector2f(0, 0);
-		s_quad[1].uv = Vector2f(1, 0);
-		s_quad[2].uv = Vector2f(1, 1);
-		s_quad[3].uv = Vector2f(0, 1);
+			s_quad[0].uv = Vector2f(0, 0);
+			s_quad[1].uv = Vector2f(1, 0);
+			s_quad[2].uv = Vector2f(1, 1);
+			s_quad[3].uv = Vector2f(0, 1);
 
-		s_quad[0].col = color;
-		s_quad[1].col = color;
-		s_quad[2].col = color;
-		s_quad[3].col = color;
+			s_quad[0].col = color;
+			s_quad[1].col = color;
+			s_quad[2].col = color;
+			s_quad[3].col = color;
+		}
 
 		return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
 	}

@@ -14,14 +14,13 @@ namespace unicore
 		Render2D& render;
 	};
 
-	class Platform
+	class Platform : public Module
 	{
 	protected:
 		Shared<Logger> _system_logger;
 
 	public:
 		explicit Platform(const PlatformSettings& settings);
-		virtual ~Platform() = default;
 
 		Logger& logger;
 		Time& time;

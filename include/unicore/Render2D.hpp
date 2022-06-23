@@ -1,9 +1,9 @@
 #pragma once
+#include "unicore/EnumFlag.hpp"
 #include "unicore/Render.hpp"
 #include "unicore/Color4.hpp"
 #include "unicore/Angle.hpp"
 #include "unicore/Rect.hpp"
-#include "unicore/FileSystem.hpp"
 #include "unicore/Vertex2.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Texture.hpp"
@@ -41,10 +41,7 @@ namespace unicore
 	class Render2D : public Render
 	{
 	public:
-		virtual Shared<Surface> load_surface(const Shared<ReadStream>& stream) = 0;
 		virtual Shared<Texture> create_texture(Surface& surface) = 0;
-
-		virtual Shared<Texture> load_texture(const Shared<ReadStream>& stream);
 
 		virtual void clear(const Color4b& color) = 0;
 
@@ -79,5 +76,8 @@ namespace unicore
 			const Vertex2* vertices, size_t num_vertices,
 			const Texture* texture = nullptr
 		) = 0;
+
+		void register_module(Context& context) override;
+		void unregister_module(Context& context) override;
 	};
 }

@@ -336,6 +336,6 @@ namespace unicore
 
 	LogHelper& operator<<(LogHelper& helper, const Path& path)
 	{
-		return helper << path.data();
+		return helper << '\'' << path.data() << '\'';
 	}
 }

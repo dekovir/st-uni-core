@@ -88,22 +88,6 @@ namespace unicore
 		SDL_DestroyWindow(_window);
 	}
 
-	Shared<Surface> SDL2Render::load_surface(const Shared<ReadStream>& stream)
-	{
-		SDL_Surface* surface;
-		if (const auto sdl_stream = std::dynamic_pointer_cast<SDL2Stream>(stream))
-		{
-			surface = SDL_LoadBMP_RW(sdl_stream->get_context(), SDL_FALSE);
-		}
-		else
-		{
-			const auto c = SDL2Utils::from_stream(stream);
-			surface = c != nullptr ? SDL_LoadBMP_RW(c, SDL_TRUE) : nullptr;
-		}
-
-		return surface != nullptr ? make_shared<SDL2Surface>(surface) : nullptr;
-	}
-
 	Shared<Texture> SDL2Render::create_texture(Surface& surface)
 	{
 		if (const auto sdl = dynamic_cast<SDL2Surface*>(&surface))

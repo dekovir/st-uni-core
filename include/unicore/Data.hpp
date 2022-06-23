@@ -28,6 +28,8 @@ namespace unicore
 				Memory::free(_buffer);
 		}
 
+		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BinaryData) + _size; }
+
 		UC_NODISCARD const void* data() const { return _buffer; }
 		UC_NODISCARD size_t size() const { return _size; }
 
@@ -64,6 +66,8 @@ namespace unicore
 
 		explicit BasicStringData(BasicString<Char>&& data)
 			: _data(std::move(data)) {}
+
+		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BasicStringData<Char>) + _data.size() * sizeof(Char); }
 
 		UC_NODISCARD const BasicString<Char>& data() const { return _data; }
 

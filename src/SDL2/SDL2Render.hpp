@@ -15,7 +15,9 @@ namespace unicore
 			SDL_FreeSurface(_context);
 		}
 
-		const Vector2i& size() const override { return _size; }
+		UC_NODISCARD size_t system_memory_use() const override { return sizeof(SDL2Surface) + _context->h * _context->pitch; }
+
+		UC_NODISCARD const Vector2i& size() const override { return _size; }
 
 	protected:
 		SDL_Surface* _context;
@@ -36,7 +38,9 @@ namespace unicore
 			SDL_DestroyTexture(_context);
 		}
 
-		const Vector2i& size() const override { return _size; }
+		UC_NODISCARD size_t system_memory_use() const override { return sizeof(SDL2Texture); }
+
+		UC_NODISCARD const Vector2i& size() const override { return _size; }
 
 	protected:
 		SDL_Texture* _context;
@@ -64,7 +68,6 @@ namespace unicore
 
 		UC_NODISCARD const Vector2i& screen_size() const override { return _size; }
 
-		Shared<Surface> load_surface(const Shared<ReadStream>& stream) override;
 		Shared<Texture> create_texture(Surface& surface) override;
 
 		bool begin_scene() override;

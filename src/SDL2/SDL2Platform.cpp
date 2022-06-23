@@ -3,6 +3,7 @@
 #include "unicore/LogHelper.hpp"
 #include "SDL2Utils.hpp"
 #include "SDL2StreamProvider.hpp"
+#include "SDL2Loaders.hpp"
 #if defined(EMSCRIPTEN)
 #	include <emscripten/emscripten.h>
 #endif
@@ -80,6 +81,14 @@ namespace unicore
 		}
 
 		_time.Update();
+	}
+
+	void SDL2Platform::register_module(Context& context)
+	{
+		Platform::register_module(context);
+
+		static SDL2SurfaceLoader loader;
+		context.add_loader(loader);
 	}
 }
 #endif

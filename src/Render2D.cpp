@@ -19,9 +19,16 @@ namespace unicore
 		Render2D& _render;
 	};
 
-	Shared<Texture> Render2D::load_texture(const Shared<ReadStream>& stream)
+	void Render2D::register_module(Context& context)
 	{
-		const auto surface = load_surface(stream);
-		return surface ? create_texture(*surface) : nullptr;
+		static Render2DTextureLoader loader(*this);
+
+		Render::register_module(context);
+		context.add_loader(loader);
+	}
+
+	void Render2D::unregister_module(Context& context)
+	{
+		Render::unregister_module(context);
 	}
 }

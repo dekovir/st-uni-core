@@ -1,23 +1,26 @@
 #include "unicore/ResourceCache.hpp"
 #include "unicore/LogHelper.hpp"
+#include "unicore/RenderResource.hpp"
 
 namespace unicore
 {
-	void ResourceCache::add_provider(const Shared<BasicStreamProvider>& provider)
+	ResourceCache::ResourceCache(Context& context, Logger& logger)
+		: _context(context), _logger(logger)
+	{}
+
+	void ResourceCache::unload_all()
 	{
-		_providers.push_back(provider);
+		_cached.clear();
 	}
 
-	void ResourceCache::add_loader(const Shared<ResourceLoader>& loader)
+	void ResourceCache::clear()
 	{
-		_loaders_dict[loader->resource_type()].push_back(loader);
+		_providers.clear();
 	}
 
-	const List<Shared<ResourceLoader>>& ResourceCache::get_loaders(TypeIndex index) const
+	void ResourceCache::add_provider(BasicStreamProvider& provider)
 	{
-		static List<Shared<ResourceLoader>> s_empty;
-		const auto it = _loaders_dict.find(index);
-		return it != _loaders_dict.end() ? it->second : s_empty;
+		_providers.push_back(&provider);
 	}
 
 	Shared<Resource> ResourceCache::find(const Path& path, TypeIndex type) const
@@ -38,11 +41,10 @@ namespace unicore
 		if (auto resource_find = find(path, type))
 			return resource_find;
 
-		auto& loaders = get_loaders(type);
-
+		const auto loaders = _context.get_loaders(type);
 		if (loaders.empty())
 		{
-			UC_LOG_WARNING(_logger) << "No loaders for " << type;
+			UC_LOG_WARNING(_logger) << "Empty loaders for " << type;
 			return nullptr;
 		}
 
@@ -51,8 +53,11 @@ namespace unicore
 		for (const auto& provider : _providers)
 		{
 			auto stream = provider->open_read(path);
+			if (!stream) continue;
 
-			ResourceLoaderContext context{ path, *this, *stream, _logger.get() };
+			// TODO: Implement loading stack for prevent recursive loading
+
+			ResourceLoaderContext context{ path, *this, *stream, &_logger };
 
 			for (const auto& loader : loaders)
 			{
@@ -62,14 +67,39 @@ namespace unicore
 				if (auto resource = loader->load(context))
 				{
 					_cached[path][type] = resource;
-					UC_LOG_DEBUG(_logger) << "Loaded '" << type << "' from " << path;
+					UC_LOG_DEBUG(_logger) << "Loaded " << type << " from " << path;
 					return resource;
 				}
 
-				UC_LOG_ERROR(_logger) << "Can't load '" << type << "' from " << path;
+				UC_LOG_ERROR(_logger) << "Can't load " << type << " from " << path;
 			}
 		}
 
 		return nullptr;
+	}
+
+	void ResourceCache::calc_memory_use(size_t* system, size_t* video) const
+	{
+		if (system == nullptr && video == nullptr) return;
+
+		if (system != nullptr)
+			*system = 0;
+
+		if (video != nullptr)
+			*video = 0;
+
+		for (const auto& it : _cached)
+		{
+			for (const auto& [_, resource] : it.second)
+			{
+				if (system != nullptr)
+					*system += resource->system_memory_use();
+				//if (video != nullptr)
+				//{
+				//	if (const auto render_resource = std::dynamic_pointer_cast<RenderResource>(resource))
+				//		*video += render_resource->video_memory_use();
+				//}
+			}
+		}
 	}
 }

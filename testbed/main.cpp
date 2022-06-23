@@ -12,8 +12,7 @@ namespace unicore
 	{
 		UC_LOG_INFO(logger) << "Info";
 
-		if (const auto stream = file_system.open_read(L"assets/zazaka.bmp"_path))
-			_tex = render.load_texture(stream);
+_tex = resources.load<Texture>(L"assets/zazaka.bmp"_path);
 	}
 
 	void MyCore::on_update()

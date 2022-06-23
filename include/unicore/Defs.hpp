@@ -22,6 +22,12 @@
 static_assert(false, "Unknown platform");
 #endif
 
+#if defined(_DEBUG) || defined(DEBUG)
+#	define UNICORE_DEBUG
+#else
+#	define UNICORE_RELEASE
+#endif
+
 namespace unicore
 {
 	template<typename T, size_t N>

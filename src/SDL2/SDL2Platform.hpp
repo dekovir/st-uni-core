@@ -45,6 +45,8 @@ namespace unicore
 		SDL2Render _render;
 
 		bool _running = true;
+
+		void register_module(Context& context) override;
 	};
 }
 #endif
