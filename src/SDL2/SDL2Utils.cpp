@@ -5,44 +5,78 @@ namespace unicore
 {
 	struct StreamHandle
 	{
+		Shared<BasicStream> shared_link;
 		BasicStream* basic = nullptr;
-		Shared<ReadStream> read;
-		Shared<WriteStream> write;
+		ReadStream* read = nullptr;
+		WriteStream* write = nullptr;
+
+		static StreamHandle* from_context(SDL_RWops* context)
+		{
+			return static_cast<StreamHandle*>(context->hidden.unknown.data1);
+		}
 	};
 
 	static Sint64 basic_size_func(SDL_RWops* context)
 	{
-		auto handle = static_cast<StreamHandle*>(context->hidden.unknown.data1);
+		const auto handle = StreamHandle::from_context(context);
 		return handle->basic->size();
 	}
 
 	static Sint64 basic_seek_func(SDL_RWops* context, Sint64 offset, int whence)
 	{
-		auto handle = static_cast<StreamHandle*>(context->hidden.unknown.data1);
+		const auto handle = StreamHandle::from_context(context);
 		return handle->basic->seek(offset, static_cast<SeekMethod>(whence));
 	}
 
 	static size_t read_func(SDL_RWops* context, void* ptr, size_t size, size_t maxnum)
 	{
-		auto handle = static_cast<StreamHandle*>(context->hidden.unknown.data1);
+		const auto handle = StreamHandle::from_context(context);
 		return handle->read->read(ptr, size, maxnum);
 	}
 
 	static size_t write_func(SDL_RWops* context, const void* ptr, size_t size, size_t num)
 	{
-		auto handle = static_cast<StreamHandle*>(context->hidden.unknown.data1);
+		const auto handle = StreamHandle::from_context(context);
 		return handle->write->write(ptr, size, num);
 	}
 
 	static int close_func(SDL_RWops* context)
 	{
-		auto handle = static_cast<StreamHandle*>(context->hidden.unknown.data1);
+		const auto handle = StreamHandle::from_context(context);
+		handle->shared_link = nullptr;
+		handle->basic = nullptr;
 		handle->read = nullptr;
 		handle->write = nullptr;
 		delete handle;
+
 		context->hidden.unknown.data1 = nullptr;
 
 		return 0;
+	}
+
+	static void init_context(SDL_RWops* context, StreamHandle* handle)
+	{
+		context->size = &basic_size_func;
+		context->seek = &basic_seek_func;
+		context->read = &read_func;
+		context->write = &write_func;
+		context->close = &close_func;
+		context->type = 0xdeadbeef;
+		context->hidden.unknown.data1 = handle;
+	}
+
+	SDL_RWops* SDL2Utils::from_stream(ReadStream& stream)
+	{
+		SDL_RWops* c = SDL_AllocRW();
+		if (c != nullptr)
+		{
+			const auto handle = new StreamHandle;
+			handle->basic = &stream;
+			handle->read = &stream;
+			init_context(c, handle);
+		}
+
+		return c;
 	}
 
 	SDL_RWops* SDL2Utils::from_stream(const Shared<ReadStream>& stream)
@@ -51,16 +85,10 @@ namespace unicore
 		if (c != nullptr)
 		{
 			const auto handle = new StreamHandle;
-			handle->read = stream;
+			handle->shared_link = stream;
 			handle->basic = stream.get();
-
-			c->size = &basic_size_func;
-			c->seek = &basic_seek_func;
-			c->read = &read_func;
-			c->write = &write_func;
-			c->close = &close_func;
-			c->type = 0xdeadbeef;
-			c->hidden.unknown.data1 = handle;
+			handle->read = stream.get();
+			init_context(c, handle);
 		}
 
 		return c;
@@ -72,16 +100,10 @@ namespace unicore
 		if (c != nullptr)
 		{
 			const auto handle = new StreamHandle;
-			handle->write = stream;
+			handle->shared_link = stream;
 			handle->basic = stream.get();
-
-			c->size = &basic_size_func;
-			c->seek = &basic_seek_func;
-			c->read = &read_func;
-			c->write = &write_func;
-			c->close = &close_func;
-			c->type = 0;
-			c->hidden.unknown.data1 = handle;
+			handle->write = stream.get();
+			init_context(c, handle);
 		}
 
 		return c;

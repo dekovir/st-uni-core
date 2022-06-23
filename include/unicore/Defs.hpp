@@ -4,6 +4,7 @@
 #include <array>
 #include <vector>
 #include <map>
+#include <set>
 #include <string>
 #include <string_view>
 #include <optional>
@@ -28,6 +29,9 @@ namespace unicore
 
 	template<typename T>
 	using List = std::vector<T>;
+
+	template<typename T>
+	using Set = std::set<T>;
 
 	template<typename TKey, typename TValue>
 	using Dictionary = std::map<TKey, TValue>;

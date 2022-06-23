@@ -8,7 +8,9 @@ namespace unicore
 {
 	namespace SDL2Utils
 	{
+		extern SDL_RWops* from_stream(ReadStream& stream);
 		extern SDL_RWops* from_stream(const Shared<ReadStream>& stream);
+
 		extern SDL_RWops* from_stream(const Shared<WriteStream>& stream);
 
 		static SDL_Rect& convert(const Recti& src, SDL_Rect& dst)
@@ -38,28 +40,28 @@ namespace unicore
 		static void convert(const Vector2i* src, size_t count, List<SDL_Point>& dst)
 		{
 			dst.resize(count);
-			for (auto i = 0; i < count; i++)
+			for (size_t i = 0; i < count; i++)
 				convert(src[i], dst[i]);
 		}
 
 		static void convert(const Vector2f* src, size_t count, List<SDL_FPoint>& dst)
 		{
 			dst.resize(count);
-			for (auto i = 0; i < count; i++)
+			for (size_t i = 0; i < count; i++)
 				convert(src[i], dst[i]);
 		}
 
 		static void convert(const Recti* src, size_t count, List<SDL_Rect>& dst)
 		{
 			dst.resize(count);
-			for (auto i = 0; i < count; i++)
+			for (size_t i = 0; i < count; i++)
 				convert(src[i], dst[i]);
 		}
 
 		static void convert(const Rectf* src, size_t count, List<SDL_FRect>& dst)
 		{
 			dst.resize(count);
-			for (auto i = 0; i < count; i++)
+			for (size_t i = 0; i < count; i++)
 				convert(src[i], dst[i]);
 		}
 	}

@@ -20,8 +20,24 @@ namespace unicore
 		return it != _loaders_dict.end() ? it->second : s_empty;
 	}
 
+	Shared<Resource> ResourceCache::find(const Path& path, TypeIndex type) const
+	{
+		const auto find_it = _cached.find(path);
+		if (find_it == _cached.end()) return nullptr;
+
+		for (const auto& it : find_it->second)
+		{
+			if (it.first == type) return it.second;
+		}
+
+		return nullptr;
+	}
+
 	Shared<Resource> ResourceCache::load(const Path& path, TypeIndex type)
 	{
+		if (auto resource_find = find(path, type))
+			return resource_find;
+
 		auto& loaders = get_loaders(type);
 
 		if (loaders.empty())
@@ -32,20 +48,22 @@ namespace unicore
 
 		const auto extension = path.extension();
 
-		for (const auto & provider : _providers)
+		for (const auto& provider : _providers)
 		{
 			auto stream = provider->open_read(path);
 
-			for (const auto & loader : loaders)
+			ResourceLoaderContext context{ path, *this, *stream, _logger.get() };
+
+			for (const auto& loader : loaders)
 			{
 				if (!loader->can_load_extension(extension))
 					continue;
 
-				auto result = loader->load(*stream, _logger.get());
-				if (result.code == ResourceManipulatorCode::Success)
+				if (auto resource = loader->load(context))
 				{
+					_cached[path][type] = resource;
 					UC_LOG_DEBUG(_logger) << "Loaded '" << type << "' from " << path;
-					return result.resource;
+					return resource;
 				}
 
 				UC_LOG_ERROR(_logger) << "Can't load '" << type << "' from " << path;

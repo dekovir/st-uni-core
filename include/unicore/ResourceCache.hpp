@@ -16,6 +16,14 @@ namespace unicore
 		void add_loader(const Shared<ResourceLoader>& loader);
 		UC_NODISCARD const List<Shared<ResourceLoader>>& get_loaders(TypeIndex index) const;
 
+		UC_NODISCARD Shared<Resource> find(const Path& path, TypeIndex type) const;
+
+		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
+		UC_NODISCARD Shared<T> find(const Path& path) const
+		{
+			return std::dynamic_pointer_cast<T>(find(path, get_type_index<T>()));
+		}
+
 		Shared<Resource> load(const Path& path, TypeIndex type);
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
@@ -28,5 +36,7 @@ namespace unicore
 		Shared<Logger> _logger;
 		List<Shared<BasicStreamProvider>> _providers;
 		Dictionary<TypeIndex, List<Shared<ResourceLoader>>> _loaders_dict;
+
+		Dictionary<Path, Dictionary<TypeIndex, Shared<Resource>>> _cached;
 	};
 }

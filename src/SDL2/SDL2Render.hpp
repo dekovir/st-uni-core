@@ -88,16 +88,16 @@ namespace unicore
 		void draw_rects_f(const Rectf* rect, size_t count, bool filled) override;
 
 		void draw_texture(const Texture& texture,
-			const RenderDrawTextureOptionsI& options) override;
+			const Render2DDrawTextureOptionsI& options) override;
 
 		void draw_texture_f(const Texture& texture,
-			const RenderDrawTextureOptionsF& options) override;
+			const Render2DDrawTextureOptionsF& options) override;
 
 		void draw_texture_ex(const Texture& texture,
-			const RenderDrawTextureOptionsExI& options) override;
+			const Render2DDrawTextureOptionsExI& options) override;
 
 		void draw_texture_exf(const Texture& texture,
-			const RenderDrawTextureOptionsExF& options) override;
+			const Render2DDrawTextureOptionsExF& options) override;
 
 		void draw_triangles(const Vertex2* vertices,
 			size_t num_vertices, const Texture* texture) override;

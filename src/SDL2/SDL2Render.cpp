@@ -192,7 +192,7 @@ namespace unicore
 	}
 
 	void SDL2Render::draw_texture(const Texture& texture,
-		const RenderDrawTextureOptionsI& options)
+		const Render2DDrawTextureOptionsI& options)
 	{
 		const auto tex = dynamic_cast<const SDL2Texture*>(&texture);
 		if (const auto tex_handle = tex ? tex->_context : nullptr; tex_handle != nullptr)
@@ -207,7 +207,7 @@ namespace unicore
 	}
 
 	void SDL2Render::draw_texture_f(const Texture& texture,
-		const RenderDrawTextureOptionsF& options)
+		const Render2DDrawTextureOptionsF& options)
 	{
 		const auto tex = dynamic_cast<const SDL2Texture*>(&texture);
 		if (const auto tex_handle = tex ? tex->_context : nullptr; tex_handle != nullptr)
@@ -222,7 +222,7 @@ namespace unicore
 	}
 
 	void SDL2Render::draw_texture_ex(const Texture& texture,
-		const RenderDrawTextureOptionsExI& options)
+		const Render2DDrawTextureOptionsExI& options)
 	{
 		const auto tex = dynamic_cast<const SDL2Texture*>(&texture);
 		if (const auto tex_handle = tex ? tex->_context : nullptr; tex_handle != nullptr)
@@ -240,7 +240,7 @@ namespace unicore
 	}
 
 	void SDL2Render::draw_texture_exf(const Texture& texture,
-		const RenderDrawTextureOptionsExF& options)
+		const Render2DDrawTextureOptionsExF& options)
 	{
 		const auto tex = dynamic_cast<const SDL2Texture*>(&texture);
 		if (const auto tex_handle = tex ? tex->_context : nullptr; tex_handle != nullptr)
@@ -294,9 +294,9 @@ namespace unicore
 	SDL_RendererFlip SDL2Render::convert_flip(RenderFlags flags)
 	{
 		int value = SDL_FLIP_NONE;
-		if (flags.has(RenderFlag::FlipX))
+		if (flags.has(Render2DFlag::FlipX))
 			value |= SDL_FLIP_HORIZONTAL;
-		if (flags.has(RenderFlag::FlipY))
+		if (flags.has(Render2DFlag::FlipY))
 			value |= SDL_FLIP_VERTICAL;
 		return static_cast<SDL_RendererFlip>(value);
 	}
