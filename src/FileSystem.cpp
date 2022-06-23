@@ -2,7 +2,7 @@
 
 namespace unicore
 {
-	bool FileSystem::exists(const Path& path)
+	bool FileSystem::exists(const Path& path) const
 	{
 		for (const auto& provider : _providers)
 		{
@@ -13,7 +13,7 @@ namespace unicore
 		return false;
 	}
 
-	Optional<FileStats> FileSystem::stats(const Path& path)
+	Optional<FileStats> FileSystem::stats(const Path& path) const
 	{
 		for (const auto& provider : _providers)
 		{

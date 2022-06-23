@@ -8,8 +8,8 @@ namespace unicore
 	class SDL2StreamProvider : public StreamProvider
 	{
 	public:
-		bool exists(const Path& path) override;
-		Optional<FileStats> stats(const Path& path) override;
+		UC_NODISCARD bool exists(const Path& path) const override;
+		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
 		uint16_t enumerate(const Path& path, List<Path>& name_list, FileFlags flags) override;
 

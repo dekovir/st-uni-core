@@ -27,13 +27,13 @@ namespace unicore
 	{
 	}
 
-	Path::Path(const WStringView path)
+	Path::Path(WStringView path)
 		: _data(prepare(path))
 	{
 		_hash = calc_hash(_data);
 	}
 
-	Path::Path(const WStringView path, std::size_t hash)
+	Path::Path(WStringView path, std::size_t hash)
 		: _data(path), _hash(hash)
 	{
 	}

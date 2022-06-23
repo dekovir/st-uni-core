@@ -7,7 +7,7 @@ namespace unicore
 	{
 	public:
 		Path();
-		explicit Path(const WStringView path);
+		explicit Path(WStringView path);
 
 		UC_NODISCARD bool absolute() const;
 		UC_NODISCARD bool empty() const { return _data.empty(); }
@@ -64,7 +64,7 @@ namespace unicore
 		WString _data;
 		size_t _hash;
 
-		Path(const WStringView path, size_t hash);
+		Path(WStringView path, size_t hash);
 
 		static WString::size_type find_drive_pos(WStringView str);
 		static WString::size_type find_filename_pos(WStringView str);

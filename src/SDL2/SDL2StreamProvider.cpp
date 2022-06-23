@@ -4,18 +4,21 @@
 
 namespace unicore
 {
-	bool SDL2StreamProvider::exists(const Path& path)
+	bool SDL2StreamProvider::exists(const Path& path) const
 	{
+		UC_ASSERT_ALWAYS_MSG("Not implemented");
 		return false;
 	}
 
-	Optional<FileStats> SDL2StreamProvider::stats(const Path& path)
+	Optional<FileStats> SDL2StreamProvider::stats(const Path& path) const
 	{
+		UC_ASSERT_ALWAYS_MSG("Not implemented");
 		return std::nullopt;
 	}
 
 	uint16_t SDL2StreamProvider::enumerate(const Path& path, List<Path>& name_list, FileFlags flags)
 	{
+		UC_ASSERT_ALWAYS_MSG("Not implemented");
 		return 0;
 	}
 
