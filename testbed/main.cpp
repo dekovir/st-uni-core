@@ -4,6 +4,7 @@
 #include "unicore/Input.hpp"
 #include "unicore/Graphics.hpp"
 #include "unicore/SpriteBatch.hpp"
+#include "unicore/ResourcePath.hpp"
 
 namespace unicore
 {
@@ -12,7 +13,13 @@ namespace unicore
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
+		//List<WString> files;
+		//file_system.enumerate(L"assets"_path, files, FileFlag::File);
+
 		_tex = resources.load<Texture>(L"assets/zazaka.bmp"_path);
+
+		constexpr auto var = "assets:zazaka.bmp"_res;
+		UC_LOG_INFO(logger) << var.data();
 	}
 
 	void MyCore::on_update()

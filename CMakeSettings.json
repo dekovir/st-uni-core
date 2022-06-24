@@ -69,6 +69,32 @@
           "name": "CMAKE_TOOLCHAIN_FILE",
           "value": "${env.EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
           "type": "FILEPATH"
+        },
+        {
+          "name": "UNICORE_TESTBED",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "name": "WSL-Clang-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeExecutable": "cmake",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "linux_clang_x64" ],
+      "wslPath": "${defaultWSLPath}",
+      "addressSanitizerEnabled": true,
+      "variables": [
+        {
+          "name": "UNICORE_TESTBED",
+          "value": "True",
+          "type": "BOOL"
         }
       ]
     }

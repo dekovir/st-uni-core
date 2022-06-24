@@ -107,6 +107,7 @@ function(unicore_init_executable target_name)
 			PROPERTIES
 				SUFFIX ".html"
 		)
+	elseif(UNIX OR ANDROID)
 	else()
 		message(FATAL_ERROR "Unsupported platform")
 	endif()

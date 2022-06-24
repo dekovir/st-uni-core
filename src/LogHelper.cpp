@@ -30,8 +30,8 @@ namespace unicore
 	LogHelper& LogHelper::operator<<(const DebugSource& source)
 	{
 		// TODO: Replace with constexpr
-#if defined (ENG_PLATFORM_WIN) || defined(ENG_PLATFORM_ANDROID)
-		const auto* pos = strrchr(source.file, '\\');
+#if defined (UNICORE_PLATFORM_WINDOWS) || defined(UNICORE_PLATFORM_ANDROID)
+		const auto* pos = strrchr(source.file.data(), '\\');
 #else
 		const auto* pos = strrchr(source.file.data(), '/');
 #endif

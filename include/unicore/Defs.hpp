@@ -11,40 +11,46 @@
 #include <memory>
 #include <functional>
 #include <cassert>
+#include <cstring>
 #include <typeindex>
 #include <algorithm>
 
 #if defined (_WIN32)
 
 #	define UNICORE_PLATFORM_WINDOWS
-#	define UNICORE_PLATFORM_DESKTOP
 
 #elif defined(__APPLE__)
 
 #	include <TargetConditionals.h>
 #	define UNICORE_PLATFORM_APPLE
+#	define UNICORE_PLATFORM_LINUX
+
 #	if TARGET_OS_IPHONE
 #		define UNICORE_PLATFORM_IOS
-#		define UNICORE_PLATFORM_MOBILE
 
 #		if TARGET_IPHONE_SIMULATOR
 #			define UNICORE_PLATFORM_IOS_SIMULATOR
 #		endif
 #	else
 #		define UNICORE_PLATFORM_OSX
-#		define UNICORE_PLATFORM_DESKTOP
 #	endif
 
 #elif defined(__ANDROID__)
 
 #	define UNICORE_PLATFORM_ANDROID
-#	define UNICORE_PLATFORM_MOBILE
+#	define UNICORE_PLATFORM_LINUX
 
 #elif defined(EMSCRIPTEN)
 
 #	define UNICORE_PLATFORM_EMSCRIPTEN
 #	define UNICORE_PLATFORM_WEB
+#	define UNICORE_PLATFORM_LINUX
+
 #	include <emscripten/emscripten.h>
+
+#elif defined(__linux__) || defined(__unix__)
+
+#	define UNICORE_PLATFORM_LINUX
 
 #else
 
@@ -52,7 +58,7 @@ static_assert(false, "Unknown platform");
 
 #endif
 
-#if defined(_DEBUG) || defined(DEBUG)
+#if defined(_DEBUG) || defined(DEBUG) || !defined(NDEBUG)
 #	define UNICORE_DEBUG
 #else
 #	define UNICORE_RELEASE

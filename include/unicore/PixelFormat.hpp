@@ -16,6 +16,7 @@ namespace unicore
 		uint8_t r_shift, g_shift, b_shift, a_shift;
 	};
 
+	// https://github.com/urho3d/Urho3D/blob/master/Source/Urho3D/Math/Color.cpp
 	static constexpr PixelFormat<uint32_t, uint8_t> pixel_format_argb{ 16, 8, 0, 24 };
 	static constexpr PixelFormat<uint32_t, uint8_t> pixel_format_rgba{ 24, 16, 8, 0 };
 }

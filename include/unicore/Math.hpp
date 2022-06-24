@@ -25,7 +25,7 @@ namespace unicore
 
 		static inline float sin(float value) { return std::sin(value); }
 		static inline float cos(float value) { return std::cos(value); }
-		static inline float pow(float value, float count = 2) { return std::powf(value, count); }
+		static inline float pow(float value, float count = 2) { return std::pow(value, count); }
 
 		static inline float sqrt(float value) { return std::sqrt(value); }
 

@@ -1,26 +1,28 @@
 #pragma once
-#include "unicore/Module.hpp"
-#include "StreamProvider.hpp"
+#include "unicore/StreamProvider.hpp"
+#if defined(UNICORE_PLATFORM_LINUX)
+#include "unicore/Logger.hpp"
 
 namespace unicore
 {
-	class FileSystem : public Module, public BasicStreamProvider
+	class LinuxStreamProvider : public StreamProvider
 	{
 	public:
-		FileSystem() = default;
+		explicit LinuxStreamProvider(Logger& logger);
 
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
-
 		uint16_t enumerate(const Path& path,
 			List<WString>& name_list, FileFlags flags) override;
 
 		Shared<ReadStream> open_read(const Path& path) override;
 		Shared<WriteStream> create_new(const Path& path) override;
 
-		void add_provider(StreamProvider& provider);
-
 	protected:
-		List<StreamProvider*> _providers;
+		Logger& _logger;
+
+		static String to_native(const Path& path);
 	};
 }
+
+#endif
