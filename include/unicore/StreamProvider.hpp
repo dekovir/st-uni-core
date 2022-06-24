@@ -13,7 +13,7 @@ namespace unicore
 		UC_NODISCARD virtual bool exists(const Path& path) const;
 
 		virtual uint16_t enumerate(
-			const Path& path, List<Path>& name_list,
+			const Path& path, List<WString>& name_list,
 			FileFlags flags = FileFlag::File | FileFlag::Directory) = 0;
 
 		virtual Shared<ReadStream> open_read(const Path& path) = 0;
@@ -34,7 +34,7 @@ namespace unicore
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 		UC_NODISCARD bool exists(const Path& path) const override;
 
-		uint16_t enumerate(const Path& path, List<Path>& name_list, FileFlags flags) override;
+		uint16_t enumerate(const Path& path, List<WString>& name_list, FileFlags flags) override;
 		Shared<ReadStream> open_read(const Path& path) override;
 		Shared<WriteStream> create_new(const Path& path) override;
 

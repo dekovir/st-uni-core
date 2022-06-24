@@ -1,14 +1,15 @@
 #pragma once
 #include "unicore/StreamProvider.hpp"
-#if defined(UNICORE_USE_SDL2)
-#include "SDL2Stream.hpp"
+#if defined(UNICORE_PLATFORM_WINDOWS)
+#include "unicore/Logger.hpp"
+#include "WinDefs.hpp"
 
 namespace unicore
 {
-	class SDL2StreamProvider : public StreamProvider
+	class WinStreamProvider : public StreamProvider
 	{
 	public:
-		SDL2StreamProvider() = default;
+		explicit WinStreamProvider(Logger& logger);
 
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
@@ -18,7 +19,11 @@ namespace unicore
 
 		Shared<ReadStream> open_read(const Path& path) override;
 		Shared<WriteStream> create_new(const Path& path) override;
+
+	protected:
+		Logger& _logger;
+
+		static time_t filetime_to_timet(FILETIME const& ft);
 	};
 }
-
 #endif

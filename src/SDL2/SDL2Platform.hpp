@@ -3,16 +3,17 @@
 #if defined(UNICORE_USE_SDL2)
 #include "SDL2Render.hpp"
 #include "SDL2Input.hpp"
+#include "SDL2StreamProvider.hpp"
 
 namespace unicore
 {
-	class SDL2Timer : public Time
+	class SDL2Time : public Time
 	{
 	public:
-		SDL2Timer();
+		SDL2Time();
 
-		const TimeSpan& delta() const override { return _delta; }
-		const TimeSpan& elapsed() const override { return  _elapsed; }
+		UC_NODISCARD const TimeSpan& delta() const override { return _delta; }
+		UC_NODISCARD const TimeSpan& elapsed() const override { return  _elapsed; }
 
 	protected:
 		Uint32 _prevTicks = 0;
@@ -35,13 +36,14 @@ namespace unicore
 		explicit SDL2Platform(const SDLPlatformSettings& settings);
 		~SDL2Platform() override;
 
-		bool running() const override { return _running; }
+		UC_NODISCARD bool running() const override { return _running; }
 
 		void poll_events() override;
 
 	protected:
-		SDL2Timer _time;
+		SDL2Time _time;
 		SDL2Input _input;
+		SDL2StreamProvider _stream_provider;
 		ProxyLogger _render_logger;
 		SDL2Render _render;
 

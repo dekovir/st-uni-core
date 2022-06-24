@@ -15,12 +15,41 @@
 #include <algorithm>
 
 #if defined (_WIN32)
+
 #	define UNICORE_PLATFORM_WINDOWS
+#	define UNICORE_PLATFORM_DESKTOP
+
+#elif defined(__APPLE__)
+
+#	include <TargetConditionals.h>
+#	define UNICORE_PLATFORM_APPLE
+#	if TARGET_OS_IPHONE
+#		define UNICORE_PLATFORM_IOS
+#		define UNICORE_PLATFORM_MOBILE
+
+#		if TARGET_IPHONE_SIMULATOR
+#			define UNICORE_PLATFORM_IOS_SIMULATOR
+#		endif
+#	else
+#		define UNICORE_PLATFORM_OSX
+#		define UNICORE_PLATFORM_DESKTOP
+#	endif
+
+#elif defined(__ANDROID__)
+
+#	define UNICORE_PLATFORM_ANDROID
+#	define UNICORE_PLATFORM_MOBILE
+
 #elif defined(EMSCRIPTEN)
+
 #	define UNICORE_PLATFORM_EMSCRIPTEN
+#	define UNICORE_PLATFORM_WEB
 #	include <emscripten/emscripten.h>
+
 #else
+
 static_assert(false, "Unknown platform");
+
 #endif
 
 #if defined(_DEBUG) || defined(DEBUG)
@@ -45,12 +74,12 @@ namespace unicore
 
 	template<typename T>
 	using BasicString = std::basic_string<T>;
-	using String  = BasicString<char>;
+	using String = BasicString<char>;
 	using WString = BasicString<wchar_t>;
 
 	template<typename T>
 	using BasicStringView = std::basic_string_view<T>;
-	using StringView  = BasicStringView<char>;
+	using StringView = BasicStringView<char>;
 	using WStringView = BasicStringView<wchar_t>;
 
 	template<typename T>
@@ -94,3 +123,6 @@ namespace unicore
 
 #define UC_ASSERT_ALWAYS() assert(false)
 #define UC_ASSERT_ALWAYS_MSG(msg) assert(false && msg)
+
+#define UC_STATIC_ASSERT(cond, msg) static_assert(cond, msg)
+#define UC_STATIC_ASSERT_ALWAYS(msg) static_assert(false, msg)

@@ -2,7 +2,6 @@
 #if defined(UNICORE_USE_SDL2)
 #include "unicore/LogHelper.hpp"
 #include "SDL2Utils.hpp"
-#include "SDL2StreamProvider.hpp"
 #include "SDL2Loaders.hpp"
 #if defined(EMSCRIPTEN)
 #	include <emscripten/emscripten.h>
@@ -10,12 +9,12 @@
 
 namespace unicore
 {
-	SDL2Timer::SDL2Timer()
+	SDL2Time::SDL2Time()
 	{
 		_prevTicks = SDL_GetTicks();
 	}
 
-	void SDL2Timer::Update()
+	void SDL2Time::Update()
 	{
 		const auto ticks = SDL_GetTicks();
 		const auto delta = ticks - _prevTicks;
@@ -31,7 +30,7 @@ namespace unicore
 		, _render_logger("[Render] ", logger)
 		, _render(_render_logger, settings.render)
 	{
-		file_system.add_provider(std::make_shared<SDL2StreamProvider>());
+		file_system.add_provider(_stream_provider);
 
 		SDL_version ver;
 		SDL_GetVersion(&ver);

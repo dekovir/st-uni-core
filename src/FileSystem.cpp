@@ -4,28 +4,23 @@ namespace unicore
 {
 	bool FileSystem::exists(const Path& path) const
 	{
-		for (const auto& provider : _providers)
-		{
-			if (provider->exists(path))
-				return true;
-		}
-
-		return false;
+		return std::any_of(_providers.begin(), _providers.end(),
+			[&path](const StreamProvider* provider) { return provider->exists(path); });
 	}
 
 	Optional<FileStats> FileSystem::stats(const Path& path) const
 	{
 		for (const auto& provider : _providers)
 		{
-			auto value = provider->stats(path);
-			if (value.has_value())
+			if (auto value = provider->stats(path); value.has_value())
 				return value.value();
 		}
 
 		return std::nullopt;
 	}
 
-	uint16_t FileSystem::enumerate(const Path& path, List<Path>& name_list, FileFlags flags)
+	uint16_t FileSystem::enumerate(const Path& path,
+		List<WString>& name_list, FileFlags flags)
 	{
 		uint16_t count = 0;
 		for (const auto& provider : _providers)
@@ -37,8 +32,7 @@ namespace unicore
 	{
 		for (const auto& provider : _providers)
 		{
-			auto stream = provider->open_read(path);
-			if (stream != nullptr)
+			if (auto stream = provider->open_read(path); stream != nullptr)
 				return stream;
 		}
 
@@ -49,16 +43,15 @@ namespace unicore
 	{
 		for (const auto& provider : _providers)
 		{
-			auto stream = provider->create_new(path);
-			if (stream != nullptr)
+			if (auto stream = provider->create_new(path); stream != nullptr)
 				return stream;
 		}
 
 		return nullptr;
 	}
 
-	void FileSystem::add_provider(const Shared<StreamProvider>& provider)
+	void FileSystem::add_provider(StreamProvider& provider)
 	{
-		_providers.insert(_providers.begin(), provider);
+		_providers.push_back(&provider);
 	}
 }

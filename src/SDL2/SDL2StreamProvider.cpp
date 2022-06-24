@@ -16,7 +16,8 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	uint16_t SDL2StreamProvider::enumerate(const Path& path, List<Path>& name_list, FileFlags flags)
+	uint16_t SDL2StreamProvider::enumerate(const Path& path,
+		List<WString>& name_list, FileFlags flags)
 	{
 		UC_ASSERT_ALWAYS_MSG("Not implemented");
 		return 0;

@@ -17,7 +17,7 @@ namespace unicore
 		return _provider.exists(make_path(path));
 	}
 
-	uint16_t PathStreamProvider::enumerate(const Path& path, List<Path>& name_list, FileFlags flags)
+	uint16_t PathStreamProvider::enumerate(const Path& path, List<WString>& name_list, FileFlags flags)
 	{
 		return _provider.enumerate(make_path(path), name_list, flags);
 	}
