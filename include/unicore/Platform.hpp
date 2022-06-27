@@ -31,6 +31,9 @@ namespace unicore
 
 		virtual void poll_events() = 0;
 
+		void register_module(Context& context) override;
+		void unregister_module(Context& context) override;
+
 		static Shared<Platform> create();
 	};
 }

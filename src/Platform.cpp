@@ -1,4 +1,6 @@
 #include "unicore/Platform.hpp"
+#include "unicore/Data.hpp"
+#include "unicore/Font.hpp"
 #include "SDL2/SDL2Platform.hpp"
 
 namespace unicore
@@ -11,6 +13,24 @@ namespace unicore
 		, resources_logger("[Cache] ", logger)
 		, resources(resources_logger)
 	{
+	}
+
+	void Platform::register_module(Context& context)
+	{
+		Module::register_module(context);
+
+		static BinaryDataLoader data_loader;
+		static TextDataLoader text_loader;
+		static BitmapFontLoader font_loader;
+
+		context.add_loader(data_loader);
+		context.add_loader(text_loader);
+		context.add_loader(font_loader);
+	}
+
+	void Platform::unregister_module(Context& context)
+	{
+		Module::unregister_module(context);
 	}
 
 	Shared<Platform> Platform::create()
