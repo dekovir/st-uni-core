@@ -27,12 +27,12 @@ namespace unicore
 			return std::dynamic_pointer_cast<T>(find(path, get_type_index<T>()));
 		}
 
-		Shared<Resource> load(const Path& path, TypeIndex type);
+		Shared<Resource> load(const Path& path, TypeIndex type, bool quiet = false);
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-		Shared<T> load(const Path& path)
+		Shared<T> load(const Path& path, bool quiet = false)
 		{
-			return std::dynamic_pointer_cast<T>(load(path, get_type_index<T>()));
+			return std::dynamic_pointer_cast<T>(load(path, get_type_index<T>(), quiet));
 		}
 
 		void calc_memory_use(size_t* system, size_t* video) const;

@@ -26,10 +26,10 @@ namespace unicore
 
 	void Render2D::register_module(Context& context)
 	{
-		static Render2DTextureLoader loader(*this);
+		static Render2DTextureLoader texture_loader(*this);
 
 		Render::register_module(context);
-		context.add_loader(loader);
+		context.add_loader(texture_loader);
 	}
 
 	void Render2D::unregister_module(Context& context)

@@ -34,6 +34,8 @@ namespace unicore
 
 		void replace_filename(WStringView filename);
 		void replace_extension(WStringView ext);
+
+		void remove_extension();
 		void remove_extension(const List<WString>& extensions);
 
 		UC_NODISCARD bool equals(const Path& other) const;

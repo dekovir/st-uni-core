@@ -167,14 +167,22 @@ namespace unicore
 
 	void Path::replace_extension(WStringView ext)
 	{
-		const auto pos = find_extension_pos(_data);
-		if (pos != WString::npos)
+		if (const auto pos = find_extension_pos(_data); pos != WString::npos)
 			_data = _data.substr(0, pos);
 		else if (ext.empty())
 			return;
 
 		_data += ext;
 		_hash = calc_hash(_data);
+	}
+
+	void Path::remove_extension()
+	{
+		if (const auto pos = find_extension_pos(_data); pos != WString::npos)
+		{
+			_data = _data.substr(0, pos);
+			_hash = calc_hash(_data);
+		}
 	}
 
 	void Path::remove_extension(const List<WString>& extensions)
@@ -338,4 +346,4 @@ namespace unicore
 	{
 		return helper << '\'' << path.data() << '\'';
 	}
-}
+	}

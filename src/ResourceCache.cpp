@@ -47,7 +47,7 @@ namespace unicore
 		return nullptr;
 	}
 
-	Shared<Resource> ResourceCache::load(const Path& path, TypeIndex type)
+	Shared<Resource> ResourceCache::load(const Path& path, TypeIndex type, bool quiet)
 	{
 		if (auto resource_find = find(path, type))
 			return resource_find;
@@ -58,10 +58,12 @@ namespace unicore
 			return nullptr;
 		}
 
+		const auto logger = !quiet ? &_logger : nullptr;
+
 		const auto loaders = _context->get_loaders(type);
 		if (loaders.empty())
 		{
-			UC_LOG_WARNING(_logger) << "Empty loaders for " << type;
+			UC_LOG_WARNING(logger) << "Empty loaders for " << type;
 			return nullptr;
 		}
 
@@ -79,7 +81,7 @@ namespace unicore
 				stream = open_read(path);
 				if (!stream)
 				{
-					UC_LOG_ERROR(_logger) << "Failed to open file at " << path;
+					UC_LOG_ERROR(logger) << "Failed to open file at " << path;
 					return nullptr;
 				}
 			}
@@ -87,11 +89,11 @@ namespace unicore
 			if (auto resource = loader->load({ path, *this, *stream, &_logger }))
 			{
 				_cached[path][type] = resource;
-				UC_LOG_DEBUG(_logger) << "Loaded " << type << " from " << path;
+				UC_LOG_DEBUG(logger) << "Loaded " << type << " from " << path;
 				return resource;
 			}
 
-			UC_LOG_ERROR(_logger) << "Can't load " << type << " from " << path;
+			UC_LOG_ERROR(logger) << "Can't load " << type << " from " << path;
 		}
 
 		return nullptr;
