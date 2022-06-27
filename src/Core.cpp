@@ -6,19 +6,15 @@ namespace unicore
 		: logger(_platform.logger)
 		, time(_platform.time)
 		, input(_platform.input)
-		, file_system(_platform.file_system)
 		, render(_platform.render)
 		, platform(_platform)
-		, resources_logger("[Cache] ", logger)
-		, resources(context, resources_logger)
+		, resources(_platform.resources)
 	{
 		time.register_module(context);
 		input.register_module(context);
-		file_system.register_module(context);
 		render.register_module(context);
 		platform.register_module(context);
-
-		resources.add_provider(file_system);
+		resources.register_module(context);
 	}
 
 	Core::~Core()
@@ -26,9 +22,9 @@ namespace unicore
 		resources.unload_all();
 		resources.clear();
 
+		resources.unregister_module(context);
 		platform.unregister_module(context);
 		render.unregister_module(context);
-		file_system.unregister_module(context);
 		input.unregister_module(context);
 		time.unregister_module(context);
 	}

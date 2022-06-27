@@ -1,7 +1,6 @@
 #pragma once
 #include "unicore/Platform.hpp"
 #include "unicore/Context.hpp"
-#include "unicore/ResourceCache.hpp"
 
 namespace unicore
 {
@@ -14,14 +13,11 @@ namespace unicore
 		Logger& logger;
 		Time& time;
 		Input& input;
-		FileSystem& file_system;
 		Render2D& render;
 		Platform& platform;
+		ResourceCache& resources;
 
 		Context context;
-
-		ProxyLogger resources_logger;
-		ResourceCache resources;
 
 		void update();
 		void draw();

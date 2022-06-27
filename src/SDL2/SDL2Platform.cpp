@@ -30,7 +30,7 @@ namespace unicore
 		, _render_logger("[Render] ", logger)
 		, _render(_render_logger, settings.render)
 	{
-		file_system.add_provider(_stream_provider);
+		resources.add_provider(_stream_provider);
 
 		SDL_version ver;
 		SDL_GetVersion(&ver);

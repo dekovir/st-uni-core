@@ -1,9 +1,9 @@
 #pragma once
 #include "unicore/Logger.hpp"
-#include "unicore/FileSystem.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Render2D.hpp"
 #include "unicore/Time.hpp"
+#include "unicore/ResourceCache.hpp"
 
 namespace unicore
 {
@@ -23,7 +23,9 @@ namespace unicore
 		Time& time;
 		Input& input;
 		Render2D& render;
-		FileSystem file_system;
+
+		ProxyLogger resources_logger;
+		ResourceCache resources;
 
 		UC_NODISCARD virtual bool running() const = 0;
 

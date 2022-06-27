@@ -7,17 +7,17 @@ namespace unicore
 {
 	class Context;
 
-	class ResourceCache : public Object
+	class ResourceCache : public Module
 	{
 	public:
-		explicit ResourceCache(Context& context, Logger& logger);
+		explicit ResourceCache(Logger& logger);
 
 		void unload_all();
 		void clear();
 
-		void add_provider(BasicStreamProvider& provider);
+		void add_provider(StreamProvider& provider);
 
-		Shared<ReadStream> open_read(const Path& path) const;
+		UC_NODISCARD Shared<ReadStream> open_read(const Path& path) const;
 
 		UC_NODISCARD Shared<Resource> find(const Path& path, TypeIndex type) const;
 
@@ -37,10 +37,13 @@ namespace unicore
 
 		void calc_memory_use(size_t* system, size_t* video) const;
 
+		void register_module(Context& context) override;
+		void unregister_module(Context& context) override;
+
 	protected:
-		Context& _context;
+		Context* _context = nullptr;
 		Logger& _logger;
-		List<BasicStreamProvider*> _providers;
+		List<StreamProvider*> _providers;
 
 		Dictionary<Path, Dictionary<TypeIndex, Shared<Resource>>> _cached;
 	};

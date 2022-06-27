@@ -4,8 +4,8 @@
 
 namespace unicore
 {
-	ResourceCache::ResourceCache(Context& context, Logger& logger)
-		: _context(context), _logger(logger)
+	ResourceCache::ResourceCache(Logger& logger)
+		: _logger(logger)
 	{}
 
 	void ResourceCache::unload_all()
@@ -18,7 +18,7 @@ namespace unicore
 		_providers.clear();
 	}
 
-	void ResourceCache::add_provider(BasicStreamProvider& provider)
+	void ResourceCache::add_provider(StreamProvider& provider)
 	{
 		_providers.push_back(&provider);
 	}
@@ -52,7 +52,13 @@ namespace unicore
 		if (auto resource_find = find(path, type))
 			return resource_find;
 
-		const auto loaders = _context.get_loaders(type);
+		if (_context == nullptr)
+		{
+			UC_LOG_ERROR(_logger) << "ResourceCache module not registered";
+			return nullptr;
+		}
+
+		const auto loaders = _context->get_loaders(type);
 		if (loaders.empty())
 		{
 			UC_LOG_WARNING(_logger) << "Empty loaders for " << type;
@@ -114,5 +120,18 @@ namespace unicore
 				//}
 			}
 		}
+	}
+
+	void ResourceCache::register_module(Context& context)
+	{
+		Module::register_module(context);
+
+		_context = &context;
+	}
+
+	void ResourceCache::unregister_module(Context& context)
+	{
+		_context = nullptr;
+		Module::unregister_module(context);
 	}
 }

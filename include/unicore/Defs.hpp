@@ -100,10 +100,19 @@ namespace unicore
 	template<typename T>
 	using Shared = std::shared_ptr<T>;
 
+	template<typename T>
+	using Unique = std::unique_ptr<T>;
+
 	template<typename T, class... Types>
 	static inline Shared<T> make_shared(Types&&... args)
 	{
 		return std::make_shared<T>(args...);
+	}
+
+	template<typename T, class... Types>
+	static inline Shared<T> make_unique(Types&&... args)
+	{
+		return std::make_unique<T>(args...);
 	}
 
 	using TypeInfo = std::type_info;

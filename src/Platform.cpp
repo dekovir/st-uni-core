@@ -8,6 +8,8 @@ namespace unicore
 		, time(settings.time)
 		, input(settings.input)
 		, render(settings.render)
+		, resources_logger("[Cache] ", logger)
+		, resources(resources_logger)
 	{
 	}
 

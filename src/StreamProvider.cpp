@@ -2,7 +2,7 @@
 
 namespace unicore
 {
-	bool BasicStreamProvider::exists(const Path& path) const
+	bool StreamProvider::exists(const Path& path) const
 	{
 		return stats(path).has_value();
 	}

@@ -6,7 +6,7 @@
 
 namespace unicore
 {
-	class BasicStreamProvider : public Object
+	class StreamProvider : public Object
 	{
 	public:
 		UC_NODISCARD virtual Optional<FileStats> stats(const Path& path) const = 0;
@@ -20,12 +20,7 @@ namespace unicore
 		virtual Shared<WriteStream> create_new(const Path& path) = 0;
 	};
 
-	class StreamProvider : public BasicStreamProvider
-	{
-	public:
-	};
-
-	class PathStreamProvider : BasicStreamProvider
+	class PathStreamProvider : StreamProvider
 	{
 	public:
 		explicit PathStreamProvider(StreamProvider& provider, const Path& base)

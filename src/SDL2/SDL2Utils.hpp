@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/LogHelper.hpp"
+#include "unicore/Stream.hpp"
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include <SDL.h>
