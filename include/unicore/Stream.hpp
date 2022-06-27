@@ -21,13 +21,13 @@ namespace unicore
 	{
 	public:
 		UC_NODISCARD virtual bool eof() const = 0;
-		virtual size_t read(void* buffer, size_t size, size_t count = 1) = 0;
+		virtual bool read(void* buffer, size_t size, size_t* bytes_read = nullptr) = 0;
 	};
 
 	class WriteStream : virtual public BasicStream
 	{
 	public:
-		virtual size_t write(const void* buffer, size_t size, size_t count = 1) = 0;
+		virtual bool write(const void* buffer, size_t size, size_t* bytes_written = nullptr) = 0;
 		virtual bool flush() = 0;
 	};
 }

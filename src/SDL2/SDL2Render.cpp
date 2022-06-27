@@ -1,6 +1,5 @@
 #include "SDL2Render.hpp"
 #if defined(UNICORE_USE_SDL2)
-#include "SDL2Stream.hpp"
 #include "SDL2Utils.hpp"
 #include "SDL2Loaders.hpp"
 

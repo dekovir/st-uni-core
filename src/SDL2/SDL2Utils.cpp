@@ -30,14 +30,18 @@ namespace unicore
 
 	static size_t read_func(SDL_RWops* context, void* ptr, size_t size, size_t maxnum)
 	{
+		size_t count;
 		const auto handle = StreamHandle::from_context(context);
-		return handle->read->read(ptr, size, maxnum);
+		handle->read->read(ptr, size * maxnum, &count);
+		return count / size;
 	}
 
 	static size_t write_func(SDL_RWops* context, const void* ptr, size_t size, size_t num)
 	{
+		size_t count;
 		const auto handle = StreamHandle::from_context(context);
-		return handle->write->write(ptr, size, num);
+		handle->write->write(ptr, size * num, &count);
+		return count / size;
 	}
 
 	static int close_func(SDL_RWops* context)
