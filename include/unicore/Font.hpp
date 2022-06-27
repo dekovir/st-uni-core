@@ -36,10 +36,13 @@ namespace unicore
 	class BitmapFont : public Font
 	{
 	public:
+		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BitmapFont); }
 
 	protected:
 		List<Shared<Texture>> _pages;
 		Dictionary<wchar_t, BitmapFontGlyph> _glyphs;
+
+		friend class BitmapFontLoader;
 	};
 
 	class BitmapFontLoader : public ResourceLoaderT<BitmapFont>

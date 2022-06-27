@@ -69,6 +69,11 @@ if (NOT EMSCRIPTEN)
 	target_link_libraries(unicore PRIVATE SDL2-static)
 endif()
 
+# tinyxml2
+add_subdirectory("${LIB_DIR}/tinyxml2")
+set_target_properties(tinyxml2 PROPERTIES FOLDER "Libs")
+target_link_libraries(unicore PUBLIC tinyxml2)
+
 if (WIN32)
 	target_link_libraries(unicore PRIVATE Shlwapi)
 endif()

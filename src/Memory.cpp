@@ -4,11 +4,11 @@ namespace unicore
 {
 	void* Memory::alloc(size_t size)
 	{
-		return ::alloca(size);
+		return new char[size];
 	}
 
 	void Memory::free(void* ptr)
 	{
-		::free(ptr);
+		delete[] static_cast<char*>(ptr);
 	}
 }
