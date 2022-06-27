@@ -105,6 +105,8 @@ namespace unicore
 		void draw_triangles(const Vertex2* vertices,
 			size_t num_vertices, const Texture* texture) override;
 
+		void register_module(Context& context) override;
+
 	protected:
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;

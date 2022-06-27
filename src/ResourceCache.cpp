@@ -25,10 +25,17 @@ namespace unicore
 
 	Shared<ReadStream> ResourceCache::open_read(const Path& path) const
 	{
-		for (const auto& provider : _providers)
+		if (!_providers.empty())
 		{
-			if (auto stream = provider->open_read(path))
-				return stream;
+			for (const auto& provider : _providers)
+			{
+				if (auto stream = provider->open_read(path))
+					return stream;
+			}
+		}
+		else
+		{
+			UC_LOG_WARNING(_logger) << "No providers";
 		}
 
 		return nullptr;
@@ -47,7 +54,7 @@ namespace unicore
 		return nullptr;
 	}
 
-	Shared<Resource> ResourceCache::load(const Path& path, TypeIndex type, bool quiet)
+	Shared<Resource> ResourceCache::load(const Path& path, TypeIndex type, ResourceCacheFlags flags)
 	{
 		if (auto resource_find = find(path, type))
 			return resource_find;
@@ -58,7 +65,7 @@ namespace unicore
 			return nullptr;
 		}
 
-		const auto logger = !quiet ? &_logger : nullptr;
+		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;
 
 		const auto loaders = _context->get_loaders(type);
 		if (loaders.empty())
@@ -70,10 +77,10 @@ namespace unicore
 		const auto extension = path.extension();
 		Shared<ReadStream> stream;
 
+		// TODO: Implement loading stack for prevent recursive loading
 		for (const auto& loader : loaders)
 		{
-			// TODO: Implement loading stack for prevent recursive loading
-			if (!loader->can_load_extension(extension))
+			if (!flags.has(ResourceCacheFlag::SkipExtension) && !loader->can_load_extension(extension))
 				continue;
 
 			if (!stream)

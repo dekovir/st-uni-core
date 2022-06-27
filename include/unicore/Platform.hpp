@@ -9,9 +9,9 @@ namespace unicore
 {
 	struct PlatformSettings
 	{
+		Logger& logger;
 		Time& time;
 		Input& input;
-		Render2D& render;
 	};
 
 	class Platform : public Module
@@ -22,7 +22,6 @@ namespace unicore
 		Logger& logger;
 		Time& time;
 		Input& input;
-		Render2D& render;
 
 		ProxyLogger resources_logger;
 		ResourceCache resources;

@@ -3,9 +3,9 @@
 
 namespace unicore
 {
-	extern Shared<Core> create_main_core(Platform& platform);
+	extern Shared<Core> create_main_core(const CoreSettings& settings);
 }
 
 #define UNICORE_MAIN_CORE(CoreType) \
-	Shared<Core> create_main_core(Platform& platform) \
-	{ return make_shared<CoreType>(platform); }
+	Shared<Core> create_main_core(const CoreSettings& settings) \
+	{ return make_shared<CoreType>(settings); }

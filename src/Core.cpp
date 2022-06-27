@@ -2,18 +2,18 @@
 
 namespace unicore
 {
-	Core::Core(Platform& _platform)
-		: logger(_platform.logger)
-		, time(_platform.time)
-		, input(_platform.input)
-		, render(_platform.render)
-		, platform(_platform)
-		, resources(_platform.resources)
+	Core::Core(const CoreSettings& settings)
+		: platform(settings.platform)
+		, logger(settings.platform.logger)
+		, time(settings.platform.time)
+		, input(settings.platform.input)
+		, resources(settings.platform.resources)
+		, render(settings.render)
 	{
+		platform.register_module(context);
 		time.register_module(context);
 		input.register_module(context);
 		render.register_module(context);
-		platform.register_module(context);
 		resources.register_module(context);
 	}
 

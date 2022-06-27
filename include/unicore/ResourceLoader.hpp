@@ -24,7 +24,7 @@ namespace unicore
 		UC_NODISCARD virtual Shared<Resource> load(const ResourceLoaderContext& context) = 0;
 	};
 
-	template<typename T, class = std::enable_if_t<std::is_base_of_v<Resource, T>>>
+	template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
 	class ResourceLoaderT : public ResourceLoader
 	{
 	public:

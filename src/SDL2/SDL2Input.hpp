@@ -8,19 +8,17 @@ namespace unicore
 	class SDL2Input : public Input
 	{
 	public:
-		SDL2Input() = default;
+		SDL2Input();
 
-		bool mouse_button(uint8_t button) const override;
-		const Vector2i& mouse_position() const override;
+		UC_NODISCARD bool mouse_button(uint8_t button) const override;
+		UC_NODISCARD const Vector2i& mouse_position() const override;
+
+		void apply_event(const SDL_MouseButtonEvent& evt);
+		void apply_event(const SDL_MouseMotionEvent& evt);
 
 	protected:
 		Array<bool, 3> _mouseBtn = { false };
 		Vector2i _mousePos = Vector2i::Zero;
-
-		void ApplyEvent(const SDL_MouseButtonEvent& evt);
-		void ApplyEvent(const SDL_MouseMotionEvent& evt);
-
-		friend class SDL2Platform;
 	};
 }
 #endif

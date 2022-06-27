@@ -8,8 +8,8 @@
 
 namespace unicore
 {
-	MyCore::MyCore(Platform& _platform)
-		: Core(_platform)
+	MyCore::MyCore(const CoreSettings& settings)
+		: Core(settings)
 	{
 		UC_LOG_INFO(logger) << "Starting";
 

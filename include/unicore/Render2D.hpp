@@ -81,5 +81,7 @@ namespace unicore
 
 		void register_module(Context& context) override;
 		void unregister_module(Context& context) override;
+
+		static Shared<Render2D> create(Logger& logger);
 	};
 }

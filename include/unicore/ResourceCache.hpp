@@ -7,6 +7,13 @@ namespace unicore
 {
 	class Context;
 
+	enum class ResourceCacheFlag
+	{
+		Quiet = 1,
+		SkipExtension = 2,
+	};
+	UNICORE_ENUMFLAGS(ResourceCacheFlag, ResourceCacheFlags);
+
 	class ResourceCache : public Module
 	{
 	public:
@@ -27,12 +34,14 @@ namespace unicore
 			return std::dynamic_pointer_cast<T>(find(path, get_type_index<T>()));
 		}
 
-		Shared<Resource> load(const Path& path, TypeIndex type, bool quiet = false);
+		Shared<Resource> load(const Path& path, TypeIndex type,
+			ResourceCacheFlags flags = ResourceCacheFlags::Zero);
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-		Shared<T> load(const Path& path, bool quiet = false)
+		Shared<T> load(const Path& path,
+			ResourceCacheFlags flags = ResourceCacheFlags::Zero)
 		{
-			return std::dynamic_pointer_cast<T>(load(path, get_type_index<T>(), quiet));
+			return std::dynamic_pointer_cast<T>(load(path, get_type_index<T>(), flags));
 		}
 
 		void calc_memory_use(size_t* system, size_t* video) const;

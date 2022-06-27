@@ -86,7 +86,7 @@ namespace unicore
 		const auto native_path = path.native_path();
 
 		auto handle = CreateFileW(native_path.c_str(),
-			GENERIC_READ, 0, nullptr,
+			GENERIC_READ, FILE_SHARE_READ, nullptr,
 			OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 		if (handle != INVALID_HANDLE_VALUE)
 			return std::make_shared<WinStream>(handle);

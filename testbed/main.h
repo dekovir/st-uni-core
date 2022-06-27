@@ -6,7 +6,7 @@ namespace unicore
 	class MyCore : public Core
 	{
 	public:
-		explicit MyCore(Platform& platform);
+		explicit MyCore(const CoreSettings& settings);
 
 	protected:
 		Shared<Texture> _tex;

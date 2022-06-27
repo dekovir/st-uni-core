@@ -44,20 +44,32 @@ namespace unicore
 
 	size_t WinStream::read(void* buffer, size_t size, size_t count)
 	{
-		DWORD read;
-		if (ReadFile(_handle, buffer, size, &read, nullptr))
-			return read;
+		size_t cnt = 0;
+		const auto ptr = static_cast<char*>(buffer);
+		for (size_t i = 0; i < count; i++)
+		{
+			if (!ReadFile(_handle, &ptr[size * i], size, nullptr, nullptr))
+				break;
 
-		return 0;
+			cnt++;
+		}
+
+		return cnt;
 	}
 
 	size_t WinStream::write(const void* buffer, size_t size, size_t count)
 	{
-		DWORD write;
-		if (WriteFile(_handle, buffer, size, &write, nullptr))
-			return write;
+		size_t cnt = 0;
+		const auto ptr = static_cast<const char*>(buffer);
+		for (size_t i = 0; i < count; i++)
+		{
+			if (WriteFile(_handle, &ptr[size * i], size, nullptr, nullptr))
+				break;
 
-		return 0;
+			cnt++;
+		}
+
+		return cnt;
 	}
 
 	bool WinStream::flush()

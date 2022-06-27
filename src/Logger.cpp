@@ -1,5 +1,4 @@
 #include "unicore/Logger.hpp"
-#include "Windows/WinLogger.hpp"
 #include <cstdio>
 
 namespace unicore
@@ -7,16 +6,6 @@ namespace unicore
 	void PrintLogger::write(LogType type, const StringView text)
 	{
 		printf("%s %s\n", type_to_str(type), text.data());
-	}
-
-	Logger& Logger::get_native()
-	{
-#if defined(UNICORE_PLATFORM_WINDOWS)
-		static WinLogger logger;
-#else
-		static PrintLogger logger;
-#endif
-		return logger;
 	}
 
 	const char* Logger::type_to_str(LogType type)

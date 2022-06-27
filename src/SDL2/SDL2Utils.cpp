@@ -42,14 +42,15 @@ namespace unicore
 
 	static int close_func(SDL_RWops* context)
 	{
-		const auto handle = StreamHandle::from_context(context);
-		handle->shared_link = nullptr;
-		handle->basic = nullptr;
-		handle->read = nullptr;
-		handle->write = nullptr;
-		delete handle;
-
-		context->hidden.unknown.data1 = nullptr;
+		if (const auto handle = StreamHandle::from_context(context))
+		{
+			handle->shared_link = nullptr;
+			handle->basic = nullptr;
+			handle->read = nullptr;
+			handle->write = nullptr;
+			delete handle;
+			context->hidden.unknown.data1 = nullptr;
+		}
 
 		return 0;
 	}
@@ -61,7 +62,7 @@ namespace unicore
 		context->read = &read_func;
 		context->write = &write_func;
 		context->close = &close_func;
-		context->type = 0xdeadbeef;
+		context->type = 0;
 		context->hidden.unknown.data1 = handle;
 	}
 

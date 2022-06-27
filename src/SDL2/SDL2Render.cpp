@@ -2,6 +2,7 @@
 #if defined(UNICORE_USE_SDL2)
 #include "SDL2Stream.hpp"
 #include "SDL2Utils.hpp"
+#include "SDL2Loaders.hpp"
 
 namespace unicore
 {
@@ -269,6 +270,14 @@ namespace unicore
 			points.data(), static_cast<int>(num_vertices),
 			nullptr, 0
 		);
+	}
+
+	void SDL2Render::register_module(Context& context)
+	{
+		Render2D::register_module(context);
+
+		static SDL2SurfaceLoader surface_loader;
+		context.add_loader(surface_loader);
 	}
 
 	void SDL2Render::update_size()

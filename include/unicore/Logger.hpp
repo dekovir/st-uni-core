@@ -21,8 +21,6 @@ namespace unicore
 		inline void warn(const StringView text) { write(LogType::Warning, text); }
 		inline void err(const StringView text) { write(LogType::Error, text); }
 
-		static Logger& get_native();
-
 	protected:
 		static const char* type_to_str(LogType type);
 	};

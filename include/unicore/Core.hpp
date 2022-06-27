@@ -4,18 +4,24 @@
 
 namespace unicore
 {
+	struct CoreSettings
+	{
+		Platform& platform;
+		Render2D& render;
+	};
+
 	class Core
 	{
 	public:
-		explicit Core(Platform& platform);
+		explicit Core(const CoreSettings& settings);
 		virtual ~Core();
 
+		Platform& platform;
 		Logger& logger;
 		Time& time;
 		Input& input;
-		Render2D& render;
-		Platform& platform;
 		ResourceCache& resources;
+		Render2D& render;
 
 		Context context;
 
@@ -27,5 +33,5 @@ namespace unicore
 		virtual void on_draw() = 0;
 	};
 
-	typedef Shared<Core>(*CoreFactory)(Platform& platform);
+	typedef Shared<Core>(*CoreFactory)(const CoreSettings& settings);
 }

@@ -3,6 +3,11 @@
 
 namespace unicore
 {
+	SDL2Input::SDL2Input()
+	{
+		SDL_InitSubSystem(SDL_INIT_EVENTS);
+	}
+
 	bool SDL2Input::mouse_button(uint8_t button) const
 	{
 		return button < _mouseBtn.size() && _mouseBtn[button];
@@ -13,7 +18,7 @@ namespace unicore
 		return _mousePos;
 	}
 
-	void SDL2Input::ApplyEvent(const SDL_MouseButtonEvent& evt)
+	void SDL2Input::apply_event(const SDL_MouseButtonEvent& evt)
 	{
 		if (evt.button >= 1 && evt.button <= _mouseBtn.size())
 		{
@@ -23,7 +28,7 @@ namespace unicore
 		}
 	}
 
-	void SDL2Input::ApplyEvent(const SDL_MouseMotionEvent& evt)
+	void SDL2Input::apply_event(const SDL_MouseMotionEvent& evt)
 	{
 		_mousePos.x = evt.x;
 		_mousePos.y = evt.y;

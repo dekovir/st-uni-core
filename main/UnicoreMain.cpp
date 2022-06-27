@@ -6,19 +6,23 @@ namespace unicore
 	{
 	public:
 		Shared<Platform> platform;
+		Shared<Render2D> render;
+		Shared<ProxyLogger> render_logger;
 		Shared<Core> core;
 
 		State()
 		{
 			platform = Platform::create();
-			core = create_main_core(*platform);
+
+			render_logger = make_shared<ProxyLogger>("[Render] ", platform->logger);
+			render = Render2D::create(*render_logger);
+			core = create_main_core({ *platform, *render });
 		}
 
 		~State()
 		{
 			core = nullptr;
 		}
-
 	};
 
 	static State* g_state = nullptr;
@@ -28,15 +32,13 @@ namespace unicore
 		g_state->platform->poll_events();
 		g_state->core->update();
 
-		auto& render = g_state->platform->render;
-		if (render.begin_scene())
+		if (const auto& render = g_state->render; render->begin_scene())
 		{
 			g_state->core->draw();
-			render.end_scene();
+			render->end_scene();
 		}
 	}
 }
-
 
 #if defined(UNICORE_USE_SDL2_MAIN)
 #include <SDL_main.h>

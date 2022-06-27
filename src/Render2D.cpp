@@ -1,6 +1,8 @@
 #include "unicore/Render2D.hpp"
 #include "unicore/ResourceLoader.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/LogHelper.hpp"
+#include "SDL2/SDL2Render.hpp"
 
 namespace unicore
 {
@@ -11,8 +13,11 @@ namespace unicore
 
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override
 		{
-			const auto surface = context.cache.load<Surface>(context.path);
-			return !surface ? nullptr : _render.create_texture(*surface);
+			if (const auto surface = context.cache.load<Surface>(context.path))
+				return _render.create_texture(*surface);
+
+			UC_LOG_WARNING(context.logger) << "Failed to load surface";
+			return nullptr;
 		}
 
 	protected:
@@ -35,5 +40,20 @@ namespace unicore
 	void Render2D::unregister_module(Context& context)
 	{
 		Render::unregister_module(context);
+	}
+
+	Shared<Render2D> Render2D::create(Logger& logger)
+	{
+#if defined(UNICORE_USE_SDL2)
+		SDL2RenderSettings settings;
+		settings.size = unicore::Vector2i::Zero;
+		//settings.size = unicore::Vector2i(800, 600);
+		settings.resizeable = false;
+		settings.borderless = false;
+		settings.fullscreen = false;
+		return make_shared<SDL2Render>(logger, settings);
+#else
+		UC_STATIC_ASSERT_ALWAYS("Unknown platform");
+#endif
 	}
 }
