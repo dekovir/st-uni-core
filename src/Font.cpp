@@ -1,6 +1,5 @@
 #include "unicore/Font.hpp"
 #include "unicore/Data.hpp"
-#include "unicore/LogHelper.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore

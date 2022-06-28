@@ -5,7 +5,7 @@
 #include <Shlwapi.h>
 #endif
 #include "unicore/Strings.hpp"
-#include "unicore/LogHelper.hpp"
+#include "unicore/Logger.hpp"
 
 namespace unicore
 {

@@ -1,6 +1,5 @@
 #include "SDL2Loaders.hpp"
 #if defined(UNICORE_USE_SDL2)
-#include "unicore/LogHelper.hpp"
 #include "SDL2Utils.hpp"
 #include "SDL2Render.hpp"
 

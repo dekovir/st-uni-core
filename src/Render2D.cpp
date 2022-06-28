@@ -1,7 +1,6 @@
 #include "unicore/Render2D.hpp"
 #include "unicore/ResourceLoader.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "unicore/LogHelper.hpp"
 #include "SDL2/SDL2Render.hpp"
 
 namespace unicore

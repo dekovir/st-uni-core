@@ -1,7 +1,7 @@
 #include "WinError.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #include "unicore/Strings.hpp"
-#include "unicore/LogHelper.hpp"
+#include "unicore/Logger.hpp"
 
 namespace unicore
 {

@@ -1,6 +1,5 @@
 #include "unicore/Data.hpp"
 #include "unicore/Stream.hpp"
-#include "unicore/LogHelper.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore

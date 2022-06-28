@@ -1,5 +1,5 @@
 #include "unicore/ResourcePath.hpp"
-#include "unicore/LogHelper.hpp"
+#include "unicore/Logger.hpp"
 
 namespace unicore
 {

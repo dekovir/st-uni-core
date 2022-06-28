@@ -1,5 +1,5 @@
 #include "unicore/Version.hpp"
-#include "unicore/LogHelper.hpp"
+#include "unicore/Logger.hpp"
 
 namespace unicore
 {

@@ -1,7 +1,6 @@
 #include "WinStreamProvider.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #include <Shlwapi.h>
-#include "unicore/LogHelper.hpp"
 #include "WinError.hpp"
 #include "WinStream.hpp"
 

@@ -1,5 +1,4 @@
 #include "unicore/ResourceCache.hpp"
-#include "unicore/LogHelper.hpp"
 #include "unicore/RenderResource.hpp"
 
 namespace unicore
@@ -96,7 +95,8 @@ namespace unicore
 			if (auto resource = loader->load({ path, *this, *stream, &_logger }))
 			{
 				_cached[path][type] = resource;
-				UC_LOG_DEBUG(logger) << "Loaded " << type << " from " << path;
+				UC_LOG_DEBUG(logger) << "Loaded " << type << " from " << path
+					<< " [" <<  resource->system_memory_use() << "bytes]";
 				return resource;
 			}
 

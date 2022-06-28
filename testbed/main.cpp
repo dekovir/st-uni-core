@@ -1,6 +1,5 @@
 #include "main.h"
 #include "UnicoreMain.h"
-#include "unicore/LogHelper.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Graphics.hpp"
 #include "unicore/SpriteBatch.hpp"
@@ -20,7 +19,7 @@ namespace unicore
 		_font = resources.load<BitmapFont>(L"assets/font_004.fnt"_path);
 
 		constexpr auto var = "assets:zazaka.bmp"_res;
-		UC_LOG_INFO(logger) << var.data();
+		UC_LOG_INFO(logger) << var;
 	}
 
 	void MyCore::on_update()
