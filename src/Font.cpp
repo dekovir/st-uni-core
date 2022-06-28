@@ -15,6 +15,43 @@ namespace unicore
 		return 0;
 	}
 
+	Shared<Texture> BitmapFont::get_char_print_info(uint32_t code,
+		Vector2f& pos, Rectf* rect, Rectf* uv_rect) const
+	{
+		const auto it = glyphs.find(code);
+		if (it != glyphs.end())
+		{
+			const auto& c = it->second;
+			if (c.page < pages.size())
+			{
+				auto page = pages[c.page];
+				auto& size = page->size();
+
+				if (uv_rect)
+				{
+					uv_rect->x = static_cast<float>(c.rect.x) / static_cast<float>(size.x);
+					uv_rect->y = static_cast<float>(c.rect.y) / static_cast<float>(size.y);
+					uv_rect->w = static_cast<float>(c.rect.w) / static_cast<float>(size.x);
+					uv_rect->h = static_cast<float>(c.rect.h) / static_cast<float>(size.y);
+				}
+
+				if (rect)
+				{
+					rect->x = pos.x - static_cast<float>(c.xoffset);
+					rect->y = pos.y + static_cast<float>(c.yoffset);
+					rect->w = static_cast<float>(c.rect.w);
+					rect->h = static_cast<float>(c.rect.h);
+				}
+
+				pos.x += static_cast<float>(c.xadvance);
+
+				return page;
+			}
+		}
+
+		return nullptr;
+	}
+
 	Shared<Texture> BitmapFont::print_char(uint32_t code, Vector2f& pos,
 		Vertex2& v0, Vertex2& v1, Vertex2& v2, Vertex2& v3, const Color4b& color) const
 	{

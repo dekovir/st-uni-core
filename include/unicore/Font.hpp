@@ -31,6 +31,8 @@ namespace unicore
 		List<Shared<Texture>> pages;
 		Dictionary<uint32_t, BitmapFontGlyph> glyphs;
 
+		Shared<Texture> get_char_print_info(uint32_t code, Vector2f& pos, Rectf* rect, Rectf* uv_rect) const;
+
 		Shared<Texture> print_char(uint32_t code, Vector2f& pos,
 			Vertex2& v0, Vertex2& v1, Vertex2& v2, Vertex2& v3,
 			const Color4b& color = ColorConst4b::White) const;

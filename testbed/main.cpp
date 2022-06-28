@@ -57,10 +57,13 @@ namespace unicore
 		graphics.end();
 		graphics.to_render(render);
 
+		String str = "FPS: ";
+		str += std::to_string(fps());
+
 		SpriteBatch batch;
 		batch.begin();
 		batch.draw(_tex, input.mouse_position().cast<float>(), _angle, { 2, 2 });
-		batch.print(_font, { 200, 200 }, "Hello World!");
+		batch.print(_font, { 0, 0 }, str);
 		batch.end();
 		batch.to_render(render);
 	}

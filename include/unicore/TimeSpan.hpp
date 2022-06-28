@@ -38,6 +38,12 @@ namespace unicore
 			return *this;
 		}
 
+		TimeSpan& operator-=(const TimeSpan& other)
+		{
+			_data -= other._data;
+			return *this;
+		}
+
 		template<typename TRep, typename TPeriod>
 		static  constexpr TimeSpan from_duration(std::chrono::duration<TRep, TPeriod> value)
 		{
@@ -88,6 +94,26 @@ namespace unicore
 		return a.data() != b.data();
 	}
 
+	static constexpr bool operator<=(const TimeSpan& a, const TimeSpan& b)
+	{
+		return a.data() <= b.data();
+	}
+
+	static constexpr bool operator>=(const TimeSpan& a, const TimeSpan& b)
+	{
+		return a.data() >= b.data();
+	}
+
+	static constexpr bool operator<(const TimeSpan& a, const TimeSpan& b)
+	{
+		return a.data() < b.data();
+	}
+
+	static constexpr bool operator>(const TimeSpan& a, const TimeSpan& b)
+	{
+		return a.data() > b.data();
+	}
+
 	static constexpr TimeSpan operator +(const TimeSpan& a, const TimeSpan& b)
 	{
 		return a.add(b);
@@ -101,5 +127,6 @@ namespace unicore
 	struct TimeSpanConst
 	{
 		static constexpr TimeSpan Zero;
+		static constexpr TimeSpan OneSecond = TimeSpan::from_seconds(1.f);
 	};
 }

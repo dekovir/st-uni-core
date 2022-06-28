@@ -30,9 +30,16 @@ namespace unicore
 
 		void frame();
 
+		UC_NODISCARD constexpr int fps() const { return _fps_current; }
+
 	protected:
 		virtual void on_update() = 0;
 		virtual void on_draw() = 0;
+
+	private:
+		int _fps_current = 0;
+		int _fps_counter = 0;
+		TimeSpan _fps_time = TimeSpanConst::Zero;
 	};
 
 	typedef Shared<Core>(*CoreFactory)(const CoreSettings& settings);
