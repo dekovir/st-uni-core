@@ -12,6 +12,12 @@ namespace unicore
 		constexpr Vector2() = default;
 		constexpr Vector2(T x, T y);
 
+		inline void set(T _x, T _y)
+		{
+			x = _x;
+			y = _y;
+		}
+
 		UC_NODISCARD constexpr T area() const { return x * y; }
 
 		template<typename U>

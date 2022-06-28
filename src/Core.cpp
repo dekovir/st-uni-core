@@ -31,11 +31,22 @@ namespace unicore
 
 	void Core::update()
 	{
+		platform.poll_events();
 		on_update();
 	}
 
 	void Core::draw()
 	{
-		on_draw();
+		if (render.begin_scene())
+		{
+			on_draw();
+			render.end_scene();
+		}
+	}
+
+	void Core::frame()
+	{
+		update();
+		draw();
 	}
 }

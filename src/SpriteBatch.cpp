@@ -117,6 +117,29 @@ namespace unicore
 		return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
 	}
 
+	SpriteBatch& SpriteBatch::print(const Shared<BitmapFont>& font,
+		const Vector2f& pos, StringView text, const Color4b& color)
+	{
+		if (font)
+		{
+			Vector2f cur(pos);
+
+			for (size_t i = 0; i < text.size(); i++)
+			{
+				const auto c = text[i];
+				if (auto tex = font->print_char(c, cur, s_quad[0], s_quad[1], s_quad[2], s_quad[3], color))
+				{
+					draw(tex, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+
+					if (i + 1 < text.size())
+						cur.x += static_cast<float>(font->find_kerning(c, text[i + 1]));
+				}
+			}
+		}
+
+		return *this;
+	}
+
 	void SpriteBatch::flush()
 	{
 		if (_current.vcount > 0)

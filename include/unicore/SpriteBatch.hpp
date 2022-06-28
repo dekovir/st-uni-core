@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Object.hpp"
+#include "unicore/Font.hpp"
 #include "unicore/Render2D.hpp"
 
 namespace unicore
@@ -27,6 +28,10 @@ namespace unicore
 		SpriteBatch& draw(const Shared<Texture>& texture,
 			const Vector2f& center, const Radians& angle,
 			const Vector2f& scale, const Color4b& color = ColorConst4b::White);
+
+		SpriteBatch& print(const Shared<BitmapFont>& font,
+			const Vector2f& pos, StringView text,
+			const Color4b& color = ColorConst4b::White);
 
 	protected:
 		struct Batch

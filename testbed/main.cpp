@@ -30,7 +30,7 @@ namespace unicore
 #endif
 
 		if (input.mouse_button(MouseButton::Left))
-		//if (input.key_code(KeyCode::Space))
+			//if (input.key_code(KeyCode::Space))
 			_angle += 180_deg * static_cast<float>(time.delta().total_seconds());
 	}
 
@@ -60,6 +60,7 @@ namespace unicore
 		SpriteBatch batch;
 		batch.begin();
 		batch.draw(_tex, input.mouse_position().cast<float>(), _angle, { 2, 2 });
+		batch.print(_font, { 200, 200 }, "Hello World!");
 		batch.end();
 		batch.to_render(render);
 	}

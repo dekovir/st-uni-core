@@ -29,14 +29,7 @@ namespace unicore
 
 	void state_frame()
 	{
-		g_state->platform->poll_events();
-		g_state->core->update();
-
-		if (const auto& render = g_state->render; render->begin_scene())
-		{
-			g_state->core->draw();
-			render->end_scene();
-		}
+		g_state->core->frame();
 	}
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Rect.hpp"
+#include "unicore/Vertex2.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/ResourceLoader.hpp"
 
@@ -8,20 +9,9 @@ namespace unicore
 	class Font : public Resource
 	{
 	public:
+		Dictionary<uint32_t, Dictionary<uint32_t, int>> kerning;
 
-	protected:
-		Dictionary<wchar_t, Dictionary<wchar_t, int>> _kerning;
-
-		UC_NODISCARD int find_kerning(wchar_t a, wchar_t b) const
-		{
-			if (const auto it = _kerning.find(a); it != _kerning.end())
-			{
-				if (const auto jt = it->second.find(b); jt != it->second.end())
-					return jt->second;
-			}
-
-			return 0;
-		}
+		UC_NODISCARD int find_kerning(uint32_t a, uint32_t b) const;
 	};
 
 	struct BitmapFontGlyph
@@ -38,11 +28,12 @@ namespace unicore
 	public:
 		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BitmapFont); }
 
-	protected:
-		List<Shared<Texture>> _pages;
-		Dictionary<wchar_t, BitmapFontGlyph> _glyphs;
+		List<Shared<Texture>> pages;
+		Dictionary<uint32_t, BitmapFontGlyph> glyphs;
 
-		friend class BitmapFontLoader;
+		Shared<Texture> print_char(uint32_t code, Vector2f& pos,
+			Vertex2& v0, Vertex2& v1, Vertex2& v2, Vertex2& v3,
+			const Color4b& color = ColorConst4b::White) const;
 	};
 
 	class BitmapFontLoader : public ResourceLoaderT<BitmapFont>
