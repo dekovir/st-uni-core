@@ -116,13 +116,13 @@ namespace unicore
 	};
 
 	template<typename T>
-	static constexpr bool operator == (const EnumFlag<T>& a, const EnumFlag<T>& b)
+	static constexpr bool operator == (const EnumFlag<T> a, const EnumFlag<T> b)
 	{
 		return a.value() == b.value();
 	}
 
 	template<typename T>
-	static constexpr bool operator != (const EnumFlag<T>& a, const EnumFlag<T>& b)
+	static constexpr bool operator != (const EnumFlag<T> a, const EnumFlag<T> b)
 	{
 		return a.value() != b.value();
 	}
@@ -132,7 +132,7 @@ namespace unicore
 
 #define UNICORE_ENUMFLAGS(TFlag, TName) \
 	typedef EnumFlag<TFlag> TName; \
-	inline TName operator|(TFlag a, TFlag b) { \
+	static constexpr TName operator|(const TFlag a, const TFlag b) { \
 		return TName(static_cast<TName::TValue>(a) | static_cast<TName::TValue>(b)); \
 	}
 }
