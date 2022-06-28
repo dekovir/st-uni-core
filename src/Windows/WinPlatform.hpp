@@ -21,11 +21,14 @@ namespace unicore
 
 	protected:
 		WinLogger _logger;
+		ProxyLogger _input_logger;
+
 #if defined(UNICORE_USE_SDL2)
 		SDL2Time _time;
 		SDL2Input _input;
 		bool _running = true;
 #endif
+
 		ProxyLogger _provider_logger;
 		WinStreamProvider _provider;
 	};

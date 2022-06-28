@@ -5,6 +5,8 @@ namespace unicore
 {
 	WinPlatform::WinPlatform()
 		: Platform({ _logger, _time, _input })
+		, _input_logger("[Input] ", _logger)
+		, _input(_input_logger)
 		, _provider_logger("[FS] ", _logger)
 		, _provider(_provider_logger)
 	{
@@ -23,10 +25,10 @@ namespace unicore
 	void WinPlatform::poll_events()
 	{
 #if defined(UNICORE_USE_SDL2)
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
+		SDL_Event evt;
+		while (SDL_PollEvent(&evt))
 		{
-			switch (event.type)
+			switch (evt.type)
 			{
 			case SDL_QUIT:
 				_running = false;
@@ -34,7 +36,7 @@ namespace unicore
 
 			case SDL_WINDOWEVENT:
 				//_log.debug("Evt: Wnd: " + Strings::From(event.window.event));
-				switch (event.window.event)
+				switch (evt.window.event)
 				{
 				case SDL_WINDOWEVENT_RESIZED:
 					logger.debug("Resized");
@@ -44,17 +46,17 @@ namespace unicore
 				break;
 
 			case SDL_KEYDOWN:
-				if (event.key.keysym.sym == SDLK_ESCAPE)
-					_running = false;
+			case SDL_KEYUP:
+				_input.apply_event(evt.key);
 				break;
 
 			case SDL_MOUSEMOTION:
-				_input.apply_event(event.motion);
+				_input.apply_event(evt.motion);
 				break;
 
 			case SDL_MOUSEBUTTONDOWN:
 			case SDL_MOUSEBUTTONUP:
-				_input.apply_event(event.button);
+				_input.apply_event(evt.button);
 				break;
 			}
 		}

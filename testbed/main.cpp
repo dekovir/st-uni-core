@@ -24,7 +24,8 @@ namespace unicore
 
 	void MyCore::on_update()
 	{
-		_angle += 180_deg * static_cast<float>(time.delta().total_seconds());
+		if (input.mouse_button(MouseButton::Left))
+			_angle += 180_deg * static_cast<float>(time.delta().total_seconds());
 	}
 
 	void MyCore::on_draw()

@@ -103,5 +103,6 @@ namespace unicore
 		static constexpr Vector2<T> AxisY = Vector2<T>(0, 1);
 	};
 
+	using Vector2iConst = Vector2Const<int>;
 	using Vector2fConst = Vector2Const<float>;
 }
