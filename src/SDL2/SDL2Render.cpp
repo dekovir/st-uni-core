@@ -78,7 +78,8 @@ namespace unicore
 
 		SDL_RendererInfo info;
 		SDL_GetRendererInfo(_renderer, &info);
-		UC_LOG_INFO(_logger) << "Using " << info.name;
+
+		UC_LOG_INFO(_logger) << "Using " << (info.name ? info.name : "null") << " device";
 
 		update_size();
 	}

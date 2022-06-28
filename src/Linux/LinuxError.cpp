@@ -1,6 +1,6 @@
 #include "LinuxError.hpp"
 #if defined(UNICORE_PLATFORM_LINUX)
-#include "unicore/LogHelper.hpp"
+#include "unicore/Logger.hpp"
 
 namespace unicore
 {

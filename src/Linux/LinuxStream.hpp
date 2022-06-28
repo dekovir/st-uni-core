@@ -14,10 +14,10 @@ namespace unicore
 		int64_t seek(int64_t offset, SeekMethod method) override;
 
 		UC_NODISCARD bool eof() const override;
-		size_t read(void* buffer, size_t size, size_t count) override;
+		bool read(void* buffer, size_t size, size_t* bytes_read) override;
 
-		size_t write(const void* buffer, size_t size, size_t count) override;
 		bool flush() override;
+		bool write(const void* buffer, size_t size, size_t* bytes_written) override;
 
 	protected:
 		FILE* _handle;

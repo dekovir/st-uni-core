@@ -126,7 +126,7 @@ namespace unicore
 
 	struct TimeSpanConst
 	{
-		static constexpr TimeSpan Zero;
+		static constexpr TimeSpan Zero = TimeSpan::from_milliseconds(0);
 		static constexpr TimeSpan OneSecond = TimeSpan::from_seconds(1.f);
 	};
 }

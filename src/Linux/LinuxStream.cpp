@@ -33,19 +33,25 @@ namespace unicore
 		return feof(_handle) != 0;
 	}
 
-	size_t LinuxStream::read(void* buffer, size_t size, size_t count)
+	bool LinuxStream::read(void* buffer, size_t size, size_t* bytes_read)
 	{
-		return fread(buffer, size, count, _handle);
-	}
-
-	size_t LinuxStream::write(const void* buffer, size_t size, size_t count)
-	{
-		return fwrite(buffer, size, count, _handle);
+		const auto result = fread(buffer, 1, size, _handle);
+		if (bytes_read)
+			*bytes_read = result;
+		return result == size;
 	}
 
 	bool LinuxStream::flush()
 	{
 		return fflush(_handle) == 0;
+	}
+
+	bool LinuxStream::write(const void* buffer, size_t size, size_t* bytes_written)
+	{
+		const auto result = fwrite(buffer, 1, size, _handle);
+		if (bytes_written)
+			*bytes_written = result;
+		return result == size;
 	}
 
 	int LinuxStream::convert_method(SeekMethod method)

@@ -1,7 +1,9 @@
 #include "unicore/Platform.hpp"
 #include "unicore/Data.hpp"
+#include "unicore/XMLData.hpp"
 #include "unicore/Font.hpp"
 #include "Windows/WinPlatform.hpp"
+#include "Linux/LinuxPlatform.hpp"
 
 namespace unicore
 {
@@ -21,12 +23,15 @@ namespace unicore
 		static BinaryDataLoader data_loader;
 		static TextDataLoader text_loader;
 		static BitmapFontLoader font_loader;
-		static XMLDataLoader xml_loader;
 
 		context.add_loader(data_loader);
 		context.add_loader(text_loader);
 		context.add_loader(font_loader);
+
+#if defined(UNICORE_USE_XML)
+		static XMLDataLoader xml_loader;
 		context.add_loader(xml_loader);
+#endif
 	}
 
 	void Platform::unregister_module(Context& context)
@@ -39,6 +44,8 @@ namespace unicore
 #if defined(UNICORE_PLATFORM_WINDOWS)
 		return std::make_shared<WinPlatform>();
 //#elif defined(UNICORE_PLATFORM_EMSCRIPTEN)
+#elif defined(UNICORE_PLATFORM_LINUX)
+		return std::make_shared<LinuxPlatform>();
 #else
 		static_assert(true, "Unknown platform");
 #endif

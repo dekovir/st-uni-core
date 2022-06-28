@@ -18,8 +18,8 @@ namespace unicore
 		_tex = resources.load<Texture>(L"assets/zazaka.bmp"_path);
 		_font = resources.load<BitmapFont>(L"assets/font_004.fnt"_path);
 
-		constexpr auto var = "assets:zazaka.bmp"_res;
-		UC_LOG_INFO(logger) << var;
+		//constexpr auto var = "assets:zazaka.bmp"_res;
+		//UC_LOG_INFO(logger) << var;
 	}
 
 	void MyCore::on_update()

@@ -52,6 +52,22 @@ namespace unicore
 		return *this;
 	}
 
+	LogHelper& LogHelper::operator<<(const char* value)
+	{
+		if (value != nullptr)
+			append(value);
+
+		return *this;
+	}
+
+	LogHelper& LogHelper::operator<<(const wchar_t* value)
+	{
+		if (value != nullptr)
+			append(value);
+
+		return *this;
+	}
+
 #if defined (_HAS_EXCEPTIONS)
 	LogHelper& LogHelper::operator<<(const std::exception& ex)
 	{

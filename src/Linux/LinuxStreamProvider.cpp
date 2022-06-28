@@ -2,8 +2,9 @@
 #if defined(UNICORE_PLATFORM_LINUX)
 #include <sys/stat.h>
 #include "unicore/Strings.hpp"
-#include "unicore/LogHelper.hpp"
+#include "unicore/Logger.hpp"
 #include "LinuxError.hpp"
+#include "LinuxStream.hpp"
 
 namespace unicore
 {
@@ -47,17 +48,21 @@ namespace unicore
 	uint16_t LinuxStreamProvider::enumerate(const Path& path,
 		List<WString>& name_list, FileFlags flags)
 	{
+		return 0;
 	}
 
 	Shared<ReadStream> LinuxStreamProvider::open_read(const Path& path)
 	{
 		const auto native_path = to_native(path);
-
 		auto handle = fopen(native_path.c_str(), "rb");
+		return handle ? make_shared<LinuxStream>(handle) : nullptr;
 	}
 
 	Shared<WriteStream> LinuxStreamProvider::create_new(const Path& path)
 	{
+		const auto native_path = to_native(path);
+		auto handle = fopen(native_path.c_str(), "wb");
+		return handle ? make_shared<LinuxStream>(handle) : nullptr;
 	}
 
 	String LinuxStreamProvider::to_native(const Path& path)

@@ -59,8 +59,8 @@ namespace unicore
 		LogHelper& operator << (const char value) { append(value); return *this; }
 		LogHelper& operator << (const wchar_t value) { append(value); return *this; }
 
-		LogHelper& operator << (const char* value) { append(value); return *this; }
-		LogHelper& operator << (const wchar_t* value) { append(value); return *this; }
+		LogHelper& operator << (const char* value);
+		LogHelper& operator << (const wchar_t* value);
 
 		LogHelper& operator << (const StringView value) { append(value); return *this; }
 		LogHelper& operator << (const WStringView value) { append(value); return *this; }

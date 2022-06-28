@@ -89,7 +89,7 @@
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "linux_clang_x64" ],
       "wslPath": "${defaultWSLPath}",
-      "addressSanitizerEnabled": true,
+      "addressSanitizerEnabled": false,
       "variables": [
         {
           "name": "UNICORE_TESTBED",

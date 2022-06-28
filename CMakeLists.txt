@@ -68,17 +68,18 @@ if (NOT EMSCRIPTEN)
 	set_target_properties(SDL2-static SDL2main PROPERTIES FOLDER "Libs")
 	target_link_libraries(unicore PRIVATE SDL2-static)
 endif()
+target_compile_definitions(unicore PUBLIC UNICORE_USE_SDL2)
 
 # tinyxml2
 add_subdirectory("${LIBS_DIR}/tinyxml2")
 set_target_properties(tinyxml2 PROPERTIES FOLDER "Libs")
 target_link_libraries(unicore PUBLIC tinyxml2)
+target_compile_definitions(unicore PUBLIC UNICORE_USE_XML)
 
 if (WIN32)
 	target_link_libraries(unicore PRIVATE Shlwapi)
 endif()
 
-target_compile_definitions(unicore PUBLIC UNICORE_USE_SDL2)
 #target_compile_options(unicore PUBLIC -fno-exceptions)
 
 # MAIN #########################################################################

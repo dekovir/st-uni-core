@@ -1,5 +1,6 @@
 #include "unicore/Font.hpp"
 #include "unicore/Data.hpp"
+#include "unicore/XMLData.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore
@@ -106,6 +107,7 @@ namespace unicore
 
 	Shared<Resource> BitmapFontLoader::load(const ResourceLoaderContext& context)
 	{
+#if defined(UNICORE_USE_XML)
 		const auto xml = context.cache.load<XMLData>(context.path, ResourceCacheFlag::SkipExtension);
 		if (!xml)
 		{
@@ -158,5 +160,8 @@ namespace unicore
 		}
 
 		return font;
+#else
+		return nullptr;
+#endif
 	}
 }
