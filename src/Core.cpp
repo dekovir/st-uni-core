@@ -11,7 +11,6 @@ namespace unicore
 		, render(settings.render)
 	{
 		platform.register_module(context);
-		time.register_module(context);
 		input.register_module(context);
 		render.register_module(context);
 		resources.register_module(context);
@@ -26,7 +25,6 @@ namespace unicore
 		platform.unregister_module(context);
 		render.unregister_module(context);
 		input.unregister_module(context);
-		time.unregister_module(context);
 	}
 
 	void Core::update()
