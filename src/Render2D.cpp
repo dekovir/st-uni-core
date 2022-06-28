@@ -41,7 +41,7 @@ namespace unicore
 		Render::unregister_module(context);
 	}
 
-	Shared<Render2D> Render2D::create(Logger& logger)
+	Unique<Render2D> Render2D::create(Logger& logger)
 	{
 #if defined(UNICORE_USE_SDL2)
 		SDL2RenderSettings settings;
@@ -50,7 +50,7 @@ namespace unicore
 		settings.resizeable = false;
 		settings.borderless = false;
 		settings.fullscreen = false;
-		return make_shared<SDL2Render>(logger, settings);
+		return make_unique<SDL2Render>(logger, settings);
 #else
 		UC_STATIC_ASSERT_ALWAYS("Unknown platform");
 #endif

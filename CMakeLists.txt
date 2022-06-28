@@ -10,6 +10,7 @@ if (EMSCRIPTEN)
 endif ()
 
 # OPTIONS ######################################################################
+option(UNICORE_XML "Add tinyxml2 library" ON)
 option(UNICORE_TESTBED "Add Testbed project" OFF)
 
 # PROJECT ######################################################################
@@ -71,10 +72,12 @@ endif()
 target_compile_definitions(unicore PUBLIC UNICORE_USE_SDL2)
 
 # tinyxml2
-add_subdirectory("${LIBS_DIR}/tinyxml2")
-set_target_properties(tinyxml2 PROPERTIES FOLDER "Libs")
-target_link_libraries(unicore PUBLIC tinyxml2)
-target_compile_definitions(unicore PUBLIC UNICORE_USE_XML)
+if (UNICORE_XML)
+	add_subdirectory("${LIBS_DIR}/tinyxml2")
+	set_target_properties(tinyxml2 PROPERTIES FOLDER "Libs")
+	target_link_libraries(unicore PUBLIC tinyxml2)
+	target_compile_definitions(unicore PUBLIC UNICORE_USE_XML)
+endif()
 
 if (WIN32)
 	target_link_libraries(unicore PRIVATE Shlwapi)

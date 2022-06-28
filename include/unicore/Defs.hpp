@@ -110,13 +110,13 @@ namespace unicore
 	template<typename T, class... Types>
 	static inline Shared<T> make_shared(Types&&... args)
 	{
-		return std::make_shared<T>(args...);
+		return std::make_shared<T>(std::forward<Types>(args)...);
 	}
 
 	template<typename T, class... Types>
-	static inline Shared<T> make_unique(Types&&... args)
+	static inline Unique<T> make_unique(Types&&... args)
 	{
-		return std::make_unique<T>(args...);
+		return std::make_unique<T>(std::forward<Types>(args)...);
 	}
 
 	using TypeInfo = std::type_info;

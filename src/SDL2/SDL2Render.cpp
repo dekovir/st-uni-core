@@ -77,9 +77,14 @@ namespace unicore
 		_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
 
 		SDL_RendererInfo info;
-		SDL_GetRendererInfo(_renderer, &info);
-
-		UC_LOG_INFO(_logger) << "Using " << (info.name ? info.name : "null") << " device";
+		if (SDL_GetRendererInfo(_renderer, &info) == 0)
+		{
+			UC_LOG_INFO(_logger) << "Using " << (info.name ? info.name : "null") << " device";
+		}
+		else
+		{
+			UC_LOG_WARNING(_logger) << "Failed to get render info";
+		}
 
 		update_size();
 	}

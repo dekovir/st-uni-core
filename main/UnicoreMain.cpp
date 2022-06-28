@@ -5,17 +5,18 @@ namespace unicore
 	class State
 	{
 	public:
-		Shared<Platform> platform;
-		Shared<Render2D> render;
-		Shared<ProxyLogger> render_logger;
-		Shared<Core> core;
+		Unique<Platform> platform;
+		Unique<Render2D> render;
+		Unique<ProxyLogger> render_logger;
+		Unique<Core> core;
 
 		State()
 		{
 			platform = Platform::create();
 
-			render_logger = make_shared<ProxyLogger>("[Render] ", platform->logger);
+			render_logger = make_unique<ProxyLogger>("[Render] ", platform->logger);
 			render = Render2D::create(*render_logger);
+
 			core = create_main_core({ *platform, *render });
 		}
 

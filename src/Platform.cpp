@@ -39,13 +39,13 @@ namespace unicore
 		Module::unregister_module(context);
 	}
 
-	Shared<Platform> Platform::create()
+	Unique<Platform> Platform::create()
 	{
 #if defined(UNICORE_PLATFORM_WINDOWS)
-		return std::make_shared<WinPlatform>();
+		return make_unique<WinPlatform>();
 //#elif defined(UNICORE_PLATFORM_EMSCRIPTEN)
 #elif defined(UNICORE_PLATFORM_LINUX)
-		return std::make_shared<LinuxPlatform>();
+		return make_unique<LinuxPlatform>();
 #else
 		static_assert(true, "Unknown platform");
 #endif
