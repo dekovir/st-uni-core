@@ -15,20 +15,19 @@ namespace unicore
 		UC_NODISCARD bool mouse_button(uint8_t button) const override;
 		UC_NODISCARD const Vector2i& mouse_position() const override;
 
-		UC_NODISCARD bool keyboard(KeyCode code) const override;
+		UC_NODISCARD bool key_code(KeyCode code) const override;
+		UC_NODISCARD KeyModFlags key_mod() const override;
 
 		void reset();
-
-		void apply_event(const SDL_MouseButtonEvent& evt);
-		void apply_event(const SDL_MouseMotionEvent& evt);
-		void apply_event(const SDL_KeyboardEvent& evt);
+		void update();
 
 	protected:
 		Logger& _logger;
-		Array<bool, 3> _mouse_button = { false };
+		Bitset<3> _mouse_button = { false };
 		Vector2i _mouse_pos = Vector2i::Zero;
 
-		Array<bool, static_cast<size_t>(KeyCode::MaxKeyCode)> _keys = { false };
+		Bitset<static_cast<size_t>(KeyCode::MaxKeyCode)> _key_code = { false };
+		KeyModFlags _key_mod;
 	};
 }
 #endif

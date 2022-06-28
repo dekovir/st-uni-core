@@ -44,24 +44,11 @@ namespace unicore
 					break;
 				}
 				break;
-
-			case SDL_KEYDOWN:
-			case SDL_KEYUP:
-				_input.apply_event(evt.key);
-				break;
-
-			case SDL_MOUSEMOTION:
-				_input.apply_event(evt.motion);
-				break;
-
-			case SDL_MOUSEBUTTONDOWN:
-			case SDL_MOUSEBUTTONUP:
-				_input.apply_event(evt.button);
-				break;
 			}
 		}
 
 		_time.update();
+		_input.update();
 #else
 		UC_STATIC_ASSERT_ALWAYS("Unimplemented platform");
 #endif

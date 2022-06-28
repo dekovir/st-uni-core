@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <bitset>
 #include <string>
 #include <string_view>
 #include <optional>
@@ -66,6 +67,9 @@ static_assert(false, "Unknown platform");
 
 namespace unicore
 {
+	template<size_t N>
+	using Bitset = std::bitset<N>;
+
 	template<typename T, size_t N>
 	using Array = std::array<T, N>;
 

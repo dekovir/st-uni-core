@@ -1,140 +1,157 @@
 #pragma once
+#include "unicore/EnumFlag.hpp"
 #include "unicore/Module.hpp"
 #include "unicore/Vector2.hpp"
 
 namespace unicore
 {
-	enum class KeyCode : uint16_t
+	enum class KeyCode : uint8_t
 	{
-		BackSpace,
-		Tab,
-		Return,
-		Escape,
-		Space,
-		Home,
-		End,
-		PageUp,
-		PageDown,
-		ArrowLeft,
-		ArrowUp,
-		ArrowRight,
-		ArrowDown,
-		Insert,
-		Delete,
+		BackSpace = 1,
+		Tab = 2,
+		Return = 3,
+		Escape = 4,
+		Space = 5,
+
+		Home = 20,
+		End = 21,
+		PageUp = 22,
+		PageDown = 23,
+		Insert = 24,
+		Delete = 25,
+
+		ArrowLeft = 30,
+		ArrowUp = 31,
+		ArrowRight = 32,
+		ArrowDown = 33,
+
 		Colon,
 		Semicolon,
 
-		Num0,
-		Num1,
-		Num2,
-		Num3,
-		Num4,
-		Num5,
-		Num6,
-		Num7,
-		Num8,
-		Num9,
-		A,
-		B,
-		C,
-		D,
-		E,
-		F,
-		G,
-		H,
-		I,
-		J,
-		K,
-		L,
-		M,
-		N,
-		O,
-		P,
-		Q,
-		R,
-		S,
-		T,
-		U,
-		V,
-		W,
-		X,
-		Y,
-		Z,
+		Num0 = 40,
+		Num1 = 41,
+		Num2 = 42,
+		Num3 = 43,
+		Num4 = 44,
+		Num5 = 45,
+		Num6 = 46,
+		Num7 = 47,
+		Num8 = 48,
+		Num9 = 49,
 
-		Multiply,
-		Add,
-		Separator,
-		Subtract,
-		Decimal,
-		Divide,
+		A = 50,
+		B = 51,
+		C = 52,
+		D = 53,
+		E = 54,
+		F = 55,
+		G = 56,
+		H = 57,
+		I = 58,
+		J = 59,
+		K = 60,
+		L = 61,
+		M = 62,
+		N = 63,
+		O = 64,
+		P = 65,
+		Q = 66,
+		R = 67,
+		S = 68,
+		T = 69,
+		U = 70,
+		V = 71,
+		W = 72,
+		X = 73,
+		Y = 74,
+		Z = 75,
 
-		WinLeft,
-		WinRight,
+		Multiply = 80,
+		Add = 81,
+		Separator = 82,
+		Subtract = 83,
+		Decimal = 84,
+		Divide = 85,
 
 		// NumPad
-		NumPad0,
-		NumPad1,
-		NumPad2,
-		NumPad3,
-		NumPad4,
-		NumPad5,
-		NumPad6,
-		NumPad7,
-		NumPad8,
-		NumPad9,
-		NumPadMultiply,
-		NumPadAdd,
-		NumPadSeparator,
-		NumPadSubtract,
-		NumPadDecimal,
-		NumPadDivide,
-		NumPadEnter,
+		NumPad0 = 100,
+		NumPad1 = 101,
+		NumPad2 = 102,
+		NumPad3 = 103,
+		NumPad4 = 104,
+		NumPad5 = 105,
+		NumPad6 = 106,
+		NumPad7 = 107,
+		NumPad8 = 108,
+		NumPad9 = 109,
+		NumPadMultiply = 110,
+		NumPadAdd = 111,
+		NumPadSeparator = 112,
+		NumPadSubtract = 113,
+		NumPadDecimal = 114,
+		NumPadDivide = 115,
+		NumPadEnter = 116,
 
-		F1,
-		F2,
-		F3,
-		F4,
-		F5,
-		F6,
-		F7,
-		F8,
-		F9,
-		F10,
-		F11,
-		F12,
+		F1 = 120,
+		F2 = 121,
+		F3 = 122,
+		F4 = 123,
+		F5 = 124,
+		F6 = 125,
+		F7 = 126,
+		F8 = 127,
+		F9 = 128,
+		F10 = 129,
+		F11 = 130,
+		F12 = 131,
 
-		ShiftLeft,
-		ShiftRight,
-		ControlLeft,
-		ControlRight,
-		AltLeft,
-		AltRight,
+		WinLeft = 150,
+		WinRight = 151,
+		ShiftLeft = 152,
+		ShiftRight = 153,
+		ControlLeft = 154,
+		ControlRight = 155,
+		AltLeft = 156,
+		AltRight = 157,
 
-		BracketLeft,   // [
-		BracketRight,  // ]
+		BracketLeft = 170,
+		BracketRight = 171,
 
-		Equal,          /* = */
-		Slash,          /* / */
-		BackSlash,      /* \ */
-		Minus,
-		Comma,          /* , */
-		Period,         /* . */
-		Apostrophe,     /* ' */
-		GraveAccent,   /* ` */
+		Equal = 180,
+		Slash = 181,
+		BackSlash = 182,
+		Minus = 183,
+		Comma = 184,
+		Period = 185,
+		Apostrophe = 186,
+		GraveAccent = 187,
 
 		// Audio
-		AudioPlay,
-		AudioStop,
-		AudioNext,
-		AudioPrev,
+		AudioPlay = 200,
+		AudioStop = 201,
+		AudioNext = 202,
+		AudioPrev = 203,
 
 		MaxKeyCode,
 
 		// Synonyms
-		AsciiBegin = Num0,
-		AsciiEnd = Z,
+		AlphaNumBegin = Num0,
+		AlphaNumEnd = Z,
 		Enter = Return,
 	};
+
+	enum class KeyMod : uint16_t
+	{
+		WinLeft = 1 << 0,
+		WinRight = 1 << 1,
+		ShiftLeft = 1 << 2,
+		ShiftRight = 1 << 3,
+		ControlLeft = 1 << 4,
+		ControlRight = 1 << 5,
+		AltLeft = 1 << 6,
+		AltRight = 1 << 7,
+	};
+	UNICORE_ENUMFLAGS(KeyMod, KeyModFlags);
 
 	enum class MouseButton
 	{
@@ -151,9 +168,10 @@ namespace unicore
 
 		UC_NODISCARD virtual bool mouse_button(MouseButton button) const
 		{
-			return mouse_button(static_cast<uint8_t>(button));
+			return mouse_button((uint8_t)button);
 		}
 
-		UC_NODISCARD virtual bool keyboard(KeyCode code) const = 0;
+		UC_NODISCARD virtual bool key_code(KeyCode code) const = 0;
+		UC_NODISCARD virtual KeyModFlags key_mod() const = 0;
 	};
 }

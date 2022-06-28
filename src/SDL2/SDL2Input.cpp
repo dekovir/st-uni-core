@@ -5,120 +5,120 @@
 namespace unicore
 {
 	// https://wiki.libsdl.org/SDL_Scancode
-	const std::map<SDL_Keycode, KeyCode> s_key_bindings =
+	const std::map<SDL_Scancode, KeyCode> s_key_bindings =
 	{
-			{SDLK_SPACE, KeyCode::Space},
-			{SDLK_0, KeyCode::Num0},
-			{SDLK_1, KeyCode::Num1},
-			{SDLK_2, KeyCode::Num2},
-			{SDLK_3, KeyCode::Num3},
-			{SDLK_4, KeyCode::Num4},
-			{SDLK_5, KeyCode::Num5},
-			{SDLK_6, KeyCode::Num6},
-			{SDLK_7, KeyCode::Num7},
-			{SDLK_8, KeyCode::Num8},
-			{SDLK_9, KeyCode::Num9},
-			{SDLK_SEMICOLON, KeyCode::Semicolon},
-			{SDLK_a, KeyCode::A},
-			{SDLK_b, KeyCode::B},
-			{SDLK_c, KeyCode::C},
-			{SDLK_d, KeyCode::D},
-			{SDLK_e, KeyCode::E},
-			{SDLK_f, KeyCode::F},
-			{SDLK_g, KeyCode::G},
-			{SDLK_h, KeyCode::H},
-			{SDLK_i, KeyCode::I},
-			{SDLK_j, KeyCode::K},
-			{SDLK_k, KeyCode::K},
-			{SDLK_l, KeyCode::L},
-			{SDLK_m, KeyCode::M},
-			{SDLK_n, KeyCode::N},
-			{SDLK_o, KeyCode::O},
-			{SDLK_p, KeyCode::P},
-			{SDLK_q, KeyCode::Q},
-			{SDLK_r, KeyCode::R},
-			{SDLK_s, KeyCode::S},
-			{SDLK_t, KeyCode::T},
-			{SDLK_u, KeyCode::U},
-			{SDLK_v, KeyCode::V},
-			{SDLK_w, KeyCode::W},
-			{SDLK_x, KeyCode::X},
-			{SDLK_y, KeyCode::Y},
-			{SDLK_z, KeyCode::Z},
-			{SDLK_LEFTBRACKET, KeyCode::BracketLeft},
-			{SDLK_RIGHTBRACKET, KeyCode::BracketRight},
-			{SDLK_ESCAPE, KeyCode::Escape},
-			{SDLK_RETURN, KeyCode::Return},
-			{SDLK_TAB, KeyCode::Tab},
-			{SDLK_BACKSPACE, KeyCode::BackSpace},
-			{SDLK_INSERT, KeyCode::Insert},
-			{SDLK_DELETE, KeyCode::Delete},
-			{SDLK_RIGHT, KeyCode::ArrowRight},
-			{SDLK_LEFT, KeyCode::ArrowLeft},
-			{SDLK_DOWN, KeyCode::ArrowDown},
-			{SDLK_UP, KeyCode::ArrowUp},
-			{SDLK_PAGEUP, KeyCode::PageUp},
-			{SDLK_PAGEDOWN, KeyCode::PageDown},
-			{SDLK_HOME, KeyCode::Home},
-			{SDLK_END, KeyCode::End},
+			{SDL_SCANCODE_SPACE, KeyCode::Space},
+			{SDL_SCANCODE_0, KeyCode::Num0},
+			{SDL_SCANCODE_1, KeyCode::Num1},
+			{SDL_SCANCODE_2, KeyCode::Num2},
+			{SDL_SCANCODE_3, KeyCode::Num3},
+			{SDL_SCANCODE_4, KeyCode::Num4},
+			{SDL_SCANCODE_5, KeyCode::Num5},
+			{SDL_SCANCODE_6, KeyCode::Num6},
+			{SDL_SCANCODE_7, KeyCode::Num7},
+			{SDL_SCANCODE_8, KeyCode::Num8},
+			{SDL_SCANCODE_9, KeyCode::Num9},
+			{SDL_SCANCODE_SEMICOLON, KeyCode::Semicolon},
+			{SDL_SCANCODE_A, KeyCode::A},
+			{SDL_SCANCODE_B, KeyCode::B},
+			{SDL_SCANCODE_C, KeyCode::C},
+			{SDL_SCANCODE_D, KeyCode::D},
+			{SDL_SCANCODE_E, KeyCode::E},
+			{SDL_SCANCODE_F, KeyCode::F},
+			{SDL_SCANCODE_G, KeyCode::G},
+			{SDL_SCANCODE_H, KeyCode::H},
+			{SDL_SCANCODE_I, KeyCode::I},
+			{SDL_SCANCODE_J, KeyCode::K},
+			{SDL_SCANCODE_K, KeyCode::K},
+			{SDL_SCANCODE_L, KeyCode::L},
+			{SDL_SCANCODE_M, KeyCode::M},
+			{SDL_SCANCODE_N, KeyCode::N},
+			{SDL_SCANCODE_O, KeyCode::O},
+			{SDL_SCANCODE_P, KeyCode::P},
+			{SDL_SCANCODE_Q, KeyCode::Q},
+			{SDL_SCANCODE_R, KeyCode::R},
+			{SDL_SCANCODE_S, KeyCode::S},
+			{SDL_SCANCODE_T, KeyCode::T},
+			{SDL_SCANCODE_U, KeyCode::U},
+			{SDL_SCANCODE_V, KeyCode::V},
+			{SDL_SCANCODE_W, KeyCode::W},
+			{SDL_SCANCODE_X, KeyCode::X},
+			{SDL_SCANCODE_Y, KeyCode::Y},
+			{SDL_SCANCODE_Z, KeyCode::Z},
+			{SDL_SCANCODE_LEFTBRACKET, KeyCode::BracketLeft},
+			{SDL_SCANCODE_RIGHTBRACKET, KeyCode::BracketRight},
+			{SDL_SCANCODE_ESCAPE, KeyCode::Escape},
+			{SDL_SCANCODE_RETURN, KeyCode::Return},
+			{SDL_SCANCODE_TAB, KeyCode::Tab},
+			{SDL_SCANCODE_BACKSPACE, KeyCode::BackSpace},
+			{SDL_SCANCODE_INSERT, KeyCode::Insert},
+			{SDL_SCANCODE_DELETE, KeyCode::Delete},
+			{SDL_SCANCODE_RIGHT, KeyCode::ArrowRight},
+			{SDL_SCANCODE_LEFT, KeyCode::ArrowLeft},
+			{SDL_SCANCODE_DOWN, KeyCode::ArrowDown},
+			{SDL_SCANCODE_UP, KeyCode::ArrowUp},
+			{SDL_SCANCODE_PAGEUP, KeyCode::PageUp},
+			{SDL_SCANCODE_PAGEDOWN, KeyCode::PageDown},
+			{SDL_SCANCODE_HOME, KeyCode::Home},
+			{SDL_SCANCODE_END, KeyCode::End},
 
 			// F KEYS
-			{SDLK_F1, KeyCode::F1},
-			{SDLK_F2, KeyCode::F2},
-			{SDLK_F3, KeyCode::F3},
-			{SDLK_F4, KeyCode::F4},
-			{SDLK_F5, KeyCode::F5},
-			{SDLK_F6, KeyCode::F6},
-			{SDLK_F7, KeyCode::F7},
-			{SDLK_F8, KeyCode::F8},
-			{SDLK_F9, KeyCode::F9},
-			{SDLK_F10, KeyCode::F10},
-			{SDLK_F11, KeyCode::F11},
-			{SDLK_F12, KeyCode::F12},
+			{SDL_SCANCODE_F1, KeyCode::F1},
+			{SDL_SCANCODE_F2, KeyCode::F2},
+			{SDL_SCANCODE_F3, KeyCode::F3},
+			{SDL_SCANCODE_F4, KeyCode::F4},
+			{SDL_SCANCODE_F5, KeyCode::F5},
+			{SDL_SCANCODE_F6, KeyCode::F6},
+			{SDL_SCANCODE_F7, KeyCode::F7},
+			{SDL_SCANCODE_F8, KeyCode::F8},
+			{SDL_SCANCODE_F9, KeyCode::F9},
+			{SDL_SCANCODE_F10, KeyCode::F10},
+			{SDL_SCANCODE_F11, KeyCode::F11},
+			{SDL_SCANCODE_F12, KeyCode::F12},
 
 			// KEYPAD / NUMPAD
-			{SDLK_KP_0, KeyCode::NumPad0},
-			{SDLK_KP_1, KeyCode::NumPad1},
-			{SDLK_KP_2, KeyCode::NumPad2},
-			{SDLK_KP_3, KeyCode::NumPad3},
-			{SDLK_KP_4, KeyCode::NumPad4},
-			{SDLK_KP_5, KeyCode::NumPad5},
-			{SDLK_KP_6, KeyCode::NumPad6},
-			{SDLK_KP_7, KeyCode::NumPad7},
-			{SDLK_KP_8, KeyCode::NumPad8},
-			{SDLK_KP_9, KeyCode::NumPad9},
-			{SDLK_KP_DECIMAL, KeyCode::NumPadDecimal},
-			{SDLK_KP_DIVIDE, KeyCode::NumPadDivide},
-			{SDLK_KP_MULTIPLY, KeyCode::NumPadMultiply},
-			{SDLK_KP_MINUS, KeyCode::NumPadSubtract},
-			{SDLK_KP_PLUS, KeyCode::NumPadAdd},
-			{SDLK_KP_ENTER, KeyCode::NumPadEnter},
+			{SDL_SCANCODE_KP_0, KeyCode::NumPad0},
+			{SDL_SCANCODE_KP_1, KeyCode::NumPad1},
+			{SDL_SCANCODE_KP_2, KeyCode::NumPad2},
+			{SDL_SCANCODE_KP_3, KeyCode::NumPad3},
+			{SDL_SCANCODE_KP_4, KeyCode::NumPad4},
+			{SDL_SCANCODE_KP_5, KeyCode::NumPad5},
+			{SDL_SCANCODE_KP_6, KeyCode::NumPad6},
+			{SDL_SCANCODE_KP_7, KeyCode::NumPad7},
+			{SDL_SCANCODE_KP_8, KeyCode::NumPad8},
+			{SDL_SCANCODE_KP_9, KeyCode::NumPad9},
+			{SDL_SCANCODE_KP_DECIMAL, KeyCode::NumPadDecimal},
+			{SDL_SCANCODE_KP_DIVIDE, KeyCode::NumPadDivide},
+			{SDL_SCANCODE_KP_MULTIPLY, KeyCode::NumPadMultiply},
+			{SDL_SCANCODE_KP_MINUS, KeyCode::NumPadSubtract},
+			{SDL_SCANCODE_KP_PLUS, KeyCode::NumPadAdd},
+			{SDL_SCANCODE_KP_ENTER, KeyCode::NumPadEnter},
 
 			// AUDIO
-			{ SDLK_AUDIOPLAY, KeyCode::AudioPlay },
-			{ SDLK_AUDIOSTOP, KeyCode::AudioStop },
-			{ SDLK_AUDIONEXT, KeyCode::AudioNext },
-			{ SDLK_AUDIOPREV, KeyCode::AudioPrev },
+			{ SDL_SCANCODE_AUDIOPLAY, KeyCode::AudioPlay },
+			{ SDL_SCANCODE_AUDIOSTOP, KeyCode::AudioStop },
+			{ SDL_SCANCODE_AUDIONEXT, KeyCode::AudioNext },
+			{ SDL_SCANCODE_AUDIOPREV, KeyCode::AudioPrev },
 
 			// OTHER
-			{SDLK_SLASH, KeyCode::Slash},
-			{SDLK_BACKSLASH, KeyCode::BackSlash},
-			{SDLK_QUOTE, KeyCode::Apostrophe},
-			{SDLK_COMMA, KeyCode::Comma},
-			{SDLK_PERIOD, KeyCode::Period},
-			{SDLK_MINUS, KeyCode::Minus},
-			{SDLK_EQUALS, KeyCode::Equal},
-			{SDLK_BACKQUOTE, KeyCode::GraveAccent},
+			{SDL_SCANCODE_SLASH, KeyCode::Slash},
+			{SDL_SCANCODE_BACKSLASH, KeyCode::BackSlash},
+			{SDL_SCANCODE_APOSTROPHE, KeyCode::Apostrophe},
+			{SDL_SCANCODE_COMMA, KeyCode::Comma},
+			{SDL_SCANCODE_PERIOD, KeyCode::Period},
+			{SDL_SCANCODE_MINUS, KeyCode::Minus},
+			{SDL_SCANCODE_EQUALS, KeyCode::Equal},
+			{SDL_SCANCODE_GRAVE, KeyCode::GraveAccent},
 
 			// MODIFIERS
-			{SDLK_LSHIFT, KeyCode::ShiftLeft},
-			{SDLK_LCTRL, KeyCode::ControlLeft},
-			{SDLK_LALT, KeyCode::AltLeft},
-			{SDLK_LGUI, KeyCode::WinLeft},
-			{SDLK_RSHIFT, KeyCode::ShiftRight},
-			{SDLK_RCTRL, KeyCode::ControlRight},
-			{SDLK_RALT, KeyCode::AltRight},
-			{SDLK_RGUI, KeyCode::WinRight},
+			{SDL_SCANCODE_LSHIFT, KeyCode::ShiftLeft},
+			{SDL_SCANCODE_LCTRL, KeyCode::ControlLeft},
+			{SDL_SCANCODE_LALT, KeyCode::AltLeft},
+			{SDL_SCANCODE_LGUI, KeyCode::WinLeft},
+			{SDL_SCANCODE_RSHIFT, KeyCode::ShiftRight},
+			{SDL_SCANCODE_RCTRL, KeyCode::ControlRight},
+			{SDL_SCANCODE_RALT, KeyCode::AltRight},
+			{SDL_SCANCODE_RGUI, KeyCode::WinRight},
 	};
 
 	SDL2Input::SDL2Input(Logger& logger)
@@ -137,46 +137,65 @@ namespace unicore
 		return _mouse_pos;
 	}
 
-	bool SDL2Input::keyboard(KeyCode code) const
+	bool SDL2Input::key_code(KeyCode code) const
 	{
-		return _keys[static_cast<int>(code)];
+		return _key_code[static_cast<int>(code)];
+	}
+
+	KeyModFlags SDL2Input::key_mod() const
+	{
+		return _key_mod;
 	}
 
 	void SDL2Input::reset()
 	{
-		_mouse_button.fill(false);
+		_mouse_button.reset();
 		_mouse_pos = Vector2iConst::Zero;
 
-		_keys.fill(false);
+		_key_code.reset();
+		_key_mod = KeyModFlags::Zero;
 	}
 
-	void SDL2Input::apply_event(const SDL_MouseButtonEvent& evt)
+	void SDL2Input::update()
 	{
-		if (evt.button >= 1 && evt.button <= _mouse_button.size())
-		{
-			_mouse_button[evt.button - 1] = evt.type == SDL_MOUSEBUTTONDOWN;
-			_mouse_pos.x = evt.x;
-			_mouse_pos.y = evt.y;
-		}
-	}
+		// Mouse
+		const auto mouse_buttons = SDL_GetMouseState(&_mouse_pos.x, &_mouse_pos.y);
+		for (unsigned i = 0; i < _mouse_button.size(); i++)
+			_mouse_button[i] = (mouse_buttons & SDL_BUTTON(i + 1)) != 0;
 
-	void SDL2Input::apply_event(const SDL_MouseMotionEvent& evt)
-	{
-		_mouse_pos.x = evt.x;
-		_mouse_pos.y = evt.y;
-	}
+		// Keyboard State
+		_key_code.reset();
+		int keys_num;
+		const auto key_state = SDL_GetKeyboardState(&keys_num);
+		for (auto i = 0; i < keys_num; i++)
+		{
+			if (key_state[i] == 1)
+			{
+				const auto scancode = static_cast<SDL_Scancode>(i);
+				const auto it = s_key_bindings.find(scancode);
+				if (it != s_key_bindings.end())
+					_key_code[static_cast<int>(it->second)] = true;
+				//else
+				//{
+				//	const auto key_name = SDL_GetScancodeName(scancode);
+				//	UC_LOG_WARNING(_logger) << "Unknown scancode " << key_name << ":" << scancode;
+				//}
+			}
+		}
 
-	void SDL2Input::apply_event(const SDL_KeyboardEvent& evt)
-	{
-		const auto it = s_key_bindings.find(evt.keysym.sym);
-		if (it != s_key_bindings.end())
-		{
-			_keys[static_cast<int>(it->second)] = evt.state == SDL_PRESSED;
-		}
-		else
-		{
-			UC_LOG_WARNING(_logger) << "Unknown key " << evt.keysym.sym;
-		}
+		// Keyboard Modifiers
+		const auto key_mod = SDL_GetModState();
+		_key_mod.set(KeyMod::ShiftLeft, key_mod & KMOD_LSHIFT);
+		_key_mod.set(KeyMod::ShiftRight, key_mod & KMOD_LSHIFT);
+
+		_key_mod.set(KeyMod::AltLeft, key_mod & KMOD_LALT);
+		_key_mod.set(KeyMod::AltRight, key_mod & KMOD_RALT);
+
+		_key_mod.set(KeyMod::ControlLeft, key_mod & KMOD_LCTRL);
+		_key_mod.set(KeyMod::ControlRight, key_mod & KMOD_RCTRL);
+
+		_key_mod.set(KeyMod::WinLeft, key_mod & KMOD_LGUI);
+		_key_mod.set(KeyMod::WinRight, key_mod & KMOD_RGUI);
 	}
 }
 #endif
