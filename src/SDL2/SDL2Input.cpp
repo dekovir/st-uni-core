@@ -114,11 +114,11 @@ namespace unicore
 			{SDL_SCANCODE_LSHIFT, KeyCode::ShiftLeft},
 			{SDL_SCANCODE_LCTRL, KeyCode::ControlLeft},
 			{SDL_SCANCODE_LALT, KeyCode::AltLeft},
-			{SDL_SCANCODE_LGUI, KeyCode::WinLeft},
+			{SDL_SCANCODE_LGUI, KeyCode::SystemLeft},
 			{SDL_SCANCODE_RSHIFT, KeyCode::ShiftRight},
 			{SDL_SCANCODE_RCTRL, KeyCode::ControlRight},
 			{SDL_SCANCODE_RALT, KeyCode::AltRight},
-			{SDL_SCANCODE_RGUI, KeyCode::WinRight},
+			{SDL_SCANCODE_RGUI, KeyCode::SystemRight},
 	};
 
 	SDL2Input::SDL2Input(Logger& logger)
@@ -194,8 +194,8 @@ namespace unicore
 		_key_mod.set(KeyMod::ControlLeft, key_mod & KMOD_LCTRL);
 		_key_mod.set(KeyMod::ControlRight, key_mod & KMOD_RCTRL);
 
-		_key_mod.set(KeyMod::WinLeft, key_mod & KMOD_LGUI);
-		_key_mod.set(KeyMod::WinRight, key_mod & KMOD_RGUI);
+		_key_mod.set(KeyMod::SystemLeft, key_mod & KMOD_LGUI);
+		_key_mod.set(KeyMod::SystemRight, key_mod & KMOD_RGUI);
 	}
 }
 #endif

@@ -105,8 +105,8 @@ namespace unicore
 		F11 = 130,
 		F12 = 131,
 
-		WinLeft = 150,
-		WinRight = 151,
+		SystemLeft = 150,
+		SystemRight = 151,
 		ShiftLeft = 152,
 		ShiftRight = 153,
 		ControlLeft = 154,
@@ -142,8 +142,8 @@ namespace unicore
 
 	enum class KeyMod : uint16_t
 	{
-		WinLeft = 1 << 0,
-		WinRight = 1 << 1,
+		SystemLeft = 1 << 0,
+		SystemRight = 1 << 1,
 		ShiftLeft = 1 << 2,
 		ShiftRight = 1 << 3,
 		ControlLeft = 1 << 4,
@@ -152,6 +152,14 @@ namespace unicore
 		AltRight = 1 << 7,
 	};
 	UNICORE_ENUMFLAGS(KeyMod, KeyModFlags);
+
+	enum class KeyModCombine
+	{
+		System,
+		Shift,
+		Control,
+		Alt,
+	};
 
 	enum class MouseButton
 	{
@@ -166,12 +174,11 @@ namespace unicore
 		UC_NODISCARD virtual bool mouse_button(uint8_t button) const = 0;
 		UC_NODISCARD virtual const Vector2i& mouse_position() const = 0;
 
-		UC_NODISCARD virtual bool mouse_button(MouseButton button) const
-		{
-			return mouse_button((uint8_t)button);
-		}
+		UC_NODISCARD bool mouse_button(MouseButton button) const;
 
 		UC_NODISCARD virtual bool key_code(KeyCode code) const = 0;
 		UC_NODISCARD virtual KeyModFlags key_mod() const = 0;
+
+		UC_NODISCARD bool key_mod(KeyModCombine mod) const;
 	};
 }

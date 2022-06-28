@@ -18,7 +18,7 @@ namespace unicore
 #if defined(UNICORE_USE_SDL2)
 		return _running;
 #else
-		UC_STATIC_ASSERT_ALWAYS("Unimplemented platform");
+		UC_STATIC_ASSERT_ALWAYS("Unimplemented");
 #endif
 	}
 
@@ -44,7 +44,7 @@ namespace unicore
 				switch (evt.window.event)
 				{
 				case SDL_WINDOWEVENT_RESIZED:
-					logger.debug("Resized");
+					UC_LOG_DEBUG(logger) << "Resized";
 					//_render.update_size();
 					break;
 				}
@@ -55,7 +55,7 @@ namespace unicore
 		_time.update();
 		_input.update();
 #else
-		UC_STATIC_ASSERT_ALWAYS("Unimplemented platform");
+		UC_STATIC_ASSERT_ALWAYS("Unimplemented");
 #endif
 	}
 }

@@ -10,15 +10,47 @@ namespace unicore
 	public:
 		typedef std::underlying_type_t<T> TValue;
 
-		EnumFlag() : _value(0) {}
-		EnumFlag(T value) : _value(static_cast<TValue>(value)) {}
-		explicit EnumFlag(TValue value) : _value(value) {}
+		constexpr EnumFlag() : _value(0) {}
+		constexpr EnumFlag(T value) : _value(static_cast<TValue>(value)) {}
+		constexpr explicit EnumFlag(TValue value) : _value(value) {}
 
-		UC_NODISCARD bool empty() const { return _value == 0; }
+		UC_NODISCARD constexpr TValue value() const { return _value; }
 
-		UC_NODISCARD bool has(T flag) const
+		UC_NODISCARD constexpr bool empty() const { return _value == 0; }
+
+		UC_NODISCARD constexpr bool has(T flag) const
 		{
 			return (_value & static_cast<TValue>(flag)) == static_cast<TValue>(flag);
+		}
+
+		template<T Flag>
+		UC_NODISCARD constexpr bool has() const
+		{
+			return (_value & static_cast<TValue>(Flag)) == static_cast<TValue>(Flag);
+		}
+
+		template<T Flag>
+		UC_NODISCARD constexpr bool any() const
+		{
+			return (_value & static_cast<TValue>(Flag)) == static_cast<TValue>(Flag);
+		}
+
+		template<T FlagA, T FlagB, T... Rest>
+		UC_NODISCARD constexpr bool any() const
+		{
+			return any<FlagA>() || any<FlagB, Rest...>();
+		}
+
+		template<T Flag>
+		UC_NODISCARD constexpr bool all() const
+		{
+			return (_value & static_cast<TValue>(Flag)) == static_cast<TValue>(Flag);
+		}
+
+		template<T FlagA, T FlagB, T... Rest>
+		UC_NODISCARD constexpr bool all() const
+		{
+			return all<FlagA>() && all<FlagB, Rest...>();
 		}
 
 		void set(T flag)
@@ -45,9 +77,9 @@ namespace unicore
 			else set(flag);
 		}
 
-		bool operator[](T flag) const { return flag(flag); }
+		UC_NODISCARD constexpr bool operator[](T flag) const { return has(flag); }
 
-		EnumFlag<T> operator|(T flag) const
+		constexpr EnumFlag<T> operator|(T flag) const
 		{
 			EnumFlag<T> flags(_value);
 			flags.set(flag);
@@ -72,17 +104,7 @@ namespace unicore
 			return *this;
 		}
 
-		bool operator == (const EnumFlag<T>& other) const
-		{
-			return _value == other._value;
-		}
-
-		bool operator != (const EnumFlag<T>& other) const
-		{
-			return _value != other._value;
-		}
-
-		static bool is_changed(const EnumFlag<T>& a, const EnumFlag<T>& b, T flag)
+		static constexpr bool is_changed(const EnumFlag<T>& a, const EnumFlag<T>& b, T flag)
 		{
 			return a.has(flag) != b.has(flag);
 		}
@@ -94,11 +116,23 @@ namespace unicore
 	};
 
 	template<typename T>
+	static constexpr bool operator == (const EnumFlag<T>& a, const EnumFlag<T>& b)
+	{
+		return a.value() == b.value();
+	}
+
+	template<typename T>
+	static constexpr bool operator != (const EnumFlag<T>& a, const EnumFlag<T>& b)
+	{
+		return a.value() != b.value();
+	}
+
+	template<typename T>
 	const EnumFlag<T> EnumFlag<T>::Zero(0);
 
 #define UNICORE_ENUMFLAGS(TFlag, TName) \
-		typedef EnumFlag<TFlag> TName; \
-		inline TName operator|(TFlag a, TFlag b) { \
-				return TName(static_cast<TName::TValue>(a) | static_cast<TName::TValue>(b)); \
-		}
+	typedef EnumFlag<TFlag> TName; \
+	inline TName operator|(TFlag a, TFlag b) { \
+		return TName(static_cast<TName::TValue>(a) | static_cast<TName::TValue>(b)); \
+	}
 }
