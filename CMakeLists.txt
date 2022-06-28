@@ -15,7 +15,7 @@ option(UNICORE_TESTBED "Add Testbed project" OFF)
 # PROJECT ######################################################################
 project(UniCore)
 
-set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/")
+set(LIBS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/")
 
 function(unicore_group_sources_by_folder target)
 	set(last_dir "")
@@ -64,13 +64,13 @@ if (NOT EMSCRIPTEN)
 	set(SDL_LIBC ON CACHE BOOL "" FORCE)
 	set(SDL_TEST_ENABLED_BY_DEFAULT OFF CACHE BOOL "" FORCE)
 
-	add_subdirectory("${LIB_DIR}/SDL2")
+	add_subdirectory("${LIBS_DIR}/SDL2")
 	set_target_properties(SDL2-static SDL2main PROPERTIES FOLDER "Libs")
 	target_link_libraries(unicore PRIVATE SDL2-static)
 endif()
 
 # tinyxml2
-add_subdirectory("${LIB_DIR}/tinyxml2")
+add_subdirectory("${LIBS_DIR}/tinyxml2")
 set_target_properties(tinyxml2 PROPERTIES FOLDER "Libs")
 target_link_libraries(unicore PUBLIC tinyxml2)
 
