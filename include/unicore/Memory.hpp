@@ -35,4 +35,12 @@ namespace unicore
 		T* _data;
 		size_t _count;
 	};
+
+	struct MemorySize
+	{
+		size_t total_bytes;
+	};
+
+	class LogHelper;
+	extern LogHelper& operator << (LogHelper& helper, const MemorySize& value);
 }

@@ -1,5 +1,6 @@
 #include "unicore/ResourceCache.hpp"
 #include "unicore/RenderResource.hpp"
+#include "unicore/Memory.hpp"
 
 namespace unicore
 {
@@ -96,7 +97,7 @@ namespace unicore
 			{
 				_cached[path][type] = resource;
 				UC_LOG_DEBUG(logger) << "Loaded " << type << " from " << path
-					<< " [" <<  resource->system_memory_use() << "b]";
+					<< " " << MemorySize{ resource->system_memory_use() };
 				return resource;
 			}
 

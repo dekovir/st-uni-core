@@ -124,11 +124,11 @@ namespace unicore
 
 	LogHelper& operator<<(LogHelper& helper, const TypeInfo& type)
 	{
-		return helper << type.name();
+		return helper << '<' << type.name() << '>';
 	}
 
 	LogHelper& operator<<(LogHelper& helper, const TypeIndex& type)
 	{
-		return helper << type.name();
+		return helper << '<' << type.name() << '>';
 	}
 }

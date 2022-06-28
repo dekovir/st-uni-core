@@ -85,6 +85,14 @@ namespace unicore
 			return *this;
 		}
 
+		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		LogHelper& operator<<(T value)
+		{
+			const auto str = std::to_wstring(value);
+			append(str.c_str());
+			return *this;
+		}
+
 		template<typename T>
 		LogHelper& operator<<(std::initializer_list<T> list)
 		{
