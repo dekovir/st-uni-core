@@ -2,7 +2,7 @@
 #include "unicore/EnumFlag.hpp"
 #include "unicore/Render.hpp"
 #include "unicore/Color4.hpp"
-#include "unicore/Angle.hpp"
+#include "unicore/Math.hpp"
 #include "unicore/Rect.hpp"
 #include "unicore/Vertex2.hpp"
 #include "unicore/Surface.hpp"

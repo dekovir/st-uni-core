@@ -1,6 +1,4 @@
 #pragma once
-#include "unicore/EnumFlag.hpp"
-#include "unicore/Angle.hpp"
 #include "unicore/Render2D.hpp"
 
 namespace unicore
