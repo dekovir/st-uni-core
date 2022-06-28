@@ -38,7 +38,7 @@ namespace unicore
 			return *this;
 		}
 
-		TimeSpan& operator-=(const TimeSpan& other)
+		TimeSpan& operator -= (const TimeSpan& other)
 		{
 			_data -= other._data;
 			return *this;

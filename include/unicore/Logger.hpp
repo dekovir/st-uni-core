@@ -11,7 +11,7 @@ namespace unicore
 		Error,
 	};
 
-	class Logger : public Module
+	class Logger : public Object
 	{
 	public:
 		virtual void write(LogType type, const StringView text) = 0;

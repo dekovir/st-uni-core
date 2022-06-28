@@ -2,8 +2,11 @@
 #include "unicore/Data.hpp"
 #include "unicore/XMLData.hpp"
 #include "unicore/Font.hpp"
-#include "Windows/WinPlatform.hpp"
-#include "Linux/LinuxPlatform.hpp"
+#if defined(UNICORE_PLATFORM_WINDOWS)
+#	include "Windows/WinPlatform.hpp"
+#elif defined(UNICORE_PLATFORM_LINUX)
+#	include "Linux/LinuxPlatform.hpp"
+#endif
 
 namespace unicore
 {
