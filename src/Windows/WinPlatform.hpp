@@ -17,6 +17,8 @@ namespace unicore
 		WinPlatform();
 
 		UC_NODISCARD bool running() const override;
+		void quit() override;
+
 		void poll_events() override;
 
 	protected:

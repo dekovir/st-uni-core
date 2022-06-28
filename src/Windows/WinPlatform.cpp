@@ -22,6 +22,11 @@ namespace unicore
 #endif
 	}
 
+	void WinPlatform::quit()
+	{
+		_running = false;
+	}
+
 	void WinPlatform::poll_events()
 	{
 #if defined(UNICORE_USE_SDL2)

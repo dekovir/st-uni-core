@@ -24,6 +24,11 @@ namespace unicore
 
 	void MyCore::on_update()
 	{
+#if !defined(UNICORE_PLATFORM_WEB)
+		if (input.key_code(KeyCode::Escape))
+			platform.quit();
+#endif
+
 		if (input.mouse_button(MouseButton::Left))
 		//if (input.key_code(KeyCode::Space))
 			_angle += 180_deg * static_cast<float>(time.delta().total_seconds());

@@ -27,6 +27,7 @@ namespace unicore
 		ResourceCache resources;
 
 		UC_NODISCARD virtual bool running() const = 0;
+		virtual void quit() = 0;
 
 		virtual void poll_events() = 0;
 
