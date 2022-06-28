@@ -9,24 +9,16 @@ namespace unicore
 	class BinaryData : public Resource
 	{
 	public:
-		BinaryData(void* buffer, size_t size, bool free_buffer = true)
-			: _buffer(buffer), _size(size), _free_buffer(free_buffer) {}
+		explicit BinaryData(const Shared<MemoryChunk<>>& chunk)
+			: _chunk(chunk) {}
 
-		~BinaryData() override
-		{
-			if (_free_buffer)
-				Memory::free(_buffer);
-		}
+		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BinaryData) + _chunk->count(); }
 
-		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BinaryData) + _size; }
-
-		UC_NODISCARD const void* data() const { return _buffer; }
-		UC_NODISCARD size_t size() const { return _size; }
+		UC_NODISCARD const void* data() const { return _chunk->data(); }
+		UC_NODISCARD size_t size() const { return _chunk->count(); }
 
 	protected:
-		void* _buffer;
-		size_t _size;
-		bool _free_buffer;
+		Shared<MemoryChunk<>> _chunk;
 	};
 
 	class BinaryDataLoader : public ResourceLoaderT<BinaryData>

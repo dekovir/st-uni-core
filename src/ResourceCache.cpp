@@ -96,7 +96,7 @@ namespace unicore
 			{
 				_cached[path][type] = resource;
 				UC_LOG_DEBUG(logger) << "Loaded " << type << " from " << path
-					<< " [" <<  resource->system_memory_use() << "bytes]";
+					<< " [" <<  resource->system_memory_use() << "b]";
 				return resource;
 			}
 

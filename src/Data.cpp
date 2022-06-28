@@ -8,11 +8,10 @@ namespace unicore
 	{
 		const auto size = context.stream.size();
 		context.stream.seek(0);
-		auto buffer = Memory::alloc(size);
-		if (context.stream.read(buffer, size))
-			return make_shared<BinaryData>(buffer, size);
+		auto buffer = make_shared<MemoryChunk<>>(size);
+		if (context.stream.read(buffer->data(), size))
+			return std::make_shared<BinaryData>(buffer);
 
-		free(buffer);
 		UC_LOG_ERROR(context.logger) << "Read failed";
 		return nullptr;
 	}
