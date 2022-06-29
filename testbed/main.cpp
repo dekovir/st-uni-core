@@ -35,16 +35,24 @@ namespace unicore
 		//List<WString> files;
 		//file_system.enumerate(L"assets"_path, files, FileFlag::File);
 
-		_tex = resources.load<Texture>(L"assets/zazaka.bmp"_path);
+#if 0
+		{
+			BitmapSurface surface(64, 64);
+			surface.fill(ColorConst4b::Cyan);
+			_tex = render.create_texture(surface);
+		}
+#else
+		_tex = resources.load<Texture>(L"assets/zazaka.png"_path);
+#endif
 		_font = resources.load<BitmapFont>(L"assets/font_004.fnt"_path);
 
 		size_t sys_mem;
 		resources.calc_memory_use(&sys_mem, nullptr);
-		UC_LOG_DEBUG(logger) << "Resource used system memory " << MemorySize{sys_mem};
+		UC_LOG_DEBUG(logger) << "Resource used system memory " << MemorySize{ sys_mem };
 
 		resources.unload_unused();
 		resources.dump_used();
-	}
+		}
 
 	void MyCore::on_update()
 	{
@@ -90,6 +98,8 @@ namespace unicore
 
 		SpriteBatch batch;
 		batch.begin();
+		batch.draw(_tex, {32, 32});
+
 		for (const auto& entity : _entites)
 			batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
 
@@ -120,4 +130,4 @@ namespace unicore
 	}
 
 	UNICORE_MAIN_CORE(MyCore);
-}
+	}

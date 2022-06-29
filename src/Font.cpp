@@ -117,7 +117,7 @@ namespace unicore
 		}
 
 		Path texture_path(context.path);
-		texture_path.replace_extension(L".bmp");
+		texture_path.replace_extension(L".png");
 		const auto texture = context.cache.load<Texture>(texture_path);
 		if (!texture)
 		{

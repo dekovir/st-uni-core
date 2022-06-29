@@ -103,6 +103,28 @@ namespace unicore
 				return make_shared<SDL2Texture>(texture);
 		}
 
+		if (const auto bitmap = dynamic_cast<BitmapSurface*>(&surface))
+		{
+			auto& size = bitmap->size();
+
+#if 1
+			auto sdl_texture = SDL_CreateTexture(_renderer,
+				SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, size.x, size.y);
+			SDL_SetTextureBlendMode(sdl_texture, SDL_BLENDMODE_BLEND);
+			auto ret = SDL_UpdateTexture(sdl_texture, nullptr, bitmap->data(), size.x * 4);
+			return make_shared<SDL2Texture>(sdl_texture);
+#else
+			if (const auto sdl_surface = SDL_CreateRGBSurfaceWithFormatFrom(
+				bitmap->data(), size.x, size.y, 4 * 8, size.x * 4, SDL_PIXELFORMAT_RGBA32))
+			{
+				auto texture = SDL_CreateTextureFromSurface(_renderer, sdl_surface);
+				SDL_FreeSurface(sdl_surface);
+				if (texture)
+					return make_shared<SDL2Texture>(texture);
+			}
+#endif
+		}
+
 		return nullptr;
 	}
 

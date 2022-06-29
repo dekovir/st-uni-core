@@ -41,7 +41,7 @@ namespace unicore
 
 	bool MemoryStream::read(void* buffer, size_t size, size_t* bytes_read)
 	{
-		const auto count = Math::min(size, _chunk->size() - _position);
+		const auto count = Math::min<size_t>(size, _chunk->size() - _position);
 		if (bytes_read) *bytes_read = count;
 		if (count > 0)
 		{

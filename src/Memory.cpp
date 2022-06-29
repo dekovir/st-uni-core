@@ -1,5 +1,6 @@
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
+#include "unicore/Math.hpp"
 
 namespace unicore
 {
@@ -26,6 +27,37 @@ namespace unicore
 	void Memory::move(void* dest, const void* src, size_t size)
 	{
 		memmove(dest, src, size);
+	}
+
+	void MemoryChunk::reset()
+	{
+		if (!empty())
+			Memory::set(_data, 0, _size);
+	}
+
+	void MemoryChunk::resize(size_t new_size, bool copy_data)
+	{
+		if (new_size == _size) return;
+
+		const auto new_mem = static_cast<uint8_t*>(Memory::alloc(new_size));
+		if (copy_data)
+		{
+			const auto copy_size = Math::min(new_size, _size);
+			Memory::copy(new_mem, _data, copy_size);
+		}
+
+		_data = new_mem;
+		_size = new_size;
+	}
+
+	void MemoryChunk::free()
+	{
+		if (!empty())
+		{
+			Memory::free(_data);
+			_data = nullptr;
+			_size = 0;
+		}
 	}
 
 	LogHelper& operator<<(LogHelper& helper, const MemorySize& value)
