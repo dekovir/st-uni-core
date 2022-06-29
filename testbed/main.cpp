@@ -1,30 +1,30 @@
 #include "main.h"
 #include "UnicoreMain.h"
 #include "unicore/Input.hpp"
+#include "unicore/Memory.hpp"
 #include "unicore/Graphics.hpp"
 #include "unicore/SpriteBatch.hpp"
-#include "unicore/ResourcePath.hpp"
 
 namespace unicore
 {
 	void Entity::update(const Vector2i& size, float delta)
 	{
-		position += velocity * delta;
+		center += velocity * delta;
 
 		if (
-			(velocity.x < 0 && position.x < radius) ||
-			(velocity.x > 0 && position.x > size.x - radius))
+			(velocity.x < 0 && center.x < radius) ||
+			(velocity.x > 0 && center.x > size.x - radius))
 		{
 			velocity.x *= -1;
 		}
 		if (
-			(velocity.y < 0 && position.y < radius) ||
-			(velocity.y > 0 && position.y > size.y - radius))
+			(velocity.y < 0 && center.y < radius) ||
+			(velocity.y > 0 && center.y > size.y - radius))
 		{
 			velocity.y *= -1;
 		}
 
-		angle += aspeed * delta;
+		angle += angle_speed * delta;
 	}
 
 	MyCore::MyCore(const CoreSettings& settings)
@@ -38,8 +38,12 @@ namespace unicore
 		_tex = resources.load<Texture>(L"assets/zazaka.bmp"_path);
 		_font = resources.load<BitmapFont>(L"assets/font_004.fnt"_path);
 
-		//constexpr auto var = "assets:zazaka.bmp"_res;
-		//UC_LOG_INFO(logger) << var;
+		size_t sys_mem;
+		resources.calc_memory_use(&sys_mem, nullptr);
+		UC_LOG_DEBUG(logger) << "Resource used system memory " << MemorySize{sys_mem};
+
+		resources.unload_unused();
+		resources.dump_used();
 	}
 
 	void MyCore::on_update()
@@ -86,8 +90,8 @@ namespace unicore
 
 		SpriteBatch batch;
 		batch.begin();
-		for (const auto & entity : _entites)
-			batch.draw(_tex, entity.position, entity.angle, entity.scale, entity.color);
+		for (const auto& entity : _entites)
+			batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
 
 		batch.print(_font, { 0, 0 }, fps_str);
 		batch.print(_font, { 0, 20 }, count_str);
@@ -99,18 +103,18 @@ namespace unicore
 	void MyCore::spawn_entity(const Vector2f& position, const Vector2i& size)
 	{
 		Entity entity;
-		entity.position = position;
+		entity.center = position;
 		entity.velocity = Vector2f(
-			_random.range(100, 500) * (_random.boolean() ? +1 : -1),
-			_random.range(100, 500) * (_random.boolean() ? +1 : -1)
+			_random.range(100.f, 500.f) * (_random.boolean() ? +1.f : -1.f),
+			_random.range(100.f, 500.f) * (_random.boolean() ? +1.f : -1.f)
 		);
 		entity.color = Color4b::create_random(_random);
 
-		entity.radius = _random.range(25, 50);
-		entity.scale = 2.f * entity.radius / size.x;
+		entity.radius = _random.range(25.f, 50.f);
+		entity.scale = 2.f * entity.radius / static_cast<float>(size.x);
 
-		entity.angle = Degrees(_random.range(0, 359));
-		entity.aspeed = Degrees(_random.range(45, 300));
+		entity.angle = Degrees(_random.range(0.f, 359.f));
+		entity.angle_speed = Degrees(_random.range(45.f, 300.f));
 
 		_entites.push_back(entity);
 	}

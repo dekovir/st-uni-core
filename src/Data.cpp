@@ -8,7 +8,7 @@ namespace unicore
 	{
 		const auto size = context.stream.size();
 		context.stream.seek(0);
-		auto buffer = make_shared<MemoryChunk<>>(size);
+		auto buffer = make_shared<MemoryChunk>(size);
 		if (context.stream.read(buffer->data(), size))
 			return std::make_shared<BinaryData>(buffer);
 

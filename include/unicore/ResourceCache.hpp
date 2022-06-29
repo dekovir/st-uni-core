@@ -20,6 +20,8 @@ namespace unicore
 		explicit ResourceCache(Logger& logger);
 
 		void unload_all();
+		void unload_unused();
+
 		void clear();
 
 		void add_provider(StreamProvider& provider);
@@ -44,6 +46,7 @@ namespace unicore
 			return std::dynamic_pointer_cast<T>(load(path, get_type_index<T>(), flags));
 		}
 
+		void dump_used();
 		void calc_memory_use(size_t* system, size_t* video) const;
 
 		void register_module(Context& context) override;

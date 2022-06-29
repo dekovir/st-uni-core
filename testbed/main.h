@@ -6,14 +6,14 @@ namespace unicore
 {
 	struct Entity
 	{
-		Vector2f position;
+		Vector2f center;
 		Vector2f velocity = Vector2f(300, 300);
 
 		float radius;
 		Vector2f scale;
 
 		Radians angle;
-		Radians aspeed;
+		Radians angle_speed;
 
 		Color4b color;
 

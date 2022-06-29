@@ -10,14 +10,13 @@ namespace unicore
 		static void free(void* ptr);
 	};
 
-	template<typename T = uint8_t>
 	class MemoryChunk
 	{
 	public:
-		explicit MemoryChunk(size_t count)
-			: _count(count)
+		explicit MemoryChunk(size_t size)
+			: _size(size)
 		{
-			_data = static_cast<T*>(Memory::alloc(total_size()));
+			_data = static_cast<uint8_t*>(Memory::alloc(size));
 		}
 
 		~MemoryChunk()
@@ -25,21 +24,31 @@ namespace unicore
 			Memory::free(_data);
 		}
 
-		UC_NODISCARD T* data() { return _data; }
-		UC_NODISCARD const T* data() const { return _data; }
+		UC_NODISCARD uint8_t* data() { return _data; }
+		UC_NODISCARD const uint8_t* data() const { return _data; }
 
-		UC_NODISCARD constexpr size_t count() const { return _count; }
-		UC_NODISCARD constexpr size_t total_size() const { return _count * sizeof(T); }
+		UC_NODISCARD constexpr size_t size() const { return _size; }
 
 	protected:
-		T* _data;
-		size_t _count;
+		uint8_t* _data;
+		size_t _size;
 	};
 
 	struct MemorySize
 	{
-		size_t total_bytes;
+		size_t bytes;
+
+		MemorySize& operator+=(const MemorySize other)
+		{
+			bytes += other.bytes;
+			return *this;
+		}
 	};
+
+	static constexpr MemorySize operator+(const MemorySize a, const MemorySize b)
+	{
+		return { a.bytes + b.bytes };
+	}
 
 	class LogHelper;
 	extern LogHelper& operator << (LogHelper& helper, const MemorySize& value);

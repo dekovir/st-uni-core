@@ -6,11 +6,28 @@ namespace unicore
 {
 	ResourceCache::ResourceCache(Logger& logger)
 		: _logger(logger)
-	{}
+	{
+	}
 
 	void ResourceCache::unload_all()
 	{
 		_cached.clear();
+	}
+
+	void ResourceCache::unload_unused()
+	{
+		for (auto& [path, map] : _cached)
+		{
+			for (auto jt = map.begin(); jt != map.end();)
+			{
+				if (jt->second.use_count() == 1)
+				{
+					UC_LOG_DEBUG(_logger) << "Unload resource " << jt->first << " from " << path;
+					jt = map.erase(jt);
+				}
+				else ++jt;
+			}
+		}
 	}
 
 	void ResourceCache::clear()
@@ -105,6 +122,30 @@ namespace unicore
 		}
 
 		return nullptr;
+	}
+
+	void ResourceCache::dump_used()
+	{
+		unsigned index = 0;
+		MemorySize sys_mem{ 0 };
+
+		UC_LOG_INFO(_logger) << "Used resource dump";
+		UC_LOG_INFO(_logger) << "----------------------------------";
+		for (const auto& [path, map] : _cached)
+		{
+			for (const auto& [type, resource] : map)
+			{
+				const auto memory_use = MemorySize{ resource->system_memory_use() };
+				sys_mem += memory_use;
+				UC_LOG_INFO(_logger) << index << ": " << path << " " << type
+					<< " [" << resource.use_count() 
+					<< ", " << memory_use << "]";
+				index++;
+			}
+		}
+
+		UC_LOG_INFO(_logger) << "----------------------------------";
+		UC_LOG_INFO(_logger) << "Used system memory: " << sys_mem;
 	}
 
 	void ResourceCache::calc_memory_use(size_t* system, size_t* video) const

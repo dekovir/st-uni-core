@@ -8,16 +8,16 @@ namespace unicore
 	class BinaryData : public Resource
 	{
 	public:
-		explicit BinaryData(const Shared<MemoryChunk<>>& chunk)
+		explicit BinaryData(const Shared<MemoryChunk>& chunk)
 			: _chunk(chunk) {}
 
-		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BinaryData) + _chunk->count(); }
+		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BinaryData) + _chunk->size(); }
 
 		UC_NODISCARD const void* data() const { return _chunk->data(); }
-		UC_NODISCARD size_t size() const { return _chunk->count(); }
+		UC_NODISCARD size_t size() const { return _chunk->size(); }
 
 	protected:
-		Shared<MemoryChunk<>> _chunk;
+		Shared<MemoryChunk> _chunk;
 	};
 
 	class BinaryDataLoader : public ResourceLoaderT<BinaryData>
