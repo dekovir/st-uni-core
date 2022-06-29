@@ -24,7 +24,7 @@ namespace unicore
 	protected:
 		Logger& _logger;
 		Bitset<3> _mouse_button = { false };
-		Vector2i _mouse_pos = Vector2i::Zero;
+		Vector2i _mouse_pos = Vector2iConst::Zero;
 
 		Bitset<static_cast<size_t>(KeyCode::MaxKeyCode)> _key_code = { false };
 		KeyModFlags _key_mod;

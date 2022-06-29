@@ -13,7 +13,7 @@ namespace unicore
 		constexpr Vector2(T x, T y);
 		constexpr Vector2(T value);
 
-		inline void set(T _x, T _y)
+		void set(T _x, T _y)
 		{
 			x = _x;
 			y = _y;
@@ -43,13 +43,10 @@ namespace unicore
 		}
 
 		template<typename U>
-		constexpr Vector2<U> cast() const
+		UC_NODISCARD constexpr Vector2<U> cast() const
 		{
 			return Vector2<U>(static_cast<U>(x), static_cast<U>(y));
 		}
-
-		static const Vector2<T> Zero;
-		static const Vector2<T> One;
 	};
 
 	typedef Vector2<float> Vector2f;
@@ -65,12 +62,6 @@ namespace unicore
 	constexpr Vector2<T>::Vector2(T value)
 		: x(value), y(value)
 	{}
-
-	template<typename T>
-	const Vector2<T> Vector2<T>::Zero{ 0, 0 };
-
-	template<typename T>
-	const Vector2<T> Vector2<T>::One{ 1, 1 };
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>

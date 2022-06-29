@@ -45,8 +45,8 @@ namespace unicore
 	{
 #if defined(UNICORE_USE_SDL2)
 		SDL2RenderSettings settings;
-		settings.size = unicore::Vector2i::Zero;
-		//settings.size = unicore::Vector2i(800, 600);
+		settings.size = Vector2iConst::Zero;
+		//settings.size = Vector2i(800, 600);
 		settings.resizeable = false;
 		settings.borderless = false;
 		settings.fullscreen = false;

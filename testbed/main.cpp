@@ -75,7 +75,7 @@ namespace unicore
 				Vertex2::from_pos({ 200, 100 }, ColorConst4b::Cyan),
 				Vertex2::from_pos({ 100, 200 }, ColorConst4b::Magenta))
 			.set_color(ColorConst4b::Red)
-			.draw_line(Vector2i::Zero, size)
+			.draw_line(Vector2iConst::Zero, size)
 			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))
 			.set_color(ColorConst4b::White)
 			.set_color(0x20FF00FF_rgba)

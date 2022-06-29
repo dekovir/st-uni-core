@@ -107,6 +107,7 @@ namespace unicore
 
 	Shared<Resource> BitmapFontLoader::load(const ResourceLoaderContext& context)
 	{
+		// TODO: Finish loading
 #if defined(UNICORE_USE_XML)
 		const auto xml = context.cache.load<XMLData>(context.path, ResourceCacheFlag::SkipExtension);
 		if (!xml)

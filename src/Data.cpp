@@ -27,6 +27,4 @@ namespace unicore
 
 		return nullptr;
 	}
-
-	
 }

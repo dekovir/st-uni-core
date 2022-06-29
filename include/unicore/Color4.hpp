@@ -80,7 +80,7 @@ namespace unicore
 			};
 		}
 
-		[[nodiscard]] constexpr uint32_t to_rgb() const
+		UC_NODISCARD constexpr uint32_t to_rgb() const
 		{
 			return
 				(convert_component_to_uint8(r) << 16) |
@@ -108,6 +108,7 @@ namespace unicore
 		}
 
 	protected:
+		// TODO: Convert to template
 		static constexpr T convert_component_from_uint8(uint8_t value)
 		{
 			if constexpr (std::is_same_v<T, uint8_t>) return value;
@@ -118,7 +119,8 @@ namespace unicore
 			return static_cast<T>((static_cast<double>(value) / 255.0) * color_limits<T>::range()) + color_limits<T>::min();
 		}
 
-		[[nodiscard]] constexpr uint8_t convert_component_to_uint8(T value) const
+		// TODO: Convert to template
+		UC_NODISCARD constexpr uint8_t convert_component_to_uint8(T value) const
 		{
 			if constexpr (std::is_same_v<T, uint8_t>) return value;
 
@@ -129,7 +131,7 @@ namespace unicore
 		}
 	};
 
-	template<typename T>
+	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 	static bool operator==(const Color4<T>& a, const Color4<T>& b)
 	{
 		return
@@ -139,10 +141,20 @@ namespace unicore
 			a.a == b.a;
 	}
 
-	template<typename T>
+	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 	static bool operator!=(const Color4<T>& a, const Color4<T>& b)
 	{
 		return !(a == b);
+	}
+
+	template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+	static Color4<T> operator*(const Color4<T>& color, T value)
+	{
+		return Color4<T>(
+			color.r * value,
+			color.g * value,
+			color.b * value,
+			color.a * value);
 	}
 
 	using Color4b = Color4<uint8_t>;
