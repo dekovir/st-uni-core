@@ -66,8 +66,9 @@ namespace unicore
 		if (_tex && input.mouse_button(MouseButton::Left))
 			spawn_entity(input.mouse_position().cast<float>(), _tex->size());
 
+		const auto delta = static_cast<float>(time.delta().total_seconds());
 		for (auto& entity : _entites)
-			entity.update(screen_size, time.delta().total_seconds());
+			entity.update(screen_size, delta);
 	}
 
 	void MyCore::on_draw()
@@ -134,7 +135,7 @@ namespace unicore
 		auto& screen_size = render.screen_size();
 		auto& size = _tex->size();
 
-		for (unsigned i = 0; i < 200; i++)
+		for (unsigned i = 0; i < count; i++)
 		{
 			const Vector2f pos(
 				_random.range(0.f, screen_size.x),
