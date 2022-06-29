@@ -150,7 +150,7 @@ namespace unicore
 	void SDL2Input::reset()
 	{
 		_mouse_button.reset();
-		_mouse_pos = Vector2iConst::Zero;
+		_mouse_pos = VectorConst2i::Zero;
 
 		_key_code.reset();
 		_key_mod = KeyModFlags::Zero;

@@ -52,7 +52,7 @@ namespace unicore
 
 		resources.unload_unused();
 		resources.dump_used();
-		}
+	}
 
 	void MyCore::on_update()
 	{
@@ -61,13 +61,13 @@ namespace unicore
 			platform.quit();
 #endif
 
+		auto& screen_size = render.screen_size();
+
 		if (_tex && input.mouse_button(MouseButton::Left))
 			spawn_entity(input.mouse_position().cast<float>(), _tex->size());
 
-		auto& size = render.screen_size();
-
 		for (auto& entity : _entites)
-			entity.update(size, time.delta().total_seconds());
+			entity.update(screen_size, time.delta().total_seconds());
 	}
 
 	void MyCore::on_draw()
@@ -83,7 +83,7 @@ namespace unicore
 				Vertex2::from_pos({ 200, 100 }, ColorConst4b::Cyan),
 				Vertex2::from_pos({ 100, 200 }, ColorConst4b::Magenta))
 			.set_color(ColorConst4b::Red)
-			.draw_line(Vector2iConst::Zero, size)
+			.draw_line(VectorConst2i::Zero, size)
 			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))
 			.set_color(ColorConst4b::White)
 			.set_color(0x20FF00FF_rgba)
@@ -98,7 +98,7 @@ namespace unicore
 
 		SpriteBatch batch;
 		batch.begin();
-		batch.draw(_tex, {32, 32});
+		batch.draw(_tex, { 32, 32 });
 
 		for (const auto& entity : _entites)
 			batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
@@ -129,5 +129,20 @@ namespace unicore
 		_entites.push_back(entity);
 	}
 
-	UNICORE_MAIN_CORE(MyCore);
+	void MyCore::spawn_entities(unsigned count)
+	{
+		auto& screen_size = render.screen_size();
+		auto& size = _tex->size();
+
+		for (unsigned i = 0; i < 200; i++)
+		{
+			const Vector2f pos(
+				_random.range(0.f, screen_size.x),
+				_random.range(0.f, screen_size.y)
+			);
+			spawn_entity(pos, size);
+		}
 	}
+
+	UNICORE_MAIN_CORE(MyCore);
+}

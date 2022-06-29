@@ -36,7 +36,7 @@ namespace unicore
 		bool try_get_pixel(const Vector2i& pos, Color4b& color) { return try_get_pixel(pos.x, pos.y, color); }
 
 	protected:
-		Vector2i _size = Vector2iConst::Zero;
+		Vector2i _size = VectorConst2i::Zero;
 		MemoryChunk _chunk;
 
 		UC_NODISCARD int get_offset(int x, int y) const { return (y * _size.x + x) * 4; }

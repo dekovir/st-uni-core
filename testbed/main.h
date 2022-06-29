@@ -35,5 +35,6 @@ namespace unicore
 		void on_draw() override;
 
 		void spawn_entity(const Vector2f& position, const Vector2i& size);
+		void spawn_entities(unsigned count);
 	};
 }

@@ -117,7 +117,7 @@ namespace unicore
 	}
 
 	template<typename T>
-	struct Vector2Const
+	struct VectorConst2
 	{
 		static constexpr Vector2<T> Zero = Vector2<T>(0, 0);
 		static constexpr Vector2<T> One = Vector2<T>(1, 1);
@@ -126,6 +126,6 @@ namespace unicore
 		static constexpr Vector2<T> AxisY = Vector2<T>(0, 1);
 	};
 
-	using Vector2iConst = Vector2Const<int>;
-	using Vector2fConst = Vector2Const<float>;
+	using VectorConst2i = VectorConst2<int>;
+	using VectorConst2f = VectorConst2<float>;
 }

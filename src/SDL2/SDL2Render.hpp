@@ -21,7 +21,7 @@ namespace unicore
 
 	protected:
 		SDL_Surface* _context;
-		Vector2i _size = Vector2iConst::Zero;
+		Vector2i _size = VectorConst2i::Zero;
 
 		void update_size();
 
@@ -45,7 +45,7 @@ namespace unicore
 
 	protected:
 		SDL_Texture* _context;
-		Vector2i _size = Vector2iConst::Zero;
+		Vector2i _size = VectorConst2i::Zero;
 
 		void update_size();
 
@@ -112,7 +112,7 @@ namespace unicore
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
 
-		Vector2i _size = Vector2iConst::Zero;
+		Vector2i _size = VectorConst2i::Zero;
 		Color4b _color = ColorConst4b::White;
 		Optional<Recti> _clip_rect;
 
