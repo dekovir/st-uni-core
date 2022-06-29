@@ -34,6 +34,28 @@ namespace unicore
 
 		template<typename T>
 		static constexpr T sign(T value) { return value >= 0 ? +1 : -1; }
+
+		template<typename T>
+		static constexpr T clamp(T value, T min_value, T max_value)
+		{
+			if (value > max_value) return max_value;
+			if (value < min_value) return min_value;
+			return value;
+		}
+
+		template<typename T>
+		static constexpr T clamp_max(T value, T max_value)
+		{
+			if (value > max_value) return max_value;
+			return value;
+		}
+
+		template<typename T>
+		static constexpr T clamp_min(T value, T min_value)
+		{
+			if (value < min_value) return min_value;
+			return value;
+		}
 	}
 
 	struct AngleTypeRad

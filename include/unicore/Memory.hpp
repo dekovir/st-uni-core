@@ -8,6 +8,10 @@ namespace unicore
 	public:
 		static void* alloc(size_t size);
 		static void free(void* ptr);
+
+		static void set(void* dest, int value, size_t size);
+		static void copy(void* dest, const void* src, size_t size);
+		static void move(void* dest, const void* src, size_t size);
 	};
 
 	class MemoryChunk

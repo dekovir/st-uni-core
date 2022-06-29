@@ -13,6 +13,21 @@ namespace unicore
 		delete[] static_cast<char*>(ptr);
 	}
 
+	void Memory::set(void* dest, int value, size_t size)
+	{
+		memset(dest, value, size);
+	}
+
+	void Memory::copy(void* dest, const void* src, size_t size)
+	{
+		memcpy(dest, src, size);
+	}
+
+	void Memory::move(void* dest, const void* src, size_t size)
+	{
+		memmove(dest, src, size);
+	}
+
 	LogHelper& operator<<(LogHelper& helper, const MemorySize& value)
 	{
 		constexpr auto KB = 1024;

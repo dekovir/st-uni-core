@@ -27,7 +27,7 @@ namespace unicore
 	class WriteStream : virtual public BasicStream
 	{
 	public:
-		virtual bool write(const void* buffer, size_t size, size_t* bytes_written = nullptr) = 0;
 		virtual bool flush() = 0;
+		virtual bool write(const void* buffer, size_t size, size_t* bytes_written = nullptr) = 0;
 	};
 }
