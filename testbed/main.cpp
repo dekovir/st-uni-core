@@ -7,6 +7,26 @@
 
 namespace unicore
 {
+	void Entity::update(const Vector2i& size, float delta)
+	{
+		position += velocity * delta;
+
+		if (
+			(velocity.x < 0 && position.x < radius) ||
+			(velocity.x > 0 && position.x > size.x - radius))
+		{
+			velocity.x *= -1;
+		}
+		if (
+			(velocity.y < 0 && position.y < radius) ||
+			(velocity.y > 0 && position.y > size.y - radius))
+		{
+			velocity.y *= -1;
+		}
+
+		angle += aspeed * delta;
+	}
+
 	MyCore::MyCore(const CoreSettings& settings)
 		: Core(settings)
 	{
@@ -29,9 +49,13 @@ namespace unicore
 			platform.quit();
 #endif
 
-		if (input.mouse_button(MouseButton::Left))
-			//if (input.key_code(KeyCode::Space))
-			_angle += 180_deg * static_cast<float>(time.delta().total_seconds());
+		if (_tex && input.mouse_button(MouseButton::Left))
+			spawn_entity(input.mouse_position().cast<float>(), _tex->size());
+
+		auto& size = render.screen_size();
+
+		for (auto& entity : _entites)
+			entity.update(size, time.delta().total_seconds());
 	}
 
 	void MyCore::on_draw()
@@ -57,15 +81,38 @@ namespace unicore
 		graphics.end();
 		graphics.to_render(render);
 
-		String str = "FPS: ";
-		str += std::to_string(fps());
+		const String fps_str = "FPS: " + std::to_string(fps());
+		const String count_str = "Count: " + std::to_string(_entites.size());
 
 		SpriteBatch batch;
 		batch.begin();
-		batch.draw(_tex, input.mouse_position().cast<float>(), _angle, { 2, 2 });
-		batch.print(_font, { 0, 0 }, str);
+		for (const auto & entity : _entites)
+			batch.draw(_tex, entity.position, entity.angle, entity.scale, entity.color);
+
+		batch.print(_font, { 0, 0 }, fps_str);
+		batch.print(_font, { 0, 20 }, count_str);
+
 		batch.end();
 		batch.to_render(render);
+	}
+
+	void MyCore::spawn_entity(const Vector2f& position, const Vector2i& size)
+	{
+		Entity entity;
+		entity.position = position;
+		entity.velocity = Vector2f(
+			_random.range(100, 500) * (_random.boolean() ? +1 : -1),
+			_random.range(100, 500) * (_random.boolean() ? +1 : -1)
+		);
+		entity.color = Color4b::create_random(_random);
+
+		entity.radius = _random.range(25, 50);
+		entity.scale = 2.f * entity.radius / size.x;
+
+		entity.angle = Degrees(_random.range(0, 359));
+		entity.aspeed = Degrees(_random.range(45, 300));
+
+		_entites.push_back(entity);
 	}
 
 	UNICORE_MAIN_CORE(MyCore);

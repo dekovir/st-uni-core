@@ -16,4 +16,9 @@ namespace unicore
 	{
 		return _rd();
 	}
+
+	float DefaultRandom::next_float()
+	{
+		return static_cast <float> (next()) / static_cast <float> (std::random_device::max());
+	}
 }

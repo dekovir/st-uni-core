@@ -1,4 +1,7 @@
 #include "UnicoreMain.h"
+#if defined(UNICORE_USE_SDL2_MAIN)
+#	include <SDL_main.h>
+#endif
 
 namespace unicore
 {
@@ -19,14 +22,24 @@ namespace unicore
 
 			core = create_main_core({ *platform, *render });
 		}
-
-		~State()
-		{
-			core = nullptr;
-		}
 	};
 
 	static State* g_state = nullptr;
+
+	void state_init()
+	{
+		g_state = new State();
+	}
+
+	void state_done()
+	{
+		delete g_state;
+	}
+
+	bool state_running()
+	{
+		return g_state->platform->running();
+	}
 
 	void state_frame()
 	{
@@ -34,21 +47,17 @@ namespace unicore
 	}
 }
 
-#if defined(UNICORE_USE_SDL2_MAIN)
-#include <SDL_main.h>
-#endif
-
 int main(int argc, char* argv[])
 {
-	unicore::g_state = new unicore::State();
+	unicore::state_init();
 
 #if defined(UNICORE_PLATFORM_EMSCRIPTEN)
 	emscripten_set_main_loop(unicore::state_frame, 0, 1);
 #else
-	while (unicore::g_state->platform->running())
+	while (unicore::state_running())
 		unicore::state_frame();
 #endif
 
-	delete unicore::g_state;
+	unicore::state_done();
 	return 0;
 }

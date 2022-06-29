@@ -11,6 +11,7 @@ namespace unicore
 
 		constexpr Vector2() = default;
 		constexpr Vector2(T x, T y);
+		constexpr Vector2(T value);
 
 		inline void set(T _x, T _y)
 		{
@@ -19,6 +20,27 @@ namespace unicore
 		}
 
 		UC_NODISCARD constexpr T area() const { return x * y; }
+
+		Vector2<T>& operator += (const Vector2<T>& other)
+		{
+			x += other.x;
+			y += other.y;
+			return *this;
+		}
+
+		Vector2<T>& operator -= (const Vector2<T>& other)
+		{
+			x -= other.x;
+			y -= other.y;
+			return *this;
+		}
+
+		Vector2<T>& operator *= (T value)
+		{
+			x *= value;
+			y *= value;
+			return *this;
+		}
 
 		template<typename U>
 		constexpr Vector2<U> cast() const
@@ -37,8 +59,12 @@ namespace unicore
 	template <typename T>
 	constexpr Vector2<T>::Vector2(T _x, T _y)
 		: x(_x), y(_y)
-	{
-	}
+	{}
+
+	template <typename T>
+	constexpr Vector2<T>::Vector2(T value)
+		: x(value), y(value)
+	{}
 
 	template<typename T>
 	const Vector2<T> Vector2<T>::Zero{ 0, 0 };

@@ -8,6 +8,7 @@ namespace unicore
 	{
 	public:
 		virtual uint32_t next() = 0;
+		virtual float next_float() = 0;
 
 		virtual uint32_t range(uint32_t count);
 		virtual bool boolean();
@@ -17,6 +18,12 @@ namespace unicore
 		{
 			const auto value = range(max - min);
 			return value + min;
+		}
+
+		float range(float min, float max)
+		{
+			const auto delta = max - min;
+			return next_float() * delta + min;
 		}
 
 		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
@@ -34,6 +41,7 @@ namespace unicore
 		DefaultRandom() = default;
 
 		uint32_t next() override;
+		float next_float() override;
 
 	protected:
 		std::random_device _rd;

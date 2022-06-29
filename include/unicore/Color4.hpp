@@ -27,7 +27,7 @@ namespace unicore
 		T r, g, b, a;
 
 		static constexpr T MinValue = color_limits<T>::min();
-		static constexpr T MaxValue = color_limits<T>::min();
+		static constexpr T MaxValue = color_limits<T>::max();
 
 		constexpr Color4() : r(MaxValue), g(MaxValue), b(MaxValue), a(MaxValue) {}
 		constexpr Color4(T _r, T _g, T _b)
