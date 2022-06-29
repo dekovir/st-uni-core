@@ -29,6 +29,18 @@ namespace unicore
 		update_size();
 	}
 
+	uint32_t SDL2Texture::video_memory_use() const
+	{
+		Uint32 format;
+		if (SDL_QueryTexture(_context, &format, nullptr, nullptr, nullptr) == 0)
+		{
+			const auto bpp = SDL_BYTESPERPIXEL(format);
+			return _size.area() * bpp;
+		}
+
+		return 0;
+	}
+
 	void SDL2Texture::update_size()
 	{
 		SDL_QueryTexture(_context, nullptr, nullptr, &_size.x, &_size.y);
@@ -109,7 +121,7 @@ namespace unicore
 
 #if 1
 			auto sdl_texture = SDL_CreateTexture(_renderer,
-				SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, size.x, size.y);
+				SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, size.x, size.y);
 			SDL_SetTextureBlendMode(sdl_texture, SDL_BLENDMODE_BLEND);
 			auto ret = SDL_UpdateTexture(sdl_texture, nullptr, bitmap->data(), size.x * 4);
 			return make_shared<SDL2Texture>(sdl_texture);

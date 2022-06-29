@@ -39,6 +39,7 @@ namespace unicore
 		}
 
 		UC_NODISCARD size_t system_memory_use() const override { return sizeof(SDL2Texture); }
+		UC_NODISCARD uint32_t video_memory_use() const override;
 
 		UC_NODISCARD const Vector2i& size() const override { return _size; }
 

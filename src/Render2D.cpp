@@ -7,6 +7,31 @@
 
 namespace unicore
 {
+	// fill 'data' with 'size' bytes.  return number of bytes actually read
+	static int stbi_stream_read(void* user, char* data, int size)
+	{
+		const auto stream = static_cast<ReadStream*>(user);
+		size_t read;
+		stream->read(data, size, &read);
+		return read;
+	}
+
+	// skip the next 'n' bytes, or 'unget' the last -n bytes if negative
+	static void stbi_stream_skip(void* user, int n)
+	{
+		const auto stream = static_cast<ReadStream*>(user);
+		stream->seek(n, SeekMethod::Current);
+	}
+
+	// returns nonzero if we are at end of file/data
+	static int stbi_stream_eof(void* user)
+	{
+		const auto stream = static_cast<ReadStream*>(user);
+		return stream->eof() ? 1 : 0;
+	}
+
+	static const stbi_io_callbacks stbi_stream_callbacks{ stbi_stream_read, stbi_stream_skip, stbi_stream_eof };
+
 	class SurfaceLoader : public ResourceLoaderT<Surface>
 	{
 	public:
@@ -19,28 +44,18 @@ namespace unicore
 
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override
 		{
-			const auto data = context.cache.load<BinaryData>(context.path);
-			if (!data)
-			{
-				UC_LOG_ERROR(context.logger) << "Failed to load BinaryData from " << context.path;
-				return nullptr;
-			}
-
-			const auto buffer = (stbi_uc*)data->data();
-			const auto size = static_cast<int>(data->size());
-
 			int w, h, n;
-			auto rgba = stbi_load_from_memory(buffer, size, &w, &h, &n, 4);
-			if (!rgba)
+			const auto data = stbi_load_from_callbacks(&stbi_stream_callbacks, &context.stream, &w, &h, &n, 4);
+			if (!data)
 			{
 				UC_LOG_ERROR(context.logger) << stbi_failure_reason();
 				return nullptr;
 			}
 
 			auto surface = std::make_shared<BitmapSurface>(w, h);
-			Memory::copy(surface->data(), rgba, surface->data_size());
+			Memory::copy(surface->data(), data, surface->data_size());
 
-			stbi_image_free(rgba);
+			stbi_image_free(data);
 			return surface;
 		}
 	};
