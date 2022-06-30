@@ -261,7 +261,7 @@ namespace unicore
 		}
 	}
 
-	void SDL2Render::draw_triangles(const Vertex2* vertices,
+	void SDL2Render::draw_triangles(const VertexTexColor2* vertices,
 		size_t num_vertices, const Texture* texture)
 	{
 		static std::vector<SDL_Vertex> points;

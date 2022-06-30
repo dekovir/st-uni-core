@@ -25,7 +25,7 @@ namespace unicore
 		Graphics& draw_rect(const Recti& rect);
 		Graphics& draw_rect(const Rectf& rect);
 
-		Graphics& draw_tri(const Vertex2& v0, const Vertex2& v1, const Vertex2& v2);
+		Graphics& draw_tri(const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2);
 
 	protected:
 		enum class BatchType
@@ -46,7 +46,7 @@ namespace unicore
 
 		List<Vector2f> _points;
 		List<Rectf> _rects;
-		VertexList2 _vertices;
+		List<VertexTexColor2> _vertices;
 		List<Batch> _batches;
 		Batch _current;
 

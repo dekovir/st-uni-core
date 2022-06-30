@@ -29,7 +29,7 @@ namespace unicore
 	}
 
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
-		const Vertex2& v0, const Vertex2& v1, const Vertex2& v2)
+		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2)
 	{
 		if (texture != nullptr)
 		{
@@ -49,7 +49,7 @@ namespace unicore
 	}
 
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
-		const Vertex2& v0, const Vertex2& v1, const Vertex2& v2, const Vertex2& v3)
+		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2, const VertexTexColor2& v3)
 	{
 		if (texture != nullptr)
 		{
@@ -72,7 +72,7 @@ namespace unicore
 		return *this;
 	}
 
-	static Vertex2 s_quad[4];
+	static VertexTexColor2 s_quad[4];
 
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture, const Vector2f& center, const Color4b& color)
 	{

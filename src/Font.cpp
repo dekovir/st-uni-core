@@ -54,7 +54,9 @@ namespace unicore
 	}
 
 	Shared<Texture> BitmapFont::print_char(uint32_t code, Vector2f& pos,
-		Vertex2& v0, Vertex2& v1, Vertex2& v2, Vertex2& v3, const Color4b& color) const
+		VertexTexColor2& v0, VertexTexColor2& v1,
+		VertexTexColor2& v2, VertexTexColor2& v3,
+		const Color4b& color) const
 	{
 		const auto it = glyphs.find(code);
 		if (it != glyphs.end())

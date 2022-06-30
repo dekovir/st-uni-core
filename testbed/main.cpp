@@ -93,9 +93,9 @@ namespace unicore
 		graphics.begin();
 		graphics
 			.draw_tri(
-				Vertex2::from_pos({ 100, 100 }, ColorConst4b::Yellow),
-				Vertex2::from_pos({ 200, 100 }, ColorConst4b::Cyan),
-				Vertex2::from_pos({ 100, 200 }, ColorConst4b::Magenta))
+				VertexTexColor2({ 100, 100 }, ColorConst4b::Yellow),
+				VertexTexColor2({ 200, 100 }, ColorConst4b::Cyan),
+				VertexTexColor2({ 100, 200 }, ColorConst4b::Magenta))
 			.set_color(ColorConst4b::Red)
 			.draw_line(VectorConst2i::Zero, size)
 			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))

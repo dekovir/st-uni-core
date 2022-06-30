@@ -18,10 +18,10 @@ namespace unicore
 		void to_render(Render2D& render) const;
 
 		SpriteBatch& draw(const Shared<Texture>& texture,
-			const Vertex2& v0, const Vertex2& v1, const Vertex2& v2);
+			const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2);
 
 		SpriteBatch& draw(const Shared<Texture>& texture,
-			const Vertex2& v0, const Vertex2& v1, const Vertex2& v2, const Vertex2& v3);
+			const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2, const VertexTexColor2& v3);
 
 		SpriteBatch& draw(const Shared<Texture>& texture,
 			const Vector2f& center, const Color4b& color = ColorConst4b::White);
@@ -42,7 +42,7 @@ namespace unicore
 			size_t vcount = 0;
 		};
 
-		VertexList2 _vertices;
+		List<VertexTexColor2> _vertices;
 		List<Batch> _batches;
 		Batch _current;
 

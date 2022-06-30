@@ -4,7 +4,7 @@
 #include "unicore/Color4.hpp"
 #include "unicore/Math.hpp"
 #include "unicore/Rect.hpp"
-#include "unicore/Vertex2.hpp"
+#include "unicore/Vertex.hpp"
 
 namespace unicore
 {
@@ -76,7 +76,7 @@ namespace unicore
 			const Render2DDrawTextureOptionsExF& options = {}) = 0;
 
 		virtual void draw_triangles(
-			const Vertex2* vertices, size_t num_vertices,
+			const VertexTexColor2* vertices, size_t num_vertices,
 			const Texture* texture = nullptr
 		) = 0;
 

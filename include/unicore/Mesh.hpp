@@ -1,13 +1,13 @@
 #pragma once
 #include "unicore/Defs.hpp"
-#include "unicore/Vertex2.hpp"
+#include "unicore/Vertex.hpp"
 
 namespace unicore
 {
 	class Mesh
 	{
 	public:
-		List<Vertex2> vertices;
+		List<VertexTexColor2> vertices;
 		List<int> indices;
 
 		void Clear()

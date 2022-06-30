@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/Rect.hpp"
-#include "unicore/Vertex2.hpp"
+#include "unicore/Vertex.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/ResourceLoader.hpp"
 
@@ -34,7 +34,8 @@ namespace unicore
 		Shared<Texture> get_char_print_info(uint32_t code, Vector2f& pos, Rectf* rect, Rectf* uv_rect) const;
 
 		Shared<Texture> print_char(uint32_t code, Vector2f& pos,
-			Vertex2& v0, Vertex2& v1, Vertex2& v2, Vertex2& v3,
+			VertexTexColor2& v0, VertexTexColor2& v1,
+			VertexTexColor2& v2, VertexTexColor2& v3,
 			const Color4b& color = ColorConst4b::White) const;
 	};
 

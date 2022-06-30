@@ -118,7 +118,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics& Graphics::draw_tri(const Vertex2& v0, const Vertex2& v1, const Vertex2& v2)
+	Graphics& Graphics::draw_tri(const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2)
 	{
 		set_type(BatchType::Vertex);
 		_vertices.push_back(v0);
