@@ -8,8 +8,14 @@ namespace unicore
 	class WinStream : public ReadStream, public WriteStream
 	{
 	public:
-		WinStream(HANDLE handle);
+		explicit WinStream(HANDLE handle);
 		~WinStream() override;
+
+		WinStream(const WinStream& other) = delete;
+		WinStream(WinStream&& other) noexcept;
+
+		WinStream& operator=(const WinStream& other) = delete;
+		WinStream& operator=(WinStream&& other) noexcept;
 
 		UC_NODISCARD int64_t size() const override;
 		int64_t seek(int64_t offset, SeekMethod method) override;

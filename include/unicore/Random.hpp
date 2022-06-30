@@ -13,6 +13,12 @@ namespace unicore
 		virtual uint32_t range(uint32_t count);
 		virtual bool boolean();
 
+		template<typename T, std::enable_if_t<std::is_signed_v<T>>* = nullptr>
+		T sign()
+		{
+			return boolean() ? static_cast<T>(-1) : static_cast<T>(+1);
+		}
+
 		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 		T range(T min, T max)
 		{
@@ -27,7 +33,7 @@ namespace unicore
 		}
 
 		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-		inline T value_limit()
+		T value_limit()
 		{
 			return static_cast<T>(Random::range(
 				std::numeric_limits<T>::min(),

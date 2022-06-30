@@ -129,16 +129,16 @@ namespace unicore
 		Entity entity;
 		entity.center = position;
 		entity.velocity = Vector2f(
-			_random.range(100.f, 500.f) * (_random.boolean() ? +1.f : -1.f),
-			_random.range(100.f, 500.f) * (_random.boolean() ? +1.f : -1.f)
+			_random.range(100.f, 500.f) * _random.sign<float>(),
+			_random.range(100.f, 500.f) * _random.sign<float>()
 		);
 		entity.color = Color4b::create_random(_random);
 
 		entity.radius = _random.range(25.f, 50.f);
 		entity.scale = Vector2f(2.f * entity.radius / static_cast<float>(size.x));
 
-		entity.angle = Degrees(_random.range(0.f, 359.f));
-		entity.angle_speed = Degrees(_random.range(45.f, 300.f));
+		entity.angle = Degrees(_random.range(359.f, 359.f));
+		entity.angle_speed = Degrees(_random.range(45.f, 300.f) * _random.sign<float>());
 
 		_entites.push_back(entity);
 	}

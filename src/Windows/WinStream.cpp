@@ -10,8 +10,22 @@ namespace unicore
 
 	WinStream::~WinStream()
 	{
-		FlushFileBuffers(_handle);
-		CloseHandle(_handle);
+		if (_handle != nullptr)
+		{
+			FlushFileBuffers(_handle);
+			CloseHandle(_handle);
+		}
+	}
+
+	WinStream::WinStream(WinStream&& other) noexcept
+		: _handle(std::exchange(other._handle, nullptr))
+	{
+	}
+
+	WinStream& WinStream::operator=(WinStream&& other) noexcept
+	{
+		_handle = std::exchange(other._handle, nullptr);
+		return *this;
 	}
 
 	int64_t WinStream::size() const
