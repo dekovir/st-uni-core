@@ -1,6 +1,7 @@
 #pragma once
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
+#include "unicore/Time.hpp"
 #include <SDL.h>
 
 namespace unicore

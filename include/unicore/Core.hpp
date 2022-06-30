@@ -1,4 +1,5 @@
 #pragma once
+#include "unicore/TimeSpan.hpp"
 #include "unicore/Platform.hpp"
 #include "unicore/Context.hpp"
 

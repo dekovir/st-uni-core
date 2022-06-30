@@ -1,12 +1,13 @@
 #pragma once
-#include "unicore/Logger.hpp"
-#include "unicore/Input.hpp"
 #include "unicore/Render2D.hpp"
-#include "unicore/Time.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore
 {
+	class Logger;
+	class Time;
+	class Input;
+
 	struct PlatformSettings
 	{
 		Logger& logger;

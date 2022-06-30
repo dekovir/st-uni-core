@@ -7,29 +7,6 @@
 
 namespace unicore
 {
-	class SDL2Surface : public Surface
-	{
-	public:
-		explicit SDL2Surface(SDL_Surface* context);
-
-		~SDL2Surface() override
-		{
-			SDL_FreeSurface(_context);
-		}
-
-		UC_NODISCARD size_t system_memory_use() const override { return sizeof(SDL2Surface) + _context->h * _context->pitch; }
-
-		UC_NODISCARD const Vector2i& size() const override { return _size; }
-
-	protected:
-		SDL_Surface* _context;
-		Vector2i _size = VectorConst2i::Zero;
-
-		void update_size();
-
-		friend class SDL2Render;
-	};
-
 	class SDL2Texture : public Texture
 	{
 	public:
@@ -107,8 +84,6 @@ namespace unicore
 
 		void draw_triangles(const Vertex2* vertices,
 			size_t num_vertices, const Texture* texture) override;
-
-		void register_module(Context& context) override;
 
 	protected:
 		SDL_Window* _window;

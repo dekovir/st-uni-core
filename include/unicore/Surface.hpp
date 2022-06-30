@@ -3,24 +3,25 @@
 #include "unicore/Buffer2.hpp"
 #include "unicore/Color4.hpp"
 #include "unicore/Resource.hpp"
-#include <variant>
 
 namespace unicore
 {
-	class Surface : public Resource
+	class Surface : public Resource, public IBuffer2<Color4b>
 	{
 	public:
-		UC_NODISCARD virtual const Vector2i& size() const = 0;
-	};
+		Surface();
+		Surface(int width, int height);
+		explicit Surface(const Vector2i& size);
 
-	class BitmapSurface : public Surface, public IBuffer2<Color4b>
-	{
-	public:
-		BitmapSurface();
-		BitmapSurface(int width, int height);
-		explicit BitmapSurface(const Vector2i& size);
+		explicit Surface(const Surface& other);
+		Surface(Surface&& other) noexcept;
 
-		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BitmapSurface) + _chunk.size(); }
+		~Surface() override = default;
+
+		Surface& operator=(const Surface& other);
+		Surface& operator=(Surface&& other) noexcept;
+
+		UC_NODISCARD size_t system_memory_use() const override { return sizeof(Surface) + _chunk.size(); }
 		UC_NODISCARD const Vector2i& size() const override { return _size; }
 
 		auto data() { return _chunk.data(); }

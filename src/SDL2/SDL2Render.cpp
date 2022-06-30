@@ -11,18 +11,6 @@ namespace unicore
 	static List<SDL_Rect> s_rects;
 	static List<SDL_FRect> s_rects_f;
 
-	SDL2Surface::SDL2Surface(SDL_Surface* context)
-		: _context(context)
-	{
-		update_size();
-	}
-
-	void SDL2Surface::update_size()
-	{
-		_size.x = _context->w;
-		_size.y = _context->h;
-	}
-
 	SDL2Texture::SDL2Texture(SDL_Texture* context)
 		: _context(context)
 	{
@@ -109,33 +97,24 @@ namespace unicore
 
 	Shared<Texture> SDL2Render::create_texture(Surface& surface)
 	{
-		if (const auto sdl = dynamic_cast<SDL2Surface*>(&surface))
-		{
-			if (auto texture = SDL_CreateTextureFromSurface(_renderer, sdl->_context))
-				return make_shared<SDL2Texture>(texture);
-		}
-
-		if (const auto bitmap = dynamic_cast<BitmapSurface*>(&surface))
-		{
-			auto& size = bitmap->size();
+		auto& size = surface.size();
 
 #if 1
-			auto sdl_texture = SDL_CreateTexture(_renderer,
-				SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, size.x, size.y);
-			SDL_SetTextureBlendMode(sdl_texture, SDL_BLENDMODE_BLEND);
-			auto ret = SDL_UpdateTexture(sdl_texture, nullptr, bitmap->data(), size.x * 4);
-			return make_shared<SDL2Texture>(sdl_texture);
+		auto sdl_texture = SDL_CreateTexture(_renderer,
+			SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, size.x, size.y);
+		SDL_SetTextureBlendMode(sdl_texture, SDL_BLENDMODE_BLEND);
+		auto ret = SDL_UpdateTexture(sdl_texture, nullptr, surface.data(), size.x * 4);
+		return make_shared<SDL2Texture>(sdl_texture);
 #else
-			if (const auto sdl_surface = SDL_CreateRGBSurfaceWithFormatFrom(
-				bitmap->data(), size.x, size.y, 4 * 8, size.x * 4, SDL_PIXELFORMAT_RGBA32))
-			{
-				auto texture = SDL_CreateTextureFromSurface(_renderer, sdl_surface);
-				SDL_FreeSurface(sdl_surface);
-				if (texture)
-					return make_shared<SDL2Texture>(texture);
-			}
-#endif
+		if (const auto sdl_surface = SDL_CreateRGBSurfaceWithFormatFrom(
+			surface.data(), size.x, size.y, 4 * 8, size.x * 4, SDL_PIXELFORMAT_RGBA32))
+		{
+			auto texture = SDL_CreateTextureFromSurface(_renderer, sdl_surface);
+			SDL_FreeSurface(sdl_surface);
+			if (texture)
+				return make_shared<SDL2Texture>(texture);
 		}
+#endif
 
 		return nullptr;
 	}
@@ -309,14 +288,6 @@ namespace unicore
 			points.data(), static_cast<int>(num_vertices),
 			nullptr, 0
 		);
-	}
-
-	void SDL2Render::register_module(Context& context)
-	{
-		Render2D::register_module(context);
-
-		static SDL2SurfaceLoader surface_loader;
-		context.add_loader(surface_loader);
 	}
 
 	void SDL2Render::update_size()

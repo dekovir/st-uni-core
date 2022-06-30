@@ -1,4 +1,7 @@
 #include "unicore/Platform.hpp"
+#include "unicore/Logger.hpp"
+#include "unicore/Input.hpp"
+#include "unicore/Time.hpp"
 #include "unicore/Data.hpp"
 #include "unicore/XMLData.hpp"
 #include "unicore/Font.hpp"

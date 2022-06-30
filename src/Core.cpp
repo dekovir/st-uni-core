@@ -1,4 +1,6 @@
 #include "unicore/Core.hpp"
+#include "unicore/Time.hpp"
+#include "unicore/Input.hpp"
 
 namespace unicore
 {

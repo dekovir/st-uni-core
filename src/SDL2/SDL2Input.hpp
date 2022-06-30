@@ -1,6 +1,7 @@
 #pragma once
 #include "unicore/Input.hpp"
 #if defined(UNICORE_USE_SDL2)
+#include "unicore/Input.hpp"
 #include <SDL.h>
 
 namespace unicore

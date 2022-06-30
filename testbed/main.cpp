@@ -1,5 +1,6 @@
 #include "main.h"
 #include "UnicoreMain.h"
+#include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Surface.hpp"
@@ -36,14 +37,14 @@ namespace unicore
 		//List<WString> files;
 		//file_system.enumerate(L"assets"_path, files, FileFlag::File);
 
-#if 1
+#if 0
 		{
-			BitmapSurface surface(64, 64);
-			auto& size = surface.size();
+			Surface circle(64, 64);
+			auto& size = circle.size();
 			const auto hw = size.x / 2;
 			const auto hh = size.y / 2;
-			
-			surface.fill([hw, hh](int x, int y) -> Color4b
+
+			circle.fill([hw, hh](int x, int y) -> Color4b
 				{
 					const float distance = Vector2i(hw, hh).distance({ x, y });
 					return distance <= 32
@@ -51,10 +52,7 @@ namespace unicore
 						: ColorConst4b::Clear;
 				});
 
-			BitmapSurface clone(32, 32);
-			surface.copy(clone);
-
-			_tex = render.create_texture(clone);
+			_tex = render.create_texture(circle);
 		}
 #else
 		_tex = resources.load<Texture>(L"assets/zazaka.png"_path);

@@ -1,5 +1,4 @@
 #include "unicore/Render2D.hpp"
-#include "unicore/Data.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/ResourceLoader.hpp"
@@ -54,7 +53,7 @@ namespace unicore
 				return nullptr;
 			}
 
-			auto surface = std::make_shared<BitmapSurface>(w, h);
+			auto surface = std::make_shared<Surface>(w, h);
 			Memory::copy(surface->data(), data, surface->data_size());
 
 			stbi_image_free(data);

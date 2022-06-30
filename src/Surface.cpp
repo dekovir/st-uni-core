@@ -2,22 +2,46 @@
 
 namespace unicore
 {
-	BitmapSurface::BitmapSurface()
+	Surface::Surface()
 		: _size(0, 0), _chunk(0)
 	{
 	}
 
-	BitmapSurface::BitmapSurface(int width, int height)
+	Surface::Surface(int width, int height)
 		: _size(width, height), _chunk(_size.area() * 4)
 	{
 	}
 
-	BitmapSurface::BitmapSurface(const Vector2i& size)
+	Surface::Surface(const Vector2i& size)
 		: _size(size), _chunk(_size.area() * 4)
 	{
 	}
 
-	void BitmapSurface::fill(const FillValue& value)
+	Surface::Surface(const Surface& other)
+		: _size(other.size()), _chunk(other._chunk)
+	{
+	}
+
+	Surface::Surface(Surface&& other) noexcept
+		: _size(std::move(other._size)), _chunk(std::move(other._chunk))
+	{
+	}
+
+	Surface& Surface::operator=(const Surface& other)
+	{
+		_size = other._size;
+		_chunk = other._chunk;
+		return *this;
+	}
+
+	Surface& Surface::operator=(Surface&& other) noexcept
+	{
+		_size = std::move(other._size);
+		_chunk = std::move(other._chunk);
+		return *this;
+	}
+
+	void Surface::fill(const FillValue& value)
 	{
 		const auto ptr = reinterpret_cast<uint32_t*>(_chunk.data());
 		const auto count = _size.area();
@@ -50,13 +74,13 @@ namespace unicore
 		}
 	}
 
-	void BitmapSurface::fill(const Recti& rect, const FillValue& value)
+	void Surface::fill(const Recti& rect, const FillValue& value)
 	{
 		// TODO: Optimize
 		IBuffer2<Color4b>::fill(rect, value);
 	}
 
-	bool BitmapSurface::get(int x, int y, Color4b& value) const
+	bool Surface::get(int x, int y, Color4b& value) const
 	{
 		if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
 		{
@@ -69,7 +93,7 @@ namespace unicore
 		return false;
 	}
 
-	bool BitmapSurface::set(int x, int y, Color4b value)
+	bool Surface::set(int x, int y, Color4b value)
 	{
 		if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
 		{

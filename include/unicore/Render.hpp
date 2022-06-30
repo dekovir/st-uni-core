@@ -1,14 +1,15 @@
 #pragma once
 #include "unicore/Module.hpp"
 #include "unicore/Vector2.hpp"
-#include "unicore/Logger.hpp"
 
 namespace unicore
 {
+	class Logger;
+
 	class Render : public Module
 	{
 	public:
-		explicit Render(Logger& logger) : _logger(logger) {}
+		explicit Render(Logger& logger);
 
 		UC_NODISCARD virtual const Vector2i& screen_size() const = 0;
 
