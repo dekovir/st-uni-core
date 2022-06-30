@@ -27,41 +27,26 @@ namespace unicore
 			ptr[i] = data;
 	}
 
-	void BitmapSurface::fill(std::function<Color4b(int x, int y)> fill_func)
-	{
-		const auto ptr = reinterpret_cast<uint32_t*>(_chunk.data());
-		const auto count = _size.area();
-
-		int y = 0, x = 0;
-		for (int i = 0; i < count; i++)
-		{
-			ptr[i] = fill_func(x, y).to_format(pixel_format_abgr);
-			x++;
-			if (x == _size.x)
-			{
-				y++;
-				x = 0;
-			}
-		}
-	}
-
-	void BitmapSurface::set_pixel(int x, int y, const Color4b& color)
+	bool BitmapSurface::get(int x, int y, Color4b& value) const
 	{
 		if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
 		{
-			const auto offset = get_offset(x, y);
-			const auto ptr = reinterpret_cast<uint32_t*>(&_chunk.data()[offset]);
-			ptr[0] = color.to_format(pixel_format_abgr);
+			const auto offset = calc_offset(x, y);
+			const auto ptr = reinterpret_cast<const uint32_t*>(&_chunk.data()[offset]);
+			value = Color4b::from_format(pixel_format_abgr, ptr[0]);
+			return true;
 		}
+
+		return false;
 	}
 
-	bool BitmapSurface::try_get_pixel(int x, int y, Color4b& color)
+	bool BitmapSurface::set(int x, int y, Color4b value)
 	{
 		if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
 		{
-			const auto offset = get_offset(x, y);
+			const auto offset = calc_offset(x, y);
 			const auto ptr = reinterpret_cast<uint32_t*>(&_chunk.data()[offset]);
-			color = Color4b::from_format(pixel_format_abgr, ptr[0]);
+			ptr[0] = value.to_format(pixel_format_abgr);
 			return true;
 		}
 

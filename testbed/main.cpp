@@ -42,7 +42,8 @@ namespace unicore
 			const auto hw = size.x / 2;
 			const auto hh = size.y / 2;
 			//surface.fill(ColorConst4b::White);
-			surface.fill([hw, hh](int x, int y) -> Color4b
+
+			BufferDraw2::fill<Color4b>(surface, [hw, hh](int x, int y) -> Color4b
 				{
 					const float distance = Vector2i(hw, hh).distance({ x, y });
 					return distance <= 32
@@ -62,7 +63,7 @@ namespace unicore
 
 		resources.unload_unused();
 		resources.dump_used();
-		}
+	}
 
 	void MyCore::on_update()
 	{
@@ -156,4 +157,4 @@ namespace unicore
 	}
 
 	UNICORE_MAIN_CORE(MyCore);
-	}
+}

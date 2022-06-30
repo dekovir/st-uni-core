@@ -17,24 +17,29 @@ namespace unicore
 	class MemoryChunk
 	{
 	public:
-		explicit MemoryChunk(size_t size)
-			: _size(size)
+		explicit MemoryChunk(size_t size);
+
+		MemoryChunk(const MemoryChunk& other);
+
+		constexpr MemoryChunk(MemoryChunk&& other) noexcept
+			: _data(other._data), _size(other._size)
 		{
-			_data = size > 0 ? static_cast<uint8_t*>(Memory::alloc(size)) : nullptr;
+			other._data = nullptr;
+			other._size = 0;
 		}
 
-		~MemoryChunk()
-		{
-			free();
-		}
+		~MemoryChunk();
+
+		MemoryChunk& operator=(const MemoryChunk& other);
+		MemoryChunk& operator=(MemoryChunk&& other) noexcept;
 
 		UC_NODISCARD constexpr size_t size() const { return _size; }
 		UC_NODISCARD constexpr bool empty() const { return _size == 0; }
 
-		UC_NODISCARD uint8_t* data() { return _data; }
-		UC_NODISCARD const uint8_t* data() const { return _data; }
+		UC_NODISCARD constexpr uint8_t* data() { return _data; }
+		UC_NODISCARD constexpr const uint8_t* data() const { return _data; }
 
-		void reset();
+		void clear();
 
 		void resize(size_t new_size, bool copy_data = true);
 		void free();
@@ -43,6 +48,16 @@ namespace unicore
 		uint8_t* _data;
 		size_t _size;
 	};
+
+	static constexpr bool operator==(const MemoryChunk& a, const MemoryChunk& b)
+	{
+		return a.data() == b.data();
+	}
+
+	static constexpr bool operator!=(const MemoryChunk& a, const MemoryChunk& b)
+	{
+		return !(a == b);
+	}
 
 	struct MemorySize
 	{

@@ -6,12 +6,12 @@ namespace unicore
 {
 	void* Memory::alloc(size_t size)
 	{
-		return new char[size];
+		return new uint8_t[size];
 	}
 
 	void Memory::free(void* ptr)
 	{
-		delete[] static_cast<char*>(ptr);
+		delete[] static_cast<uint8_t*>(ptr);
 	}
 
 	void Memory::set(void* dest, int value, size_t size)
@@ -29,7 +29,47 @@ namespace unicore
 		memmove(dest, src, size);
 	}
 
-	void MemoryChunk::reset()
+	// ===========================================================================
+	MemoryChunk::MemoryChunk(size_t size): _size(size)
+	{
+		_data = size > 0 ? static_cast<uint8_t*>(Memory::alloc(size)) : nullptr;
+	}
+
+	MemoryChunk::MemoryChunk(const MemoryChunk& other)
+		: MemoryChunk(other.size())
+	{
+		Memory::copy(_data, other.data(), _size);
+	}
+
+	MemoryChunk::~MemoryChunk()
+	{
+		free();
+	}
+
+	MemoryChunk& MemoryChunk::operator=(const MemoryChunk& other)
+	{
+		if (this != &other)
+		{
+			free();
+
+			resize(other.size(), false);
+			Memory::copy(_data, other._data, _size);
+		}
+
+		return *this;
+	}
+
+	MemoryChunk& MemoryChunk::operator=(MemoryChunk&& other) noexcept
+	{
+		if (this != &other)
+		{
+			_data = std::exchange(other._data, nullptr);
+			_size = std::exchange(other._size, 0);
+		}
+		return *this;
+	}
+
+	void MemoryChunk::clear()
 	{
 		if (!empty())
 			Memory::set(_data, 0, _size);
@@ -60,6 +100,7 @@ namespace unicore
 		}
 	}
 
+	// ===========================================================================
 	LogHelper& operator<<(LogHelper& helper, const MemorySize& value)
 	{
 		constexpr auto KB = 1024;

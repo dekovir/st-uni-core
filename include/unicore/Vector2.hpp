@@ -31,7 +31,7 @@ namespace unicore
 
 		UC_NODISCARD constexpr T area() const { return x * y; }
 		UC_NODISCARD constexpr T length_squared() const { return x * x + y * y; }
-		UC_NODISCARD float length() const { return sqrtf(length_squared()); }
+		UC_NODISCARD float length() const { return sqrtf(static_cast<float>(length_squared())); }
 
 		// Copy assignment operator
 		Vector2& operator=(const Vector2& other) noexcept = default;

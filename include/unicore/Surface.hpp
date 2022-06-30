@@ -1,8 +1,8 @@
 #pragma once
 #include "unicore/Memory.hpp"
-#include "unicore/Vector2.hpp"
-#include "unicore/Resource.hpp"
+#include "unicore/Buffer2.hpp"
 #include "unicore/Color4.hpp"
+#include "unicore/Resource.hpp"
 
 namespace unicore
 {
@@ -12,7 +12,7 @@ namespace unicore
 		UC_NODISCARD virtual const Vector2i& size() const = 0;
 	};
 
-	class BitmapSurface : public Surface
+	class BitmapSurface : public Surface, public IBuffer2<Color4b>
 	{
 	public:
 		BitmapSurface();
@@ -29,18 +29,13 @@ namespace unicore
 		void fill(const Color4b& color);
 		void clear() { fill(ColorConst4b::Black); }
 
-		void fill(std::function<Color4b(int x, int y)> fill_func);
-
-		void set_pixel(int x, int y, const Color4b& color);
-		void set_pixel(const Vector2i& pos, const Color4b& color) { set_pixel(pos.x, pos.y, color); }
-
-		bool try_get_pixel(int x, int y, Color4b& color);
-		bool try_get_pixel(const Vector2i& pos, Color4b& color) { return try_get_pixel(pos.x, pos.y, color); }
+		UC_NODISCARD bool get(int x, int y, Color4<unsigned char>& value) const override;
+		bool set(int x, int y, Color4<unsigned char> value) override;
 
 	protected:
 		Vector2i _size = VectorConst2i::Zero;
 		MemoryChunk _chunk;
 
-		UC_NODISCARD int get_offset(int x, int y) const { return (y * _size.x + x) * 4; }
+		UC_NODISCARD int calc_offset(int x, int y) const { return (y * _size.x + x) * 4; }
 	};
 }
