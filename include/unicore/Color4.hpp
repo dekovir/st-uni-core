@@ -35,8 +35,27 @@ namespace unicore
 		constexpr Color4(T _r, T _g, T _b, T _a)
 			: r(_r), g(_g), b(_b), a(_a) {}
 
-		constexpr Color4(const Color4& other)
+		// Copy constructor
+		constexpr Color4(const Color4& other) = default;
+
+		// Move constructor
+		constexpr Color4(Color4&& other) noexcept
 			: r(other.r), g(other.g), b(other.b), a(other.a) {}
+
+		~Color4() = default;
+
+		// Copy assignment operator
+		Color4& operator=(const Color4& other) noexcept = default;
+
+		// Move assignment operator
+		Color4& operator=(Color4&& other) noexcept
+		{
+			r = other.r;
+			g = other.g;
+			b = other.b;
+			a = other.a;
+			return  *this;
+		}
 
 		template<
 			typename DataType,

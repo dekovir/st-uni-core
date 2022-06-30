@@ -10,6 +10,25 @@ namespace unicore
 		constexpr TimeSpan() : _data(0) {}
 		explicit constexpr TimeSpan(std::chrono::nanoseconds value) : _data(value) {}
 
+		// Copy constructor
+		constexpr TimeSpan(const TimeSpan& other) = default;
+
+		// Move constructor
+		constexpr TimeSpan(TimeSpan&& other) noexcept
+			: _data(other._data) {}
+
+		~TimeSpan() = default;
+
+		// Copy assignment operator
+		TimeSpan& operator=(const TimeSpan& other) noexcept = default;
+
+		// Move assignment operator
+		TimeSpan& operator=(TimeSpan&& other) noexcept
+		{
+			_data = other._data;
+			return *this;
+		}
+
 		UC_NODISCARD constexpr auto data() const { return _data; }
 
 		UC_NODISCARD constexpr TimeSpan add(const TimeSpan& other) const

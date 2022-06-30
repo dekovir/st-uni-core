@@ -9,6 +9,20 @@ namespace unicore
 		Path();
 		explicit Path(WStringView path);
 
+		// Copy constructor
+		Path(const Path& other) = default;
+
+		// Move constructor
+		Path(Path&& other) noexcept;
+
+		~Path() = default;
+
+		// Copy assignment operator
+		Path& operator=(const Path& other) = default;
+
+		// Move assignment operator
+		Path& operator=(Path&& other) noexcept;
+
 		UC_NODISCARD bool absolute() const;
 		UC_NODISCARD bool empty() const { return _data.empty(); }
 		void clear();

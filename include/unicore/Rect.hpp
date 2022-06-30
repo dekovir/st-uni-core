@@ -16,6 +16,28 @@ namespace unicore
 		constexpr Rect(const Vector2<T>& position, T w, T h);
 		constexpr Rect(const Vector2<T>& position, const Vector2<T>& size);
 
+		// Copy constructor
+		constexpr Rect(const Rect& other) = default;
+
+		// Move constructor
+		constexpr Rect(Rect&& other) noexcept
+			: x(other.x), y(other.y), w(other.w), h(other.h) {}
+
+		~Rect() = default;
+
+		// Copy assignment operator
+		Rect& operator=(const Rect& other) noexcept = default;
+
+		// Move assignment operator
+		Rect& operator=(Rect&& other) noexcept
+		{
+			x = other.x;
+			y = other.y;
+			w = other.w;
+			h = other.h;
+			return *this;
+		}
+
 		UC_NODISCARD constexpr T min_x() const { return x; }
 		UC_NODISCARD constexpr T max_x() const { return x + w; }
 		UC_NODISCARD constexpr T min_y() const { return y; }

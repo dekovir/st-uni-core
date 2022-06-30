@@ -137,7 +137,7 @@ namespace unicore
 
 		for (auto element = root->FirstChildElement("char"); element != nullptr; element = element->NextSiblingElement())
 		{
-			auto code = element->Int64Attribute("code");
+			const auto code = (wchar_t)element->Int64Attribute("code");
 			BitmapFontGlyph glyph{};
 
 			glyph.rect.x = element->IntAttribute("x");
@@ -148,7 +148,7 @@ namespace unicore
 			glyph.yoffset = element->IntAttribute("dy");
 			glyph.xadvance = element->IntAttribute("advx");
 
-			font->glyphs.emplace(code, glyph);
+			font->glyphs.insert_or_assign(code, glyph);
 		}
 
 		for (auto element = root->FirstChildElement("kerning"); element != nullptr; element = element->NextSiblingElement())

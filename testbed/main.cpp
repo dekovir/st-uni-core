@@ -122,7 +122,7 @@ namespace unicore
 		entity.color = Color4b::create_random(_random);
 
 		entity.radius = _random.range(25.f, 50.f);
-		entity.scale = 2.f * entity.radius / static_cast<float>(size.x);
+		entity.scale = Vector2f(2.f * entity.radius / static_cast<float>(size.x));
 
 		entity.angle = Degrees(_random.range(0.f, 359.f));
 		entity.angle_speed = Degrees(_random.range(45.f, 300.f));
@@ -138,8 +138,8 @@ namespace unicore
 		for (unsigned i = 0; i < count; i++)
 		{
 			const Vector2f pos(
-				_random.range(0.f, screen_size.x),
-				_random.range(0.f, screen_size.y)
+				_random.range(0.f, static_cast<float>(screen_size.x)),
+				_random.range(0.f, static_cast<float>(screen_size.y))
 			);
 			spawn_entity(pos, size);
 		}

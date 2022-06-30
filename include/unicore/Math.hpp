@@ -36,6 +36,14 @@ namespace unicore
 		static constexpr T sign(T value) { return value >= 0 ? +1 : -1; }
 
 		template<typename T>
+		static constexpr int compare(T a, T b)
+		{
+			if (a > b) return +1;
+			if (a < b) return -1;
+			return 0;
+		}
+
+		template<typename T>
 		static constexpr T clamp(T value, T min_value, T max_value)
 		{
 			if (value > max_value) return max_value;

@@ -33,9 +33,22 @@ namespace unicore
 		_hash = calc_hash(_data);
 	}
 
+	Path::Path(Path&& other) noexcept
+		: _data(std::move(other._data))
+		, _hash(std::exchange(other._hash, 0))
+	{
+	}
+
 	Path::Path(WStringView path, std::size_t hash)
 		: _data(path), _hash(hash)
 	{
+	}
+
+	Path& Path::operator=(Path&& other) noexcept
+	{
+		_data = std::move(other._data);
+		_hash = std::exchange(other._hash, 0);
+		return *this;
 	}
 
 	bool Path::absolute() const
@@ -346,4 +359,4 @@ namespace unicore
 	{
 		return helper << '\'' << path.data() << '\'';
 	}
-	}
+}

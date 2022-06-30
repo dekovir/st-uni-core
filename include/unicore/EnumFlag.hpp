@@ -14,6 +14,14 @@ namespace unicore
 		constexpr EnumFlag(T value) : _value(static_cast<TValue>(value)) {}
 		constexpr explicit EnumFlag(TValue value) : _value(value) {}
 
+		constexpr EnumFlag(const EnumFlag& other) = default;
+		constexpr EnumFlag(EnumFlag&& other) noexcept = default;
+
+		~EnumFlag() = default;
+
+		EnumFlag& operator=(const EnumFlag& other) = default;
+		EnumFlag& operator=(EnumFlag&& other) noexcept = default;
+
 		UC_NODISCARD constexpr TValue value() const { return _value; }
 
 		UC_NODISCARD constexpr bool empty() const { return _value == 0; }

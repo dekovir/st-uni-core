@@ -13,7 +13,7 @@ namespace unicore
 		const auto stream = static_cast<ReadStream*>(user);
 		size_t read;
 		stream->read(data, size, &read);
-		return read;
+		return static_cast<int>(read);
 	}
 
 	// skip the next 'n' bytes, or 'unget' the last -n bytes if negative

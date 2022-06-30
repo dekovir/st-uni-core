@@ -11,7 +11,17 @@ namespace unicore
 
 		constexpr Vector2() = default;
 		constexpr Vector2(T x, T y);
-		constexpr Vector2(T value);
+		explicit constexpr Vector2(T value);
+
+		// Copy constructor
+		constexpr Vector2(const Vector2<T>& other) = default;
+
+		// Move constructor
+		constexpr Vector2(Vector2<T>&& other) noexcept
+			: x(other.x), y(other.y)
+		{}
+
+		~Vector2() = default;
 
 		void set(T _x, T _y)
 		{
@@ -20,6 +30,17 @@ namespace unicore
 		}
 
 		UC_NODISCARD constexpr T area() const { return x * y; }
+
+		// Copy assignment operator
+		Vector2& operator=(const Vector2& other) noexcept = default;
+
+		// Move assignment operator
+		Vector2& operator=(Vector2&& other) noexcept
+		{
+			x = other.x;
+			y = other.y;
+			return  *this;
+		}
 
 		Vector2<T>& operator += (const Vector2<T>& other)
 		{
