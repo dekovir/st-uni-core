@@ -1,6 +1,5 @@
 #pragma once
 #include "unicore/Vector2.hpp"
-#include "unicore/Vector3.hpp"
 #include "unicore/Color4.hpp"
 
 namespace unicore
@@ -37,5 +36,4 @@ namespace unicore
 	};
 
 	using VertexTexColor2 = VertexTexColor<Vector2f, Vector2f, Color4b>;
-	using VertexTexColor3 = VertexTexColor<Vector3f, Vector2f, Color4b>;
 }
