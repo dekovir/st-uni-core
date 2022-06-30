@@ -36,7 +36,7 @@ namespace unicore
 
 	bool MemoryStream::eof() const
 	{
-		return _position >= _chunk->size();
+		return _position >= static_cast<int64_t>(_chunk->size());
 	}
 
 	bool MemoryStream::read(void* buffer, size_t size, size_t* bytes_read)

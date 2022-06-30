@@ -23,8 +23,26 @@ namespace unicore
 		const auto count = _size.area();
 		const auto data = color.to_format(pixel_format_abgr);
 
-		for (int i = 0; i < count;i++)
+		for (int i = 0; i < count; i++)
 			ptr[i] = data;
+	}
+
+	void BitmapSurface::fill(std::function<Color4b(int x, int y)> fill_func)
+	{
+		const auto ptr = reinterpret_cast<uint32_t*>(_chunk.data());
+		const auto count = _size.area();
+
+		int y = 0, x = 0;
+		for (int i = 0; i < count; i++)
+		{
+			ptr[i] = fill_func(x, y).to_format(pixel_format_abgr);
+			x++;
+			if (x == _size.x)
+			{
+				y++;
+				x = 0;
+			}
+		}
 	}
 
 	void BitmapSurface::set_pixel(int x, int y, const Color4b& color)

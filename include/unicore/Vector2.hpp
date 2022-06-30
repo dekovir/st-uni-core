@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Defs.hpp"
+#include "unicore/Math.hpp"
 
 namespace unicore
 {
@@ -30,6 +30,8 @@ namespace unicore
 		}
 
 		UC_NODISCARD constexpr T area() const { return x * y; }
+		UC_NODISCARD constexpr T length_squared() const { return x * x + y * y; }
+		UC_NODISCARD float length() const { return sqrtf(length_squared()); }
 
 		// Copy assignment operator
 		Vector2& operator=(const Vector2& other) noexcept = default;
@@ -63,10 +65,54 @@ namespace unicore
 			return *this;
 		}
 
+		void normalize()
+		{
+			const auto lng = length();
+			x /= lng;
+			y /= lng;
+		}
+
+		UC_NODISCARD Vector2<T> normalized() const
+		{
+			Vector2<T> vec(x, y);
+			vec.normalize();
+			return vec;
+		}
+
 		template<typename U>
 		UC_NODISCARD constexpr Vector2<U> cast() const
 		{
 			return Vector2<U>(static_cast<U>(x), static_cast<U>(y));
+		}
+
+		UC_NODISCARD float dot(const Vector2<T>& other) const
+		{
+			return x * other.x + y * other.y;
+		}
+
+		UC_NODISCARD Radians angle(const Vector2<T>& other) const
+		{
+			return Radians(Math::sqrt(dot(other) / (length() * other.length())));
+		}
+
+		UC_NODISCARD float distance(const Vector2<T>& other) const
+		{
+			return (*this - other).length();
+		}
+
+		static float dot(const Vector2<T>& a, const Vector2<T>& b)
+		{
+			return a.dot(b);
+		}
+
+		static Radians angle(const Vector2<T>& a, const Vector2<T>& b)
+		{
+			return a.angle(b);
+		}
+
+		static float distance(const Vector2<T>& a, const Vector2<T>& b)
+		{
+			return a.distance(b);
 		}
 	};
 

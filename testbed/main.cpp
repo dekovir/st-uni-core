@@ -38,7 +38,17 @@ namespace unicore
 #if 0
 		{
 			BitmapSurface surface(64, 64);
-			surface.fill(ColorConst4b::Cyan);
+			auto& size = surface.size();
+			const auto hw = size.x / 2;
+			const auto hh = size.y / 2;
+			//surface.fill(ColorConst4b::White);
+			surface.fill([hw, hh](int x, int y) -> Color4b
+				{
+					const float distance = Vector2i(hw, hh).distance({ x, y });
+					return distance <= 32
+						? Color4b::lerp(ColorConst4b::White, ColorConst4b::Clear, distance / 32)
+						: ColorConst4b::Clear;
+				});
 			_tex = render.create_texture(surface);
 		}
 #else
@@ -52,7 +62,7 @@ namespace unicore
 
 		resources.unload_unused();
 		resources.dump_used();
-	}
+		}
 
 	void MyCore::on_update()
 	{
@@ -146,4 +156,4 @@ namespace unicore
 	}
 
 	UNICORE_MAIN_CORE(MyCore);
-}
+	}

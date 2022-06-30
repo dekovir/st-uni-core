@@ -7,6 +7,8 @@ namespace unicore
 	namespace Math
 	{
 		constexpr float PI = 3.14159265358979323846f;
+		constexpr float PI2 = PI * 2;
+
 		constexpr float DEG_TO_RAD = PI / 180;
 		constexpr float RAD_TO_DEG = 180 / PI;
 
@@ -25,6 +27,10 @@ namespace unicore
 
 		static inline float sin(float value) { return std::sin(value); }
 		static inline float cos(float value) { return std::cos(value); }
+
+		static inline float asin(float value) { return std::asin(value); }
+		static inline float acos(float value) { return std::acos(value); }
+
 		static inline float pow(float value, float count = 2) { return std::pow(value, count); }
 
 		static inline float sqrt(float value) { return std::sqrt(value); }
@@ -64,6 +70,12 @@ namespace unicore
 			if (value < min_value) return min_value;
 			return value;
 		}
+
+		template<typename T>
+		static constexpr T lerp(T a, T b, float t)
+		{
+			return static_cast<T>((b - a) * t + a);
+		}
 	}
 
 	struct AngleTypeRad
@@ -90,10 +102,18 @@ namespace unicore
 		constexpr Angle(const Angle<OtherTag>& other)
 			: _value(other.template cast<TypeTag>().value()) {}
 
+		constexpr Angle(const Angle& other) = default;
+		constexpr Angle(Angle&& other) noexcept = default;
+
+		~Angle() = default;
+
+		Angle& operator=(const Angle& other) = default;
+		Angle& operator=(Angle&& other) noexcept = default;
+
 		UC_NODISCARD constexpr float value() const { return _value; }
 
-		UC_NODISCARD inline float cos() const { return TypeTag::cos(_value); }
-		UC_NODISCARD inline float sin() const { return TypeTag::sin(_value); }
+		UC_NODISCARD float cos() const { return TypeTag::cos(_value); }
+		UC_NODISCARD float sin() const { return TypeTag::sin(_value); }
 
 		Angle& operator+=(const Angle& other)
 		{

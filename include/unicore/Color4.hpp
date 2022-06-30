@@ -86,6 +86,16 @@ namespace unicore
 				(convert_component_to_uint8(a) << format.a_shift);
 		}
 
+		static constexpr Color4 lerp(const Color4& a, const Color4& b, float t)
+		{
+			return {
+				Math::lerp(a.r, b.r, t),
+				Math::lerp(a.g, b.g, t),
+				Math::lerp(a.b, b.b, t),
+				Math::lerp(a.a, b.a, t),
+			};
+		}
+
 		static constexpr Color4 from_rgb(const uint32_t rgb)
 		{
 			const uint8_t r = (rgb >> 16) & 0xFF;

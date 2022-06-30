@@ -29,6 +29,8 @@ namespace unicore
 		void fill(const Color4b& color);
 		void clear() { fill(ColorConst4b::Black); }
 
+		void fill(std::function<Color4b(int x, int y)> fill_func);
+
 		void set_pixel(int x, int y, const Color4b& color);
 		void set_pixel(const Vector2i& pos, const Color4b& color) { set_pixel(pos.x, pos.y, color); }
 
