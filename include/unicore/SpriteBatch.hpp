@@ -42,7 +42,7 @@ namespace unicore
 			size_t vcount = 0;
 		};
 
-		VertexList _vertices;
+		VertexList2 _vertices;
 		List<Batch> _batches;
 		Batch _current;
 

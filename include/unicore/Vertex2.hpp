@@ -26,5 +26,5 @@ namespace unicore
 		}
 	};
 
-	using VertexList = List<Vertex2>;
+	using VertexList2 = List<Vertex2>;
 }

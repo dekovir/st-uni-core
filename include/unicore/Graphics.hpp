@@ -46,7 +46,7 @@ namespace unicore
 
 		List<Vector2f> _points;
 		List<Rectf> _rects;
-		VertexList _vertices;
+		VertexList2 _vertices;
 		List<Batch> _batches;
 		Batch _current;
 
