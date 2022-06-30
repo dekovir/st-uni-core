@@ -68,6 +68,29 @@ namespace unicore
 				UC_ASSERT_ALWAYS_MSG("Unimplemented");
 			}
 		}
+
+		virtual void copy(const Recti& src_rect, IBuffer2<T>& dest, const Vector2i& offset = VectorConst2i::Zero) const
+		{
+			const auto s = dest.size();
+
+			const Recti rect(
+				offset.x, offset.y,
+				Math::min(src_rect.w, s.x - offset.x),
+				Math::min(src_rect.h, s.y - offset.y)
+			);
+			dest.fill(rect, [&](int x, int y) -> T
+				{
+					T value;
+					return get(src_rect.x + x, src_rect.y + y, value) ? value : T{};
+				});
+		}
+
+		virtual void copy(IBuffer2<T>& dest, const Vector2i& offset = VectorConst2i::Zero) const
+		{
+			const auto s = size();
+			const Recti rect{ 0, 0, s.x, s.y };
+			copy(rect, dest, offset);
+		}
 	};
 
 	template<typename T>

@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/ResourceLoader.hpp"
 #if defined(UNICORE_USE_SDL2)
-#include "unicore/Render2D.hpp"
+#include "unicore/Surface.hpp"
 
 namespace unicore
 {

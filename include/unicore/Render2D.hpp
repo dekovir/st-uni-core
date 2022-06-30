@@ -5,11 +5,12 @@
 #include "unicore/Math.hpp"
 #include "unicore/Rect.hpp"
 #include "unicore/Vertex2.hpp"
-#include "unicore/Surface.hpp"
-#include "unicore/Texture.hpp"
 
 namespace unicore
 {
+	class Surface;
+	class Texture;
+
 	enum class Render2DFlag
 	{
 		FlipX = 1,

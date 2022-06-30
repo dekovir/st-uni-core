@@ -1,5 +1,7 @@
 #include "unicore/Render2D.hpp"
 #include "unicore/Data.hpp"
+#include "unicore/Surface.hpp"
+#include "unicore/Texture.hpp"
 #include "unicore/ResourceLoader.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "SDL2/SDL2Render.hpp"

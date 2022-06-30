@@ -1,6 +1,8 @@
 #pragma once
 #include "unicore/Render2D.hpp"
 #if defined(UNICORE_USE_SDL2)
+#include "unicore/Surface.hpp"
+#include "unicore/Texture.hpp"
 #include <SDL.h>
 
 namespace unicore

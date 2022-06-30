@@ -2,6 +2,7 @@
 #include "UnicoreMain.h"
 #include "unicore/Input.hpp"
 #include "unicore/Memory.hpp"
+#include "unicore/Surface.hpp"
 #include "unicore/Graphics.hpp"
 #include "unicore/SpriteBatch.hpp"
 
@@ -35,7 +36,7 @@ namespace unicore
 		//List<WString> files;
 		//file_system.enumerate(L"assets"_path, files, FileFlag::File);
 
-#if 0
+#if 1
 		{
 			BitmapSurface surface(64, 64);
 			auto& size = surface.size();
@@ -49,7 +50,11 @@ namespace unicore
 						? Color4b::lerp(ColorConst4b::White, ColorConst4b::Clear, distance / 32)
 						: ColorConst4b::Clear;
 				});
-			_tex = render.create_texture(surface);
+
+			BitmapSurface clone(32, 32);
+			surface.copy(clone);
+
+			_tex = render.create_texture(clone);
 		}
 #else
 		_tex = resources.load<Texture>(L"assets/zazaka.png"_path);
