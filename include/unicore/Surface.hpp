@@ -3,6 +3,7 @@
 #include "unicore/Buffer2.hpp"
 #include "unicore/Color4.hpp"
 #include "unicore/Resource.hpp"
+#include <variant>
 
 namespace unicore
 {
@@ -26,7 +27,9 @@ namespace unicore
 		UC_NODISCARD auto data() const { return _chunk.data(); }
 		UC_NODISCARD size_t data_size() const { return _chunk.size(); }
 
-		void fill(const Color4b& color);
+		void fill(const FillValue& value) override;
+		void fill(const Recti& rect, const FillValue& value) override;
+
 		void clear() { fill(ColorConst4b::Black); }
 
 		UC_NODISCARD bool get(int x, int y, Color4<unsigned char>& value) const override;

@@ -17,14 +17,43 @@ namespace unicore
 	{
 	}
 
-	void BitmapSurface::fill(const Color4b& color)
+	void BitmapSurface::fill(const FillValue& value)
 	{
 		const auto ptr = reinterpret_cast<uint32_t*>(_chunk.data());
 		const auto count = _size.area();
-		const auto data = color.to_format(pixel_format_abgr);
 
-		for (int i = 0; i < count; i++)
-			ptr[i] = data;
+		if (const auto color = std::get_if<Color4b>(&value))
+		{
+			const auto data = color->to_format(pixel_format_abgr);
+			for (int i = 0; i < count; i++)
+				ptr[i] = data;
+		}
+		else if (const auto func = std::get_if<FillFunction>(&value))
+		{
+			int x = 0, y = 0;
+			for (int i = 0; i < count; i++)
+			{
+				const auto data = (*func)(x, y).to_format(pixel_format_abgr);
+				ptr[i] = data;
+
+				x++;
+				if (x == _size.x)
+				{
+					y++;
+					x = 0;
+				}
+			}
+		}
+		else
+		{
+			UC_ASSERT_ALWAYS_MSG("Unimplemented");
+		}
+	}
+
+	void BitmapSurface::fill(const Recti& rect, const FillValue& value)
+	{
+		// TODO: Optimize
+		IBuffer2<Color4b>::fill(rect, value);
 	}
 
 	bool BitmapSurface::get(int x, int y, Color4b& value) const

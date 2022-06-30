@@ -7,6 +7,9 @@ namespace unicore
 	class IBuffer2
 	{
 	public:
+		using FillFunction = std::function<T(int x, int y)>;
+		using FillValue = Variant<T, FillFunction>;
+
 		virtual ~IBuffer2() = default;
 
 		UC_NODISCARD virtual const Vector2i& size() const = 0;
@@ -16,6 +19,55 @@ namespace unicore
 
 		virtual bool set(int x, int y, T value) = 0;
 		virtual bool set(const Vector2i& pos, T value) { return set(pos.x, pos.y, value); }
+
+		virtual void fill(const FillValue& value)
+		{
+			const auto s = size();
+			if (auto v = std::get_if<T>(&value))
+			{
+				for (auto y = 0; y < s.y; y++)
+					for (auto x = 0; x < s.x; x++)
+					{
+						set(x, y, *v);
+					}
+			}
+			else if (auto func = std::get_if<FillFunction>(&value))
+			{
+				for (auto y = 0; y < s.y; y++)
+					for (auto x = 0; x < s.x; x++)
+					{
+						set(x, y, (*func)(x, y));
+					}
+			}
+			else
+			{
+				UC_ASSERT_ALWAYS_MSG("Unimplemented");
+			}
+		}
+
+		virtual void fill(const Recti& rect, const FillValue& value)
+		{
+			if (auto v = std::get_if<T>(&value))
+			{
+				for (auto y = rect.min_y(); y < rect.max_y(); y++)
+					for (auto x = rect.min_x(); x < rect.max_x(); x++)
+					{
+						set(x, y, *v);
+					}
+			}
+			else if (auto func = std::get_if<FillFunction>(&value))
+			{
+				for (auto y = rect.min_y(); y < rect.max_y(); y++)
+					for (auto x = rect.min_x(); x < rect.max_x(); x++)
+					{
+						set(x, y, (*func)(x, y));
+					}
+			}
+			else
+			{
+				UC_ASSERT_ALWAYS_MSG("Unimplemented");
+			}
+		}
 	};
 
 	template<typename T>
@@ -63,43 +115,4 @@ namespace unicore
 		List<T> _data;
 		Vector2i _size;
 	};
-
-	namespace BufferDraw2
-	{
-		template<typename T>
-		extern void fill(IBuffer2<T>& buffer, T value)
-		{
-			auto& size = buffer.size();
-			for (auto y = 0; y < size.y; y++)
-				for (auto x = 0; x < size.x; x++)
-					buffer.set(x, y, value);
-		}
-
-		template<typename T>
-		extern void fill(IBuffer2<T>& buffer, const Recti& rect, T value)
-		{
-			for (auto y = rect.min_y(); y < rect.max_y(); y++)
-				for (auto x = rect.min_x(); x < rect.max_x(); x++)
-					buffer.set(x, y, value);
-		}
-
-		template<typename T>
-		extern void fill(IBuffer2<T>& buffer, std::function<T(int x, int y)> func)
-		{
-			auto& size = buffer.size();
-			for (auto y = 0; y < size.y; y++)
-				for (auto x = 0; x < size.x; x++)
-				{
-					buffer.set(x, y, func(x, y));
-				}
-		}
-
-		template<typename T>
-		extern void fill(IBuffer2<T>& buffer, const Recti& rect, std::function<T(int x, int y)> func)
-		{
-			for (auto y = rect.min_y(); y < rect.max_y(); y++)
-				for (auto x = rect.min_x(); x < rect.max_x(); x++)
-					buffer.set(x, y, func(x, y));
-		}
-	}
 }

@@ -9,6 +9,7 @@
 #include <string>
 #include <string_view>
 #include <optional>
+#include <variant>
 #include <memory>
 #include <functional>
 #include <cassert>
@@ -94,6 +95,9 @@ namespace unicore
 
 	template<typename T>
 	using Optional = std::optional<T>;
+
+	template <class... Types>
+	using Variant = std::variant<Types...>;
 
 	template<typename T>
 	using HashFunc = std::hash<T>;

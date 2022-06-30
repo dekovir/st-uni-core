@@ -41,9 +41,8 @@ namespace unicore
 			auto& size = surface.size();
 			const auto hw = size.x / 2;
 			const auto hh = size.y / 2;
-			//surface.fill(ColorConst4b::White);
-
-			BufferDraw2::fill<Color4b>(surface, [hw, hh](int x, int y) -> Color4b
+			
+			surface.fill([hw, hh](int x, int y) -> Color4b
 				{
 					const float distance = Vector2i(hw, hh).distance({ x, y });
 					return distance <= 32
