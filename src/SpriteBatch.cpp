@@ -1,4 +1,5 @@
 #include "unicore/SpriteBatch.hpp"
+#include "unicore/Render2D.hpp"
 
 namespace unicore
 {

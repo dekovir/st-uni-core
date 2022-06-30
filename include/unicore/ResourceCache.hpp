@@ -1,10 +1,10 @@
 #pragma once
-#include "unicore/Logger.hpp"
 #include "unicore/StreamProvider.hpp"
 #include "unicore/ResourceLoader.hpp"
 
 namespace unicore
 {
+	class Logger;
 	class Context;
 
 	enum class ResourceCacheFlag

@@ -1,10 +1,11 @@
 #pragma once
 #include "unicore/Object.hpp"
 #include "unicore/Font.hpp"
-#include "unicore/Render2D.hpp"
 
 namespace unicore
 {
+	class Render2D;
+
 	class SpriteBatch : public Object
 	{
 	public:

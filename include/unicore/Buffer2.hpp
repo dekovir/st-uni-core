@@ -97,8 +97,12 @@ namespace unicore
 	class Buffer2 : public IBuffer2<T>
 	{
 	public:
-		explicit Buffer2(const Vector2i& size, T value)
-			: _data(size.area(), value), _size(size)
+		explicit Buffer2(const Vector2i& size)
+			: _data(size.area()), _size(size)
+		{}
+
+		Buffer2(int x, int y)
+			: _data(x* y), _size(x, y)
 		{}
 
 		UC_NODISCARD const Vector2i& size() const override { return _size; }

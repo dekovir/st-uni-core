@@ -1,6 +1,7 @@
 #include "unicore/ResourceCache.hpp"
-#include "unicore/RenderResource.hpp"
 #include "unicore/Memory.hpp"
+#include "unicore/Logger.hpp"
+#include "unicore/RenderResource.hpp"
 
 namespace unicore
 {

@@ -33,8 +33,8 @@ namespace unicore
 
 		void clear() { fill(ColorConst4b::Black); }
 
-		UC_NODISCARD bool get(int x, int y, Color4<unsigned char>& value) const override;
-		bool set(int x, int y, Color4<unsigned char> value) override;
+		UC_NODISCARD bool get(int x, int y, Color4b& value) const override;
+		bool set(int x, int y, Color4b value) override;
 
 	protected:
 		Vector2i _size = VectorConst2i::Zero;
