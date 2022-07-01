@@ -58,6 +58,13 @@ namespace unicore
 		VertexTexColor2& v2, VertexTexColor2& v3,
 		const Color4b& color) const
 	{
+		switch (code)
+		{
+		case 32:
+			pos.x += static_cast<float>(space_w);
+			return nullptr;
+		}
+
 		const auto it = glyphs.find(code);
 		if (it != glyphs.end())
 		{
@@ -136,6 +143,8 @@ namespace unicore
 
 		auto font = make_shared<BitmapFont>();
 		font->pages.push_back(texture);
+
+		font->space_w = root->IntAttribute("spaceWidth");
 
 		for (auto element = root->FirstChildElement("char"); element != nullptr; element = element->NextSiblingElement())
 		{

@@ -15,13 +15,14 @@ namespace unicore
 		void end();
 
 		void clear();
-		void to_render(Render2D& render) const;
+		void render(Render2D& render) const;
 
 		SpriteBatch& draw(const Shared<Texture>& texture,
 			const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2);
 
 		SpriteBatch& draw(const Shared<Texture>& texture,
-			const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2, const VertexTexColor2& v3);
+			const VertexTexColor2& v0, const VertexTexColor2& v1,
+			const VertexTexColor2& v2, const VertexTexColor2& v3);
 
 		SpriteBatch& draw(const Shared<Texture>& texture,
 			const Vector2f& center, const Color4b& color = ColorConst4b::White);
@@ -47,6 +48,7 @@ namespace unicore
 		Batch _current;
 
 		void flush();
+		bool set_texture(const Shared<Texture>& texture);
 
 		static void calc_quad_position(const Vector2f& center, const Vector2i& size,
 			Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3);

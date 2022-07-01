@@ -4,7 +4,6 @@
 #include "unicore/Input.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Surface.hpp"
-#include "unicore/SpriteBatch.hpp"
 
 namespace unicore
 {
@@ -84,6 +83,7 @@ namespace unicore
 
 		auto& size = render.screen_size();
 
+		// GRAPHICS ////////////////////////////////////////////////////////////////
 		_graphics.begin();
 		_graphics
 			.draw_tri(
@@ -99,6 +99,23 @@ namespace unicore
 			;
 
 		_graphics.end();
+
+		// SPRITE BATCH ////////////////////////////////////////////////////////////
+		const String fps_str = "FPS: " + std::to_string(fps());
+		const String count_str = "Count: " + std::to_string(_entites.size());
+		const String draw_str = "Draw: " + std::to_string(_draw_calls);
+
+		_sprite_batch.begin();
+
+		for (const auto& entity : _entites)
+			_sprite_batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
+		_sprite_batch.draw(_tex, { static_cast<float>(size.x) - 32, 32 });
+
+		_sprite_batch.print(_font, { 0, 0 }, fps_str);
+		_sprite_batch.print(_font, { 0, 20 }, count_str);
+		_sprite_batch.print(_font, { 0, 40 }, draw_str);
+
+		_sprite_batch.end();
 	}
 
 	void MyCore::on_draw()
@@ -107,21 +124,9 @@ namespace unicore
 
 		_graphics.render(render);
 
-		const String fps_str = "FPS: " + std::to_string(fps());
-		const String count_str = "Count: " + std::to_string(_entites.size());
+		_sprite_batch.render(render);
 
-		SpriteBatch batch;
-		batch.begin();
-		batch.draw(_tex, { 32, 32 });
-
-		for (const auto& entity : _entites)
-			batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
-
-		batch.print(_font, { 0, 0 }, fps_str);
-		batch.print(_font, { 0, 20 }, count_str);
-
-		batch.end();
-		batch.to_render(render);
+		_draw_calls = render.draw_calls();
 	}
 
 	void MyCore::spawn_entity(const Vector2f& position, const Vector2i& size)

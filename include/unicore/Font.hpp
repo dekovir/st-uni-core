@@ -10,6 +10,7 @@ namespace unicore
 	{
 	public:
 		Dictionary<uint32_t, Dictionary<uint32_t, int>> kerning;
+		uint8_t space_w;
 
 		UC_NODISCARD int find_kerning(uint32_t a, uint32_t b) const;
 	};

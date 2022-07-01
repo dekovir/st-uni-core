@@ -2,6 +2,7 @@
 #include "unicore/Core.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/Graphics2D.hpp"
+#include "unicore/SpriteBatch.hpp"
 
 namespace unicore
 {
@@ -31,7 +32,11 @@ namespace unicore
 		Shared<BitmapFont> _font;
 		DefaultRandom _random;
 		List<Entity> _entites;
+
 		Graphics2D _graphics;
+		SpriteBatch _sprite_batch;
+
+		uint32_t _draw_calls = 0;
 
 		void on_update() override;
 		void on_draw() override;

@@ -17,9 +17,10 @@ namespace unicore
 	{
 		_batches.clear();
 		_current = {};
+		_vertices.clear();
 	}
 
-	void SpriteBatch::to_render(Render2D& render) const
+	void SpriteBatch::render(Render2D& render) const
 	{
 		for (const auto& batch : _batches)
 		{
@@ -31,14 +32,8 @@ namespace unicore
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
 		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2)
 	{
-		if (texture != nullptr)
+		if (set_texture(texture))
 		{
-			if (_current.texture != texture)
-			{
-				flush();
-				_current.texture = texture;
-			}
-
 			_vertices.push_back(v0);
 			_vertices.push_back(v1);
 			_vertices.push_back(v2);
@@ -51,14 +46,8 @@ namespace unicore
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
 		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2, const VertexTexColor2& v3)
 	{
-		if (texture != nullptr)
+		if (set_texture(texture))
 		{
-			if (_current.texture != texture)
-			{
-				flush();
-				_current.texture = texture;
-			}
-
 			_vertices.push_back(v0);
 			_vertices.push_back(v1);
 			_vertices.push_back(v3);
@@ -76,7 +65,7 @@ namespace unicore
 
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture, const Vector2f& center, const Color4b& color)
 	{
-		if (texture != nullptr)
+		if (set_texture(texture))
 		{
 			calc_quad_position(center, texture->size(),
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
@@ -99,7 +88,7 @@ namespace unicore
 		const Vector2f& center, const Radians& angle,
 		const Vector2f& scale, const Color4b& color)
 	{
-		if (texture != nullptr)
+		if (set_texture(texture))
 		{
 			calc_quad_position(center, texture->size(), angle, scale,
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
@@ -150,6 +139,21 @@ namespace unicore
 			_current = {};
 			_current.vstart = _vertices.size();
 		}
+	}
+
+	bool SpriteBatch::set_texture(const Shared<Texture>& texture)
+	{
+		if (texture != nullptr)
+		{
+			if (_current.texture != texture)
+			{
+				flush();
+				_current.texture = texture;
+			}
+			return true;
+		}
+
+		return false;
 	}
 
 	void SpriteBatch::calc_quad_position(

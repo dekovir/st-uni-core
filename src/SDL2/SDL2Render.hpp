@@ -47,6 +47,7 @@ namespace unicore
 		~SDL2Render() override;
 
 		UC_NODISCARD const Vector2i& screen_size() const override { return _size; }
+		UC_NODISCARD uint32_t draw_calls() const override { return _draw_calls; }
 
 		Shared<Texture> create_texture(Surface& surface) override;
 
@@ -78,6 +79,7 @@ namespace unicore
 	protected:
 		SDL_Window* _window;
 		SDL_Renderer* _renderer;
+		uint32_t _draw_calls = 0;
 
 		Vector2i _size = VectorConst2i::Zero;
 		Color4b _color = ColorConst4b::White;

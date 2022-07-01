@@ -124,6 +124,8 @@ namespace unicore
 	{
 		set_color(ColorConst4b::White);
 		set_clip(std::nullopt);
+		_draw_calls = 0;
+
 		return true;
 	}
 
@@ -164,24 +166,28 @@ namespace unicore
 	{
 		SDL2Utils::convert(points, count, s_points);
 		SDL_RenderDrawPoints(_renderer, s_points.data(), static_cast<int>(count));
+		_draw_calls++;
 	}
 
 	void SDL2Render::draw_points_f(const Vector2f* points, size_t count)
 	{
 		SDL2Utils::convert(points, count, s_points_f);
 		SDL_RenderDrawPointsF(_renderer, s_points_f.data(), static_cast<int>(count));
+		_draw_calls++;
 	}
 
 	void SDL2Render::draw_lines(const Vector2i* points, size_t count)
 	{
 		SDL2Utils::convert(points, count, s_points);
 		SDL_RenderDrawLines(_renderer, s_points.data(), static_cast<int>(count));
+		_draw_calls++;
 	}
 
 	void SDL2Render::draw_lines_f(const Vector2f* points, size_t count)
 	{
 		SDL2Utils::convert(points, count, s_points_f);
 		SDL_RenderDrawLinesF(_renderer, s_points_f.data(), static_cast<int>(count));
+		_draw_calls++;
 	}
 
 	void SDL2Render::draw_rects(const Recti* rect, size_t count, bool filled)
@@ -191,6 +197,7 @@ namespace unicore
 			SDL_RenderFillRects(_renderer, s_rects.data(), static_cast<int>(count));
 		else
 			SDL_RenderDrawRects(_renderer, s_rects.data(), static_cast<int>(count));
+		_draw_calls++;
 	}
 
 	void SDL2Render::draw_rects_f(const Rectf* rect, size_t count, bool filled)
@@ -200,6 +207,7 @@ namespace unicore
 			SDL_RenderFillRectsF(_renderer, s_rects_f.data(), static_cast<int>(count));
 		else
 			SDL_RenderDrawRectsF(_renderer, s_rects_f.data(), static_cast<int>(count));
+		_draw_calls++;
 	}
 
 	void SDL2Render::draw_triangles(
@@ -223,6 +231,8 @@ namespace unicore
 			s_vertices.data(), static_cast<int>(num_vertices),
 			nullptr, 0
 		);
+
+		_draw_calls++;
 	}
 
 	void SDL2Render::draw_triangles(const VertexTexColor2* vertices,
@@ -251,6 +261,8 @@ namespace unicore
 			s_vertices.data(), static_cast<int>(num_vertices),
 			nullptr, 0
 		);
+
+		_draw_calls++;
 	}
 
 	void SDL2Render::update_size()

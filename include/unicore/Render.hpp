@@ -33,6 +33,7 @@ namespace unicore
 		explicit Render(Logger& logger);
 
 		UC_NODISCARD virtual const Vector2i& screen_size() const = 0;
+		UC_NODISCARD virtual uint32_t draw_calls() const =0;
 
 		virtual bool begin_scene() = 0;
 		virtual void end_scene() = 0;
