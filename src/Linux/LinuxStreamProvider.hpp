@@ -12,11 +12,18 @@ namespace unicore
 
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
+
 		uint16_t enumerate(const Path& path,
-			List<WString>& name_list, FileFlags flags) override;
+			WStringView search_pattern, List<Path>& name_list,
+			FileFlags flags = FileFlag::File | FileFlag::Directory) const override;
+
+		bool create_directory(const Path& path) override;
+		bool delete_directory(const Path& path, bool recursive) override;
 
 		Shared<ReadStream> open_read(const Path& path) override;
 		Shared<WriteStream> create_new(const Path& path) override;
+
+		bool delete_file(const Path& path) override;
 
 	protected:
 		Logger& _logger;

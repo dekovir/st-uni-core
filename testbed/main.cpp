@@ -32,9 +32,6 @@ namespace unicore
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
-		//List<WString> files;
-		//file_system.enumerate(L"assets"_path, files, FileFlag::File);
-
 #if 0
 		{
 			Surface circle(64, 64);

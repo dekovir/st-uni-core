@@ -64,9 +64,9 @@ namespace unicore
 		Path operator/(const Path& path) const;
 
 		void native_path(WString& nativePath) const;
-		[[nodiscard]] WString native_path() const;
+		UC_NODISCARD WString native_path() const;
 
-		[[nodiscard]] Path to_lower() const;
+		UC_NODISCARD Path to_lower() const;
 
 		static Path combine(WStringView a, WStringView b);
 		static Path combine(WStringView a, WStringView b, WStringView c);
@@ -89,6 +89,11 @@ namespace unicore
 		static WString prepare(WStringView str);
 		static size_t calc_hash(WStringView str);
 	};
+
+	static Path operator/(const Path& path, WStringView file)
+	{
+		return Path::combine(path.data(), file);
+	}
 
 	static Path operator"" _path(const wchar_t* path, size_t len)
 	{

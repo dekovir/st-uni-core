@@ -48,9 +48,10 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	uint16_t WinStreamProvider::enumerate(const Path& path, List<WString>& name_list, FileFlags flags)
+	uint16_t WinStreamProvider::enumerate(const Path& path,
+		WStringView search_pattern, List<Path>& name_list, FileFlags flags) const
 	{
-		const auto native_path = path.native_path() + L"/*";
+		const auto native_path = (path / search_pattern).native_path();
 
 		uint16_t count = 0;
 
@@ -70,7 +71,7 @@ namespace unicore
 				if (!flags.has(fileType))
 					continue;
 
-				name_list.push_back(fileName);
+				name_list.push_back(path / fileName);
 				count++;
 			} while (FindNextFileW(find, &data));
 
@@ -78,6 +79,28 @@ namespace unicore
 		}
 
 		return count;
+	}
+
+	bool WinStreamProvider::create_directory(const Path& path)
+	{
+		const auto native_path = path.native_path();
+		if (CreateDirectoryW(native_path.data(), nullptr) != 0)
+			return true;
+
+		if (const auto error = WinError::get_last(); error.is_error())
+			UC_LOG_ERROR(_logger) << error << L" for '" << path << L"'";
+		return false;
+	}
+
+	bool WinStreamProvider::delete_directory(const Path& path, bool recursive)
+	{
+		const auto native_path = path.native_path();
+		if (RemoveDirectoryW(native_path.data()) != 0)
+			return true;
+
+		if (const auto error = WinError::get_last(); error.is_error())
+			UC_LOG_ERROR(_logger) << error << L" for '" << path << L"'";
+		return false;
 	}
 
 	Shared<ReadStream> WinStreamProvider::open_read(const Path& path)
@@ -110,6 +133,17 @@ namespace unicore
 			UC_LOG_ERROR(_logger) << error << L" for '" << path << L"'";
 
 		return nullptr;
+	}
+
+	bool WinStreamProvider::delete_file(const Path& path)
+	{
+		const auto native_path = path.native_path();
+		if (DeleteFileW(native_path.data()) != 0)
+			return true;
+
+		if (const auto error = WinError::get_last(); error.is_error())
+			UC_LOG_ERROR(_logger) << error << L" for '" << path << L"'";
+		return false;
 	}
 
 	time_t WinStreamProvider::filetime_to_timet(FILETIME const& ft)

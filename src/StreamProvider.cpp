@@ -8,6 +8,14 @@ namespace unicore
 		return stats(path).has_value();
 	}
 
+	List<Path> StreamProvider::get_enumerate(const Path& path,
+		WStringView search_pattern, FileFlags flags) const
+	{
+		List<Path> name_list;
+		enumerate(path, search_pattern, name_list, flags);
+		return name_list;
+	}
+
 	Shared<MemoryChunk> StreamProvider::read_chunk(const Path& path)
 	{
 		if (const auto stream = open_read(path))
@@ -39,9 +47,20 @@ namespace unicore
 		return _provider.exists(make_path(path));
 	}
 
-	uint16_t PathStreamProvider::enumerate(const Path& path, List<WString>& name_list, FileFlags flags)
+	uint16_t PathStreamProvider::enumerate(const Path& path,
+		WStringView search_pattern, List<Path>& name_list, FileFlags flags) const
 	{
-		return _provider.enumerate(make_path(path), name_list, flags);
+		return _provider.enumerate(make_path(path), search_pattern, name_list, flags);
+	}
+
+	bool PathStreamProvider::create_directory(const Path& path)
+	{
+		return _provider.create_directory(make_path(path));
+	}
+
+	bool PathStreamProvider::delete_directory(const Path& path, bool recursive)
+	{
+		return _provider.delete_directory(make_path(path), recursive);
 	}
 
 	Shared<ReadStream> PathStreamProvider::open_read(const Path& path)
@@ -52,5 +71,10 @@ namespace unicore
 	Shared<WriteStream> PathStreamProvider::create_new(const Path& path)
 	{
 		return _provider.create_new(make_path(path));
+	}
+
+	bool PathStreamProvider::delete_file(const Path& path)
+	{
+		return _provider.delete_file(make_path(path));
 	}
 }

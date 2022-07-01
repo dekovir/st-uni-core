@@ -46,9 +46,22 @@ namespace unicore
 	}
 
 	uint16_t LinuxStreamProvider::enumerate(const Path& path,
-		List<WString>& name_list, FileFlags flags)
+			WStringView search_pattern, List<Path>& name_list, FileFlags flags) const
 	{
+		UC_ASSERT_ALWAYS_MSG("Unimplemented");
 		return 0;
+	}
+
+	bool LinuxStreamProvider::create_directory(const Path& path)
+	{
+		UC_ASSERT_ALWAYS_MSG("Unimplemented");
+		return false;
+	}
+
+	bool LinuxStreamProvider::delete_directory(const Path& path, bool recursive)
+	{
+		UC_ASSERT_ALWAYS_MSG("Unimplemented");
+		return false;
 	}
 
 	Shared<ReadStream> LinuxStreamProvider::open_read(const Path& path)
@@ -63,6 +76,12 @@ namespace unicore
 		const auto native_path = to_native(path);
 		auto handle = fopen(native_path.c_str(), "wb");
 		return handle ? make_shared<LinuxStream>(handle) : nullptr;
+	}
+
+	bool LinuxStreamProvider::delete_file(const Path& path)
+	{
+		UC_ASSERT_ALWAYS_MSG("Unimplemented");
+		return false;
 	}
 
 	String LinuxStreamProvider::to_native(const Path& path)
