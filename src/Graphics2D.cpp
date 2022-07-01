@@ -1,24 +1,24 @@
-#include "unicore/Graphics.hpp"
+#include "unicore/Graphics2D.hpp"
 
 namespace unicore
 {
-	void Graphics::begin()
+	void Graphics2D::begin()
 	{
 		clear();
 	}
 
-	void Graphics::end()
+	void Graphics2D::end()
 	{
 		flush();
 	}
 
-	void Graphics::clear()
+	void Graphics2D::clear()
 	{
 		_batches.clear();
 		_current = {};
 	}
 
-	void Graphics::to_render(Render2D& render) const
+	void Graphics2D::render(Render2D& render) const
 	{
 		for (const auto& batch : _batches)
 		{
@@ -48,7 +48,7 @@ namespace unicore
 		}
 	}
 
-	Graphics& Graphics::set_color(const Color4b& color)
+	Graphics2D& Graphics2D::set_color(const Color4b& color)
 	{
 		if (_current.color != color)
 		{
@@ -58,7 +58,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics& Graphics::draw_point(const Vector2i& p)
+	Graphics2D& Graphics2D::draw_point(const Vector2i& p)
 	{
 		set_type(BatchType::Point);
 
@@ -68,7 +68,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics& Graphics::draw_point(const Vector2f& p)
+	Graphics2D& Graphics2D::draw_point(const Vector2f& p)
 	{
 		set_type(BatchType::Point);
 
@@ -78,7 +78,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics& Graphics::draw_line(const Vector2i& p0, const Vector2i& p1)
+	Graphics2D& Graphics2D::draw_line(const Vector2i& p0, const Vector2i& p1)
 	{
 		set_type(BatchType::Line);
 
@@ -89,7 +89,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics& Graphics::draw_line(const Vector2f& p0, const Vector2f& p1)
+	Graphics2D& Graphics2D::draw_line(const Vector2f& p0, const Vector2f& p1)
 	{
 		set_type(BatchType::Line);
 
@@ -100,7 +100,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics& Graphics::draw_rect(const Recti& rect)
+	Graphics2D& Graphics2D::draw_rect(const Recti& rect)
 	{
 		set_type(BatchType::Rect);
 		_rects.push_back(rect.cast<float>());
@@ -109,7 +109,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics& Graphics::draw_rect(const Rectf& rect)
+	Graphics2D& Graphics2D::draw_rect(const Rectf& rect)
 	{
 		set_type(BatchType::Rect);
 		_rects.push_back(rect);
@@ -118,7 +118,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics& Graphics::draw_tri(const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2)
+	Graphics2D& Graphics2D::draw_tri(const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2)
 	{
 		set_type(BatchType::Vertex);
 		_vertices.push_back(v0);
@@ -128,7 +128,7 @@ namespace unicore
 		return *this;
 	}
 
-	void Graphics::set_type(BatchType type)
+	void Graphics2D::set_type(BatchType type)
 	{
 		if (_current.type != type)
 		{
@@ -157,7 +157,7 @@ namespace unicore
 		}
 	}
 
-	void Graphics::flush()
+	void Graphics2D::flush()
 	{
 		if (_current.count > 0)
 		{

@@ -1,6 +1,7 @@
 #pragma once
 #include "unicore/Core.hpp"
 #include "unicore/Font.hpp"
+#include "unicore/Graphics2D.hpp"
 
 namespace unicore
 {
@@ -30,6 +31,7 @@ namespace unicore
 		Shared<BitmapFont> _font;
 		DefaultRandom _random;
 		List<Entity> _entites;
+		Graphics2D _graphics;
 
 		void on_update() override;
 		void on_draw() override;

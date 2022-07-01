@@ -4,7 +4,6 @@
 #include "unicore/Input.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Surface.hpp"
-#include "unicore/Graphics.hpp"
 #include "unicore/SpriteBatch.hpp"
 
 namespace unicore
@@ -82,16 +81,11 @@ namespace unicore
 		const auto delta = static_cast<float>(time.delta().total_seconds());
 		for (auto& entity : _entites)
 			entity.update(screen_size, delta);
-	}
 
-	void MyCore::on_draw()
-	{
 		auto& size = render.screen_size();
 
-		render.clear(ColorConst4b::Black);
-		Graphics graphics;
-		graphics.begin();
-		graphics
+		_graphics.begin();
+		_graphics
 			.draw_tri(
 				VertexTexColor2({ 100, 100 }, ColorConst4b::Yellow),
 				VertexTexColor2({ 200, 100 }, ColorConst4b::Cyan),
@@ -104,8 +98,14 @@ namespace unicore
 			.draw_point(Vector2f(400, 400))
 			;
 
-		graphics.end();
-		graphics.to_render(render);
+		_graphics.end();
+	}
+
+	void MyCore::on_draw()
+	{
+		render.clear(ColorConst4b::Black);
+
+		_graphics.render(render);
 
 		const String fps_str = "FPS: " + std::to_string(fps());
 		const String count_str = "Count: " + std::to_string(_entites.size());
