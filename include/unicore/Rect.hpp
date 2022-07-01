@@ -40,20 +40,21 @@ namespace unicore
 
 		UC_NODISCARD constexpr T min_x() const { return x; }
 		UC_NODISCARD constexpr T max_x() const { return x + w; }
+
 		UC_NODISCARD constexpr T min_y() const { return y; }
 		UC_NODISCARD constexpr T max_y() const { return y + h; }
 
 		UC_NODISCARD constexpr Range<T> range_x() const { return { min_x(), max_x() }; }
 		UC_NODISCARD constexpr Range<T> range_y() const { return { min_y(), max_y() }; }
 
-		UC_NODISCARD constexpr T get_left() const { return x; }
-		UC_NODISCARD constexpr T get_right() const { return x + w; }
-		UC_NODISCARD constexpr T get_bottom() const { return y; }
-		UC_NODISCARD constexpr T get_top() const { return y + h; }
+		UC_NODISCARD constexpr T left() const { return x; }
+		UC_NODISCARD constexpr T right() const { return x + w; }
+		UC_NODISCARD constexpr T bottom() const { return y; }
+		UC_NODISCARD constexpr T top() const { return y + h; }
 
-		UC_NODISCARD constexpr Vector2<T> get_position() const { return Vector2<T>(x, y); }
-		UC_NODISCARD constexpr Vector2<T> get_size() const { return Vector2<T>(w, h); }
-		UC_NODISCARD constexpr Vector2<T> get_center() const { return Vector2<T>(x + w / 2, y + h / 2); }
+		UC_NODISCARD constexpr Vector2<T> position() const { return Vector2<T>(x, y); }
+		UC_NODISCARD constexpr Vector2<T> size() const { return Vector2<T>(w, h); }
+		UC_NODISCARD constexpr Vector2<T> center() const { return Vector2<T>(x + w / 2, y + h / 2); }
 
 		UC_NODISCARD constexpr Vector2<T> top_left() const { return Vector2<T>(x, y + h); }
 		UC_NODISCARD constexpr Vector2<T> top_right() const { return Vector2<T>(x + w, y + h); }
@@ -71,22 +72,40 @@ namespace unicore
 				static_cast<U>(w), static_cast<U>(h));
 		}
 
-		constexpr bool operator== (const Rect<T>& other) const
+		//constexpr static Rect<T>& clip(const Rect<T>& a, const Rect<T>& b, Rect<T>& result)
+		//{
+		//	result.x = Math::max(a.x, b.x);
+		//	result.y = Math::max(a.y, b.y);
+		//	return result;
+		//}
+
+		//constexpr static Rect<T> clip(const Rect<T>& a, const Rect<T>& b)
+		//{
+		//	Rect<T> result;
+		//	clip(a, b, result);
+		//	return result;
+		//}
+
+		Rect<T>& operator+=(const Vector2<T>& vec)
 		{
-			return x == other.x && y == other.y
-				&& w == other.w && h == other.h;
+			x += vec.x;
+			y += vec.y;
+			return *this;
 		}
 
-		static constexpr Rect<T> FromMinMax(const Vector2<T>& min, const Vector2<T>& max);
+		Rect<T>& operator-=(const Vector2<T>& vec)
+		{
+			x -= vec.x;
+			y -= vec.y;
+			return *this;
+		}
 
-		static const Rect<T> Zero;
+		static constexpr Rect<T> from_min_max(const Vector2<T>& min, const Vector2<T>& max);
+		static constexpr Rect<T> from_center(const Vector2<T>& center, const Vector2<T>& size);
 	};
 
-	template<typename T>
-	const Rect<T> Rect<T>::Zero{ 0, 0, 0, 0 };
-
-	typedef Rect<int>   Recti;
-	typedef Rect<float> Rectf;
+	using Recti = Rect<int>;
+	using Rectf = Rect<float>;
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
 	template <typename T>
@@ -114,9 +133,15 @@ namespace unicore
 	}
 
 	template <typename T>
-	constexpr Rect<T> Rect<T>::FromMinMax(const Vector2<T>& min, const Vector2<T>& max)
+	constexpr Rect<T> Rect<T>::from_min_max(const Vector2<T>& min, const Vector2<T>& max)
 	{
 		return Rect<T>(min.x, min.y, max.x - min.x, max.y - min.y);
+	}
+
+	template <typename T>
+	constexpr Rect<T> Rect<T>::from_center(const Vector2<T>& center, const Vector2<T>& size)
+	{
+		return Rect<T>(center.x - size.x / 2, center.y - size.y / 2, size.x, size.y);
 	}
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
@@ -135,4 +160,26 @@ namespace unicore
 		return a.x != b.x || a.y != b.y ||
 			a.w != b.w || a.h != b.h;
 	}
+
+	template<typename T>
+	Rect<T> operator+ (const Rect<T>& rect, const Vector2<T>& vec)
+	{
+		return Rect<T>(rect.x + vec.x, rect.y + vec.y, rect.w, rect.h);
+	}
+
+	template<typename T>
+	Rect<T> operator- (const Rect<T>& rect, const Vector2<T>& vec)
+	{
+		return Rect<T>(rect.x - vec.x, rect.y - vec.y, rect.w, rect.h);
+	}
+
+	// CONST /////////////////////////////////////////////////////////////////////
+	template<typename T>
+	struct RectConst
+	{
+		static constexpr Rect<T> Zero = Rect<T>(0, 0, 0, 0);
+	};
+
+	using RectConsti = RectConst<int>;
+	using RectConstf = RectConst<float>;
 }

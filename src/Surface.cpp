@@ -41,23 +41,54 @@ namespace unicore
 		return *this;
 	}
 
-	void Surface::fill(const FillValue& value)
+	void Surface::fill(const Color4b& color, const Optional<Recti>& rect)
 	{
 		const auto ptr = reinterpret_cast<uint32_t*>(_chunk.data());
-		const auto count = _size.area();
 
-		if (const auto color = std::get_if<Color4b>(&value))
+		const auto data = color.to_format(pixel_format_abgr);
+		if (rect.has_value())
 		{
-			const auto data = color->to_format(pixel_format_abgr);
+			const auto r = clip_rect(rect.value());
+			for (auto y = r.min_y(); y < r.max_y(); y++)
+			{
+				const int offset = y * _size.x;
+				for (auto x = r.min_x(); x < r.max_x(); x++)
+					ptr[offset + x] = data;
+			}
+		}
+		else
+		{
+			const auto count = _size.area();
 			for (int i = 0; i < count; i++)
 				ptr[i] = data;
 		}
-		else if (const auto func = std::get_if<FillFunction>(&value))
+	}
+
+	void Surface::fill(FillFunction func, const Optional<Recti>& rect)
+	{
+		const auto ptr = reinterpret_cast<uint32_t*>(_chunk.data());
+
+		if (rect.has_value())
+		{
+			const auto r = clip_rect(rect.value());
+			int offset = r.min_x() + r.min_y() * _size.x;
+			for (auto y = r.min_y(); y < r.max_y(); y++)
+			{
+				for (auto x = r.min_x(); x < r.max_x(); x++)
+				{
+					const auto data = func(x, y).to_format(pixel_format_abgr);
+					ptr[offset] = data;
+					offset++;
+				}
+			}
+		}
+		else
 		{
 			int x = 0, y = 0;
+			const auto count = _size.area();
 			for (int i = 0; i < count; i++)
 			{
-				const auto data = (*func)(x, y).to_format(pixel_format_abgr);
+				const auto data = func(x, y).to_format(pixel_format_abgr);
 				ptr[i] = data;
 
 				x++;
@@ -68,16 +99,6 @@ namespace unicore
 				}
 			}
 		}
-		else
-		{
-			UC_ASSERT_ALWAYS_MSG("Unimplemented");
-		}
-	}
-
-	void Surface::fill(const Recti& rect, const FillValue& value)
-	{
-		// TODO: Optimize
-		IBuffer2<Color4b>::fill(rect, value);
 	}
 
 	bool Surface::get(int x, int y, Color4b& value) const

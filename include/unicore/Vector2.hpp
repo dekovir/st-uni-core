@@ -82,7 +82,11 @@ namespace unicore
 		template<typename U>
 		UC_NODISCARD constexpr Vector2<U> cast() const
 		{
-			return Vector2<U>(static_cast<U>(x), static_cast<U>(y));
+			if constexpr (std::is_same_v<U, T>) return this;
+
+			return Vector2<U>(
+				static_cast<U>(x),
+				static_cast<U>(y));
 		}
 
 		UC_NODISCARD float dot(const Vector2<T>& other) const
@@ -92,7 +96,7 @@ namespace unicore
 
 		UC_NODISCARD Radians angle(const Vector2<T>& other) const
 		{
-			return Radians(Math::sqrt(dot(other) / (length() * other.length())));
+			return Radians(Math::acos(dot(other) / (length() * other.length())));
 		}
 
 		UC_NODISCARD float distance(const Vector2<T>& other) const
@@ -183,6 +187,7 @@ namespace unicore
 		return Vector2<T>(a.x / value, a.y / value);
 	}
 
+	// CONST /////////////////////////////////////////////////////////////////////
 	template<typename T>
 	struct VectorConst2
 	{

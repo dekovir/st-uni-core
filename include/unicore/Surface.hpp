@@ -28,8 +28,8 @@ namespace unicore
 		UC_NODISCARD auto data() const { return _chunk.data(); }
 		UC_NODISCARD size_t data_size() const { return _chunk.size(); }
 
-		void fill(const FillValue& value) override;
-		void fill(const Recti& rect, const FillValue& value) override;
+		void fill(const Color4b& color, const Optional<Recti>& rect = std::nullopt) override;
+		void fill(FillFunction func, const Optional<Recti>& rect = std::nullopt) override;
 
 		void clear() { fill(ColorConst4b::Black); }
 

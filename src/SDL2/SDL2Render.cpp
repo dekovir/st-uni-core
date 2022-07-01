@@ -98,12 +98,12 @@ namespace unicore
 	Shared<Texture> SDL2Render::create_texture(Surface& surface)
 	{
 		auto& size = surface.size();
-
+		// TODO: Implement different formats
 #if 1
 		auto sdl_texture = SDL_CreateTexture(_renderer,
 			SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, size.x, size.y);
 		SDL_SetTextureBlendMode(sdl_texture, SDL_BLENDMODE_BLEND);
-		auto ret = SDL_UpdateTexture(sdl_texture, nullptr, surface.data(), size.x * 4);
+		SDL_UpdateTexture(sdl_texture, nullptr, surface.data(), size.x * 4);
 		return make_shared<SDL2Texture>(sdl_texture);
 #else
 		if (const auto sdl_surface = SDL_CreateRGBSurfaceWithFormatFrom(
@@ -114,9 +114,8 @@ namespace unicore
 			if (texture)
 				return make_shared<SDL2Texture>(texture);
 		}
-#endif
-
 		return nullptr;
+#endif
 	}
 
 	bool SDL2Render::begin_scene()

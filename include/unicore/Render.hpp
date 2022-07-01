@@ -1,10 +1,31 @@
 #pragma once
 #include "unicore/Module.hpp"
+#include "unicore/Memory.hpp"
 #include "unicore/Vector2.hpp"
+#include "unicore/RenderResource.hpp"
 
 namespace unicore
 {
 	class Logger;
+
+	class RenderBuffer : public RenderResource
+	{
+	public:
+		UC_NODISCARD virtual size_t size() const = 0;
+
+		UC_NODISCARD virtual size_t item_size() const = 0;
+		UC_NODISCARD virtual size_t item_count() const = 0;
+	};
+
+	class VertexBuffer : public RenderBuffer
+	{
+	public:
+	};
+
+	class IndexBuffer : public RenderBuffer
+	{
+	public:
+	};
 
 	class Render : public Module
 	{
