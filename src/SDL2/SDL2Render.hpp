@@ -70,18 +70,6 @@ namespace unicore
 		void draw_rects(const Recti* rect, size_t count, bool filled) override;
 		void draw_rects_f(const Rectf* rect, size_t count, bool filled) override;
 
-		void draw_texture(const Texture& texture,
-			const Render2DDrawTextureOptionsI& options) override;
-
-		void draw_texture_f(const Texture& texture,
-			const Render2DDrawTextureOptionsF& options) override;
-
-		void draw_texture_ex(const Texture& texture,
-			const Render2DDrawTextureOptionsExI& options) override;
-
-		void draw_texture_exf(const Texture& texture,
-			const Render2DDrawTextureOptionsExF& options) override;
-
 		void draw_triangles(const VertexColor2* vertices, size_t num_vertices) override;
 
 		void draw_triangles(const VertexTexColor2* vertices,
