@@ -11,6 +11,8 @@ namespace unicore
 	static List<SDL_Rect> s_rects;
 	static List<SDL_FRect> s_rects_f;
 
+	static std::vector<SDL_Vertex> s_vertices;
+
 	SDL2Texture::SDL2Texture(SDL_Texture* context)
 		: _context(context)
 	{
@@ -185,13 +187,19 @@ namespace unicore
 	void SDL2Render::draw_rects(const Recti* rect, size_t count, bool filled)
 	{
 		SDL2Utils::convert(rect, count, s_rects);
-		SDL_RenderDrawRects(_renderer, s_rects.data(), static_cast<int>(count));
+		if (filled)
+			SDL_RenderFillRects(_renderer, s_rects.data(), static_cast<int>(count));
+		else
+			SDL_RenderDrawRects(_renderer, s_rects.data(), static_cast<int>(count));
 	}
 
 	void SDL2Render::draw_rects_f(const Rectf* rect, size_t count, bool filled)
 	{
 		SDL2Utils::convert(rect, count, s_rects_f);
-		SDL_RenderDrawRectsF(_renderer, s_rects_f.data(), static_cast<int>(count));
+		if (filled)
+			SDL_RenderFillRectsF(_renderer, s_rects_f.data(), static_cast<int>(count));
+		else
+			SDL_RenderDrawRectsF(_renderer, s_rects_f.data(), static_cast<int>(count));
 	}
 
 	void SDL2Render::draw_texture(const Texture& texture,
@@ -260,18 +268,40 @@ namespace unicore
 		}
 	}
 
-	void SDL2Render::draw_triangles(const VertexTexColor2* vertices,
-		size_t num_vertices, const Texture* texture)
+	void SDL2Render::draw_triangles(
+		const VertexColor2* vertices, size_t num_vertices)
 	{
-		static std::vector<SDL_Vertex> points;
-		const auto tex = dynamic_cast<const SDL2Texture*>(texture);
-		const auto tex_handle = tex ? tex->_context : nullptr;
-
-		points.resize(num_vertices);
+		s_vertices.resize(num_vertices);
 		for (size_t i = 0; i < num_vertices; i++)
 		{
 			const auto& vertex = vertices[i];
-			auto& [position, color, uv] = points[i];
+			auto& [position, color, uv] = s_vertices[i];
+
+			position.x = vertex.pos.x;
+			position.y = vertex.pos.y;
+			color.r = vertex.col.r;
+			color.g = vertex.col.g;
+			color.b = vertex.col.b;
+			color.a = vertex.col.a;
+		}
+
+		SDL_RenderGeometry(_renderer, nullptr,
+			s_vertices.data(), static_cast<int>(num_vertices),
+			nullptr, 0
+		);
+	}
+
+	void SDL2Render::draw_triangles(const VertexTexColor2* vertices,
+		size_t num_vertices, const Texture* texture)
+	{
+		const auto tex = dynamic_cast<const SDL2Texture*>(texture);
+		const auto tex_handle = tex ? tex->_context : nullptr;
+
+		s_vertices.resize(num_vertices);
+		for (size_t i = 0; i < num_vertices; i++)
+		{
+			const auto& vertex = vertices[i];
+			auto& [position, color, uv] = s_vertices[i];
 
 			position.x = vertex.pos.x;
 			position.y = vertex.pos.y;
@@ -284,7 +314,7 @@ namespace unicore
 		}
 
 		SDL_RenderGeometry(_renderer, tex_handle,
-			points.data(), static_cast<int>(num_vertices),
+			s_vertices.data(), static_cast<int>(num_vertices),
 			nullptr, 0
 		);
 	}

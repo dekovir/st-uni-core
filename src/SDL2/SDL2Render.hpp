@@ -82,6 +82,8 @@ namespace unicore
 		void draw_texture_exf(const Texture& texture,
 			const Render2DDrawTextureOptionsExF& options) override;
 
+		void draw_triangles(const VertexColor2* vertices, size_t num_vertices) override;
+
 		void draw_triangles(const VertexTexColor2* vertices,
 			size_t num_vertices, const Texture* texture) override;
 
@@ -96,8 +98,6 @@ namespace unicore
 		void update_size();
 
 		static SDL_RendererFlip convert_flip(RenderFlags flags);
-
-		friend class SDL2Platform;
 	};
 }
 

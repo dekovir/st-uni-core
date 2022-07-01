@@ -37,6 +37,10 @@ namespace unicore
 				render.draw_rects_f(&_rects[batch.start], batch.count);
 				break;
 
+			case BatchType::RectFilled:
+				render.draw_rects_f(&_rects[batch.start], batch.count, true);
+				break;
+
 			case BatchType::Vertex:
 				render.draw_triangles(&_vertices[batch.start], batch.count);
 				break;
@@ -100,31 +104,47 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_rect(const Recti& rect)
+	Graphics2D& Graphics2D::draw_rect(const Recti& rect, bool filled)
 	{
-		set_type(BatchType::Rect);
+		set_type(filled ? BatchType::RectFilled : BatchType::Rect);
 		_rects.push_back(rect.cast<float>());
 		_current.count++;
 
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_rect(const Rectf& rect)
+	Graphics2D& Graphics2D::draw_rect(const Rectf& rect, bool filled)
 	{
-		set_type(BatchType::Rect);
+		set_type(filled ? BatchType::RectFilled : BatchType::Rect);
 		_rects.push_back(rect);
 		_current.count++;
 
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_tri(const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2)
+	Graphics2D& Graphics2D::draw_tri(
+		const VertexColor2& v0, const VertexColor2& v1, const VertexColor2& v2)
 	{
 		set_type(BatchType::Vertex);
 		_vertices.push_back(v0);
 		_vertices.push_back(v1);
 		_vertices.push_back(v2);
 		_current.count += 3;
+		return *this;
+	}
+
+	Graphics2D& Graphics2D::draw_quad(
+		const VertexColor2& v0, const VertexColor2& v1,
+		const VertexColor2& v2, const VertexColor2& v3)
+	{
+		set_type(BatchType::Vertex);
+		_vertices.push_back(v0);
+		_vertices.push_back(v1);
+		_vertices.push_back(v3);
+		_vertices.push_back(v3);
+		_vertices.push_back(v1);
+		_vertices.push_back(v2);
+		_current.count += 6;
 		return *this;
 	}
 
@@ -143,6 +163,7 @@ namespace unicore
 				break;
 
 			case BatchType::Rect:
+			case BatchType::RectFilled:
 				_current.start = _rects.size();
 				break;
 

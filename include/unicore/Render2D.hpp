@@ -76,6 +76,10 @@ namespace unicore
 			const Render2DDrawTextureOptionsExF& options = {}) = 0;
 
 		virtual void draw_triangles(
+			const VertexColor2* vertices, size_t num_vertices
+		) = 0;
+
+		virtual void draw_triangles(
 			const VertexTexColor2* vertices, size_t num_vertices,
 			const Texture* texture = nullptr
 		) = 0;

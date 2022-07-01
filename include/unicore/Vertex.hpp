@@ -17,6 +17,8 @@ namespace unicore
 		{}
 	};
 
+	using VertexColor2 = VertexColor<Vector2f, Color4b>;
+
 	template<typename TPos, typename TTexCoords, typename TColor>
 	struct VertexTexColor
 	{
