@@ -38,6 +38,9 @@ namespace unicore
 
 		uint32_t _draw_calls = 0;
 
+		TimeSpan _add_time = TimeSpanConst::Zero;
+		bool _add_active = false;
+
 		void on_update() override;
 		void on_draw() override;
 

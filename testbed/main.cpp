@@ -69,11 +69,24 @@ namespace unicore
 			platform.quit();
 #endif
 
+		_add_active = input.mouse_button(MouseButton::Left);
+
+		// SPAWN ENTITIES ////////////////////////////////////////////////////////////
+		if (_add_active && _tex)
+		{
+			_add_time += time.delta();
+
+			constexpr auto time_period = TimeSpan::from_microseconds(1000);
+			while (_add_time >= time_period)
+			{
+				spawn_entity(input.mouse_position().cast<float>(), _tex->size());
+				_add_time -= time_period;
+			}
+		}
+		else _add_time = TimeSpanConst::Zero;
+
+		// UPDATE ENTITIES ///////////////////////////////////////////////////////////
 		auto& screen_size = render.screen_size();
-
-		if (_tex && input.mouse_button(MouseButton::Left))
-			spawn_entity(input.mouse_position().cast<float>(), _tex->size());
-
 		const auto delta = static_cast<float>(time.delta().total_seconds());
 		for (auto& entity : _entites)
 			entity.update(screen_size, delta);
