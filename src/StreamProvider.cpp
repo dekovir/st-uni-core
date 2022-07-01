@@ -1,10 +1,32 @@
 #include "unicore/StreamProvider.hpp"
+#include "unicore/Memory.hpp"
 
 namespace unicore
 {
 	bool StreamProvider::exists(const Path& path) const
 	{
 		return stats(path).has_value();
+	}
+
+	Shared<MemoryChunk> StreamProvider::read_chunk(const Path& path)
+	{
+		if (const auto stream = open_read(path))
+		{
+			auto size = stream->size();
+			auto chunk = std::make_shared<MemoryChunk>(size);
+			if (stream->read(chunk->data(), size))
+				return chunk;
+		}
+
+		return nullptr;
+	}
+
+	bool StreamProvider::write_chunk(const Path& path, const MemoryChunk& chunk)
+	{
+		if (const auto stream = create_new(path))
+			return stream->write(chunk.data(), chunk.size());
+
+		return false;
 	}
 
 	Optional<FileStats> PathStreamProvider::stats(const Path& path) const

@@ -6,6 +6,8 @@
 
 namespace unicore
 {
+	class MemoryChunk;
+
 	class StreamProvider : public Object
 	{
 	public:
@@ -18,6 +20,9 @@ namespace unicore
 
 		virtual Shared<ReadStream> open_read(const Path& path) = 0;
 		virtual Shared<WriteStream> create_new(const Path& path) = 0;
+
+		virtual Shared<MemoryChunk> read_chunk(const Path& path);
+		virtual bool write_chunk(const Path& path, const MemoryChunk& chunk);
 	};
 
 	class PathStreamProvider : StreamProvider
