@@ -13,13 +13,8 @@ namespace unicore
 		constexpr Vector2(T x, T y);
 		explicit constexpr Vector2(T value);
 
-		// Copy constructor
 		constexpr Vector2(const Vector2<T>& other) = default;
-
-		// Move constructor
-		constexpr Vector2(Vector2<T>&& other) noexcept
-			: x(other.x), y(other.y)
-		{}
+		constexpr Vector2(Vector2<T>&& other) noexcept = default;
 
 		~Vector2() = default;
 
@@ -29,20 +24,24 @@ namespace unicore
 			y = _y;
 		}
 
+		UC_NODISCARD constexpr size_t size() const { return 2; }
 		UC_NODISCARD constexpr T area() const { return x * y; }
+
 		UC_NODISCARD constexpr T length_squared() const { return x * x + y * y; }
 		UC_NODISCARD float length() const { return sqrtf(static_cast<float>(length_squared())); }
 
-		// Copy assignment operator
-		Vector2& operator=(const Vector2& other) noexcept = default;
-
-		// Move assignment operator
-		Vector2& operator=(Vector2&& other) noexcept
+		T& operator[](int index)
 		{
-			x = other.x;
-			y = other.y;
-			return  *this;
+			return (&x)[index];
 		}
+
+		T operator[](int index) const
+		{
+			return (&x)[index];
+		}
+
+		Vector2& operator=(const Vector2& other) noexcept = default;
+		Vector2& operator=(Vector2&& other) noexcept = default;
 
 		Vector2<T>& operator += (const Vector2<T>& other)
 		{
@@ -99,6 +98,16 @@ namespace unicore
 			return Radians(Math::acos(dot(other) / (length() * other.length())));
 		}
 
+		UC_NODISCARD Vector2<T> rotate(Radians angle) const
+		{
+			float a_sin, a_cos;
+			angle.sincos(a_sin, a_cos);
+			return {
+				x * a_cos - y * a_sin,
+				x * a_sin + y * a_cos
+			};
+		}
+
 		UC_NODISCARD float distance(const Vector2<T>& other) const
 		{
 			return (*this - other).length();
@@ -122,6 +131,8 @@ namespace unicore
 
 	typedef Vector2<float> Vector2f;
 	typedef Vector2<int>   Vector2i;
+
+	static_assert(sizeof(Vector2f) == sizeof(float) * 2);
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
 	template <typename T>

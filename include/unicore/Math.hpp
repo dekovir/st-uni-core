@@ -12,6 +12,9 @@ namespace unicore
 		constexpr float DEG_TO_RAD = PI / 180;
 		constexpr float RAD_TO_DEG = 180 / PI;
 
+		constexpr float MatrixEpsilon = 1e-6f;
+		constexpr float MatrixInverseEpsilon = 1e-14f;
+
 		static constexpr bool even(int value) { return (value % 2) == 0; }
 		static constexpr bool odd(int value) { return (value % 2) == 1; }
 
@@ -114,6 +117,12 @@ namespace unicore
 
 		UC_NODISCARD float cos() const { return TypeTag::cos(_value); }
 		UC_NODISCARD float sin() const { return TypeTag::sin(_value); }
+
+		void sincos(float& sin_value, float& cos_value) const
+		{
+			sin_value = TypeTag::sin(_value);
+			cos_value = TypeTag::cos(_value);
+		}
 
 		Angle& operator+=(const Angle& other)
 		{
