@@ -3,12 +3,15 @@
 #include "unicore/Input.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Data.hpp"
-#include "unicore/XMLData.hpp"
 #include "unicore/Font.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #	include "Windows/WinPlatform.hpp"
 #elif defined(UNICORE_PLATFORM_LINUX)
 #	include "Linux/LinuxPlatform.hpp"
+#endif
+
+#if defined(UNICORE_USE_XML)
+#include "unicore/xml/XMLData.hpp"
 #endif
 
 namespace unicore

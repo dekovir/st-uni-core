@@ -1,7 +1,7 @@
 #include "unicore/Font.hpp"
 #include "unicore/Data.hpp"
-#include "unicore/XMLData.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/xml/XMLData.hpp"
 
 namespace unicore
 {
@@ -19,8 +19,7 @@ namespace unicore
 	Shared<Texture> BitmapFont::get_char_print_info(uint32_t code,
 		Vector2f& pos, Rectf* rect, Rectf* uv_rect) const
 	{
-		const auto it = glyphs.find(code);
-		if (it != glyphs.end())
+		if (const auto it = glyphs.find(code); it != glyphs.end())
 		{
 			const auto& c = it->second;
 			if (c.page < pages.size())
@@ -58,15 +57,13 @@ namespace unicore
 		VertexTexColor2& v2, VertexTexColor2& v3,
 		const Color4b& color) const
 	{
-		switch (code)
+		if (code == 32)
 		{
-		case 32:
 			pos.x += static_cast<float>(space_w);
 			return nullptr;
 		}
 
-		const auto it = glyphs.find(code);
-		if (it != glyphs.end())
+		if (const auto it = glyphs.find(code); it != glyphs.end())
 		{
 			const auto& c = it->second;
 			if (c.page < pages.size())
@@ -144,7 +141,7 @@ namespace unicore
 		auto font = make_shared<BitmapFont>();
 		font->pages.push_back(texture);
 
-		font->space_w = root->IntAttribute("spaceWidth");
+		font->space_w = static_cast<uint8_t>(root->IntAttribute("spaceWidth"));
 
 		for (auto element = root->FirstChildElement("char"); element != nullptr; element = element->NextSiblingElement())
 		{

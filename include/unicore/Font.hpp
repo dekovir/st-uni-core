@@ -10,7 +10,7 @@ namespace unicore
 	{
 	public:
 		Dictionary<uint32_t, Dictionary<uint32_t, int>> kerning;
-		uint8_t space_w;
+		uint8_t space_w = 0;
 
 		UC_NODISCARD int find_kerning(uint32_t a, uint32_t b) const;
 	};
@@ -32,7 +32,8 @@ namespace unicore
 		List<Shared<Texture>> pages;
 		Dictionary<uint32_t, BitmapFontGlyph> glyphs;
 
-		Shared<Texture> get_char_print_info(uint32_t code, Vector2f& pos, Rectf* rect, Rectf* uv_rect) const;
+		Shared<Texture> get_char_print_info(uint32_t code,
+			Vector2f& pos, Rectf* rect, Rectf* uv_rect) const;
 
 		Shared<Texture> print_char(uint32_t code, Vector2f& pos,
 			VertexTexColor2& v0, VertexTexColor2& v1,

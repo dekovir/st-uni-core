@@ -1,4 +1,4 @@
-#include "unicore/XMLData.hpp"
+#include "unicore/xml/XMLData.hpp"
 #if defined(UNICORE_USE_XML)
 #include "unicore/Data.hpp"
 
