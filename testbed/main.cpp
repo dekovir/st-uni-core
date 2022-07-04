@@ -32,26 +32,29 @@ namespace unicore
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
-#if 0
-		{
-			Surface circle(64, 64);
-			auto& size = circle.size();
-			const auto hw = size.x / 2;
-			const auto hh = size.y / 2;
+		_tex1 = resources.load<Texture>(L"assets/zazaka.png"_path);
 
-			circle.fill([hw, hh](int x, int y) -> Color4b
+		{
+			constexpr auto side = 256;
+			constexpr auto radius_outer = side / 2;
+			constexpr auto radius_inner = radius_outer / 6;
+			constexpr Vector2i center(radius_outer, radius_outer);
+
+			Surface circle(side, side);
+
+			circle.fill([radius_outer, radius_inner, &center](int x, int y) -> Color4b
 				{
-					const float distance = Vector2i(hw, hh).distance({ x, y });
-					return distance <= 32
-						? Color4b::lerp(ColorConst4b::White, ColorConst4b::Clear, distance / 32)
-						: ColorConst4b::Clear;
+					const float distance = center.distance({ x, y });
+					if (distance < radius_inner || distance > radius_outer)
+						return ColorConst4b::Clear;
+
+					const float t = 1 - Math::sin(Math::PI * (distance - radius_inner) / (radius_outer - radius_inner));
+					return Color4b::lerp(ColorConst4b::White, ColorConst4b::Clear, t);
 				});
 
-			_tex = render.create_texture(circle);
+			_tex2 = render.create_texture(circle);
 		}
-#else
-		_tex = resources.load<Texture>(L"assets/zazaka.png"_path);
-#endif
+
 		_font = resources.load<BitmapFont>(L"assets/font_004.fnt"_path);
 
 		size_t sys_mem;
@@ -72,14 +75,14 @@ namespace unicore
 		_add_active = input.mouse_button(MouseButton::Left);
 
 		// SPAWN ENTITIES ////////////////////////////////////////////////////////////
-		if (_add_active && _tex)
+		if (_add_active && _tex1)
 		{
 			_add_time += time.delta();
 
 			constexpr auto time_period = TimeSpan::from_microseconds(1000);
 			while (_add_time >= time_period)
 			{
-				spawn_entity(input.mouse_position().cast<float>(), _tex->size());
+				spawn_entity(input.mouse_position().cast<float>(), _tex1->size());
 				_add_time -= time_period;
 			}
 		}
@@ -117,9 +120,11 @@ namespace unicore
 
 		_sprite_batch.begin();
 
+		_sprite_batch.draw(_tex2, { static_cast<float>(size.x) / 2, static_cast<float>(size.y) / 2 });
+
 		for (const auto& entity : _entites)
-			_sprite_batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
-		_sprite_batch.draw(_tex, { static_cast<float>(size.x) - 32, 32 });
+			_sprite_batch.draw(_tex1, entity.center, entity.angle, entity.scale, entity.color);
+		_sprite_batch.draw(_tex1, { static_cast<float>(size.x) - 32, 32 });
 
 		_sprite_batch.print(_font, { 0, 0 }, fps_str);
 		_sprite_batch.print(_font, { 0, 20 }, count_str);
@@ -161,7 +166,7 @@ namespace unicore
 	void MyCore::spawn_entities(unsigned count)
 	{
 		auto& screen_size = render.screen_size();
-		auto& size = _tex->size();
+		auto& size = _tex1->size();
 
 		for (unsigned i = 0; i < count; i++)
 		{

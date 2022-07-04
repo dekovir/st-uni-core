@@ -28,7 +28,7 @@ namespace unicore
 		explicit MyCore(const CoreSettings& settings);
 
 	protected:
-		Shared<Texture> _tex;
+		Shared<Texture> _tex1, _tex2;
 		Shared<BitmapFont> _font;
 		DefaultRandom _random;
 		List<Entity> _entites;
