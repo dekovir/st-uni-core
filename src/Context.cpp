@@ -8,6 +8,15 @@ namespace unicore
 		_loaders[loader.resource_type()].insert(&loader);
 	}
 
+	void Context::remove_loader(ResourceLoader& loader)
+	{
+		if (const auto it = _loaders.find(loader.resource_type()); it != _loaders.end())
+		{
+			if (const auto jt = it->second.find(&loader); jt != it->second.end())
+				it->second.erase(jt);
+		}
+	}
+
 	const Set<ResourceLoader*>& Context::get_loaders(TypeIndex type) const
 	{
 		static Set<ResourceLoader*> s_empty;

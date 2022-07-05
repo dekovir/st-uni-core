@@ -107,7 +107,7 @@ namespace unicore
 		return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
 	}
 
-	SpriteBatch& SpriteBatch::print(const Shared<BitmapFont>& font,
+	SpriteBatch& SpriteBatch::print(const Shared<Font>& font,
 		const Vector2f& pos, StringView text, const Color4b& color)
 	{
 		if (font)

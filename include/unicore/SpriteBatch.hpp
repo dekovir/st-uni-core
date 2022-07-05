@@ -1,5 +1,6 @@
 #pragma once
-#include "unicore/Object.hpp"
+#include "unicore/Vertex.hpp"
+#include "unicore/Texture.hpp"
 #include "unicore/Font.hpp"
 
 namespace unicore
@@ -31,7 +32,7 @@ namespace unicore
 			const Vector2f& center, const Radians& angle,
 			const Vector2f& scale, const Color4b& color = ColorConst4b::White);
 
-		SpriteBatch& print(const Shared<BitmapFont>& font,
+		SpriteBatch& print(const Shared<Font>& font,
 			const Vector2f& pos, StringView text,
 			const Color4b& color = ColorConst4b::White);
 

@@ -10,13 +10,15 @@ if (EMSCRIPTEN)
 endif ()
 
 # OPTIONS ######################################################################
-option(UNICORE_XML "Add tinyxml2 library" ON)
+option(UNICORE_XML "Add unicore-xml plugin (tinyxml2)" ON)
+option(UNICORE_FNT "Add unicore-fnt plugin" ON)
 option(UNICORE_TESTBED "Add Testbed project" OFF)
 
 # PROJECT ######################################################################
 project(UniCore)
 
 set(LIBS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/")
+set(PLUGINS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/plugins/")
 
 function(unicore_group_sources_by_folder target)
 	set(last_dir "")
@@ -71,12 +73,14 @@ if (NOT EMSCRIPTEN)
 endif()
 target_compile_definitions(unicore PUBLIC UNICORE_USE_SDL2)
 
-# tinyxml2
-if (UNICORE_XML)
+if (UNICORE_XML OR UNICORE_FNT)
 	add_subdirectory("${LIBS_DIR}/tinyxml2")
 	set_target_properties(tinyxml2 PROPERTIES FOLDER "Libs")
-	target_link_libraries(unicore PUBLIC tinyxml2)
-	target_compile_definitions(unicore PUBLIC UNICORE_USE_XML)
+	add_subdirectory("${PLUGINS_DIR}/xml")
+endif()
+
+if (UNICORE_FNT)
+	add_subdirectory("${PLUGINS_DIR}/fnt")
 endif()
 
 # stb
@@ -89,13 +93,17 @@ endif()
 
 #target_compile_options(unicore PUBLIC -fno-exceptions)
 
+# APP ##########################################################################
+add_subdirectory(logic)
+
 # MAIN #########################################################################
 set(MAIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/main")
 file(GLOB_RECURSE MAIN_SRC "${MAIN_DIR}/*.cpp" "${MAIN_DIR}/*.h")
+
 add_library(unicore-main STATIC ${MAIN_SRC})
 unicore_group_sources_by_folder(unicore-main)
 target_include_directories(unicore-main PUBLIC "${MAIN_DIR}")
-target_link_libraries(unicore-main PUBLIC unicore)
+target_link_libraries(unicore-main PUBLIC unicore-app)
 set_target_properties(unicore-main PROPERTIES FOLDER "UniCore")
 
 if (NOT EMSCRIPTEN)
@@ -126,7 +134,7 @@ function(unicore_init_executable target_name)
 	endif()
 
 	unicore_init_target(${target_name})
-	target_link_libraries(${target_name} PRIVATE unicore unicore-main)
+	target_link_libraries(${target_name} PRIVATE unicore-app unicore-main)
 endfunction()
 
 function(unicore_init_assets target_name directory)

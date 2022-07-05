@@ -1,6 +1,14 @@
-#include "unicore/Core.hpp"
+#include "unicore/app/Core.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
+
+#if defined(UNICORE_USE_XML)
+#	include "unicore/xml/XMLPlugin.hpp"
+#endif
+
+#if defined(UNICORE_USE_FNT)
+#	include "unicore/fnt/FNTPlugin.hpp"
+#endif
 
 namespace unicore
 {
@@ -16,10 +24,24 @@ namespace unicore
 		input.register_module(context);
 		render.register_module(context);
 		resources.register_module(context);
+
+#if defined(UNICORE_USE_XML)
+		_plugins.push_back(std::make_unique<XMLPlugin>());
+#endif
+
+#if defined(UNICORE_USE_FNT)
+		_plugins.push_back(std::make_unique<FNTPlugin>());
+#endif
+
+		for (const auto& plugin : _plugins)
+			plugin->register_module(context);
 	}
 
 	Core::~Core()
 	{
+		for (const auto& plugin : _plugins)
+			plugin->unregister_module(context);
+
 		resources.unload_all();
 		resources.clear();
 

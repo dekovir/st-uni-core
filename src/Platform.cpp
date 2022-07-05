@@ -3,15 +3,10 @@
 #include "unicore/Input.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Data.hpp"
-#include "unicore/Font.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #	include "Windows/WinPlatform.hpp"
 #elif defined(UNICORE_PLATFORM_LINUX)
 #	include "Linux/LinuxPlatform.hpp"
-#endif
-
-#if defined(UNICORE_USE_XML)
-#include "unicore/xml/XMLData.hpp"
 #endif
 
 namespace unicore
@@ -31,16 +26,9 @@ namespace unicore
 
 		static BinaryDataLoader data_loader;
 		static TextDataLoader text_loader;
-		static BitmapFontLoader font_loader;
 
 		context.add_loader(data_loader);
 		context.add_loader(text_loader);
-		context.add_loader(font_loader);
-
-#if defined(UNICORE_USE_XML)
-		static XMLDataLoader xml_loader;
-		context.add_loader(xml_loader);
-#endif
 	}
 
 	void Platform::unregister_module(Context& context)

@@ -1,8 +1,9 @@
 #pragma once
-#include "unicore/Core.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/Graphics2D.hpp"
 #include "unicore/SpriteBatch.hpp"
+#include "unicore/app/Core.hpp"
+#include "unicore/fnt/BitmapFont.hpp"
 
 namespace unicore
 {

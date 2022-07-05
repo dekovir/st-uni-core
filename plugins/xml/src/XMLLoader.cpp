@@ -1,6 +1,6 @@
-#include "unicore/xml/XMLData.hpp"
-#if defined(UNICORE_USE_XML)
+#include "XMLLoader.hpp"
 #include "unicore/Data.hpp"
+#include "unicore/ResourceCache.hpp"
 
 namespace unicore
 {
@@ -26,4 +26,3 @@ namespace unicore
 		return nullptr;
 	}
 }
-#endif

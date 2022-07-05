@@ -5,6 +5,8 @@
 
 namespace unicore
 {
+	class Plugin;
+
 	struct CoreSettings
 	{
 		Platform& platform;
@@ -41,6 +43,8 @@ namespace unicore
 		int _fps_current = 0;
 		int _fps_counter = 0;
 		TimeSpan _fps_time = TimeSpanConst::Zero;
+
+		List<Unique<Plugin>> _plugins;
 	};
 
 	typedef Shared<Core>(*CoreFactory)(const CoreSettings& settings);

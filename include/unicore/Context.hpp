@@ -11,6 +11,8 @@ namespace unicore
 	{
 	public:
 		void add_loader(ResourceLoader& loader);
+		void remove_loader(ResourceLoader& loader);
+
 		UC_NODISCARD const Set<ResourceLoader*>& get_loaders(TypeIndex type) const;
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
