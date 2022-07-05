@@ -106,6 +106,11 @@ namespace unicore
 		return nullptr;
 	}
 
+	BitmapFontLoader::BitmapFontLoader()
+		: ResourceLoaderT({ L".fnt" })
+	{
+	}
+
 	Shared<Resource> BitmapFontLoader::load(const ResourceLoaderContext& context)
 	{
 		// TODO: Finish loading

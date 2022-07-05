@@ -29,7 +29,7 @@ namespace unicore
 	class ResourceLoaderT : public ResourceLoader
 	{
 	public:
-		ResourceLoaderT(const std::initializer_list<WStringView> ext_list = {})
+		ResourceLoaderT(const std::initializer_list<WStringView> ext_list)
 			: _extensions(ext_list)
 		{
 		}

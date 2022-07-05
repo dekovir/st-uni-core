@@ -4,9 +4,14 @@
 
 namespace unicore
 {
+	XMLDataLoader::XMLDataLoader()
+		: ResourceLoaderT({ L".xml" })
+	{
+	}
+
 	Shared<Resource> XMLDataLoader::load(const ResourceLoaderContext& context)
 	{
-		const auto data = context.cache.load<BinaryData>(context.path);
+		const auto data = context.cache.load<TextData>(context.path);
 		if (!data)
 		{
 			UC_LOG_ERROR(context.logger) << "Failed to load BinaryData";
@@ -14,7 +19,8 @@ namespace unicore
 		}
 
 		const auto xml = make_shared<XMLData>();
-		if (xml->doc.Parse(static_cast<const char*>(data->data()), data->size()) == tinyxml2::XML_SUCCESS)
+		const auto& str = data->data();
+		if (xml->doc.Parse(str.data(), str.size()) == tinyxml2::XML_SUCCESS)
 			return xml;
 
 		return nullptr;

@@ -120,14 +120,13 @@ namespace unicore
 						return resource;
 				}
 			}
-
-			UC_LOG_ERROR(logger) << "Can't load " << type << " from " << path;
 		}
 
 		if (const auto converters = _context->get_converters(type); !converters.empty())
 		{
 			for (const auto& converter : converters)
 			{
+				// TODO: Handle cyclic loading
 				if (auto raw = load(path, converter->raw_type(), flags))
 				{
 					if (auto resource = converter->convert(*raw, { *this, logger }))
@@ -139,7 +138,7 @@ namespace unicore
 			}
 		}
 
-		UC_LOG_WARNING(logger) << "Empty loaders for " << type;
+		UC_LOG_WARNING(logger) << "Failed to load " << type << " from " << path;
 		return nullptr;
 	}
 
@@ -183,11 +182,11 @@ namespace unicore
 			{
 				if (system != nullptr)
 					*system += resource->system_memory_use();
-				//if (video != nullptr)
-				//{
-				//	if (const auto render_resource = std::dynamic_pointer_cast<RenderResource>(resource))
-				//		*video += render_resource->video_memory_use();
-				//}
+				if (video != nullptr)
+				{
+					if (const auto render_resource = std::dynamic_pointer_cast<RenderResource>(resource))
+						*video += render_resource->video_memory_use();
+				}
 			}
 		}
 	}

@@ -23,6 +23,7 @@ namespace unicore
 	class BinaryDataLoader : public ResourceLoaderT<BinaryData>
 	{
 	public:
+		BinaryDataLoader();
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
 	};
 
@@ -61,6 +62,7 @@ namespace unicore
 	class TextDataLoader : public ResourceLoaderT<TextData>
 	{
 	public:
+		TextDataLoader();
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
 	};
 

@@ -4,6 +4,11 @@
 
 namespace unicore
 {
+	BinaryDataLoader::BinaryDataLoader()
+		: ResourceLoaderT({ L".dat" })
+	{
+	}
+
 	Shared<Resource> BinaryDataLoader::load(const ResourceLoaderContext& context)
 	{
 		const auto size = context.stream.size();
@@ -14,6 +19,11 @@ namespace unicore
 
 		UC_LOG_ERROR(context.logger) << "Read failed";
 		return nullptr;
+	}
+
+	TextDataLoader::TextDataLoader()
+		: ResourceLoaderT({ L".txt" })
+	{
 	}
 
 	Shared<Resource> TextDataLoader::load(const ResourceLoaderContext& context)
