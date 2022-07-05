@@ -85,43 +85,61 @@ namespace unicore
 
 		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;
 
-		const auto loaders = _context->get_loaders(type);
-		if (loaders.empty())
+		if (const auto loaders = _context->get_loaders(type); !loaders.empty())
 		{
-			UC_LOG_WARNING(logger) << "Empty loaders for " << type;
-			return nullptr;
-		}
-
-		const auto extension = path.extension();
-		Shared<ReadStream> stream;
-
-		// TODO: Implement loading stack for prevent recursive loading
-		for (const auto& loader : loaders)
-		{
-			if (!flags.has(ResourceCacheFlag::SkipExtension) && !loader->can_load_extension(extension))
-				continue;
-
-			if (!stream)
+			// TODO: Implement loading stack for prevent recursive loading
+			for (const auto& loader : loaders)
 			{
-				stream = open_read(path);
-				if (!stream)
+				if (path.has_extension(L".*"))
 				{
-					UC_LOG_ERROR(logger) << "Failed to open file at " << path;
-					return nullptr;
-				}
-			}
+					for (const auto& extension : loader->extension())
+					{
+						Path new_path(path);
+						new_path.replace_extension(extension);
 
-			if (auto resource = loader->load({ path, *this, *stream, &_logger }))
-			{
-				_cached[path][type] = resource;
-				UC_LOG_DEBUG(logger) << "Loaded " << type << " from " << path
-					<< " " << MemorySize{ resource->system_memory_use() };
-				return resource;
+						const auto stream = open_read(new_path);
+						if (!stream)
+							continue;
+
+						if (auto resource = load_resource(*loader, new_path, *stream, type, logger))
+							return resource;
+					}
+				}
+				else
+				{
+					const auto extension = path.extension();
+
+					const auto stream = open_read(path);
+					if (!stream)
+					{
+						UC_LOG_WARNING(logger) << "Failed to open " << path;
+						return nullptr;
+					}
+
+					if (auto resource = load_resource(*loader, path, *stream, type, logger))
+						return resource;
+				}
 			}
 
 			UC_LOG_ERROR(logger) << "Can't load " << type << " from " << path;
 		}
 
+		if (const auto converters = _context->get_converters(type); !converters.empty())
+		{
+			for (const auto& converter : converters)
+			{
+				if (auto raw = load(path, converter->raw_type(), flags))
+				{
+					if (auto resource = converter->convert(*raw, { *this, logger }))
+					{
+						add_resource(resource, path, type);
+						return resource;
+					}
+				}
+			}
+		}
+
+		UC_LOG_WARNING(logger) << "Empty loaders for " << type;
 		return nullptr;
 	}
 
@@ -139,7 +157,7 @@ namespace unicore
 				const auto memory_use = MemorySize{ resource->system_memory_use() };
 				sys_mem += memory_use;
 				UC_LOG_INFO(_logger) << index << ": " << path << " " << type
-					<< " [" << resource.use_count() 
+					<< " [" << resource.use_count()
 					<< ", " << memory_use << "]";
 				index++;
 			}
@@ -185,5 +203,25 @@ namespace unicore
 	{
 		_context = nullptr;
 		Module::unregister_module(context);
+	}
+
+	Shared<Resource> ResourceCache::load_resource(ResourceLoader& loader,
+		const Path& path, ReadStream& stream, TypeIndex type, Logger* logger)
+	{
+		if (auto resource = loader.load({ path, *this, stream, logger }))
+		{
+			add_resource(resource, path, type);
+			return resource;
+		}
+
+		return nullptr;
+	}
+
+	bool ResourceCache::add_resource(const Shared<Resource>& resource, const Path& path, TypeIndex type)
+	{
+		_cached[path][type] = resource;
+		UC_LOG_DEBUG(_logger) << "Loaded " << type << " from " << path
+			<< " " << MemorySize{ resource->system_memory_use() };
+		return true;
 	}
 }

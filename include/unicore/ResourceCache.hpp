@@ -10,7 +10,6 @@ namespace unicore
 	enum class ResourceCacheFlag
 	{
 		Quiet = 1,
-		SkipExtension = 2,
 	};
 	UNICORE_ENUMFLAGS(ResourceCacheFlag, ResourceCacheFlags);
 
@@ -27,6 +26,7 @@ namespace unicore
 		void add_provider(StreamProvider& provider);
 
 		UC_NODISCARD Shared<ReadStream> open_read(const Path& path) const;
+
 
 		UC_NODISCARD Shared<Resource> find(const Path& path, TypeIndex type) const;
 
@@ -58,5 +58,10 @@ namespace unicore
 		List<StreamProvider*> _providers;
 
 		Dictionary<Path, Dictionary<TypeIndex, Shared<Resource>>> _cached;
+
+		Shared<Resource> load_resource(ResourceLoader& loader,
+			const Path& path, ReadStream& stream, TypeIndex type, Logger* logger);
+
+		bool add_resource(const Shared<Resource>& resource, const Path& path, TypeIndex type);
 	};
 }

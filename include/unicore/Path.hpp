@@ -31,6 +31,7 @@ namespace unicore
 		UC_NODISCARD const WString& data() const { return _data; }
 
 		UC_NODISCARD bool has_extension() const;
+		UC_NODISCARD bool has_extension(WStringView ext) const;
 
 		void parent_path(Path& parentPath) const;
 		UC_NODISCARD Path parent_path() const;

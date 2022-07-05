@@ -44,7 +44,6 @@ namespace unicore
 	class BitmapFontLoader : public ResourceLoaderT<BitmapFont>
 	{
 	public:
-		UC_NODISCARD bool can_load_extension(WStringView ext) const override;
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
 	};
 }

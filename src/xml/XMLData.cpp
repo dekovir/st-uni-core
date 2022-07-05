@@ -4,11 +4,6 @@
 
 namespace unicore
 {
-	bool XMLDataLoader::can_load_extension(WStringView ext) const
-	{
-		return ext == L".xml";
-	}
-
 	Shared<Resource> XMLDataLoader::load(const ResourceLoaderContext& context)
 	{
 		const auto data = context.cache.load<BinaryData>(context.path);

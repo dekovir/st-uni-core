@@ -15,7 +15,6 @@ namespace unicore
 	class XMLDataLoader : public ResourceLoaderT<XMLData>
 	{
 	public:
-		UC_NODISCARD bool can_load_extension(WStringView ext) const override;
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
 	};
 }

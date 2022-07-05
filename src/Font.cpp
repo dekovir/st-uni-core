@@ -106,16 +106,11 @@ namespace unicore
 		return nullptr;
 	}
 
-	bool BitmapFontLoader::can_load_extension(WStringView ext) const
-	{
-		return ext == L".fnt";
-	}
-
 	Shared<Resource> BitmapFontLoader::load(const ResourceLoaderContext& context)
 	{
 		// TODO: Finish loading
 #if defined(UNICORE_USE_XML)
-		const auto xml = context.cache.load<XMLData>(context.path, ResourceCacheFlag::SkipExtension);
+		const auto xml = context.cache.load<XMLData>(context.path);
 		if (!xml)
 		{
 			UC_LOG_ERROR(context.logger) << "Failed to load xml";
@@ -123,7 +118,8 @@ namespace unicore
 		}
 
 		Path texture_path(context.path);
-		texture_path.replace_extension(L".png");
+		texture_path.replace_extension(L".*");
+
 		const auto texture = context.cache.load<Texture>(texture_path);
 		if (!texture)
 		{

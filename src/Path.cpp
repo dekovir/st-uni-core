@@ -68,6 +68,12 @@ namespace unicore
 		return pos != WString::npos;
 	}
 
+	bool Path::has_extension(WStringView ext) const
+	{
+		// TODO: Optimize
+		return extension() == ext;
+	}
+
 	void Path::parent_path(Path& parentPath) const
 	{
 		const auto pos = find_filename_pos(_data);

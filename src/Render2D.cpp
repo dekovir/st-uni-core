@@ -36,11 +36,9 @@ namespace unicore
 	class SurfaceLoader : public ResourceLoaderT<Surface>
 	{
 	public:
-		UC_NODISCARD bool can_load_extension(WStringView ext) const override
+		SurfaceLoader()
+			: ResourceLoaderT({ L".png",L".tga",L".jpg",L".jpeg" })
 		{
-			return
-				ext == L".png" || ext == L".tga" ||
-				ext == L".jpg" || ext == L".jpeg";
 		}
 
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override
@@ -61,18 +59,15 @@ namespace unicore
 		}
 	};
 
-	class Render2DTextureLoader : public ResourceLoaderT<Texture>
+	class TextureConverter : public ResourceConverterT<Texture, Surface>
 	{
 	public:
-		explicit Render2DTextureLoader(Render2D& render) : _render(render) {}
+		explicit TextureConverter(Render2D& render)
+			: _render(render) {}
 
-		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override
+		Shared<Texture> convert_typed(Surface& surface, const ResourceConverterContext& context) override
 		{
-			if (const auto surface = context.cache.load<Surface>(context.path))
-				return _render.create_texture(*surface);
-
-			UC_LOG_WARNING(context.logger) << "Failed to load surface";
-			return nullptr;
+			return _render.create_texture(surface);
 		}
 
 	protected:
@@ -88,11 +83,11 @@ namespace unicore
 	{
 		Render::register_module(context);
 
-		static Render2DTextureLoader texture_loader(*this);
 		static SurfaceLoader surface_loader;
+		static TextureConverter texture_converter(*this);
 
-		context.add_loader(texture_loader);
 		context.add_loader(surface_loader);
+		context.add_converter(texture_converter);
 	}
 
 	void Render2D::unregister_module(Context& context)
