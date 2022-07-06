@@ -3,7 +3,11 @@
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Memory.hpp"
+#include "unicore/Data.hpp"
 #include "unicore/Surface.hpp"
+#include "unicore/wasm/WAEnvironment.hpp"
+#include "unicore/wasm/WAModule.hpp"
+#include "unicore/wasm/WARuntime.hpp"
 
 namespace unicore
 {
@@ -57,10 +61,33 @@ namespace unicore
 
 		_font = resources.load<BitmapFont>(L"assets/font_004.fnt"_path);
 
+		// wasm
+		ProxyLogger wasm_logger("[WASM] ", logger);
+		if (const auto env = WAEnvironment::create(wasm_logger))
+		{
+			const auto runtime = env->new_runtime();
+			const auto data = resources.load<BinaryData>(L"assets/add.wasm"_path);
+			if (runtime && data)
+			{
+				if (const auto mod = env->parse_module(data->chunk()))
+				{
+					mod->load_to(*runtime);
+
+					if (const auto func = runtime->find_function("add"); func.has_value())
+					{
+						const auto result = func->call<int>(10, 15);
+						UC_LOG_INFO(logger) << "Function result: " << result;
+					}
+				}
+			}
+		}
+
+		// resource usage
 		size_t sys_mem;
 		resources.calc_memory_use(&sys_mem, nullptr);
 		UC_LOG_DEBUG(logger) << "Resource used system memory " << MemorySize{ sys_mem };
 
+		// dump resources
 		resources.unload_unused();
 		resources.dump_used();
 	}

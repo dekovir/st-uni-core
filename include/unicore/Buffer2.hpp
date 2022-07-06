@@ -122,6 +122,9 @@ namespace unicore
 			: _data(x* y), _size(x, y)
 		{}
 
+		T* data() { return _data.data(); }
+		const T* data() const { return _data.data(); }
+
 		UC_NODISCARD const Vector2i& size() const override { return _size; }
 		UC_NODISCARD bool get(int x, int y, T& value) const override
 		{

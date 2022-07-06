@@ -30,9 +30,20 @@ namespace unicore
 	}
 
 	// ===========================================================================
-	MemoryChunk::MemoryChunk(size_t size): _size(size)
+	MemoryChunk::MemoryChunk()
+		: _data(nullptr), _size(0), _free_data(false)
+	{
+	}
+
+	MemoryChunk::MemoryChunk(size_t size)
+		: _size(size), _free_data(true)
 	{
 		_data = size > 0 ? static_cast<uint8_t*>(Memory::alloc(size)) : nullptr;
+	}
+
+	MemoryChunk::MemoryChunk(uint8_t* data, size_t size, bool free_data)
+		: _data(data), _size(size), _free_data(free_data)
+	{
 	}
 
 	MemoryChunk::MemoryChunk(const MemoryChunk& other)
@@ -94,7 +105,9 @@ namespace unicore
 	{
 		if (!empty())
 		{
-			Memory::free(_data);
+			if (_free_data)
+				Memory::free(_data);
+
 			_data = nullptr;
 			_size = 0;
 		}

@@ -17,15 +17,18 @@ namespace unicore
 	class MemoryChunk
 	{
 	public:
+		MemoryChunk();
 		explicit MemoryChunk(size_t size);
+		explicit MemoryChunk(uint8_t* data, size_t size, bool free_data = true);
 
 		MemoryChunk(const MemoryChunk& other);
 
 		constexpr MemoryChunk(MemoryChunk&& other) noexcept
-			: _data(other._data), _size(other._size)
+			: _data(other._data), _size(other._size), _free_data(other._free_data)
 		{
 			other._data = nullptr;
 			other._size = 0;
+			other._free_data = false;
 		}
 
 		~MemoryChunk();
@@ -47,6 +50,7 @@ namespace unicore
 	protected:
 		uint8_t* _data;
 		size_t _size;
+		bool _free_data;
 	};
 
 	static constexpr bool operator==(const MemoryChunk& a, const MemoryChunk& b)

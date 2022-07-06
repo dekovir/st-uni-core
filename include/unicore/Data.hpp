@@ -13,8 +13,13 @@ namespace unicore
 
 		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BinaryData) + _chunk->size(); }
 
+		UC_NODISCARD void* data() { return _chunk->data(); }
 		UC_NODISCARD const void* data() const { return _chunk->data(); }
+
 		UC_NODISCARD size_t size() const { return _chunk->size(); }
+
+		UC_NODISCARD Shared<MemoryChunk>& chunk() { return _chunk;}
+		UC_NODISCARD const Shared<MemoryChunk>& chunk() const { return _chunk;}
 
 	protected:
 		Shared<MemoryChunk> _chunk;

@@ -21,3 +21,7 @@ endif()
 if (UNICORE_FNT)
 	target_link_libraries(unicore-app PUBLIC unicore-fnt)
 endif()
+
+if (UNICORE_WASM)
+	target_link_libraries(unicore-app PUBLIC unicore-wasm)
+endif()
