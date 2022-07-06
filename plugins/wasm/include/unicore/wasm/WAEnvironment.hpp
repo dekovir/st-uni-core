@@ -12,9 +12,9 @@ namespace unicore
 	{
 	public:
 		WAEnvironment(IM3Environment handle, Logger& logger);
-		~WAEnvironment();
+		~WAEnvironment() override;
 
-		Shared<WAModule> parse_module(const Shared<MemoryChunk>& memory) const;
+		UC_NODISCARD Shared<WAModule> parse_module(const Shared<MemoryChunk>& memory) const;
 
 		Shared<WARuntime> new_runtime(uint32_t stack_size = 1024);
 

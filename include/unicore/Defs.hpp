@@ -137,6 +137,12 @@ namespace unicore
 	{
 		return TypeIndex(get_type_info<T>());
 	}
+
+	template<typename T>
+	using Predicate = std::function<bool(T)>;
+
+	template<typename ... Args>
+	using Action = std::function<void(Args...)>;
 }
 
 #define UC_NODISCARD [[nodiscard]]

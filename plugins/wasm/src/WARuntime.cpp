@@ -1,4 +1,7 @@
 #include "unicore/wasm/WARuntime.hpp"
+
+#include <m3_env.h>
+
 #include "unicore/Logger.hpp"
 #include "unicore/wasm/WAModule.hpp"
 
@@ -38,6 +41,16 @@ namespace unicore
 			return WAFunction(func);
 
 		return std::nullopt;
+	}
+
+	void WARuntime::enum_functions(const Action<WAFunction>& action) const
+	{
+		for (auto mod = _handle->modules; mod != nullptr; mod = mod->next)
+		{
+			const auto count = mod->numFunctions + mod->numFuncImports;
+			for (unsigned i = 0; i < count; i++)
+				action(WAFunction(&mod->functions[i]));
+		}
 	}
 
 	LogHelper& operator<<(LogHelper& helper, const WAError& error)

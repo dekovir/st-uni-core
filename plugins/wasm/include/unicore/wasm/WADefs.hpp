@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Defs.hpp"
+#include "unicore/Object.hpp"
 #include <wasm3.h>
 
 namespace unicore
@@ -18,7 +18,7 @@ namespace unicore
 	};
 
 	template<typename T>
-	class WAObject : public WAValue<T>
+	class WAObject : public WAValue<T>, public Object
 	{
 	public:
 		explicit WAObject(T handle)

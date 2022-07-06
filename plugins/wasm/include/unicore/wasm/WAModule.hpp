@@ -25,7 +25,7 @@ namespace unicore
 	{
 	public:
 		WAModule(IM3Module handle, const Shared<MemoryChunk>& memory, Logger& logger);
-		~WAModule();
+		~WAModule() override;
 
 		UC_NODISCARD StringView name() const { return m3_GetModuleName(_handle); }
 		void set_name(StringView name);

@@ -73,10 +73,26 @@ namespace unicore
 				{
 					mod->load_to(*runtime);
 
+					UC_LOG_INFO(wasm_logger) << "Runtime functions:";
+					unsigned index = 0;
+					runtime->enum_functions([&wasm_logger, &index](WAFunction func)
+						{
+							UC_LOG_INFO(wasm_logger) << index << ": " << func;
+							index++;
+						});
+
 					if (const auto func = runtime->find_function("add"); func.has_value())
 					{
-						const auto result = func->call<int>(10, 15);
-						UC_LOG_INFO(logger) << "Function result: " << result;
+						if (const auto error = func->call(10, 15); !error)
+						{
+							int v;
+							func->get_results(&v);
+							UC_LOG_INFO(wasm_logger) << "Function result: " << v;
+						}
+						else
+						{
+							UC_LOG_ERROR(wasm_logger) << error;
+						}
 					}
 				}
 			}
