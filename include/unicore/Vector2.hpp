@@ -90,12 +90,7 @@ namespace unicore
 
 		UC_NODISCARD float dot(const Vector2<T>& other) const
 		{
-			return x * other.x + y * other.y;
-		}
-
-		UC_NODISCARD Radians angle(const Vector2<T>& other) const
-		{
-			return Radians(Math::acos(dot(other) / (length() * other.length())));
+			return dot(*this, other);
 		}
 
 		UC_NODISCARD Vector2<T> rotate(Radians angle) const
@@ -108,24 +103,29 @@ namespace unicore
 			};
 		}
 
-		UC_NODISCARD float distance(const Vector2<T>& other) const
+		UC_NODISCARD Radians angle(const Vector2<T>& other) const
 		{
-			return (*this - other).length();
+			return angle(*this, other);
 		}
 
-		static float dot(const Vector2<T>& a, const Vector2<T>& b)
+		UC_NODISCARD float distance(const Vector2<T>& other) const
 		{
-			return a.dot(b);
+			return distance(*this, other);
+		}
+
+		static float constexpr dot(const Vector2<T>& a, const Vector2<T>& b)
+		{
+			return a.x * b.x + a.y * b.y;
+		}
+
+		static float constexpr distance(const Vector2<T>& a, const Vector2<T>& b)
+		{
+			return (a - b).length();
 		}
 
 		static Radians angle(const Vector2<T>& a, const Vector2<T>& b)
 		{
-			return a.angle(b);
-		}
-
-		static float distance(const Vector2<T>& a, const Vector2<T>& b)
-		{
-			return a.distance(b);
+			return Radians(Math::acos(dot(a, b) / (a.length() * b.length())));
 		}
 	};
 
@@ -147,52 +147,52 @@ namespace unicore
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>
-	static std::enable_if_t<std::is_integral_v<T>, bool>
+	static constexpr std::enable_if_t<std::is_integral_v<T>, bool>
 		operator == (const Vector2<T>& a, const Vector2<T>& b)
 	{
 		return a.x == b.x && a.y == b.y;
 	}
 
 	template<typename T>
-	static std::enable_if_t<std::is_integral_v<T>, bool>
+	static constexpr std::enable_if_t<std::is_integral_v<T>, bool>
 		operator != (const Vector2<T>& a, const Vector2<T>& b)
 	{
 		return a.x != b.x || a.y != b.y;
 	}
 
 	template<typename T>
-	static Vector2<T> operator + (const Vector2<T>& a, const Vector2<T>& b)
+	static constexpr Vector2<T> operator + (const Vector2<T>& a, const Vector2<T>& b)
 	{
 		return Vector2<T>(a.x + b.x, a.y + b.y);
 	}
 
 	template<typename T>
-	static Vector2<T> operator - (const Vector2<T>& a, const Vector2<T>& b)
+	static constexpr Vector2<T> operator - (const Vector2<T>& a, const Vector2<T>& b)
 	{
 		return Vector2<T>(a.x - b.x, a.y - b.y);
 	}
 
 	template<typename T>
-	static Vector2<T> operator * (const Vector2<T>& a, const Vector2<T>& b)
+	static constexpr Vector2<T> operator * (const Vector2<T>& a, const Vector2<T>& b)
 	{
 		return Vector2<T>(a.x * b.x, a.y * b.y);
 	}
 
 	template<typename T>
-	static std::enable_if_t<std::is_floating_point_v<T>, Vector2<T>>
+	static constexpr std::enable_if_t<std::is_floating_point_v<T>, Vector2<T>>
 		operator / (const Vector2<T>& a, const Vector2<T>& b)
 	{
 		return Vector2<T>(a.x / b.x, a.y / b.y);
 	}
 
 	template<typename T>
-	static Vector2<T> operator * (const Vector2<T>& a, T value)
+	static constexpr Vector2<T> operator * (const Vector2<T>& a, T value)
 	{
 		return Vector2<T>(a.x * value, a.y * value);
 	}
 
 	template<typename T>
-	static std::enable_if_t<std::is_floating_point_v<T>, Vector2<T>>
+	static constexpr std::enable_if_t<std::is_floating_point_v<T>, Vector2<T>>
 		operator / (const Vector2<T>& a, T value)
 	{
 		return Vector2<T>(a.x / value, a.y / value);
