@@ -15,7 +15,7 @@ namespace unicore
 		{
 		}
 
-		UC_NODISCARD M3ValueType get_type() const
+		UC_NODISCARD M3ValueType type() const
 		{
 			return m3_GetGlobalType(_handle);
 		}
@@ -34,6 +34,8 @@ namespace unicore
 			StringView function_name, StringView signature, M3RawCall func);
 
 		UC_NODISCARD WAGlobal find_global(StringView name) const;
+
+		void enum_globals(const Action<WAGlobal>& action) const;
 
 		bool load_to(WARuntime& runtime);
 

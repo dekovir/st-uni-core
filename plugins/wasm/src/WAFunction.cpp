@@ -76,7 +76,7 @@ namespace unicore
 		}
 		else if (arg_count == 1)
 		{
-			helper << m3_GetRetType(handle, 0);
+			helper << m3_GetArgType(handle, 0);
 		}
 		else
 		{

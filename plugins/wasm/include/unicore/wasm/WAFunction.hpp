@@ -37,13 +37,20 @@ namespace unicore
 		template<typename Ret, typename... Args>
 		Ret call_single(Args... args) const
 		{
-			const void* arg_ptrs[] = { reinterpret_cast<const void*>(&args)... };
-			M3Result res = m3_Call(_handle, sizeof...(args), arg_ptrs);
+			if constexpr (sizeof...(args) > 0)
+			{
+				const void* arg_ptrs[] = { reinterpret_cast<const void*>(&args)... };
+				m3_Call(_handle, sizeof...(args), arg_ptrs);
+			}
+			else
+			{
+				m3_Call(_handle, 0, nullptr);
+			}
 
 			if constexpr (!std::is_void_v<Ret>) {
 				Ret ret;
 				const void* ret_ptrs[] = { &ret };
-				res = m3_GetResults(_handle, 1, ret_ptrs);
+				m3_GetResults(_handle, 1, ret_ptrs);
 				return ret;
 			}
 		}

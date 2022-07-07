@@ -1,4 +1,7 @@
 #include "unicore/wasm/WAModule.hpp"
+
+#include <m3_env.h>
+
 #include "unicore/Logger.hpp"
 #include "unicore/wasm/WARuntime.hpp"
 
@@ -34,6 +37,12 @@ namespace unicore
 	WAGlobal WAModule::find_global(StringView name) const
 	{
 		return WAGlobal(m3_FindGlobal(_handle, name.data()));
+	}
+
+	void WAModule::enum_globals(const Action<WAGlobal>& action) const
+	{
+		for (unsigned i = 0; i < _handle->numGlobals; i++)
+			action(WAGlobal(&_handle->globals[i]));
 	}
 
 	bool WAModule::load_to(WARuntime& runtime)
