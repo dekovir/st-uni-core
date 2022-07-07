@@ -27,8 +27,8 @@ namespace unicore
 
 		UC_NODISCARD Shared<ReadStream> open_read(const Path& path) const;
 
-
 		UC_NODISCARD Shared<Resource> find(const Path& path, TypeIndex type) const;
+		UC_NODISCARD Optional<Path> find_path(Resource& resource) const;
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
 		UC_NODISCARD Shared<T> find(const Path& path) const
@@ -58,6 +58,8 @@ namespace unicore
 		List<StreamProvider*> _providers;
 
 		Dictionary<Path, Dictionary<TypeIndex, Shared<Resource>>> _cached;
+
+		Shared<Resource> load_resource(const Path& path, TypeIndex type, Logger* logger);
 
 		Shared<Resource> load_resource(ResourceLoader& loader,
 			const Path& path, ReadStream& stream, TypeIndex type, Logger* logger);

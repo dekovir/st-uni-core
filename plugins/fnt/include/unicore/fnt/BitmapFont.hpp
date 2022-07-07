@@ -15,7 +15,7 @@ namespace unicore
 	class BitmapFont : public Font
 	{
 	public:
-		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BitmapFont); }
+		UC_NODISCARD size_t system_memory_use() const override;
 
 		List<Shared<Texture>> pages;
 		Dictionary<uint32_t, BitmapFontGlyph> glyphs;

@@ -2,6 +2,12 @@
 
 namespace unicore
 {
+	size_t BitmapFont::system_memory_use() const
+	{
+		return Font::system_memory_use() +
+			(sizeof(BitmapFontGlyph) + sizeof(uint32_t)) * glyphs.size();
+	}
+
 	Shared<Texture> BitmapFont::get_char_print_info(uint32_t code,
 		Vector2f& pos, Rectf* rect, Rectf* uv_rect) const
 	{

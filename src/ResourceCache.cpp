@@ -72,6 +72,20 @@ namespace unicore
 		return nullptr;
 	}
 
+	Optional<Path> ResourceCache::find_path(Resource& resource) const
+	{
+		for (const auto& it : _cached)
+		{
+			for (const auto& jt : it.second)
+			{
+				if (jt.second.get() == &resource)
+					return it.first;
+			}
+		}
+
+		return std::nullopt;
+	}
+
 	Shared<Resource> ResourceCache::load(const Path& path, TypeIndex type, ResourceCacheFlags flags)
 	{
 		if (auto resource_find = find(path, type))
@@ -85,42 +99,8 @@ namespace unicore
 
 		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;
 
-		if (const auto loaders = _context->get_loaders(type); !loaders.empty())
-		{
-			// TODO: Implement loading stack for prevent recursive loading
-			for (const auto& loader : loaders)
-			{
-				if (path.has_extension(L".*"))
-				{
-					for (const auto& extension : loader->extension())
-					{
-						Path new_path(path);
-						new_path.replace_extension(extension);
-
-						const auto stream = open_read(new_path);
-						if (!stream)
-							continue;
-
-						if (auto resource = load_resource(*loader, new_path, *stream, type, logger))
-							return resource;
-					}
-				}
-				else
-				{
-					const auto extension = path.extension();
-
-					const auto stream = open_read(path);
-					if (!stream)
-					{
-						UC_LOG_WARNING(logger) << "Failed to open " << path;
-						return nullptr;
-					}
-
-					if (auto resource = load_resource(*loader, path, *stream, type, logger))
-						return resource;
-				}
-			}
-		}
+		if (auto resource = load_resource(path, type, logger))
+			return resource;
 
 		if (const auto converters = _context->get_converters(type); !converters.empty())
 		{
@@ -131,7 +111,9 @@ namespace unicore
 				{
 					if (auto resource = converter->convert(*raw, { *this, logger }))
 					{
-						add_resource(resource, path, type);
+						// TODO: Optimize (get path directly from load function)
+						const auto converted_path = find_path(*raw);
+						add_resource(resource, converted_path.value_or(path), type);
 						return resource;
 					}
 				}
@@ -202,6 +184,48 @@ namespace unicore
 	{
 		_context = nullptr;
 		Module::unregister_module(context);
+	}
+
+	Shared<Resource> ResourceCache::load_resource(const Path& path, TypeIndex type, Logger* logger)
+	{
+		const auto& loaders = _context->get_loaders(type);
+		if (loaders.empty()) return nullptr;
+
+		// TODO: Implement loading stack for prevent recursive loading
+		for (const auto& loader : loaders)
+		{
+			if (path.has_extension(L".*"))
+			{
+				for (const auto& extension : loader->extension())
+				{
+					Path new_path(path);
+					new_path.replace_extension(extension);
+
+					const auto stream = open_read(new_path);
+					if (!stream)
+						continue;
+
+					if (auto resource = load_resource(*loader, new_path, *stream, type, logger))
+						return resource;
+				}
+			}
+			else
+			{
+				const auto extension = path.extension();
+
+				const auto stream = open_read(path);
+				if (!stream)
+				{
+					UC_LOG_WARNING(logger) << "Failed to open " << path;
+					return nullptr;
+				}
+
+				if (auto resource = load_resource(*loader, path, *stream, type, logger))
+					return resource;
+			}
+		}
+
+		return nullptr;
 	}
 
 	Shared<Resource> ResourceCache::load_resource(ResourceLoader& loader,
