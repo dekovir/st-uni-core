@@ -127,42 +127,49 @@ namespace unicore
 		SDL_InitSubSystem(SDL_INIT_EVENTS);
 	}
 
-	bool SDL2Input::mouse_button(uint8_t button) const
+	bool SDL2MouseDevice::down(uint8_t button) const
 	{
-		return button < _mouse_button.size() && _mouse_button[button];
+		return button < _button.size() && _button[button];
 	}
 
-	const Vector2i& SDL2Input::mouse_position() const
+	void SDL2MouseDevice::reset()
 	{
-		return _mouse_pos;
+		_button.reset();
+		_position = VectorConst2i::Zero;
+		_delta = VectorConst2i::Zero;
+		_wheel = VectorConst2i::Zero;
 	}
 
-	bool SDL2Input::key_code(KeyCode code) const
+	void SDL2MouseDevice::update()
+	{
+		int x, y;
+		const auto mouse_buttons = SDL_GetMouseState(&x, &y);
+
+		_delta.set(x - _position.x, y - _position.y);
+		_position.set(x, y);
+
+		for (unsigned i = 0; i < _button.size(); i++)
+			_button[i] = (mouse_buttons & SDL_BUTTON(i + 1)) != 0;
+	}
+
+	bool SDL2KeyboardDevice::down(KeyCode code) const
 	{
 		return _key_code[static_cast<int>(code)];
 	}
 
-	KeyModFlags SDL2Input::key_mod() const
+	KeyModFlags SDL2KeyboardDevice::mods() const
 	{
 		return _key_mod;
 	}
 
-	void SDL2Input::reset()
+	void SDL2KeyboardDevice::reset()
 	{
-		_mouse_button.reset();
-		_mouse_pos = VectorConst2i::Zero;
-
 		_key_code.reset();
 		_key_mod = KeyModFlags::Zero;
 	}
 
-	void SDL2Input::update()
+	void SDL2KeyboardDevice::update()
 	{
-		// Mouse
-		const auto mouse_buttons = SDL_GetMouseState(&_mouse_pos.x, &_mouse_pos.y);
-		for (unsigned i = 0; i < _mouse_button.size(); i++)
-			_mouse_button[i] = (mouse_buttons & SDL_BUTTON(i + 1)) != 0;
-
 		// Keyboard State
 		_key_code.reset();
 		int keys_num;
@@ -196,6 +203,18 @@ namespace unicore
 
 		_key_mod.set(KeyMod::SystemLeft, key_mod & KMOD_LGUI);
 		_key_mod.set(KeyMod::SystemRight, key_mod & KMOD_RGUI);
+	}
+
+	void SDL2Input::reset()
+	{
+		_mouse.reset();
+		_keyboard.reset();
+	}
+
+	void SDL2Input::update()
+	{
+		_mouse.update();
+		_keyboard.update();
 	}
 }
 #endif

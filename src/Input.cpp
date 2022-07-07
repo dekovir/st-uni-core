@@ -2,14 +2,14 @@
 
 namespace unicore
 {
-	bool Input::mouse_button(MouseButton button) const
+	bool MouseDevice::down(MouseButton button) const
 	{
-		return mouse_button(static_cast<uint8_t>(button));
+		return down(static_cast<uint8_t>(button));
 	}
 
-	bool Input::key_mod(KeyModCombine mod) const
+	bool KeyboardDevice::mods(KeyModCombine mod) const
 	{
-		const auto flags = key_mod();
+		const auto flags = mods();
 		switch (mod)
 		{
 		case KeyModCombine::System:

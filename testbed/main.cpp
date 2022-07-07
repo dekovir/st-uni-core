@@ -149,11 +149,11 @@ namespace unicore
 	void MyCore::on_update()
 	{
 #if !defined(UNICORE_PLATFORM_WEB)
-		if (input.key_code(KeyCode::Escape))
+		if (input.keyboard().down(KeyCode::Escape))
 			platform.quit();
 #endif
 
-		_add_active = input.mouse_button(MouseButton::Left);
+		_add_active = input.mouse().down(MouseButton::Left);
 
 		// SPAWN ENTITIES ////////////////////////////////////////////////////////////
 		if (_add_active && _tex1)
@@ -163,7 +163,7 @@ namespace unicore
 			constexpr auto time_period = TimeSpan::from_microseconds(1000);
 			while (_add_time >= time_period)
 			{
-				spawn_entity(input.mouse_position().cast<float>(), _tex1->size());
+				spawn_entity(input.mouse().position().cast<float>(), _tex1->size());
 				_add_time -= time_period;
 			}
 		}

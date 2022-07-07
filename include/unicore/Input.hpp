@@ -166,19 +166,37 @@ namespace unicore
 		Left,
 		Middle,
 		Right,
+		Button4,
+		Button5,
+		Button6,
+		Button7,
+		Button8,
+	};
+
+	class MouseDevice : public Object
+	{
+	public:
+		UC_NODISCARD virtual bool down(uint8_t button) const = 0;
+		UC_NODISCARD virtual bool down(MouseButton button) const;
+
+		UC_NODISCARD virtual const Vector2i& position() const = 0;
+		UC_NODISCARD virtual const Vector2i& delta() const = 0;
+		UC_NODISCARD virtual const Vector2i& wheel() const = 0;
+	};
+
+	class KeyboardDevice : public Object
+	{
+	public:
+		UC_NODISCARD virtual bool down(KeyCode code) const = 0;
+
+		UC_NODISCARD virtual KeyModFlags mods() const = 0;
+		UC_NODISCARD virtual bool mods(KeyModCombine mod) const;
 	};
 
 	class Input : public Module
 	{
 	public:
-		UC_NODISCARD virtual bool mouse_button(uint8_t button) const = 0;
-		UC_NODISCARD virtual const Vector2i& mouse_position() const = 0;
-
-		UC_NODISCARD bool mouse_button(MouseButton button) const;
-
-		UC_NODISCARD virtual bool key_code(KeyCode code) const = 0;
-		UC_NODISCARD virtual KeyModFlags key_mod() const = 0;
-
-		UC_NODISCARD bool key_mod(KeyModCombine mod) const;
+		UC_NODISCARD virtual const MouseDevice& mouse() const = 0;
+		UC_NODISCARD virtual const KeyboardDevice& keyboard() const = 0;
 	};
 }
