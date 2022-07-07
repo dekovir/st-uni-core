@@ -33,8 +33,13 @@ namespace unicore
 
 	MyCore::MyCore(const CoreSettings& settings)
 		: Core(settings)
+		, _imgui_logger("[IMGUI] ", logger)
+		, _imgui_render(render, _imgui_logger)
+		, _imgui(_imgui_render, time, input, _imgui_logger)
 	{
 		UC_LOG_INFO(logger) << "Starting";
+
+		_imgui_render.init(render);
 
 		_tex1 = resources.load<Texture>(L"assets/zazaka.png"_path);
 
@@ -156,18 +161,17 @@ namespace unicore
 		_add_active = input.mouse().down(MouseButton::Left);
 
 		// SPAWN ENTITIES ////////////////////////////////////////////////////////////
-		if (_add_active && _tex1)
-		{
-			_add_time += time.delta();
-
-			constexpr auto time_period = TimeSpan::from_microseconds(1000);
-			while (_add_time >= time_period)
-			{
-				spawn_entity(input.mouse().position().cast<float>(), _tex1->size());
-				_add_time -= time_period;
-			}
-		}
-		else _add_time = TimeSpanConst::Zero;
+		//if (_add_active && _tex1)
+		//{
+		//	_add_time += time.delta();
+		//	constexpr auto time_period = TimeSpan::from_microseconds(1000);
+		//	while (_add_time >= time_period)
+		//	{
+		//		spawn_entity(input.mouse().position().cast<float>(), _tex1->size());
+		//		_add_time -= time_period;
+		//	}
+		//}
+		//else _add_time = TimeSpanConst::Zero;
 
 		// UPDATE ENTITIES ///////////////////////////////////////////////////////////
 		auto& screen_size = render.screen_size();
@@ -212,6 +216,13 @@ namespace unicore
 		_sprite_batch.print(_font, { 0, 40 }, draw_str);
 
 		_sprite_batch.end();
+
+		_imgui.frame_begin();
+
+		static bool show_demo_window = true;
+		ImGui::ShowDemoWindow(&show_demo_window);
+
+		_imgui.frame_end();
 	}
 
 	void MyCore::on_draw()
@@ -221,6 +232,8 @@ namespace unicore
 		_graphics.render(render);
 
 		_sprite_batch.render(render);
+
+		_imgui.render();
 
 		_draw_calls = render.draw_calls();
 	}

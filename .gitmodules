@@ -10,3 +10,6 @@
 [submodule "libs/wasm3"]
 	path = libs/wasm3
 	url = https://github.com/wasm3/wasm3.git
+[submodule "libs/imgui"]
+	path = libs/imgui
+	url = https://github.com/ocornut/imgui.git

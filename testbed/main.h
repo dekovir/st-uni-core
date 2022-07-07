@@ -4,6 +4,7 @@
 #include "unicore/SpriteBatch.hpp"
 #include "unicore/app/Core.hpp"
 #include "unicore/fnt/BitmapFont.hpp"
+#include "unicore/imgui/ImGuiContext.hpp"
 
 namespace unicore
 {
@@ -33,6 +34,10 @@ namespace unicore
 		Shared<BitmapFont> _font;
 		DefaultRandom _random;
 		List<Entity> _entites;
+
+		ProxyLogger _imgui_logger;
+		ImGuiRender2D _imgui_render;
+		ImGuiContext _imgui;
 
 		Graphics2D _graphics;
 		SpriteBatch _sprite_batch;

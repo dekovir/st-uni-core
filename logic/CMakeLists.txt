@@ -25,3 +25,7 @@ endif()
 if (UNICORE_WASM)
 	target_link_libraries(unicore-app PUBLIC unicore-wasm)
 endif()
+
+if (UNICORE_IMGUI)
+	target_link_libraries(unicore-app PUBLIC unicore-imgui)
+endif()

@@ -13,6 +13,7 @@ endif ()
 option(UNICORE_XML "Add unicore-xml plugin (tinyxml2)" ON)
 option(UNICORE_FNT "Add unicore-fnt plugin" ON)
 option(UNICORE_WASM "Add unicore-wasm plugin" ON)
+option(UNICORE_IMGUI "Add unicore-imgui plugin" ON)
 option(UNICORE_TESTBED "Add Testbed project" OFF)
 
 # PROJECT ######################################################################
@@ -89,6 +90,10 @@ if (UNICORE_WASM)
 	add_subdirectory("${LIBS_DIR}/wasm3/source")
 	set_target_properties(m3 PROPERTIES FOLDER "Libs")
 	add_subdirectory("${PLUGINS_DIR}/wasm")
+endif()
+
+if (UNICORE_IMGUI)
+	add_subdirectory("${PLUGINS_DIR}/imgui")
 endif()
 
 # stb
