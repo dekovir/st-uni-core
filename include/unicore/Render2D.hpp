@@ -23,8 +23,6 @@ namespace unicore
 	public:
 		explicit Render2D(Logger& logger);
 
-		virtual Shared<Texture> create_texture(Surface& surface) = 0;
-
 		virtual void clear(const Color4b& color) = 0;
 
 		virtual void set_clip(Optional<Recti> clip_rect = std::nullopt) = 0;

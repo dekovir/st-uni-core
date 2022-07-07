@@ -54,15 +54,19 @@ namespace unicore
 	void Core::update()
 	{
 		platform.poll_events();
-		on_update();
 
-		_fps_time += time.delta();
-		if (_fps_time >= TimeSpanConst::OneSecond)
+		if (time.delta() > TimeSpanConst::Zero)
 		{
-			_fps_current = _fps_counter;
+			on_update();
 
-			_fps_counter = 0;
-			_fps_time -= TimeSpanConst::OneSecond;
+			_fps_time += time.delta();
+			if (_fps_time >= TimeSpanConst::OneSecond)
+			{
+				_fps_current = _fps_counter;
+
+				_fps_counter = 0;
+				_fps_time -= TimeSpanConst::OneSecond;
+			}
 		}
 	}
 

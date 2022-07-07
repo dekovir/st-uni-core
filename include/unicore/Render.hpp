@@ -7,6 +7,8 @@
 namespace unicore
 {
 	class Logger;
+	class Surface;
+	class Texture;
 
 	class RenderBuffer : public RenderResource
 	{
@@ -34,6 +36,8 @@ namespace unicore
 
 		UC_NODISCARD virtual const Vector2i& screen_size() const = 0;
 		UC_NODISCARD virtual uint32_t draw_calls() const =0;
+
+		virtual Shared<Texture> create_texture(Surface& surface) = 0;
 
 		virtual bool begin_scene() = 0;
 		virtual void end_scene() = 0;
