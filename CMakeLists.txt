@@ -16,6 +16,7 @@ option(UNICORE_WASM "Add unicore-wasm plugin" ON)
 option(UNICORE_IMGUI "Add unicore-imgui plugin" ON)
 option(UNICORE_GRIDMAP "Add unicore-gridmap plugin" ON)
 
+option(UNICORE_MINIMAL "Add Minimal project" OFF)
 option(UNICORE_TESTBED "Add Testbed project" OFF)
 
 # PROJECT ######################################################################
@@ -154,6 +155,10 @@ function(unicore_init_executable target_name)
 
 	unicore_init_target(${target_name})
 	target_link_libraries(${target_name} PRIVATE unicore-app unicore-main)
+
+	if (MSVC)
+		set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${target_name})
+	endif()
 endfunction()
 
 function(unicore_init_assets target_name directory)
@@ -162,7 +167,22 @@ function(unicore_init_assets target_name directory)
 			"--preload-file ../../${directory}@/${directory}"
 		)
 	endif()
+	if (MSVC)
+		set_target_properties(${target_name} PROPERTIES
+			VS_DEBUGGER_WORKING_DIRECTORY ${directory}
+		)
+	endif()
 endfunction()
+
+# MINIMAL ######################################################################
+if (UNICORE_MINIMAL)
+	set(MINIMAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/minimal")
+	file(GLOB MINIMAL_SRC "${MINIMAL_DIR}/*.cpp" "${MINIMAL_DIR}/*.hpp")
+
+	add_executable(minimal "${MINIMAL_SRC}")
+	unicore_init_executable(minimal)
+	unicore_group_sources_by_folder(minimal)
+endif()
 
 # TESTBED ######################################################################
 if (UNICORE_TESTBED)
@@ -173,11 +193,4 @@ if (UNICORE_TESTBED)
 	unicore_init_executable(testbed)
 	unicore_group_sources_by_folder(testbed)
 	unicore_init_assets(testbed assets)
-
-	if (MSVC)
-		set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT testbed)
-		set_target_properties(${target_name} PROPERTIES
-			VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assets
-		)
-	endif()
 endif()

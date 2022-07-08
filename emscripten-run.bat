@@ -1,2 +1,2 @@
 cd build/Emscripten
-emrun testbed.html --kill_start --kill_exit
+emrun minimal.html --kill_start --kill_exit

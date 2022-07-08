@@ -192,8 +192,7 @@ namespace unicore
 	}
 
 	template<typename T>
-	static constexpr std::enable_if_t<std::is_floating_point_v<T>, Vector2<T>>
-		operator / (const Vector2<T>& a, T value)
+	static constexpr Vector2<T> operator / (const Vector2<T>& a, T value)
 	{
 		return Vector2<T>(a.x / value, a.y / value);
 	}
