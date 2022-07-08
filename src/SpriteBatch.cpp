@@ -1,4 +1,7 @@
 #include "unicore/SpriteBatch.hpp"
+#include "unicore/Texture.hpp"
+#include "unicore/Font.hpp"
+#include "unicore/Sprite.hpp"
 #include "unicore/Render2D.hpp"
 
 namespace unicore
@@ -63,9 +66,11 @@ namespace unicore
 
 	static VertexTexColor2 s_quad[4];
 
-	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture, const Vector2f& center, const Color4b& color)
+	// DRAW TEXTURE ///////////////////////////////////////////////////////////////
+	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
+		const Vector2f& center, const Color4b& color)
 	{
-		if (set_texture(texture))
+		if (texture)
 		{
 			calc_quad_position(center, texture->size(),
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
@@ -79,16 +84,18 @@ namespace unicore
 			s_quad[1].col = color;
 			s_quad[2].col = color;
 			s_quad[3].col = color;
+
+			return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
 		}
 
-		return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+		return *this;
 	}
 
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
 		const Vector2f& center, const Radians& angle,
 		const Vector2f& scale, const Color4b& color)
 	{
-		if (set_texture(texture))
+		if (texture)
 		{
 			calc_quad_position(center, texture->size(), angle, scale,
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
@@ -102,9 +109,61 @@ namespace unicore
 			s_quad[1].col = color;
 			s_quad[2].col = color;
 			s_quad[3].col = color;
+
+			return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
 		}
 
-		return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+		return *this;
+	}
+
+	// DRAW SPRITE ////////////////////////////////////////////////////////////////
+	SpriteBatch& SpriteBatch::draw(const Shared<Sprite>& sprite,
+		const Vector2f& center, const Color4b& color)
+	{
+		if (sprite)
+		{
+			auto& rect = sprite->rect();
+			auto& texture = sprite->texture();
+
+			calc_quad_position(center, rect.size(),
+				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
+			calc_quad_uv(texture->size(), rect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+
+			s_quad[0].col = color;
+			s_quad[1].col = color;
+			s_quad[2].col = color;
+			s_quad[3].col = color;
+
+			return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+		}
+
+		return *this;
+	}
+
+	SpriteBatch& SpriteBatch::draw(const Shared<Sprite>& sprite,
+		const Vector2f& center, const Radians& angle,
+		const Vector2f& scale, const Color4b& color)
+	{
+		if (sprite)
+		{
+			auto& rect = sprite->rect();
+			auto& texture = sprite->texture();
+
+			calc_quad_position(center, rect.size(), angle, scale,
+				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
+			calc_quad_uv(texture->size(), rect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+
+			s_quad[0].col = color;
+			s_quad[1].col = color;
+			s_quad[2].col = color;
+			s_quad[3].col = color;
+
+			return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+		}
+
+		return *this;
 	}
 
 	SpriteBatch& SpriteBatch::print(const Shared<Font>& font,
@@ -192,5 +251,22 @@ namespace unicore
 		p1 = center + rotate_and_scale(+hx, -hy, a_cos, a_sin, scale.x, scale.y);
 		p2 = center + rotate_and_scale(+hx, +hy, a_cos, a_sin, scale.x, scale.y);
 		p3 = center + rotate_and_scale(-hx, +hy, a_cos, a_sin, scale.x, scale.y);
+	}
+
+	void SpriteBatch::calc_quad_uv(const Vector2i& size, const Recti& rect,
+		Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3)
+	{
+		const auto w = static_cast<float>(size.x);
+		const auto h = static_cast<float>(size.y);
+
+		const float tx1 = static_cast<float>(rect.x) / w;
+		const float ty1 = static_cast<float>(rect.y) / h;
+		const float tx2 = tx1 + static_cast<float>(rect.w) / w;
+		const float ty2 = ty1 + static_cast<float>(rect.h) / h;
+
+		p0.set(tx1, ty1);
+		p1.set(tx2, ty1);
+		p2.set(tx2, ty2);
+		p3.set(tx1, ty2);
 	}
 }

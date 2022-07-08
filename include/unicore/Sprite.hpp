@@ -1,14 +1,19 @@
 #pragma once
 #include "unicore/Rect.hpp"
-#include "unicore/Texture.hpp"
+#include "unicore/RenderResource.hpp"
 
 namespace unicore
 {
+	class Texture;
+
 	class Sprite : public RenderResource
 	{
 	public:
 		explicit Sprite(const Shared<Texture>& texture);
 		Sprite(const Shared<Texture>& texture, const Recti& rect);
+
+		UC_NODISCARD const Recti& rect() const { return _rect; }
+		UC_NODISCARD const Shared<Texture>& texture() const { return _texture; }
 
 		UC_NODISCARD size_t system_memory_use() const override;
 		UC_NODISCARD uint32_t video_memory_use() const override;

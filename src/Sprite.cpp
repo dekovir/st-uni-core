@@ -1,4 +1,5 @@
 #include "unicore/Sprite.hpp"
+#include "unicore/Texture.hpp"
 
 namespace unicore
 {
