@@ -161,17 +161,17 @@ namespace unicore
 		_add_active = input.mouse().down(MouseButton::Left);
 
 		// SPAWN ENTITIES ////////////////////////////////////////////////////////////
-		//if (_add_active && _tex1)
-		//{
-		//	_add_time += time.delta();
-		//	constexpr auto time_period = TimeSpan::from_microseconds(1000);
-		//	while (_add_time >= time_period)
-		//	{
-		//		spawn_entity(input.mouse().position().cast<float>(), _tex1->size());
-		//		_add_time -= time_period;
-		//	}
-		//}
-		//else _add_time = TimeSpanConst::Zero;
+		if (_add_active && _tex1 && !_imgui.is_mouse_over())
+		{
+			_add_time += time.delta();
+			constexpr auto time_period = TimeSpan::from_microseconds(1000);
+			while (_add_time >= time_period)
+			{
+				spawn_entity(input.mouse().position().cast<float>(), _tex1->size());
+				_add_time -= time_period;
+			}
+		}
+		else _add_time = TimeSpanConst::Zero;
 
 		// UPDATE ENTITIES ///////////////////////////////////////////////////////////
 		auto& screen_size = render.screen_size();

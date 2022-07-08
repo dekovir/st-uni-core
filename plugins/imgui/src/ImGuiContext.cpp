@@ -10,6 +10,9 @@ namespace unicore
 		ImGui::StyleColorsDark();
 		auto& io = ImGui::GetIO();
 
+		io.UserData = this;
+		io.IniFilename = nullptr;
+
 		// BACKEND PLATFORM //////////////////////////////////////////////////////////
 		UC_ASSERT_MSG(io.BackendPlatformUserData == nullptr, "Already initialized a platform backend!");
 		io.BackendPlatformUserData = this;
@@ -77,5 +80,11 @@ namespace unicore
 		ImGui::SetCurrentContext(_handle);
 		const auto data = ImGui::GetDrawData();
 		_render.render(data);
+	}
+
+	bool ImGuiContext::is_mouse_over() const
+	{
+		const auto& io = ImGui::GetIO();
+		return io.WantCaptureMouse;
 	}
 }

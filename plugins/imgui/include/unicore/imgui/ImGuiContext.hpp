@@ -16,6 +16,8 @@ namespace unicore
 
 		void render() const;
 
+		UC_NODISCARD bool is_mouse_over() const;
+
 	protected:
 		ImGui::Context* _handle;
 		ImGuiRender& _render;
