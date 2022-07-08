@@ -33,8 +33,15 @@ namespace unicore
 		SpriteBatch& draw(const Shared<Texture>& texture,
 			const Vector2f& center, const Color4b& color = ColorConst4b::White);
 
+		SpriteBatch& draw(const Shared<Texture>& texture, 
+			const Vector2f& center, const Recti& part, const Color4b& color = ColorConst4b::White);
+
 		SpriteBatch& draw(const Shared<Texture>& texture,
 			const Vector2f& center, const Radians& angle,
+			const Vector2f& scale, const Color4b& color = ColorConst4b::White);
+
+		SpriteBatch& draw(const Shared<Texture>& texture,
+			const Vector2f& center, const Recti& part, const Radians& angle,
 			const Vector2f& scale, const Color4b& color = ColorConst4b::White);
 
 		// SPRITE
