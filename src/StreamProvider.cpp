@@ -1,5 +1,6 @@
 #include "unicore/StreamProvider.hpp"
 #include "unicore/Memory.hpp"
+#include "unicore/Stream.hpp"
 
 namespace unicore
 {
@@ -37,7 +38,7 @@ namespace unicore
 		return false;
 	}
 
-	Optional<FileStats> PathStreamProvider::stats(const Path& path) const
+	Optional<StreamStats> PathStreamProvider::stats(const Path& path) const
 	{
 		return _provider.stats(make_path(path));
 	}

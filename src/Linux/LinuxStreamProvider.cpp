@@ -20,14 +20,14 @@ namespace unicore
 		return stat(native_path.c_str(), &data) == 0;
 	}
 
-	Optional<FileStats> LinuxStreamProvider::stats(const Path& path) const
+	Optional<StreamStats> LinuxStreamProvider::stats(const Path& path) const
 	{
 		const auto native_path = to_native(path);
 
 		struct stat data;
 		if (stat(native_path.c_str(), &data) == 0)
 		{
-			FileStats stats;
+			StreamStats stats;
 			stats.size = data.st_size;
 			stats.accestime = data.st_atime;
 			stats.modtime = data.st_mtime;

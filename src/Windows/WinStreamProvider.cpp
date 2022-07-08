@@ -18,7 +18,7 @@ namespace unicore
 		return flags != INVALID_FILE_ATTRIBUTES ? true : false;
 	}
 
-	Optional<FileStats> WinStreamProvider::stats(const Path& path) const
+	Optional<StreamStats> WinStreamProvider::stats(const Path& path) const
 	{
 		const auto native_path = path.native_path();
 
@@ -30,7 +30,7 @@ namespace unicore
 			SYSTEMTIME st;
 			FileTimeToSystemTime(&fileAttr.ftCreationTime, &st);
 
-			FileStats stats;
+			StreamStats stats;
 			stats.accestime = filetime_to_timet(fileAttr.ftLastAccessTime);
 			stats.createtime = filetime_to_timet(fileAttr.ftCreationTime);
 			stats.modtime = filetime_to_timet(fileAttr.ftLastWriteTime);

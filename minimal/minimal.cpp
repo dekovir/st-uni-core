@@ -3,6 +3,7 @@
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
+#include "unicore/Texture.hpp"
 
 namespace unicore
 {

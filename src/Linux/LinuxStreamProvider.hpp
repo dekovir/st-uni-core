@@ -11,7 +11,7 @@ namespace unicore
 		explicit LinuxStreamProvider(Logger& logger);
 
 		UC_NODISCARD bool exists(const Path& path) const override;
-		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
+		UC_NODISCARD Optional<StreamStats> stats(const Path& path) const override;
 
 		uint16_t enumerate(const Path& path,
 			WStringView search_pattern, List<Path>& name_list,
