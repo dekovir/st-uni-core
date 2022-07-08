@@ -8,6 +8,7 @@ namespace unicore
 {
 	class ResourceCache;
 
+	// ResourceLoader ////////////////////////////////////////////////////////////
 	struct ResourceLoaderContext
 	{
 		Path path;
@@ -41,6 +42,7 @@ namespace unicore
 		const List<WStringView> _extensions;
 	};
 
+	// ResourceConverter //////////////////////////////////////////////////////////
 	struct ResourceConverterContext
 	{
 		ResourceCache& cache;
@@ -76,5 +78,21 @@ namespace unicore
 
 	protected:
 		virtual Shared<TResource> convert_typed(TRawResource& raw, const ResourceConverterContext& context) = 0;
+	};
+
+	// ResourceCreator ///////////////////////////////////////////////////////////
+	struct ResourceCreatorContext
+	{
+		ResourceCache& cache;
+		Logger* logger = nullptr;
+	};
+
+	// TODO: Replace const void* with something (Variant?)
+	using ResourceCreatorOptions = Dictionary<StringView, const void*>;
+
+	class ResourceCreator : public virtual Object
+	{
+	public:
+		virtual Shared<Resource> create(const ResourceCreatorContext& context, const ResourceCreatorOptions& options) = 0;
 	};
 }
