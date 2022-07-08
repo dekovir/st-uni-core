@@ -13,7 +13,20 @@ namespace unicore
 		UC_NODISCARD constexpr StringView base() const { return _base; }
 		UC_NODISCARD constexpr StringView data() const { return _data; }
 
-		UC_NODISCARD String to_string() const;
+		UC_NODISCARD String to_string() const
+		{
+			if (!_base.empty())
+			{
+				String str;
+				str.reserve(_base.size() + _data.size() + BaseSeparator.size());
+				str += _base;
+				str += BaseSeparator;
+				str += _data;
+				return str;
+			}
+
+			return String(_data);
+		}
 
 		static constexpr ResourcePath make(StringView const str)
 		{
@@ -45,7 +58,4 @@ namespace unicore
 	{
 		return ResourcePath::make(StringView(str, len));
 	}
-
-	class LogHelper;
-	extern LogHelper& operator << (LogHelper& helper, const ResourcePath& path);
 }
