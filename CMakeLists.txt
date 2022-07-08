@@ -187,7 +187,7 @@ endif()
 # TESTBED ######################################################################
 if (UNICORE_TESTBED)
 	set(TESTBED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/testbed")
-	file(GLOB TESTBED_SRC "${TESTBED_DIR}/*.cpp" "${TESTBED_DIR}/*.h")
+	file(GLOB TESTBED_SRC "${TESTBED_DIR}/*.cpp" "${TESTBED_DIR}/*.hpp")
 
 	add_executable(testbed "${TESTBED_SRC}")
 	unicore_init_executable(testbed)
