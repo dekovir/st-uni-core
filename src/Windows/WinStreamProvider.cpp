@@ -35,9 +35,9 @@ namespace unicore
 			stats.createtime = filetime_to_timet(fileAttr.ftCreationTime);
 			stats.modtime = filetime_to_timet(fileAttr.ftLastWriteTime);
 			if (fileAttr.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-				stats.flag = FileFlag::Directory;
+				stats.flag = StreamFlag::Directory;
 			else
-				stats.flag = FileFlag::File;
+				stats.flag = StreamFlag::File;
 
 			return stats;
 		}
@@ -66,8 +66,8 @@ namespace unicore
 				if (fileName == L"." || fileName == L"..")
 					continue;
 
-				const FileFlag fileType = (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0
-					? FileFlag::Directory : FileFlag::File;
+				const StreamFlag fileType = (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0
+					? StreamFlag::Directory : StreamFlag::File;
 				if (!flags.has(fileType))
 					continue;
 

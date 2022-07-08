@@ -33,8 +33,8 @@ namespace unicore
 			stats.modtime = data.st_mtime;
 			stats.createtime = data.st_ctime;
 			stats.flag = (data.st_mode & S_IFMT) == S_IFDIR
-				? FileFlag::Directory
-				: FileFlag::File;
+				? StreamFlag::Directory
+				: StreamFlag::File;
 			return stats;
 		}
 

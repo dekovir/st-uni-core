@@ -9,13 +9,13 @@ namespace unicore
 	class ReadStream;
 	class WriteStream;
 
-	enum class FileFlag : uint8_t
+	enum class StreamFlag : uint8_t
 	{
 		None = 0,
 		Directory = 1,
 		File = 2,
 	};
-	UNICORE_ENUMFLAGS(FileFlag, FileFlags);
+	UNICORE_ENUMFLAGS(StreamFlag, FileFlags);
 
 	struct StreamStats
 	{
@@ -26,7 +26,7 @@ namespace unicore
 		time_t createtime = 0;
 		// TODO: Replace with DateTime
 		time_t accestime = 0;
-		FileFlag flag = FileFlag::None;
+		StreamFlag flag = StreamFlag::None;
 	};
 
 	class StreamProvider : public Object
@@ -37,11 +37,11 @@ namespace unicore
 
 		virtual uint16_t enumerate(const Path& path,
 			WStringView search_pattern, List<Path>& name_list,
-			FileFlags flags = FileFlag::File | FileFlag::Directory) const = 0;
+			FileFlags flags = StreamFlag::File | StreamFlag::Directory) const = 0;
 
 		UC_NODISCARD virtual List<Path> get_enumerate(
 			const Path& path, WStringView search_pattern,
-			FileFlags flags = FileFlag::File | FileFlag::Directory) const;
+			FileFlags flags = StreamFlag::File | StreamFlag::Directory) const;
 
 		virtual bool create_directory(const Path& path) = 0;
 		virtual bool delete_directory(const Path& path, bool recursive = false) = 0;
@@ -55,7 +55,7 @@ namespace unicore
 		virtual bool write_chunk(const Path& path, const MemoryChunk& chunk);
 	};
 
-	class PathStreamProvider : StreamProvider
+	class PathStreamProvider : public StreamProvider
 	{
 	public:
 		explicit PathStreamProvider(StreamProvider& provider, const Path& base)
@@ -66,7 +66,7 @@ namespace unicore
 
 		uint16_t enumerate(const Path& path,
 			WStringView search_pattern, List<Path>& name_list,
-			FileFlags flags = FileFlag::File | FileFlag::Directory) const override;
+			FileFlags flags = StreamFlag::File | StreamFlag::Directory) const override;
 
 		bool create_directory(const Path& path) override;
 		bool delete_directory(const Path& path, bool recursive) override;
