@@ -127,14 +127,17 @@ namespace unicore
 		SDL_InitSubSystem(SDL_INIT_EVENTS);
 	}
 
-	bool SDL2MouseDevice::down(uint8_t button) const
+	// SDL2MouseDevice ///////////////////////////////////////////////////////////
+	ButtonState SDL2MouseDevice::state(uint8_t button) const
 	{
-		return button < _button.size() && _button[button];
+		return button < _prev.size() ? get_state(_prev[button], _cur[button]) : ButtonState::Up;
 	}
 
 	void SDL2MouseDevice::reset()
 	{
-		_button.reset();
+		_cur.reset();
+		_prev.reset();
+
 		_position = VectorConst2i::Zero;
 		_delta = VectorConst2i::Zero;
 		_wheel = VectorConst2i::Zero;
@@ -148,13 +151,16 @@ namespace unicore
 		_delta.set(x - _position.x, y - _position.y);
 		_position.set(x, y);
 
-		for (unsigned i = 0; i < _button.size(); i++)
-			_button[i] = (mouse_buttons & SDL_BUTTON(i + 1)) != 0;
+		_prev = _cur;
+		for (unsigned i = 0; i < _cur.size(); i++)
+			_cur[i] = (mouse_buttons & SDL_BUTTON(i + 1)) != 0;
 	}
 
-	bool SDL2KeyboardDevice::down(KeyCode code) const
+	// SDL2KeyboardDevice ////////////////////////////////////////////////////////
+	ButtonState SDL2KeyboardDevice::state(KeyCode code) const
 	{
-		return _key_code[static_cast<int>(code)];
+		const int index = static_cast<int>(code);
+		return get_state(_prev[index], _cur[index]);
 	}
 
 	KeyModFlags SDL2KeyboardDevice::mods() const
@@ -164,14 +170,17 @@ namespace unicore
 
 	void SDL2KeyboardDevice::reset()
 	{
-		_key_code.reset();
+		_prev.reset();
+		_cur.reset();
+
 		_key_mod = KeyModFlags::Zero;
 	}
 
 	void SDL2KeyboardDevice::update()
 	{
 		// Keyboard State
-		_key_code.reset();
+		_prev = _cur;
+		_cur.reset();
 		int keys_num;
 		const auto key_state = SDL_GetKeyboardState(&keys_num);
 		for (auto i = 0; i < keys_num; i++)
@@ -181,7 +190,7 @@ namespace unicore
 				const auto scancode = static_cast<SDL_Scancode>(i);
 				const auto it = s_key_bindings.find(scancode);
 				if (it != s_key_bindings.end())
-					_key_code[static_cast<int>(it->second)] = true;
+					_cur[static_cast<int>(it->second)] = true;
 				//else
 				//{
 				//	const auto key_name = SDL_GetScancodeName(scancode);

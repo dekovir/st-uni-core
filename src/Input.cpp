@@ -2,9 +2,20 @@
 
 namespace unicore
 {
-	bool MouseDevice::down(MouseButton button) const
+	ButtonState InputDevice::get_state(bool prev_down, bool cur_down)
 	{
-		return down(static_cast<uint8_t>(button));
+		if (prev_down == cur_down)
+			return cur_down ? ButtonState::Down : ButtonState::Up;
+
+		if (prev_down)
+			return ButtonState::UpChange;
+
+		return ButtonState::DownChange;
+	}
+
+	ButtonState MouseDevice::state(MouseButton button) const
+	{
+		return state(static_cast<uint8_t>(button));
 	}
 
 	bool KeyboardDevice::mods(KeyModCombine mod) const
