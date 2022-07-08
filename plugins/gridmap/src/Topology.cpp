@@ -42,7 +42,7 @@ namespace unicore
 		case static_cast<uint8_t>(RectangleTopologyDir::PositiveY): return { index.value.x, index.value.y + 1 };
 		case static_cast<uint8_t>(RectangleTopologyDir::NegativeY): return { index.value.x, index.value.y - 1 };
 		default:
-			UC_ASSERT_ALWAYS("Invalid dir");
+			UC_ASSERT_ALWAYS_MSG("Invalid dir");
 			return index;
 		}
 	}
