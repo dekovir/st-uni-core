@@ -7,16 +7,27 @@ namespace unicore
 {
 	struct MapIndexTag {};
 
-	struct MapIndex : Index<Vector2i, MapIndexTag>
+	struct CellIndex : Index<Vector2i, MapIndexTag>
 	{
-		constexpr MapIndex(int x, int y) : Index({ x, y }) {}
+		constexpr CellIndex(int x, int y) : Index({ x, y }) {}
 	};
 
 	class Topology : public Object
 	{
 	public:
-		UC_NODISCARD virtual Vector2f cell_to_pos(const MapIndex index) const = 0;
-		UC_NODISCARD virtual MapIndex pos_to_cell(const Vector2f& pos) const = 0;
+		UC_NODISCARD virtual Vector2f cell_to_pos(const CellIndex index) const = 0;
+		UC_NODISCARD virtual CellIndex pos_to_cell(const Vector2f& pos) const = 0;
+
+		virtual void get_cell_points(const CellIndex index, List<Vector2f>& points) const = 0;
+		UC_NODISCARD virtual CellIndex get_cell_neighbor(const CellIndex index, uint8_t dir) const = 0;
+	};
+
+	enum class RectangleTopologyDir : uint8_t
+	{
+		PositiveY,
+		NegativeX,
+		NegativeY,
+		PositiveX,
 	};
 
 	class RectangleTopology : public Topology
@@ -33,8 +44,11 @@ namespace unicore
 		UC_NODISCARD const Vector2f& size() const { return _size; }
 		UC_NODISCARD const Vector2f& gap() const { return _gap; }
 
-		UC_NODISCARD Vector2f cell_to_pos(const MapIndex index) const override;
-		UC_NODISCARD MapIndex pos_to_cell(const Vector2f& pos) const override;
+		UC_NODISCARD Vector2f cell_to_pos(const CellIndex index) const override;
+		UC_NODISCARD CellIndex pos_to_cell(const Vector2f& pos) const override;
+
+		void get_cell_points(const CellIndex index, List<Vector2f>& points) const override;
+		UC_NODISCARD CellIndex get_cell_neighbor(const CellIndex index, uint8_t dir) const override;
 
 	protected:
 		Vector2f _size;
