@@ -1,4 +1,4 @@
-#include "main.hpp"
+#include "minimal.hpp"
 #include "UnicoreMain.h"
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
