@@ -1,9 +1,50 @@
 #include "unicore/Context.hpp"
+#include "unicore/Logger.hpp"
 #include "unicore/ResourceLoader.hpp"
 
 namespace unicore
 {
 	static auto& s_resource_type = get_type<Resource>();
+
+	void Context::register_type(TypeConstRef type)
+	{
+		if (!_types.insert(&type).second)
+			return;
+
+		if (const auto parent = type.parent)
+		{
+			_derived_types[parent].insert(&type);
+			register_type(*parent);
+		}
+	}
+
+	void Context::dump_types(Logger& logger) const
+	{
+		UC_LOG_INFO(logger) << "Context dump types: " << _types.size();
+		unsigned index = 0;
+		for (const auto& type : _types)
+		{
+			auto helper = UC_LOG_INFO(logger);
+			helper << index << ": " << type->classname;
+			if (type->parent)
+				helper << " (" << type->parent->classname << ")";
+
+			if (auto it = _derived_types.find(type); it != _derived_types.end())
+			{
+				helper << " -> [";
+				unsigned i = 0;
+				for (const auto& derived_type : it->second)
+				{
+					if (i > 0) helper << ',';
+					helper << derived_type->classname;
+					i++;
+				}
+				helper << "]";
+			}
+
+			index++;
+		}
+	}
 
 	void Context::add_loader(ResourceLoader& loader)
 	{

@@ -3,6 +3,7 @@
 
 namespace unicore
 {
+	class Logger;
 	class Resource;
 	class ResourceLoader;
 	class ResourceConverter;
@@ -10,6 +11,9 @@ namespace unicore
 	class Context
 	{
 	public:
+		void register_type(TypeConstRef type);
+		void dump_types(Logger& logger) const;
+
 		void add_loader(ResourceLoader& loader);
 		void remove_loader(ResourceLoader& loader);
 
@@ -31,6 +35,9 @@ namespace unicore
 		}
 
 	protected:
+		Set<TypeConstPtr> _types;
+		Dictionary<TypeConstPtr, Set<TypeConstPtr>> _derived_types;
+
 		Dictionary<TypeConstPtr, Set<ResourceLoader*>> _loaders;
 		Dictionary<TypeConstPtr, Set<ResourceConverter*>> _converters;
 	};
