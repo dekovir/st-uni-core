@@ -169,28 +169,32 @@ function(unicore_init_assets target_name directory)
 	endif()
 	if (MSVC)
 		set_target_properties(${target_name} PROPERTIES
-			VS_DEBUGGER_WORKING_DIRECTORY ${directory}
+			VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 		)
 	endif()
 endfunction()
 
 # MINIMAL ######################################################################
+set(EXAMPLES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/examples")
+
 if (UNICORE_MINIMAL)
-	set(MINIMAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/minimal")
+	set(MINIMAL_DIR "${EXAMPLES_DIR}/minimal")
 	file(GLOB MINIMAL_SRC "${MINIMAL_DIR}/*.cpp" "${MINIMAL_DIR}/*.hpp")
 
 	add_executable(minimal "${MINIMAL_SRC}")
 	unicore_init_executable(minimal)
-	unicore_group_sources_by_folder(minimal)
+	#unicore_group_sources_by_folder(minimal)
+	set_target_properties(minimal PROPERTIES FOLDER "Examples")
 endif()
 
 # TESTBED ######################################################################
 if (UNICORE_TESTBED)
-	set(TESTBED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/testbed")
+	set(TESTBED_DIR "${EXAMPLES_DIR}/testbed")
 	file(GLOB TESTBED_SRC "${TESTBED_DIR}/*.cpp" "${TESTBED_DIR}/*.hpp")
 
 	add_executable(testbed "${TESTBED_SRC}")
 	unicore_init_executable(testbed)
-	unicore_group_sources_by_folder(testbed)
+	#unicore_group_sources_by_folder(testbed)
 	unicore_init_assets(testbed assets)
+	set_target_properties(testbed PROPERTIES FOLDER "Examples")
 endif()
