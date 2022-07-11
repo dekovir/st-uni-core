@@ -70,7 +70,7 @@ namespace unicore
 		}
 	};
 
-#define EXAMPLE_REGISTER(type, title) \
+#define UC_EXAMPLE_REGISTER(type, title) \
 	static const ExampleAutoRegister s_example_register(title, [](const ExampleContext& context) \
 		{ return std::make_shared<type>(context); })
 }

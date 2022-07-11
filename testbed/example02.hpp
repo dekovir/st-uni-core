@@ -2,7 +2,6 @@
 #include "example.hpp"
 #include "unicore/SpriteBatch.hpp"
 #include "unicore/TimeSpan.hpp"
-#include "unicore/fnt/BitmapFont.hpp"
 
 namespace unicore
 {
@@ -34,7 +33,7 @@ namespace unicore
 
 	protected:
 		Shared<Texture> _tex;
-		Shared<BitmapFont> _font;
+		Shared<Font> _font;
 
 		SpriteBatch _sprite_batch;
 		List<Entity> _entites;

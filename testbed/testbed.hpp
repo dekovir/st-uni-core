@@ -1,7 +1,6 @@
 #pragma once
 #include "unicore/app/Core.hpp"
 #include "unicore/SpriteBatch.hpp"
-#include "unicore/fnt/BitmapFont.hpp"
 #include "example.hpp"
 
 namespace unicore
@@ -15,7 +14,7 @@ namespace unicore
 		Shared<Example> _example;
 		int _example_index = -1;
 
-		Shared<BitmapFont> _font;
+		Shared<Font> _font;
 		SpriteBatch _sprite_batch;
 		DefaultRandom _random;
 

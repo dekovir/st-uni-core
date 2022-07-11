@@ -3,7 +3,7 @@
 
 namespace unicore
 {
-	EXAMPLE_REGISTER(Example01, "Graphics2D");
+	UC_EXAMPLE_REGISTER(Example01, "Graphics2D");
 
 	bool Example01::load(ResourceCache& resources)
 	{

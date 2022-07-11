@@ -4,7 +4,7 @@
 
 namespace unicore
 {
-	EXAMPLE_REGISTER(Example03, "Example03");
+	UC_EXAMPLE_REGISTER(Example03, "ImGui");
 
 	Example03::Example03(const ExampleContext& context) : Example(context)
 		, _imgui_logger("[IMGUI] ", logger)

@@ -1,13 +1,14 @@
 #include "example02.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
+#include "unicore/Font.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/Render2D.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore
 {
-	EXAMPLE_REGISTER(Example02, "Example02");
+	UC_EXAMPLE_REGISTER(Example02, "SpriteBatch");
 
 	void Entity::update(const Vector2i& size, float delta)
 	{
@@ -36,7 +37,7 @@ namespace unicore
 
 	bool Example02::load(ResourceCache& resources)
 	{
-		_font = resources.load<BitmapFont>(L"assets/font_004.fnt"_path);
+		_font = resources.load<Font>(L"assets/font_004.fnt"_path);
 		_tex = resources.load<Texture>(L"assets/zazaka.png"_path);
 
 		return _tex != nullptr;
