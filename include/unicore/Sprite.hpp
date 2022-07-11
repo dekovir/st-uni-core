@@ -6,8 +6,10 @@ namespace unicore
 {
 	class Texture;
 
+	// TODO: Inherit from RenderResource? Do we need virtual methods?
 	class Sprite : public RenderResource
 	{
+		UC_OBJECT(Sprite, RenderResource)
 	public:
 		explicit Sprite(const Shared<Texture>& texture);
 		Sprite(const Shared<Texture>& texture, const Recti& rect);

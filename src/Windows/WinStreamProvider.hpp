@@ -8,6 +8,7 @@ namespace unicore
 {
 	class WinStreamProvider : public StreamProvider
 	{
+		UC_OBJECT(WinStreamProvider, StreamProvider)
 	public:
 		explicit WinStreamProvider(Logger& logger);
 

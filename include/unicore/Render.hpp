@@ -12,6 +12,7 @@ namespace unicore
 
 	class RenderBuffer : public RenderResource
 	{
+		UC_OBJECT(RenderBuffer, RenderResource)
 	public:
 		UC_NODISCARD virtual size_t size() const = 0;
 
@@ -21,16 +22,19 @@ namespace unicore
 
 	class VertexBuffer : public RenderBuffer
 	{
+		UC_OBJECT(VertexBuffer, RenderBuffer)
 	public:
 	};
 
 	class IndexBuffer : public RenderBuffer
 	{
+		UC_OBJECT(IndexBuffer, RenderBuffer)
 	public:
 	};
 
 	class Render : public Module
 	{
+		UC_OBJECT(Render, Module)
 	public:
 		explicit Render(Logger& logger);
 

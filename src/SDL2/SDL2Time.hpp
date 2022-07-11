@@ -8,6 +8,7 @@ namespace unicore
 {
 	class SDL2Time : public Time
 	{
+		UC_OBJECT(SDL2Time, Time)
 	public:
 		SDL2Time();
 

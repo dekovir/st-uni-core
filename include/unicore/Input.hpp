@@ -183,6 +183,7 @@ namespace unicore
 
 	class InputDevice : public Object
 	{
+		UC_OBJECT(InputDevice, Object)
 	public:
 	protected:
 		static ButtonState get_state(bool prev_down, bool cur_down);
@@ -190,6 +191,7 @@ namespace unicore
 
 	class MouseDevice : public InputDevice
 	{
+		UC_OBJECT(MouseDevice, InputDevice)
 	public:
 		UC_NODISCARD virtual ButtonState state(uint8_t button) const = 0;
 		UC_NODISCARD virtual ButtonState state(MouseButton button = MouseButton::Left) const;
@@ -211,6 +213,7 @@ namespace unicore
 
 	class KeyboardDevice : public InputDevice
 	{
+		UC_OBJECT(KeyboardDevice, InputDevice)
 	public:
 		UC_NODISCARD virtual ButtonState state(KeyCode code) const = 0;
 
@@ -225,6 +228,7 @@ namespace unicore
 
 	class Input : public Module
 	{
+		UC_OBJECT(Input, Module)
 	public:
 		UC_NODISCARD virtual const MouseDevice& mouse() const = 0;
 		UC_NODISCARD virtual const KeyboardDevice& keyboard() const = 0;

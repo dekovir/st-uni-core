@@ -31,6 +31,7 @@ namespace unicore
 
 	class StreamProvider : public Object
 	{
+		UC_OBJECT(StreamProvider, Object)
 	public:
 		UC_NODISCARD virtual Optional<StreamStats> stats(const Path& path) const = 0;
 		UC_NODISCARD virtual bool exists(const Path& path) const;

@@ -123,21 +123,6 @@ namespace unicore
 		return std::make_unique<T>(std::forward<Types>(args)...);
 	}
 
-	using TypeInfo = std::type_info;
-
-	template<typename T>
-	static inline const TypeInfo& get_type_info()
-	{
-		return typeid(T);
-	}
-
-	using TypeIndex = std::type_index;
-	template<typename T>
-	static inline TypeIndex get_type_index()
-	{
-		return TypeIndex(get_type_info<T>());
-	}
-
 	template<typename T>
 	using Predicate = std::function<bool(T)>;
 

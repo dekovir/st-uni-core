@@ -13,6 +13,7 @@ namespace unicore
 
 	class Logger : public Object
 	{
+		UC_OBJECT(Logger, Object)
 	public:
 		virtual void write(LogType type, const StringView text) = 0;
 
@@ -27,6 +28,7 @@ namespace unicore
 
 	class PrintLogger : public Logger
 	{
+		UC_OBJECT(PrintLogger, Logger)
 	public:
 		void write(LogType type, const StringView text) override;
 	};
@@ -164,9 +166,6 @@ namespace unicore
 		const LogType _type;
 		String _text;
 	};
-
-	extern LogHelper& operator << (LogHelper& helper, const TypeInfo& type);
-	extern LogHelper& operator << (LogHelper& helper, const TypeIndex& type);
 }
 
 #define UC_LOG_INFO(logger) \

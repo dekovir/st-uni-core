@@ -6,6 +6,7 @@ namespace unicore
 {
 	class Random : public Object
 	{
+		UC_OBJECT(Random, Object)
 	public:
 		virtual uint32_t next() = 0;
 		virtual float next_float() = 0;

@@ -6,6 +6,7 @@ namespace unicore
 {
 	class StreamLogger : public Logger
 	{
+		UC_OBJECT(StreamLogger, Logger)
 	public:
 		explicit StreamLogger(const Shared<WriteStream>& stream);
 

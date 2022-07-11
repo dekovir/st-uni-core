@@ -6,6 +6,7 @@ namespace unicore
 {
 	class GenericTime : public Time
 	{
+		UC_OBJECT(GenericTime, Time)
 	public:
 		GenericTime();
 

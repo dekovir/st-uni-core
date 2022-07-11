@@ -5,8 +5,10 @@
 
 namespace unicore
 {
+	// TODO: Remove multiple inheritance
 	class WinStream : public ReadStream, public WriteStream
 	{
+		UC_OBJECT(WinStream, ReadStream)
 	public:
 		explicit WinStream(HANDLE handle);
 		~WinStream() override;

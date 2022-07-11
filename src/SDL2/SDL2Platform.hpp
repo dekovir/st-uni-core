@@ -17,6 +17,7 @@ namespace unicore
 {
 	class SDL2Platform : public Platform
 	{
+		UC_OBJECT(SDL2Platform, Platform)
 	public:
 		SDL2Platform();
 

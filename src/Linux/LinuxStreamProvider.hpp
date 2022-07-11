@@ -7,6 +7,7 @@ namespace unicore
 {
 	class LinuxStreamProvider : public StreamProvider
 	{
+		UC_OBJECT(LinuxStreamProvider, StreamProvider)
 	public:
 		explicit LinuxStreamProvider(Logger& logger);
 

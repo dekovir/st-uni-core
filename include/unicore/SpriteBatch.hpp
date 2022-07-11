@@ -11,6 +11,7 @@ namespace unicore
 
 	class SpriteBatch : public Object
 	{
+		UC_OBJECT(SpriteBatch, Object)
 	public:
 		SpriteBatch() = default;
 

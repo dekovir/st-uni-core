@@ -19,8 +19,9 @@ namespace unicore
 
 	class ResourceLoader : public virtual Object
 	{
+		UC_OBJECT(ResourceLoader, Object)
 	public:
-		UC_NODISCARD virtual TypeIndex resource_type() const = 0;
+		UC_NODISCARD virtual TypeConstRef resource_type() const = 0;
 		UC_NODISCARD virtual const List<WStringView>& extension() const = 0;
 
 		UC_NODISCARD virtual Shared<Resource> load(const ResourceLoaderContext& context) = 0;
@@ -29,13 +30,14 @@ namespace unicore
 	template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
 	class ResourceLoaderT : public ResourceLoader
 	{
+		UC_OBJECT(ResourceLoaderT, ResourceLoader)
 	public:
 		ResourceLoaderT(const std::initializer_list<WStringView> ext_list)
 			: _extensions(ext_list)
 		{
 		}
 
-		UC_NODISCARD TypeIndex resource_type() const override { return get_type_index<T>(); }
+		UC_NODISCARD TypeConstRef resource_type() const override { return get_type<T>(); }
 		UC_NODISCARD const List<WStringView>& extension() const override { return _extensions; }
 
 	private:
@@ -51,9 +53,10 @@ namespace unicore
 
 	class ResourceConverter : public virtual Object
 	{
+		UC_OBJECT(ResourceConverter, Object)
 	public:
-		UC_NODISCARD virtual TypeIndex raw_type() const = 0;
-		UC_NODISCARD virtual TypeIndex resource_type() const = 0;
+		UC_NODISCARD virtual TypeConstRef raw_type() const = 0;
+		UC_NODISCARD virtual TypeConstRef resource_type() const = 0;
 
 		UC_NODISCARD virtual Shared<Resource> convert(Resource& raw, const ResourceConverterContext& context) = 0;
 	};
@@ -63,9 +66,10 @@ namespace unicore
 		std::enable_if_t<std::is_base_of_v<Resource, TRawResource>>* = nullptr>
 	class ResourceConverterT : public ResourceConverter
 	{
+		UC_OBJECT(ResourceConverterT, ResourceConverter)
 	public:
-		UC_NODISCARD TypeIndex raw_type() const override { return get_type_index<TRawResource >(); }
-		UC_NODISCARD TypeIndex resource_type() const override { return get_type_index<TResource>(); }
+		UC_NODISCARD TypeConstRef raw_type() const override { return get_type<TRawResource >(); }
+		UC_NODISCARD TypeConstRef resource_type() const override { return get_type<TResource>(); }
 
 		Shared<Resource> convert(Resource& raw, const ResourceConverterContext& context) override
 		{
@@ -92,6 +96,7 @@ namespace unicore
 
 	class ResourceCreator : public virtual Object
 	{
+		UC_OBJECT(ResourceCreator, Object)
 	public:
 		virtual Shared<Resource> create(const ResourceCreatorContext& context, const ResourceCreatorOptions& options) = 0;
 	};

@@ -6,6 +6,7 @@ namespace unicore
 {
 	class MemoryStream : public ReadStream
 	{
+		UC_OBJECT(MemoryStream, ReadStream)
 	public:
 		explicit MemoryStream(const Shared<MemoryChunk>& chunk);
 

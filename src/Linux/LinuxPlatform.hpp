@@ -12,6 +12,7 @@ namespace unicore
 {
 	class LinuxPlatform : public Platform
 	{
+		UC_OBJECT(LinuxPlatform, Platform)
 	public:
 		LinuxPlatform();
 

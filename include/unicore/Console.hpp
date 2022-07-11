@@ -40,11 +40,53 @@ namespace unicore
 	};
 
 	template<typename TChar>
-	class Console : public IBuffer2<TChar>
+	class Console : public Buffer2<TChar>
 	{
 	public:
+		explicit Console(const Vector2i& size)
+			: Buffer2<TChar>(size)
+		{
+		}
+
+		Console(int x, int y)
+			: Buffer2<TChar>(x, y)
+		{
+		}
+
+		UC_NODISCARD constexpr const Vector2i& get_position() const { return _position; }
+
+		Console& print(BasicStringView<TChar> text)
+		{
+			for (const auto& c : text)
+			{
+				set(_position.x, _position.y, c);
+				_position.x++;
+			}
+
+			return *this;
+		}
+
+		Console& set_position(int x, int y)
+		{
+			_position.set(x, y);
+			return *this;
+		}
+
+		Console& set_position(const Vector2i& position)
+		{
+			_position = position;
+			return *this;
+		}
+
+		Console& reset_position()
+		{
+			_position.set(0, 0);
+			return *this;
+		}
+
+	protected:
+		Vector2i _position = VectorConst2i::Zero;
 	};
 
-	using DefaultConsole = Console<ConsoleChar<char, ConsoleColor8>>;
-	using DefaultConsoleW = Console<ConsoleChar<wchar_t, ConsoleColor8>>;
+	using DefaultConsole = Console<ConsoleChar<wchar_t, ConsoleColor8>>;
 }

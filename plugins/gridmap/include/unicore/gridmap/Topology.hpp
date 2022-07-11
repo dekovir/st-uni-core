@@ -14,6 +14,7 @@ namespace unicore
 
 	class Topology : public Object
 	{
+		UC_OBJECT(Topology, Object)
 	public:
 		UC_NODISCARD virtual Vector2f cell_to_pos(const CellIndex index) const = 0;
 		UC_NODISCARD virtual CellIndex pos_to_cell(const Vector2f& pos) const = 0;
@@ -32,6 +33,7 @@ namespace unicore
 
 	class RectangleTopology : public Topology
 	{
+		UC_OBJECT(RectangleTopology, Topology)
 	public:
 		explicit RectangleTopology(const Vector2f& size)
 			: _size(size), _gap(VectorConst2f::Zero)

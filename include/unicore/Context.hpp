@@ -13,25 +13,25 @@ namespace unicore
 		void add_loader(ResourceLoader& loader);
 		void remove_loader(ResourceLoader& loader);
 
-		UC_NODISCARD const Set<ResourceLoader*>& get_loaders(TypeIndex type) const;
+		UC_NODISCARD const Set<ResourceLoader*>& get_loaders(TypeConstRef type) const;
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
 		UC_NODISCARD const Set<ResourceLoader*>& get_loaders() const
 		{
-			return get_loaders(get_type_index<T>());
+			return get_loaders(get_type<T>());
 		}
 
 		void add_converter(ResourceConverter& converter);
-		UC_NODISCARD const Set<ResourceConverter*>& get_converters(TypeIndex type) const;
+		UC_NODISCARD const Set<ResourceConverter*>& get_converters(TypeConstRef type) const;
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
 		UC_NODISCARD const Set<ResourceConverter*>& get_converters() const
 		{
-			return get_converters(get_type_index<T>());
+			return get_converters(get_type<T>());
 		}
 
 	protected:
-		Dictionary<TypeIndex, Set<ResourceLoader*>> _loaders;
-		Dictionary<TypeIndex, Set<ResourceConverter*>> _converters;
+		Dictionary<TypeConstPtr, Set<ResourceLoader*>> _loaders;
+		Dictionary<TypeConstPtr, Set<ResourceConverter*>> _converters;
 	};
 }

@@ -6,6 +6,7 @@ namespace unicore
 {
 	class StreamWriter : public Object
 	{
+		UC_OBJECT(StreamWriter, Object)
 	public:
 		explicit StreamWriter(WriteStream& stream);
 

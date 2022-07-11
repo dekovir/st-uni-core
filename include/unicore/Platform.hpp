@@ -17,6 +17,7 @@ namespace unicore
 
 	class Platform : public Module
 	{
+		UC_OBJECT(Platform, Module)
 	public:
 		explicit Platform(const PlatformSettings& settings);
 

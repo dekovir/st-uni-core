@@ -20,6 +20,7 @@ namespace unicore
 
 	class Render2D : public Render
 	{
+		UC_OBJECT(Render2D, Render)
 	public:
 		explicit Render2D(Logger& logger);
 

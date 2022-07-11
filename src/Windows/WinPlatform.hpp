@@ -13,6 +13,7 @@ namespace unicore
 {
 	class WinPlatform : public Platform
 	{
+		UC_OBJECT(WinPlatform, Platform)
 	public:
 		WinPlatform();
 

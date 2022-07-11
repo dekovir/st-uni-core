@@ -6,6 +6,7 @@ namespace unicore
 {
 	class ImGuiRender : public Object
 	{
+		UC_OBJECT(ImGuiRender, Object)
 	public:
 		explicit ImGuiRender(Logger& logger);
 
@@ -21,6 +22,7 @@ namespace unicore
 
 	class ImGuiRender2D : public ImGuiRender
 	{
+		UC_OBJECT(ImGuiRender2D, Object)
 	public:
 		ImGuiRender2D(Render2D& render, Logger& logger);
 

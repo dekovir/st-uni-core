@@ -9,6 +9,7 @@ namespace unicore
 {
 	class SDL2Texture : public Texture
 	{
+		UC_OBJECT(SDL2Texture, Texture)
 	public:
 		explicit SDL2Texture(SDL_Texture* context);
 
@@ -42,6 +43,7 @@ namespace unicore
 
 	class SDL2Render : public Render2D
 	{
+		UC_OBJECT(SDL2Render, Render2D)
 	public:
 		explicit SDL2Render(Logger& logger, const SDL2RenderSettings& settings);
 		~SDL2Render() override;

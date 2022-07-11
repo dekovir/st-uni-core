@@ -8,6 +8,7 @@ namespace unicore
 {
 	class Surface : public Resource, public IBuffer2<Color4b>
 	{
+		UC_OBJECT(Surface, Resource)
 	public:
 		Surface();
 		Surface(int width, int height);

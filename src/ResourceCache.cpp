@@ -17,16 +17,16 @@ namespace unicore
 
 	void ResourceCache::unload_unused()
 	{
-		for (auto& [path, map] : _cached)
+		for (auto& [path, dict] : _cached)
 		{
-			for (auto jt = map.begin(); jt != map.end();)
+			for (auto it = dict.begin(); it != dict.end();)
 			{
-				if (jt->second.use_count() == 1)
+				if (it->second.use_count() == 1)
 				{
-					UC_LOG_DEBUG(_logger) << "Unload resource " << jt->first << " from " << path;
-					jt = map.erase(jt);
+					UC_LOG_DEBUG(_logger) << "Unload resource " << it->first << " from " << path;
+					it = dict.erase(it);
 				}
-				else ++jt;
+				else ++it;
 			}
 		}
 	}
@@ -59,20 +59,21 @@ namespace unicore
 		return nullptr;
 	}
 
-	Shared<Resource> ResourceCache::find(const Path& path, TypeIndex type) const
+	Shared<Resource> ResourceCache::find(const Path& path, TypeConstRef type) const
 	{
-		const auto find_it = _cached.find(path);
-		if (find_it == _cached.end()) return nullptr;
+		const auto it = _cached.find(path);
+		if (it == _cached.end()) return nullptr;
 
-		for (const auto& it : find_it->second)
+		for (const auto& [res_type, resource] : it->second)
 		{
-			if (it.first == type) return it.second;
+			if (res_type == &type || res_type->is_derived_from(type))
+				return resource;
 		}
 
 		return nullptr;
 	}
 
-	Optional<Path> ResourceCache::find_path(Resource& resource) const
+	Optional<Path> ResourceCache::find_path(const Resource& resource) const
 	{
 		for (const auto& it : _cached)
 		{
@@ -86,7 +87,7 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	Shared<Resource> ResourceCache::load(const Path& path, TypeIndex type, ResourceCacheFlags flags)
+	Shared<Resource> ResourceCache::load(const Path& path, TypeConstRef type, ResourceCacheFlags flags)
 	{
 		if (auto resource_find = find(path, type))
 			return resource_find;
@@ -186,7 +187,7 @@ namespace unicore
 		Module::unregister_module(context);
 	}
 
-	Shared<Resource> ResourceCache::load_resource(const Path& path, TypeIndex type, Logger* logger)
+	Shared<Resource> ResourceCache::load_resource(const Path& path, TypeConstRef type, Logger* logger)
 	{
 		const auto& loaders = _context->get_loaders(type);
 		if (loaders.empty()) return nullptr;
@@ -229,7 +230,7 @@ namespace unicore
 	}
 
 	Shared<Resource> ResourceCache::load_resource(ResourceLoader& loader,
-		const Path& path, ReadStream& stream, TypeIndex type, Logger* logger)
+		const Path& path, ReadStream& stream, TypeConstRef type, Logger* logger)
 	{
 		if (auto resource = loader.load({ path, *this, stream, logger }))
 		{
@@ -240,9 +241,9 @@ namespace unicore
 		return nullptr;
 	}
 
-	bool ResourceCache::add_resource(const Shared<Resource>& resource, const Path& path, TypeIndex type)
+	bool ResourceCache::add_resource(const Shared<Resource>& resource, const Path& path, TypeConstRef type)
 	{
-		_cached[path][type] = resource;
+		_cached[path].insert_or_assign(&type, resource);
 		UC_LOG_DEBUG(_logger) << "Loaded " << type << " from " << path
 			<< " " << MemorySize{ resource->system_memory_use() };
 		return true;

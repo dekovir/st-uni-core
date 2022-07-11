@@ -19,6 +19,7 @@ namespace unicore
 
 	class SDL2MouseDevice : public MouseDevice, public SDL2InputDevice
 	{
+		UC_OBJECT(SDL2MouseDevice, MouseDevice)
 	public:
 		UC_NODISCARD ButtonState state(uint8_t button) const override;
 
@@ -38,6 +39,7 @@ namespace unicore
 
 	class SDL2KeyboardDevice : public KeyboardDevice, public SDL2InputDevice
 	{
+		UC_OBJECT(SDL2KeyboardDevice, KeyboardDevice)
 	public:
 		UC_NODISCARD ButtonState state(KeyCode code) const override;
 		UC_NODISCARD KeyModFlags mods() const override;
@@ -52,6 +54,7 @@ namespace unicore
 
 	class SDL2Input : public Input
 	{
+		UC_OBJECT(SDL2Input, Input)
 	public:
 		explicit SDL2Input(Logger& logger);
 

@@ -7,6 +7,7 @@ namespace unicore
 {
 	class BinaryData : public Resource
 	{
+		UC_OBJECT(BinaryData, Resource)
 	public:
 		explicit BinaryData(const Shared<MemoryChunk>& chunk)
 			: _chunk(chunk) {}
@@ -27,6 +28,7 @@ namespace unicore
 
 	class BinaryDataLoader : public ResourceLoaderT<BinaryData>
 	{
+		UC_OBJECT(BinaryDataLoader, ResourceLoaderT)
 	public:
 		BinaryDataLoader();
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
@@ -35,6 +37,7 @@ namespace unicore
 	template<typename Char>
 	class BasicTextData : public Resource
 	{
+		UC_OBJECT(BasicTextData, Resource)
 	public:
 		explicit BasicTextData(BasicStringView<Char> data)
 			: _data(data) {}
@@ -52,6 +55,7 @@ namespace unicore
 
 	class TextData : public BasicTextData<char>
 	{
+		UC_OBJECT(TextData, BasicTextData)
 	public:
 		explicit TextData(StringView data)
 			: BasicTextData<char>(data)
@@ -66,6 +70,7 @@ namespace unicore
 
 	class TextDataLoader : public ResourceLoaderT<TextData>
 	{
+		UC_OBJECT(TextDataLoader, ResourceLoaderT)
 	public:
 		TextDataLoader();
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;

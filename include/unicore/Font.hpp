@@ -8,6 +8,7 @@ namespace unicore
 {
 	class Font : public Resource
 	{
+		UC_OBJECT(Font, Resource)
 	public:
 		Dictionary<uint32_t, Dictionary<uint32_t, int>> kerning;
 		uint8_t space_w = 0;

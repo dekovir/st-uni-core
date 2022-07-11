@@ -5,6 +5,7 @@ namespace unicore
 {
 	class Plugin : public Module
 	{
+		UC_OBJECT(Plugin, Module)
 	public:
 	};
 }

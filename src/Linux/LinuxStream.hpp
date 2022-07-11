@@ -4,8 +4,10 @@
 
 namespace unicore
 {
+	// TODO: Remove multiple inheritance
 	class LinuxStream : public ReadStream, public WriteStream
 	{
+		UC_OBJECT(LinuxStream, ReadStream)
 	public:
 		explicit LinuxStream(FILE* handle);
 		~LinuxStream() override;

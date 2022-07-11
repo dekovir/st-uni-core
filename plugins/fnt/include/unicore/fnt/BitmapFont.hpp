@@ -14,6 +14,7 @@ namespace unicore
 
 	class BitmapFont : public Font
 	{
+		UC_OBJECT(BitmapFont, Font)
 	public:
 		UC_NODISCARD size_t system_memory_use() const override;
 

@@ -1,10 +1,11 @@
 #pragma once
-#include "unicore/Defs.hpp"
+#include "unicore/Resource.hpp"
 
 namespace unicore
 {
-	class GridMap
+	class GridMap : public Resource
 	{
+		UC_OBJECT(GridMap, Resource)
 	public:
 	};
 }

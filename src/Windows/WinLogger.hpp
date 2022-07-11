@@ -6,6 +6,7 @@ namespace unicore
 {
 	class WinLogger : public Logger
 	{
+		UC_OBJECT(WinLogger, Logger)
 	public:
 		WinLogger() = default;
 

@@ -15,6 +15,7 @@ namespace unicore
 
 	class ResourceCache : public Module
 	{
+		UC_OBJECT(ResourceCache, Module)
 	public:
 		explicit ResourceCache(Logger& logger);
 
@@ -27,23 +28,22 @@ namespace unicore
 
 		UC_NODISCARD Shared<ReadStream> open_read(const Path& path) const;
 
-		UC_NODISCARD Shared<Resource> find(const Path& path, TypeIndex type) const;
-		UC_NODISCARD Optional<Path> find_path(Resource& resource) const;
+		UC_NODISCARD Shared<Resource> find(const Path& path, TypeConstRef type) const;
+		UC_NODISCARD Optional<Path> find_path(const Resource& resource) const;
 
-		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
+		template<typename T>
 		UC_NODISCARD Shared<T> find(const Path& path) const
 		{
-			return std::dynamic_pointer_cast<T>(find(path, get_type_index<T>()));
+			return std::dynamic_pointer_cast<T>(find(path, get_type<T>()));
 		}
 
-		Shared<Resource> load(const Path& path, TypeIndex type,
+		Shared<Resource> load(const Path& path, TypeConstRef type,
 			ResourceCacheFlags flags = ResourceCacheFlags::Zero);
 
-		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-		Shared<T> load(const Path& path,
-			ResourceCacheFlags flags = ResourceCacheFlags::Zero)
+		template<typename T>
+		Shared<T> load(const Path& path, ResourceCacheFlags flags = ResourceCacheFlags::Zero)
 		{
-			return std::dynamic_pointer_cast<T>(load(path, get_type_index<T>(), flags));
+			return std::dynamic_pointer_cast<T>(load(path, get_type<T>(), flags));
 		}
 
 		void dump_used();
@@ -57,13 +57,13 @@ namespace unicore
 		Logger& _logger;
 		List<StreamProvider*> _providers;
 
-		Dictionary<Path, Dictionary<TypeIndex, Shared<Resource>>> _cached;
+		Dictionary<Path, Dictionary<TypeConstPtr, Shared<Resource>>> _cached;
 
-		Shared<Resource> load_resource(const Path& path, TypeIndex type, Logger* logger);
+		Shared<Resource> load_resource(const Path& path, TypeConstRef type, Logger* logger);
 
 		Shared<Resource> load_resource(ResourceLoader& loader,
-			const Path& path, ReadStream& stream, TypeIndex type, Logger* logger);
+			const Path& path, ReadStream& stream, TypeConstRef type, Logger* logger);
 
-		bool add_resource(const Shared<Resource>& resource, const Path& path, TypeIndex type);
+		bool add_resource(const Shared<Resource>& resource, const Path& path, TypeConstRef type);
 	};
 }
