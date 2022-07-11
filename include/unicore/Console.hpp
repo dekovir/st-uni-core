@@ -1,42 +1,43 @@
 #pragma once
+#include "unicore/EnumFlag.hpp"
 #include "unicore/Buffer2.hpp"
 
 namespace unicore
 {
-	enum class ColorEnum8 : uint8_t
+	enum class ConsoleColor8 : uint8_t
 	{
-		Black,
-		Red,
-		Green,
-		Blue,
-		Yellow,
-		Magenta,
-		Cyan,
-		White
+		Black = 0,
+
+		ForegroundRed = 1 << 0,
+		ForegroundGreen = 1 << 1,
+		ForegroundBlue = 1 << 2,
+		ForegroundBright = 1 << 3,
+
+		BackgroundRed = 1 << 4,
+		BackgroundGreen = 1 << 5,
+		BackgroundBlue = 1 << 6,
+		BackgroundBright = 1 << 7,
+
+		ForegroundYellow = ForegroundRed | ForegroundGreen,
+		ForegroundMagenta = ForegroundRed | ForegroundBlue,
+		ForegroundCyan = ForegroundGreen | ForegroundBlue,
+		ForegroundWhite = ForegroundRed | ForegroundGreen | ForegroundBlue,
+
+		BackgroundYellow = BackgroundRed | BackgroundGreen,
+		BackgroundMagenta = BackgroundRed | BackgroundBlue,
+		BackgroundCyan = BackgroundGreen | BackgroundBlue,
+		BackgroundWhite = BackgroundRed | BackgroundGreen | BackgroundBlue,
 	};
-
-	struct ConsoleColor8
-	{
-		ColorEnum8 fg : 3;
-		uint8_t fg_bright : 1;
-
-		ColorEnum8 bg : 3;
-		uint8_t bg_bright : 1;
-
-		constexpr ConsoleColor8()
-			: fg(ColorEnum8::White), fg_bright(0)
-			, bg(ColorEnum8::Black), bg_bright(0)
-		{
-		}
-	};
+	UNICORE_ENUMFLAGS(ConsoleColor8, ConsoleColor8Value);
 
 	static_assert(sizeof(ConsoleColor8) == 1);
+	static_assert(sizeof(ConsoleColor8Value) == 1);
 
 	template<typename TChar, typename TColor>
 	struct ConsoleChar
 	{
 		TChar c;
-		TColor bc, fc;
+		TColor color;
 	};
 
 	template<typename TChar>
@@ -78,6 +79,13 @@ namespace unicore
 			return *this;
 		}
 
+		Console& new_line()
+		{
+			_position.x = 0;
+			_position.y++;
+			return *this;
+		}
+
 		Console& reset_position()
 		{
 			_position.set(0, 0);
@@ -88,5 +96,49 @@ namespace unicore
 		Vector2i _position = VectorConst2i::Zero;
 	};
 
-	using DefaultConsole = Console<ConsoleChar<wchar_t, ConsoleColor8>>;
+	using DefaultConsoleChar = ConsoleChar<char, ConsoleColor8Value>;
+	using DefaultConsole = Console<DefaultConsoleChar>;
+
+	using DefaultConsoleCharW = ConsoleChar<wchar_t, ConsoleColor8Value>;
+	using DefaultConsoleW = Console<DefaultConsoleCharW>;
+
+	class ConsoleLogger : public Logger
+	{
+	public:
+		using ConsoleType = Console<ConsoleChar<char, ConsoleColor8Value>>;
+
+		explicit ConsoleLogger(ConsoleType& console)
+			: _console(console)
+		{}
+
+		void write(LogType type, const StringView text) override
+		{
+			const auto color = get_color(type);
+
+			for (const auto c : text)
+			{
+				const auto pos = _console.get_position();
+				_console.set(pos.x, pos.y, { c, color });
+				_console.set_position(pos.x + 1, pos.y);
+			}
+
+			_console.new_line();
+		}
+
+	protected:
+		ConsoleType& _console;
+
+		UC_NODISCARD static constexpr ConsoleColor8 get_color(LogType type)
+		{
+			switch (type)
+			{
+			case LogType::Info: return ConsoleColor8::ForegroundWhite;
+			case LogType::Debug: return ConsoleColor8::ForegroundBlue;
+			case LogType::Warning: return ConsoleColor8::ForegroundYellow;
+			case LogType::Error: return ConsoleColor8::ForegroundRed;
+			}
+
+			return ConsoleColor8::ForegroundMagenta;
+		}
+	};
 }

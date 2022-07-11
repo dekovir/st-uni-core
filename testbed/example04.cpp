@@ -22,7 +22,7 @@ namespace unicore
 		_font = resources.load<Font>(L"assets/font_004.fnt"_path);
 		if (!_font) return false;
 
-		ProxyLogger wasm_logger("[WASM] ", logger);
+		ConsoleLogger wasm_logger(_console);
 		if (const auto env = WAEnvironment::create(wasm_logger))
 		{
 			// ADD ///////////////////////////////////////////////////////////////////
@@ -96,6 +96,31 @@ namespace unicore
 			}
 		}
 
+		_sprite_batch.begin();
+
+		const auto size = _console.size();
+		for (int y = 0; y < size.y; y++)
+			for (int x = 0; x < size.x; x++)
+			{
+				DefaultConsoleChar c;
+				if (!_console.get(x, y, c))
+					continue;
+
+				if (c.c == 0 || c.color == 0)
+					continue;
+
+				const Vector2f pos(x * 10, y * 20 + 100);
+				const StringView str(&c.c, 1);
+				const Color4b color(
+					c.color.has(ConsoleColor8::ForegroundRed) ? 255 : 0,
+					c.color.has(ConsoleColor8::ForegroundGreen) ? 255 : 0,
+					c.color.has(ConsoleColor8::ForegroundBlue) ? 255 : 0
+				);
+				_sprite_batch.print(_font, pos, str, color);
+			}
+
+		_sprite_batch.end();
+
 		return true;
 	}
 
@@ -105,7 +130,7 @@ namespace unicore
 
 	void Example04::draw() const
 	{
-
+		_sprite_batch.render(render);
 	}
 }
 #endif

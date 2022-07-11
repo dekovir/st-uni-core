@@ -23,14 +23,17 @@ namespace unicore
 			platform.quit();
 #endif
 
-		if (input.keyboard().down_change(KeyCode::Space))
-			set_example((_example_index + 1) % ExampleCatalog::get_all().size());
+		auto& examples = ExampleCatalog::get_all();
+		if (input.keyboard().down_change(KeyCode::BracketRight))
+			set_example((_example_index + 1) % examples.size());
+		if (input.keyboard().down_change(KeyCode::BracketLeft))
+			set_example((_example_index + examples.size() - 1) % examples.size());
 
 		if (_example)
 			_example->update();
 
 		// SPRITE BATCH ////////////////////////////////////////////////////////////
-		const String title_str = "Example: " + ExampleCatalog::get_all()[_example_index].title;
+		const String title_str = "Example: " + examples[_example_index].title;
 		const String fps_str = "FPS: " + std::to_string(fps());
 		const String draw_str = "Draw: " + std::to_string(_draw_calls);
 

@@ -136,11 +136,29 @@ namespace unicore
 	}
 
 	template<typename T>
+	static constexpr bool operator == (const EnumFlag<T> a, const typename EnumFlag<T>::TValue value)
+	{
+		return a.value() == value;
+	}
+
+		template<typename T>
+	static constexpr bool operator != (const EnumFlag<T> a, const typename EnumFlag<T>::TValue value)
+	{
+		return a.value() != value;
+	}
+
+	template<typename T>
 	const EnumFlag<T> EnumFlag<T>::Zero(0);
+
+#define UNICORE_ENUM_MASK(TEnum) \
+	static constexpr TEnum operator|(TEnum a, TEnum b) { \
+		using Type = std::underlying_type_t<TEnum>; \
+		return  TEnum(Type(a) | Type(b)); } \
+	static constexpr bool operator==(TEnum color, std::underlying_type_t<TEnum> value) { \
+		return static_cast<std::underlying_type_t<TEnum>>(color) == value; }
 
 #define UNICORE_ENUMFLAGS(TFlag, TName) \
 	typedef EnumFlag<TFlag> TName; \
 	static constexpr TName operator|(const TFlag a, const TFlag b) { \
-		return TName(static_cast<TName::TValue>(a) | static_cast<TName::TValue>(b)); \
-	}
+		return TName(static_cast<TName::TValue>(a) | static_cast<TName::TValue>(b)); }
 }

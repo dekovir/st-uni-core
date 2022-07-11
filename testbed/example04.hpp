@@ -3,6 +3,7 @@
 #if defined(UNICORE_USE_WASM)
 #include "unicore/Console.hpp"
 #include "unicore/Font.hpp"
+#include "unicore/SpriteBatch.hpp"
 
 namespace unicore
 {
@@ -18,6 +19,7 @@ namespace unicore
 	protected:
 		DefaultConsole _console;
 		Shared<Font> _font;
+		SpriteBatch _sprite_batch;
 	};
 }
 #endif
