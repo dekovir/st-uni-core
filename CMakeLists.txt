@@ -16,14 +16,12 @@ option(UNICORE_WASM "Add unicore-wasm plugin" ON)
 option(UNICORE_IMGUI "Add unicore-imgui plugin" ON)
 option(UNICORE_GRIDMAP "Add unicore-gridmap plugin" ON)
 
-option(UNICORE_MINIMAL "Add Minimal project" OFF)
-option(UNICORE_TESTBED "Add Testbed project" OFF)
-
 # PROJECT ######################################################################
 project(UniCore)
 
-set(LIBS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/")
-set(PLUGINS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/plugins/")
+set(PROJECT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+set(LIBS_DIR "${PROJECT_DIR}/libs/")
+set(PLUGINS_DIR "${PROJECT_DIR}/plugins/")
 
 function(unicore_group_sources_by_folder target)
 	set(last_dir "")
@@ -53,8 +51,8 @@ function(unicore_init_target target)
 endfunction()
 
 # UNICORE ######################################################################
-set(UNICORE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
-set(UNICORE_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(UNICORE_DIR "${PROJECT_DIR}/src")
+set(UNICORE_INCLUDE "${PROJECT_DIR}/include")
 
 file(GLOB_RECURSE UNICORE_SOURCE "${UNICORE_DIR}/*.cpp" "${UNICORE_DIR}/*.hpp" "${UNICORE_INCLUDE}/*.hpp")
 
@@ -117,7 +115,7 @@ endif()
 add_subdirectory(logic)
 
 # MAIN #########################################################################
-set(MAIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/main")
+set(MAIN_DIR "${PROJECT_DIR}/main")
 file(GLOB_RECURSE MAIN_SRC "${MAIN_DIR}/*.cpp" "${MAIN_DIR}/*.h")
 
 add_library(unicore-main STATIC ${MAIN_SRC})
@@ -169,32 +167,13 @@ function(unicore_init_assets target_name directory)
 	endif()
 	if (MSVC)
 		set_target_properties(${target_name} PROPERTIES
-			VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+			VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
 		)
 	endif()
 endfunction()
 
-# MINIMAL ######################################################################
-set(EXAMPLES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/examples")
 
-if (UNICORE_MINIMAL)
-	set(MINIMAL_DIR "${EXAMPLES_DIR}/minimal")
-	file(GLOB MINIMAL_SRC "${MINIMAL_DIR}/*.cpp" "${MINIMAL_DIR}/*.hpp")
+# EXAMPLES #####################################################################
+set(EXAMPLES_DIR "${PROJECT_DIR}/examples")
 
-	add_executable(minimal "${MINIMAL_SRC}")
-	unicore_init_executable(minimal)
-	#unicore_group_sources_by_folder(minimal)
-	set_target_properties(minimal PROPERTIES FOLDER "Examples")
-endif()
-
-# TESTBED ######################################################################
-if (UNICORE_TESTBED)
-	set(TESTBED_DIR "${EXAMPLES_DIR}/testbed")
-	file(GLOB TESTBED_SRC "${TESTBED_DIR}/*.cpp" "${TESTBED_DIR}/*.hpp")
-
-	add_executable(testbed "${TESTBED_SRC}")
-	unicore_init_executable(testbed)
-	#unicore_group_sources_by_folder(testbed)
-	unicore_init_assets(testbed assets)
-	set_target_properties(testbed PROPERTIES FOLDER "Examples")
-endif()
+add_subdirectory(${EXAMPLES_DIR})
