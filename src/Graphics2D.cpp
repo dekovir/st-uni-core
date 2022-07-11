@@ -14,6 +14,7 @@ namespace unicore
 
 	void Graphics2D::clear()
 	{
+		offset = VectorConst2f::Zero;
 		_batches.clear();
 		_current = {};
 	}
@@ -66,7 +67,7 @@ namespace unicore
 	{
 		set_type(BatchType::Point);
 
-		_points.push_back(p.cast<float>());
+		_points.push_back(offset + p.cast<float>());
 		_current.count++;
 
 		return *this;
@@ -76,7 +77,7 @@ namespace unicore
 	{
 		set_type(BatchType::Point);
 
-		_points.push_back(p);
+		_points.push_back(offset + p);
 		_current.count++;
 
 		return *this;
@@ -86,8 +87,8 @@ namespace unicore
 	{
 		set_type(BatchType::Line);
 
-		_points.push_back(p0.cast<float>());
-		_points.push_back(p1.cast<float>());
+		_points.push_back(offset + p0.cast<float>());
+		_points.push_back(offset + p1.cast<float>());
 		_current.count += 2;
 
 		return *this;
@@ -97,8 +98,8 @@ namespace unicore
 	{
 		set_type(BatchType::Line);
 
-		_points.push_back(p0);
-		_points.push_back(p1);
+		_points.push_back(offset + p0);
+		_points.push_back(offset + p1);
 		_current.count += 2;
 
 		return *this;
@@ -112,8 +113,15 @@ namespace unicore
 
 			for (unsigned i = 0; i + 1 < points.size(); i++)
 			{
-				_points.push_back(points[i]);
-				_points.push_back(points[i + 1]);
+				_points.push_back(offset + points[i]);
+				_points.push_back(offset + points[i + 1]);
+				_current.count += 2;
+			}
+
+			if (closed)
+			{
+				_points.push_back(offset + points.back());
+				_points.push_back(offset + points.front());
 				_current.count += 2;
 			}
 		}

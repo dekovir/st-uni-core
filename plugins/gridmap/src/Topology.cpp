@@ -7,8 +7,8 @@ namespace unicore
 	{
 		// TODO: Implement gap
 		return {
-			_size.x * static_cast<float>(index.value.x),
-			_size.y * static_cast<float>(index.value.y)
+			(_size.x + _gap.x) * static_cast<float>(index.value.x),
+			(_size.y + _gap.y) * static_cast<float>(index.value.y)
 		};
 	}
 

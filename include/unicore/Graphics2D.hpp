@@ -8,6 +8,8 @@ namespace unicore
 	public:
 		Graphics2D() = default;
 
+		Vector2f offset = VectorConst2f::Zero;
+
 		void begin();
 		void end();
 
