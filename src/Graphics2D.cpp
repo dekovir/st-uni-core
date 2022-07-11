@@ -104,6 +104,23 @@ namespace unicore
 		return *this;
 	}
 
+	Graphics2D& Graphics2D::draw_poly_line(const List<Vector2f>& points, bool closed)
+	{
+		if (points.size() > 1)
+		{
+			set_type(BatchType::Line);
+
+			for (unsigned i = 0; i + 1 < points.size(); i++)
+			{
+				_points.push_back(points[i]);
+				_points.push_back(points[i + 1]);
+				_current.count += 2;
+			}
+		}
+
+		return *this;
+	}
+
 	Graphics2D& Graphics2D::draw_rect(const Recti& rect, bool filled)
 	{
 		set_type(filled ? BatchType::RectFilled : BatchType::Rect);

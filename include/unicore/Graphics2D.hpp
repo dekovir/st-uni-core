@@ -22,6 +22,8 @@ namespace unicore
 		Graphics2D& draw_line(const Vector2i& p0, const Vector2i& p1);
 		Graphics2D& draw_line(const Vector2f& p0, const Vector2f& p1);
 
+		Graphics2D& draw_poly_line(const List<Vector2f>& points, bool closed = false);
+
 		Graphics2D& draw_rect(const Recti& rect, bool filled = false);
 		Graphics2D& draw_rect(const Rectf& rect, bool filled = false);
 
