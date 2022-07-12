@@ -76,11 +76,11 @@ namespace unicore
 			return Matrix2(mat[0].x, mat[1].x, mat[0].y, mat[1].y);
 		}
 
-		static constexpr Matrix2 scale(const Vector2<T>& vec)
+		static constexpr Matrix2 scale(const Vector2<T>& value)
 		{
 			return {
-				vec.x, 0,
-				0, vec.y
+				value.x, 0,
+				0, value.y
 			};
 		}
 
@@ -100,6 +100,18 @@ namespace unicore
 				+cos, +sin,
 				-sin, +cos
 			};
+		}
+
+		static Matrix2 transform(Radians angle, const Vector2<T>& scale)
+		{
+			float sin, cos;
+			angle.sin_cos(sin, cos);
+
+			return Matrix2<T>(
+				+cos * scale.x,
+				+sin * scale.y,
+				-sin * scale.x,
+				+cos * scale.y);
 		}
 	};
 

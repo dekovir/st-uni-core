@@ -96,7 +96,7 @@ namespace unicore
 		UC_NODISCARD Vector2<T> rotate(Radians angle) const
 		{
 			float a_sin, a_cos;
-			angle.sincos(a_sin, a_cos);
+			angle.sin_cos(a_sin, a_cos);
 			return {
 				x * a_cos - y * a_sin,
 				x * a_sin + y * a_cos

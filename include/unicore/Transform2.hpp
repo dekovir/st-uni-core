@@ -74,7 +74,7 @@ namespace unicore
 	template<typename T>
 	extern constexpr Vector2<T> operator*(const Transform2<T>& tr, const Vector2<T>& vec)
 	{
-		const auto mat = Matrix2<T>::rotation(tr.angle) * Matrix2<T>::scale(tr.scale);
+		const auto mat = Matrix2<T>::transform(tr.angle, tr.scale);
 		return mat * vec + tr.move;
 	}
 

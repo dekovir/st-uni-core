@@ -1,4 +1,6 @@
 #include "example05.hpp"
+
+#include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Render2D.hpp"
 #include "unicore/ResourceCache.hpp"
@@ -11,7 +13,7 @@ namespace unicore
 		: Example(context)
 		, _topology(Vector2f(32))
 		, _map(_topology, 30, 30)
-		, _tr({ 100, 100 })
+		, _tr({ 100, 100 }, 10_deg)
 	{
 	}
 

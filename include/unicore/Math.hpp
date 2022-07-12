@@ -118,7 +118,7 @@ namespace unicore
 		UC_NODISCARD float cos() const { return TypeTag::cos(_value); }
 		UC_NODISCARD float sin() const { return TypeTag::sin(_value); }
 
-		void sincos(float& sin_value, float& cos_value) const
+		void sin_cos(float& sin_value, float& cos_value) const
 		{
 			sin_value = TypeTag::sin(_value);
 			cos_value = TypeTag::cos(_value);
