@@ -12,7 +12,7 @@ namespace unicore
 	Example05::Example05(const ExampleContext& context)
 		: Example(context)
 		, _topology(Vector2f(32))
-		, _map(_topology, 30, 30)
+		, _map(30, 30, _topology)
 		, _tr({ 100, 100 }, 10_deg)
 	{
 	}
