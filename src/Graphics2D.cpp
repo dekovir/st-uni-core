@@ -27,23 +27,19 @@ namespace unicore
 			switch (batch.type)
 			{
 			case BatchType::Point:
-				render.draw_points_f(&_points[batch.start], batch.count);
+				render.draw_geometry(GeometryType::Points, &_points[batch.start], batch.count);
 				break;
 
 			case BatchType::Line:
-				render.draw_lines_f(&_points[batch.start], batch.count);
+				render.draw_geometry(GeometryType::LineList, &_points[batch.start], batch.count);
 				break;
 
 			case BatchType::Rect:
-				render.draw_rects_f(&_rects[batch.start], batch.count);
+				render.draw_geometry(GeometryType::Rects, &_points[batch.start], batch.count);
 				break;
 
 			case BatchType::RectFilled:
-				render.draw_rects_f(&_rects[batch.start], batch.count, true);
-				break;
-
-			case BatchType::Vertex:
-				render.draw_triangles(&_vertices[batch.start], batch.count);
+				render.draw_geometry(GeometryType::RectsFilled, &_points[batch.start], batch.count);
 				break;
 
 			default:
@@ -132,8 +128,9 @@ namespace unicore
 	Graphics2D& Graphics2D::draw_rect(const Recti& rect, bool filled)
 	{
 		set_type(filled ? BatchType::RectFilled : BatchType::Rect);
-		_rects.push_back(rect.cast<float>());
-		_current.count++;
+		_points.push_back(offset + rect.position().cast<float>());
+		_points.push_back(offset + rect.center().cast<float>());
+		_current.count += 2;
 
 		return *this;
 	}
@@ -141,35 +138,10 @@ namespace unicore
 	Graphics2D& Graphics2D::draw_rect(const Rectf& rect, bool filled)
 	{
 		set_type(filled ? BatchType::RectFilled : BatchType::Rect);
-		_rects.push_back(rect);
-		_current.count++;
+		_points.push_back(offset + rect.position());
+		_points.push_back(offset + rect.center());
+		_current.count += 2;
 
-		return *this;
-	}
-
-	Graphics2D& Graphics2D::draw_tri(
-		const VertexColor2& v0, const VertexColor2& v1, const VertexColor2& v2)
-	{
-		set_type(BatchType::Vertex);
-		_vertices.push_back(v0);
-		_vertices.push_back(v1);
-		_vertices.push_back(v2);
-		_current.count += 3;
-		return *this;
-	}
-
-	Graphics2D& Graphics2D::draw_quad(
-		const VertexColor2& v0, const VertexColor2& v1,
-		const VertexColor2& v2, const VertexColor2& v3)
-	{
-		set_type(BatchType::Vertex);
-		_vertices.push_back(v0);
-		_vertices.push_back(v1);
-		_vertices.push_back(v3);
-		_vertices.push_back(v3);
-		_vertices.push_back(v1);
-		_vertices.push_back(v2);
-		_current.count += 6;
 		return *this;
 	}
 
@@ -180,26 +152,6 @@ namespace unicore
 			flush();
 
 			_current.type = type;
-			switch (_current.type)
-			{
-			case BatchType::Point:
-			case BatchType::Line:
-				_current.start = _points.size();
-				break;
-
-			case BatchType::Rect:
-			case BatchType::RectFilled:
-				_current.start = _rects.size();
-				break;
-
-			case BatchType::Vertex:
-				_current.start = _vertices.size();
-				break;
-
-			default:
-				UC_ASSERT_ALWAYS_MSG("Unimplemented BatchType");
-				break;
-			}
 		}
 	}
 
@@ -208,7 +160,9 @@ namespace unicore
 		if (_current.count > 0)
 		{
 			_batches.push_back(_current);
+
 			_current = {};
+			_current.start = _points.size();
 		}
 	}
 }

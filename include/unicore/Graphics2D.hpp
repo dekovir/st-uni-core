@@ -29,10 +29,6 @@ namespace unicore
 		Graphics2D& draw_rect(const Recti& rect, bool filled = false);
 		Graphics2D& draw_rect(const Rectf& rect, bool filled = false);
 
-		Graphics2D& draw_tri(const VertexColor2& v0, const VertexColor2& v1, const VertexColor2& v2);
-		Graphics2D& draw_quad(
-			const VertexColor2& v0, const VertexColor2& v1, const VertexColor2& v2, const VertexColor2& v3);
-
 	protected:
 		enum class BatchType
 		{
@@ -40,7 +36,6 @@ namespace unicore
 			Line,
 			Rect,
 			RectFilled,
-			Vertex
 		};
 
 		struct Batch
@@ -52,8 +47,6 @@ namespace unicore
 		};
 
 		List<Vector2f> _points;
-		List<Rectf> _rects;
-		List<VertexColor2> _vertices;
 		List<Batch> _batches;
 		Batch _current;
 

@@ -16,6 +16,8 @@ namespace unicore
 	{
 		UC_OBJECT(Topology, Object)
 	public:
+		UC_NODISCARD virtual const Vector2f& size() const = 0;
+
 		UC_NODISCARD virtual Vector2f cell_to_pos(const CellIndex index) const = 0;
 		UC_NODISCARD virtual CellIndex pos_to_cell(const Vector2f& pos) const = 0;
 
@@ -43,7 +45,7 @@ namespace unicore
 			: _size(size), _gap(gap)
 		{}
 
-		UC_NODISCARD const Vector2f& size() const { return _size; }
+		UC_NODISCARD const Vector2f& size() const override { return _size; }
 		UC_NODISCARD const Vector2f& gap() const { return _gap; }
 
 		UC_NODISCARD Vector2f cell_to_pos(const CellIndex index) const override;

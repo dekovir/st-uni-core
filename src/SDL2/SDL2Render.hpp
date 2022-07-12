@@ -64,14 +64,7 @@ namespace unicore
 		void set_color(const Color4b& color) override;
 		UC_NODISCARD const Color4b& get_color() const override { return _color; }
 
-		void draw_points(const Vector2i* points, size_t count) override;
-		void draw_points_f(const Vector2f* points, size_t count) override;
-
-		void draw_lines(const Vector2i* points, size_t count) override;
-		void draw_lines_f(const Vector2f* points, size_t count) override;
-
-		void draw_rects(const Recti* rect, size_t count, bool filled) override;
-		void draw_rects_f(const Rectf* rect, size_t count, bool filled) override;
+		void draw_geometry(GeometryType type, const Vector2f* points, size_t points_count) override;
 
 		void draw_triangles(const VertexColor2* vertices, size_t num_vertices) override;
 

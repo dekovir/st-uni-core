@@ -81,7 +81,7 @@ namespace unicore
 		template<typename U>
 		UC_NODISCARD constexpr Vector2<U> cast() const
 		{
-			if constexpr (std::is_same_v<U, T>) return this;
+			if constexpr (std::is_same_v<U, T>) return *this;
 
 			return Vector2<U>(
 				static_cast<U>(x),

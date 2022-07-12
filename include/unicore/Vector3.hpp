@@ -75,7 +75,12 @@ namespace unicore
 		template<typename U>
 		constexpr Vector3<U> cast() const
 		{
-			return Vector3<U>(static_cast<U>(x), static_cast<U>(y), static_cast<U>(z));
+			if constexpr (std::is_same_v<U, T>) return *this;
+
+			return Vector3<U>(
+				static_cast<U>(x),
+				static_cast<U>(y),
+				static_cast<U>(z));
 		}
 	};
 

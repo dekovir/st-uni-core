@@ -5,12 +5,8 @@
 
 namespace unicore
 {
-	static List<SDL_Point> s_points;
-	static List<SDL_FPoint> s_points_f;
-
-	static List<SDL_Rect> s_rects;
-	static List<SDL_FRect> s_rects_f;
-
+	static List<SDL_FPoint> s_points;
+	static List<SDL_FRect> s_rects;
 	static std::vector<SDL_Vertex> s_vertices;
 
 	SDL2Texture::SDL2Texture(SDL_Texture* context)
@@ -162,51 +158,45 @@ namespace unicore
 		SDL_SetRenderDrawColor(_renderer, _color.r, _color.g, _color.b, _color.a);
 	}
 
-	void SDL2Render::draw_points(const Vector2i* points, size_t count)
+	void SDL2Render::draw_geometry(GeometryType type, const Vector2f* points, size_t points_count)
 	{
-		SDL2Utils::convert(points, count, s_points);
-		SDL_RenderDrawPoints(_renderer, s_points.data(), static_cast<int>(count));
-		_draw_calls++;
-	}
+		switch (type)
+		{
+		case GeometryType::Points:
+			SDL2Utils::convert(points, points_count, s_points);
+			SDL_RenderDrawPointsF(_renderer, s_points.data(), points_count);
+			break;
 
-	void SDL2Render::draw_points_f(const Vector2f* points, size_t count)
-	{
-		SDL2Utils::convert(points, count, s_points_f);
-		SDL_RenderDrawPointsF(_renderer, s_points_f.data(), static_cast<int>(count));
-		_draw_calls++;
-	}
+		case GeometryType::LineList:
+			for (unsigned i = 0; i + 1 < points_count; i += 2)
+			{
+				const auto a = points[i], b = points[i + 1];
+				SDL_RenderDrawLineF(_renderer, a.x, a.y, b.x, b.y);
+			}
+			break;
 
-	void SDL2Render::draw_lines(const Vector2i* points, size_t count)
-	{
-		SDL2Utils::convert(points, count, s_points);
-		SDL_RenderDrawLines(_renderer, s_points.data(), static_cast<int>(count));
-		_draw_calls++;
-	}
+		case GeometryType::LineStrip:
+			SDL2Utils::convert(points, points_count, s_points);
+			SDL_RenderDrawLinesF(_renderer, s_points.data(), points_count);
+			break;
 
-	void SDL2Render::draw_lines_f(const Vector2f* points, size_t count)
-	{
-		SDL2Utils::convert(points, count, s_points_f);
-		SDL_RenderDrawLinesF(_renderer, s_points_f.data(), static_cast<int>(count));
-		_draw_calls++;
-	}
+		case GeometryType::Rects:
+		case GeometryType::RectsFilled:
+			const auto count = points_count / 2;
+			s_rects.resize(count);
+			for (unsigned i = 0; i < count; i++)
+			{
+				const auto a = points[i * 2], b = points[i * 2 + 1];
+				s_rects[i] = { a.x, a.y, b.x, b.y };
+			}
 
-	void SDL2Render::draw_rects(const Recti* rect, size_t count, bool filled)
-	{
-		SDL2Utils::convert(rect, count, s_rects);
-		if (filled)
-			SDL_RenderFillRects(_renderer, s_rects.data(), static_cast<int>(count));
-		else
-			SDL_RenderDrawRects(_renderer, s_rects.data(), static_cast<int>(count));
-		_draw_calls++;
-	}
+			if (type == GeometryType::Rects)
+				SDL_RenderDrawRectsF(_renderer, s_rects.data(), s_rects.size());
+			else
+				SDL_RenderFillRectsF(_renderer, s_rects.data(), s_rects.size());
+			break;
+		}
 
-	void SDL2Render::draw_rects_f(const Rectf* rect, size_t count, bool filled)
-	{
-		SDL2Utils::convert(rect, count, s_rects_f);
-		if (filled)
-			SDL_RenderFillRectsF(_renderer, s_rects_f.data(), static_cast<int>(count));
-		else
-			SDL_RenderDrawRectsF(_renderer, s_rects_f.data(), static_cast<int>(count));
 		_draw_calls++;
 	}
 
