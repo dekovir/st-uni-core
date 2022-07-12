@@ -10,7 +10,6 @@ namespace unicore
 	{
 		UC_OBJECT(Surface, Resource)
 	public:
-		Surface();
 		Surface(int width, int height);
 		explicit Surface(const Vector2i& size);
 
@@ -25,7 +24,7 @@ namespace unicore
 		UC_NODISCARD size_t system_memory_use() const override { return sizeof(Surface) + _chunk.size(); }
 		UC_NODISCARD const Vector2i& size() const override { return _size; }
 
-		auto data() { return _chunk.data(); }
+		UC_NODISCARD auto data() { return _chunk.data(); }
 		UC_NODISCARD auto data() const { return _chunk.data(); }
 		UC_NODISCARD size_t data_size() const { return _chunk.size(); }
 

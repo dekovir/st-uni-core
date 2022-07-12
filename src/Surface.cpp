@@ -2,11 +2,6 @@
 
 namespace unicore
 {
-	Surface::Surface()
-		: _size(0, 0), _chunk(0)
-	{
-	}
-
 	Surface::Surface(int width, int height)
 		: _size(width, height), _chunk(_size.area() * 4)
 	{
@@ -23,7 +18,8 @@ namespace unicore
 	}
 
 	Surface::Surface(Surface&& other) noexcept
-		: _size(std::move(other._size)), _chunk(std::move(other._chunk))
+		: _size(std::exchange(other._size, VectorConst2i::Zero))
+		, _chunk(std::move(other._chunk))
 	{
 	}
 
@@ -36,7 +32,7 @@ namespace unicore
 
 	Surface& Surface::operator=(Surface&& other) noexcept
 	{
-		_size = std::move(other._size);
+		_size = std::exchange(other._size, VectorConst2i::Zero);
 		_chunk = std::move(other._chunk);
 		return *this;
 	}
