@@ -85,10 +85,6 @@ namespace unicore
 		// GRAPHICS ////////////////////////////////////////////////////////////////
 		_graphics.begin();
 		_graphics
-			.draw_tri(
-				{ { 100, 100 }, ColorConst4b::Yellow },
-				{ { 200, 100 }, ColorConst4b::Cyan },
-				{ { 100, 200 }, ColorConst4b::Magenta })
 			.set_color(ColorConst4b::Magenta)
 			.draw_line(VectorConst2i::Zero, size)
 			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))
