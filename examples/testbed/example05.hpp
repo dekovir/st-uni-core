@@ -1,6 +1,6 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/Texture.hpp"
+#include "unicore/Transform2.hpp"
 #include "unicore/Sprite.hpp"
 #include "unicore/SpriteBatch.hpp"
 #include "unicore/Graphics2D.hpp"
@@ -27,6 +27,7 @@ namespace unicore
 		RectangleTopology _topology;
 		Array<Shared<Sprite>, 2> _tiles;
 		GridMap<CellType> _map;
+		Transform2f _tr;
 
 		Graphics2D _graphics;
 		SpriteBatch _sprite_batch;

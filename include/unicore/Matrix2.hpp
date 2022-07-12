@@ -17,7 +17,7 @@ namespace unicore
 		constexpr Matrix2(
 			T m00, T m01,
 			T m10, T m11)
-			: mat({ m00, m01 }, { m10, m11 })
+			: mat{ { m00, m01 }, { m10, m11 } }
 		{}
 
 		constexpr Matrix2(const Matrix2& other) = default;
@@ -78,19 +78,28 @@ namespace unicore
 
 		static constexpr Matrix2 scale(const Vector2<T>& vec)
 		{
-			return { {vec.x, 0}, {0, vec.y} };
+			return {
+				vec.x, 0,
+				0, vec.y
+			};
 		}
 
 		static constexpr Matrix2 scale(T value)
 		{
-			return { {value, 0}, {0, value} };
+			return {
+				value, 0,
+				0, value
+			};
 		}
 
 		static Matrix2 rotation(Radians angle)
 		{
-			const auto cos_val = angle.cos();
-			const auto sin_val = angle.sin();
-			return { cos_val, sin_val, -sin_val, cos_val };
+			const auto cos = angle.cos();
+			const auto sin = angle.sin();
+			return {
+				+cos, +sin,
+				-sin, +cos
+			};
 		}
 	};
 
@@ -99,7 +108,7 @@ namespace unicore
 	static_assert(sizeof(Matrix2f) == sizeof(float) * 4);
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
-	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+	template<typename T>
 	static constexpr bool operator==(const Matrix2<T>& a, const Matrix2<T>& b)
 	{
 		return
@@ -107,14 +116,14 @@ namespace unicore
 			a.mat[1] == b.mat[1];
 	}
 
-	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+	template<typename T>
 	static constexpr bool operator!=(const Matrix2<T>& a, const Matrix2<T>& b)
 	{
 		return !(a == b);
 	}
 
 	template<typename T>
-	static constexpr bool operator*(const Matrix2<T>& a, const Matrix2<T>& b)
+	static constexpr Matrix2<T> operator*(const Matrix2<T>& a, const Matrix2<T>& b)
 	{
 		return Matrix2<T>(
 			a[0].x * b[0].x + a[0].y * b[1].x,
@@ -139,6 +148,12 @@ namespace unicore
 	static constexpr bool operator*(const Matrix2<T>& mat, T value)
 	{
 		return Matrix2<T>(mat[0] * value, mat[1] * value);
+	}
+
+	template<typename T>
+	static constexpr bool operator/(const Matrix2<T>& mat, T value)
+	{
+		return Matrix2<T>(mat[0] / value, mat[1] / value);
 	}
 
 	template<typename T>

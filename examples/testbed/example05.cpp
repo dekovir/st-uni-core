@@ -11,6 +11,7 @@ namespace unicore
 		: Example(context)
 		, _topology(Vector2f(32))
 		, _map(_topology, 30, 30)
+		, _tr({ 100, 100 })
 	{
 	}
 
@@ -35,7 +36,7 @@ namespace unicore
 
 		// DRAW CELLS //////////////////////////////////////////////////////////////
 		_graphics.begin();
-		_graphics.offset = { 100, 100 };
+		_graphics.set_transform(_tr);
 
 		_graphics.set_color(ColorConst4b::White);
 		for (auto y = 0; y < size.y; y++)
@@ -75,7 +76,7 @@ namespace unicore
 				const auto scale = _map.topology.size() / tile->rect().size().cast<float>();
 				const CellIndex index(x, y);
 				auto center = _map.topology.cell_to_pos(index);
-				_sprite_batch.draw(tile, center + _graphics.offset, 0_rad, scale);
+				_sprite_batch.draw(tile, _tr * center, _graphics.transform.angle, scale);
 			}
 		_sprite_batch.end();
 	}

@@ -1,5 +1,6 @@
 #pragma once
 #include "example.hpp"
+#include "unicore/Math.hpp"
 #include "unicore/Graphics2D.hpp"
 
 namespace unicore
@@ -18,5 +19,6 @@ namespace unicore
 
 	protected:
 		Graphics2D _graphics;
+		Radians _angle;
 	};
 }

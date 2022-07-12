@@ -211,6 +211,12 @@ namespace unicore
 		return Angle<TypeTag>(a.value() * value);
 	}
 
+	template<typename TypeTag>
+	static constexpr Angle<TypeTag> operator/(const Angle<TypeTag>& a, float value)
+	{
+		return Angle<TypeTag>(a.value() / value);
+	}
+
 	using Degrees = Angle<AngleTypeDeg>;
 	using Radians = Angle<AngleTypeRad>;
 

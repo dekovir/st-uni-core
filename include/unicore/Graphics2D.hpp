@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Render2D.hpp"
+#include "unicore/Transform2.hpp"
 
 namespace unicore
 {
@@ -8,13 +9,18 @@ namespace unicore
 	public:
 		Graphics2D() = default;
 
-		Vector2f offset = VectorConst2f::Zero;
+		Transform2f transform;
 
 		void begin();
 		void end();
 
 		void clear();
 		void render(Render2D& render) const;
+
+		Graphics2D& move(const Vector2f& move);
+		Graphics2D& rotate(Radians angle);
+		Graphics2D& set_transform(const Transform2f& tr);
+		Graphics2D& reset_transform();
 
 		Graphics2D& set_color(const Color4b& color);
 
