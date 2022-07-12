@@ -2,6 +2,8 @@
 
 namespace unicore
 {
+	static List<Vector2f> s_points;
+
 	void Graphics2D::begin()
 	{
 		clear();
@@ -144,6 +146,26 @@ namespace unicore
 		_current.count += 2;
 
 		return *this;
+	}
+
+	Graphics2D& Graphics2D::draw_circle(const Vector2f& center, float radius, unsigned segments)
+	{
+		if (radius == 0)
+			return draw_point(center);
+
+		if (segments == 0)
+			segments = Math::max(5, Math::floor(radius * .7f));
+
+		s_points.resize(segments);
+		for (unsigned i = 0; i < segments; i++)
+		{
+			const Radians angle = (360_deg / segments) * i;
+			const auto cos = angle.cos();
+			const auto sin = angle.sin();
+			s_points[i].set(center.x + radius * cos, center.y + radius * sin);
+		}
+
+		return draw_poly_line(s_points, true);
 	}
 
 	void Graphics2D::set_type(BatchType type)

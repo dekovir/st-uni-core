@@ -29,6 +29,8 @@ namespace unicore
 		Graphics2D& draw_rect(const Recti& rect, bool filled = false);
 		Graphics2D& draw_rect(const Rectf& rect, bool filled = false);
 
+		Graphics2D& draw_circle(const Vector2f& center, float radius, unsigned segments = 0);
+
 	protected:
 		enum class BatchType
 		{
