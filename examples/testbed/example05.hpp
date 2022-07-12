@@ -1,6 +1,7 @@
 #pragma once
 #include "example.hpp"
 #include "unicore/Texture.hpp"
+#include "unicore/Sprite.hpp"
 #include "unicore/SpriteBatch.hpp"
 #include "unicore/Graphics2D.hpp"
 #include "unicore/gridmap/GridMap.hpp"
@@ -24,7 +25,7 @@ namespace unicore
 
 	protected:
 		RectangleTopology _topology;
-		Shared<Texture> _solid;
+		Array<Shared<Sprite>, 2> _tiles;
 		GridMap<CellType> _map;
 
 		Graphics2D _graphics;

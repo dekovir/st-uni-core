@@ -116,6 +116,20 @@ namespace unicore
 #endif
 	}
 
+	bool SDL2Render::update_texture(Texture& texture, Surface& surface, Optional<Recti> rect)
+	{
+		if (const auto tex = dynamic_cast<SDL2Texture*>(&texture))
+		{
+			SDL_Rect r;
+			const auto prect = rect.has_value() ? &SDL2Utils::convert(rect.value(), r) : nullptr;
+			// TODO: Pass surface pitch from format
+			// The pixel data must be in the pixel format of the texture. Use SDL_QueryTexture() to query the pixel format of the texture.
+			return SDL_UpdateTexture(tex->_context, prect, surface.data(), surface.size().x * 4) == 0;
+		}
+
+		return false;
+	}
+
 	bool SDL2Render::begin_scene()
 	{
 		set_color(ColorConst4b::White);

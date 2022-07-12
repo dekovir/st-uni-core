@@ -3,7 +3,6 @@
 
 namespace unicore
 {
-	// TODO: Add Index typename
 	template<typename T>
 	class IBuffer2
 	{

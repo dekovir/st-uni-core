@@ -16,11 +16,14 @@ namespace unicore
 
 	bool Example05::load(ResourceCache& resources)
 	{
+		_map.fill(CellType::Solid, Recti(1, 1, 5, 5));
 		_map.set(10, 10, CellType::Solid);
 
 		Surface solid_sur(8, 8);
-		solid_sur.fill(ColorConst4b::White);
-		_solid = render.create_texture(solid_sur);
+		solid_sur.fill(ColorConst4b::Green);
+
+		if (auto texture = render.create_texture(solid_sur))
+			_tiles[static_cast<int>(CellType::Solid)] = std::make_shared<Sprite>(texture);
 
 		return true;
 	}
@@ -56,27 +59,25 @@ namespace unicore
 		_graphics.end();
 
 		// DRAW TILES //////////////////////////////////////////////////////////////
-		if (_solid)
-		{
-			const auto scale = _map.topology.size().cast<float>() / _solid->size().cast<float>();
 
-			_sprite_batch.begin();
-			for (auto y = 0; y < size.y; y++)
-				for (auto x = 0; x < size.x; x++)
-				{
-					CellType type;
-					if (!_map.get(x, y, type))
-						continue;
+		_sprite_batch.begin();
+		for (auto y = 0; y < size.y; y++)
+			for (auto x = 0; x < size.x; x++)
+			{
+				CellType type;
+				if (!_map.get(x, y, type))
+					continue;
 
-					if (type == CellType::Empty)
-						continue;
+				auto tile = _tiles[static_cast<int>(type)];
+				if (!tile)
+					continue;
 
-					const CellIndex index(x, y);
-					auto center = _map.topology.cell_to_pos(index);
-					_sprite_batch.draw(_solid, center + _graphics.offset, 0_rad, scale);
-				}
-			_sprite_batch.end();
-		}
+				const auto scale = _map.topology.size() / tile->rect().size().cast<float>();
+				const CellIndex index(x, y);
+				auto center = _map.topology.cell_to_pos(index);
+				_sprite_batch.draw(tile, center + _graphics.offset, 0_rad, scale);
+			}
+		_sprite_batch.end();
 	}
 
 	void Example05::draw() const

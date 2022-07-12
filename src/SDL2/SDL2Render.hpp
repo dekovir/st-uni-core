@@ -52,6 +52,7 @@ namespace unicore
 		UC_NODISCARD uint32_t draw_calls() const override { return _draw_calls; }
 
 		Shared<Texture> create_texture(Surface& surface) override;
+		bool update_texture(Texture& texture, Surface& surface, Optional<Recti> rect) override;
 
 		bool begin_scene() override;
 		void end_scene() override;

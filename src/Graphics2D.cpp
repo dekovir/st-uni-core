@@ -15,6 +15,7 @@ namespace unicore
 	void Graphics2D::clear()
 	{
 		offset = VectorConst2f::Zero;
+		_points.clear();
 		_batches.clear();
 		_current = {};
 	}
