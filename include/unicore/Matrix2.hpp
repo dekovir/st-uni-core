@@ -92,19 +92,20 @@ namespace unicore
 			};
 		}
 
-		static Matrix2 rotation(Radians angle)
+		static constexpr Matrix2 rotation(Radians angle)
 		{
-			const auto cos = angle.cos();
-			const auto sin = angle.sin();
+			float sin = 0, cos = 0;
+			angle.sin_cos(sin, cos);
+
 			return {
 				+cos, +sin,
 				-sin, +cos
 			};
 		}
 
-		static Matrix2 transform(Radians angle, const Vector2<T>& scale)
+		static constexpr Matrix2 transform(Radians angle, const Vector2<T>& scale)
 		{
-			float sin, cos;
+			float sin = 0, cos = 0;
 			angle.sin_cos(sin, cos);
 
 			return Matrix2<T>(

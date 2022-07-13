@@ -27,7 +27,7 @@ namespace unicore
 		RectangleTopology _topology;
 		Array<Shared<Sprite>, 2> _tiles;
 		GridMap<CellType> _map;
-		Transform2f _tr;
+		Transform2 _tr;
 
 		Graphics2D _graphics;
 		SpriteBatch _sprite_batch;

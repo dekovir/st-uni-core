@@ -18,7 +18,7 @@ namespace unicore
 
 		auto& size = render.screen_size();
 
-		Transform2f tr;
+		Transform2 tr;
 		tr.move = size.cast<float>() / 2.f;
 		tr.angle = _angle;
 		tr.scale.x = 1 + .5f * Math::sin(time.elapsed().total_seconds());

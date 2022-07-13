@@ -9,7 +9,7 @@ namespace unicore
 	public:
 		Graphics2D() = default;
 
-		Transform2f transform;
+		Transform2 transform;
 
 		void begin();
 		void end();
@@ -19,7 +19,7 @@ namespace unicore
 
 		Graphics2D& move(const Vector2f& move);
 		Graphics2D& rotate(Radians angle);
-		Graphics2D& set_transform(const Transform2f& tr);
+		Graphics2D& set_transform(const Transform2& tr);
 		Graphics2D& reset_transform();
 
 		Graphics2D& set_color(const Color4b& color);
