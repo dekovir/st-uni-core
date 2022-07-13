@@ -3,9 +3,9 @@
 
 namespace unicore
 {
-	class Render3D : public Renderer
+	class Renderer3D : public Renderer
 	{
-		UC_OBJECT(Render3D, Renderer)
+		UC_OBJECT(Renderer3D, Renderer)
 	public:
 	};
 }
