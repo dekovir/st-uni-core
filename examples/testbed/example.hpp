@@ -8,7 +8,7 @@ namespace unicore
 	class Random;
 	class Time;
 	class Input;
-	class Render2D;
+	class Renderer2D;
 	class ResourceCache;
 
 	struct ExampleContext
@@ -17,7 +17,7 @@ namespace unicore
 		Random& random;
 		Time& time;
 		Input& input;
-		Render2D& render;
+		Renderer2D& renderer;
 	};
 
 	class Example : public Object
@@ -27,7 +27,7 @@ namespace unicore
 		Random& random;
 		Time& time;
 		Input& input;
-		Render2D& render;
+		Renderer2D& renderer;
 
 		explicit Example(const ExampleContext& context);
 

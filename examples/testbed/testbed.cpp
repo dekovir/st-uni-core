@@ -48,14 +48,14 @@ namespace unicore
 
 	void MyCore::on_draw()
 	{
-		render.clear(ColorConst4b::Black);
+		renderer.clear(ColorConst4b::Black);
 
 		if (_example)
 			_example->draw();
 
-		_sprite_batch.render(render);
+		_sprite_batch.render(renderer);
 
-		_draw_calls = render.draw_calls();
+		_draw_calls = renderer.draw_calls();
 	}
 
 	void MyCore::set_example(int index)
@@ -64,7 +64,7 @@ namespace unicore
 
 		auto& info = ExampleCatalog::get_all()[index];
 
-		const auto example = info.factory({ logger, _random, time, input, render });
+		const auto example = info.factory({ logger, _random, time, input, renderer });
 		if (!example->load(resources))
 			return;
 

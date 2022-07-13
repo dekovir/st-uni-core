@@ -33,7 +33,7 @@ namespace unicore
 	}
 
 	SDL2Render::SDL2Render(Logger& logger, const SDL2RenderSettings& settings)
-		: Render2D(logger)
+		: Renderer2D(logger)
 	{
 		SDL_Init(SDL_INIT_VIDEO);
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");

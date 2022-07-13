@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/EnumFlag.hpp"
-#include "unicore/Render.hpp"
+#include "unicore/Renderer.hpp"
 #include "unicore/Color4.hpp"
 #include "unicore/Math.hpp"
 #include "unicore/Rect.hpp"
@@ -27,11 +27,11 @@ namespace unicore
 		RectsFilled,
 	};
 
-	class Render2D : public Render
+	class Renderer2D : public Renderer
 	{
-		UC_OBJECT(Render2D, Render)
+		UC_OBJECT(Renderer2D, Renderer)
 	public:
-		explicit Render2D(Logger& logger);
+		explicit Renderer2D(Logger& logger);
 
 		virtual void clear(const Color4b& color) = 0;
 
@@ -55,6 +55,6 @@ namespace unicore
 		void register_module(Context& context) override;
 		void unregister_module(Context& context) override;
 
-		static Unique<Render2D> create(Logger& logger);
+		static Unique<Renderer2D> create(Logger& logger);
 	};
 }

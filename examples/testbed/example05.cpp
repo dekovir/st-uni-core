@@ -2,7 +2,7 @@
 
 #include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
-#include "unicore/Render2D.hpp"
+#include "unicore/Renderer2D.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore
@@ -25,7 +25,7 @@ namespace unicore
 		Surface solid_sur(8, 8);
 		solid_sur.fill(ColorConst4b::Green);
 
-		if (auto texture = render.create_texture(solid_sur))
+		if (auto texture = renderer.create_texture(solid_sur))
 			_tiles[static_cast<int>(CellType::Solid)] = std::make_shared<Sprite>(texture);
 
 		return true;
@@ -85,7 +85,7 @@ namespace unicore
 
 	void Example05::draw() const
 	{
-		_sprite_batch.render(render);
-		_graphics.render(render);
+		_sprite_batch.render(renderer);
+		_graphics.render(renderer);
 	}
 }

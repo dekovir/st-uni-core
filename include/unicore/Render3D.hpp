@@ -1,11 +1,11 @@
 #pragma once
-#include "unicore/Render.hpp"
+#include "unicore/Renderer.hpp"
 
 namespace unicore
 {
-	class Render3D : public Render
+	class Render3D : public Renderer
 	{
-		UC_OBJECT(Render3D, Render)
+		UC_OBJECT(Render3D, Renderer)
 	public:
 	};
 }

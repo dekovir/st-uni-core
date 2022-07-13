@@ -32,11 +32,11 @@ namespace unicore
 	public:
 	};
 
-	class Render : public Module
+	class Renderer : public Module
 	{
-		UC_OBJECT(Render, Module)
+		UC_OBJECT(Renderer, Module)
 	public:
-		explicit Render(Logger& logger);
+		explicit Renderer(Logger& logger);
 
 		UC_NODISCARD virtual const Vector2i& screen_size() const = 0;
 		UC_NODISCARD virtual uint32_t draw_calls() const =0;

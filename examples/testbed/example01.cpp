@@ -1,6 +1,7 @@
 #include "example01.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Transform2.hpp"
+#include "unicore/Renderer2D.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore
@@ -16,7 +17,7 @@ namespace unicore
 	{
 		_angle += 90_deg * time.delta().total_seconds();
 
-		auto& size = render.screen_size();
+		auto& size = renderer.screen_size();
 
 		Transform2 tr;
 		tr.move = size.cast<float>() / 2.f;
@@ -51,6 +52,6 @@ namespace unicore
 
 	void Example01::draw() const
 	{
-		_graphics.render(render);
+		_graphics.render(renderer);
 	}
 }

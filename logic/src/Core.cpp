@@ -18,11 +18,11 @@ namespace unicore
 		, time(settings.platform.time)
 		, input(settings.platform.input)
 		, resources(settings.platform.resources)
-		, render(settings.render)
+		, renderer(settings.render)
 	{
 		platform.register_module(context);
 		input.register_module(context);
-		render.register_module(context);
+		renderer.register_module(context);
 		resources.register_module(context);
 
 #if defined(UNICORE_USE_XML)
@@ -47,7 +47,7 @@ namespace unicore
 
 		resources.unregister_module(context);
 		platform.unregister_module(context);
-		render.unregister_module(context);
+		renderer.unregister_module(context);
 		input.unregister_module(context);
 	}
 
@@ -73,10 +73,10 @@ namespace unicore
 	void Core::draw()
 	{
 		_fps_counter++;
-		if (render.begin_scene())
+		if (renderer.begin_scene())
 		{
 			on_draw();
-			render.end_scene();
+			renderer.end_scene();
 		}
 	}
 

@@ -9,6 +9,6 @@ namespace unicore
 		, random(context.random)
 		, time(context.time)
 		, input(context.input)
-		, render(context.render)
+		, renderer(context.renderer)
 	{}
 }

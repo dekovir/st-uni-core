@@ -23,27 +23,27 @@ namespace unicore
 		_current = {};
 	}
 
-	void Graphics2D::render(Render2D& render) const
+	void Graphics2D::render(Renderer2D& renderer) const
 	{
 		for (const auto& batch : _batches)
 		{
-			render.set_color(batch.color);
+			renderer.set_color(batch.color);
 			switch (batch.type)
 			{
 			case BatchType::Point:
-				render.draw_geometry(GeometryType::Points, &_points[batch.start], batch.count);
+				renderer.draw_geometry(GeometryType::Points, &_points[batch.start], batch.count);
 				break;
 
 			case BatchType::Line:
-				render.draw_geometry(GeometryType::LineList, &_points[batch.start], batch.count);
+				renderer.draw_geometry(GeometryType::LineList, &_points[batch.start], batch.count);
 				break;
 
 			case BatchType::Rect:
-				render.draw_geometry(GeometryType::Rects, &_points[batch.start], batch.count);
+				renderer.draw_geometry(GeometryType::Rects, &_points[batch.start], batch.count);
 				break;
 
 			case BatchType::RectFilled:
-				render.draw_geometry(GeometryType::RectsFilled, &_points[batch.start], batch.count);
+				renderer.draw_geometry(GeometryType::RectsFilled, &_points[batch.start], batch.count);
 				break;
 
 			default:

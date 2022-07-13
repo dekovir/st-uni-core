@@ -1,4 +1,4 @@
-#include "unicore/Render2D.hpp"
+#include "unicore/Renderer2D.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/ResourceLoader.hpp"
@@ -62,7 +62,7 @@ namespace unicore
 	class TextureConverter : public ResourceConverterT<Texture, Surface>
 	{
 	public:
-		explicit TextureConverter(Render2D& render)
+		explicit TextureConverter(Renderer2D& render)
 			: _render(render) {}
 
 		Shared<Texture> convert_typed(Surface& surface, const ResourceConverterContext& context) override
@@ -71,17 +71,17 @@ namespace unicore
 		}
 
 	protected:
-		Render2D& _render;
+		Renderer2D& _render;
 	};
 
-	Render2D::Render2D(Logger& logger)
-		: Render(logger)
+	Renderer2D::Renderer2D(Logger& logger)
+		: Renderer(logger)
 	{
 	}
 
-	void Render2D::register_module(Context& context)
+	void Renderer2D::register_module(Context& context)
 	{
-		Render::register_module(context);
+		Renderer::register_module(context);
 
 		static SurfaceLoader surface_loader;
 		static TextureConverter texture_converter(*this);
@@ -90,12 +90,12 @@ namespace unicore
 		context.add_converter(texture_converter);
 	}
 
-	void Render2D::unregister_module(Context& context)
+	void Renderer2D::unregister_module(Context& context)
 	{
-		Render::unregister_module(context);
+		Renderer::unregister_module(context);
 	}
 
-	Unique<Render2D> Render2D::create(Logger& logger)
+	Unique<Renderer2D> Renderer2D::create(Logger& logger)
 	{
 #if defined(UNICORE_USE_SDL2)
 		SDL2RenderSettings settings;

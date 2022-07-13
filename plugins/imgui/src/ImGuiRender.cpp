@@ -10,7 +10,7 @@ namespace unicore
 	{
 	}
 
-	void ImGuiRender::init(Render& render)
+	void ImGuiRender::init(Renderer& render)
 	{
 		const auto& io = ImGui::GetIO();
 
@@ -32,7 +32,7 @@ namespace unicore
 		}
 	}
 
-	ImGuiRender2D::ImGuiRender2D(Render2D& render, Logger& logger)
+	ImGuiRender2D::ImGuiRender2D(Renderer2D& render, Logger& logger)
 		: ImGuiRender(logger), _render(render)
 	{
 	}

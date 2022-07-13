@@ -49,7 +49,7 @@ namespace unicore
 				return Color4b::lerp(ColorConst4b::White, ColorConst4b::Clear, t);
 			});
 
-		_tex = render.create_texture(circle);
+		_tex = renderer.create_texture(circle);
 	}
 
 	void MyCore::on_update()
@@ -75,12 +75,12 @@ namespace unicore
 		else _add_time = TimeSpanConst::Zero;
 
 		// UPDATE ENTITIES ///////////////////////////////////////////////////////////
-		auto& screen_size = render.screen_size();
+		auto& screen_size = renderer.screen_size();
 		const auto delta = static_cast<float>(time.delta().total_seconds());
 		for (auto& entity : _entites)
 			entity.update(screen_size, delta);
 
-		auto& size = render.screen_size();
+		auto& size = renderer.screen_size();
 
 		// GRAPHICS ////////////////////////////////////////////////////////////////
 		_graphics.begin();
@@ -107,11 +107,11 @@ namespace unicore
 
 	void MyCore::on_draw()
 	{
-		render.clear(ColorConst4b::Black);
+		renderer.clear(ColorConst4b::Black);
 
-		_graphics.render(render);
+		_graphics.render(renderer);
 
-		_sprite_batch.render(render);
+		_sprite_batch.render(renderer);
 	}
 
 	void MyCore::spawn_entity(const Vector2f& position, const Vector2i& size)
@@ -137,7 +137,7 @@ namespace unicore
 	{
 		if (!_tex) return;
 
-		auto& screen_size = render.screen_size();
+		auto& screen_size = renderer.screen_size();
 		auto& size = _tex->size();
 
 		for (unsigned i = 0; i < count; i++)

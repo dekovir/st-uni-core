@@ -3,7 +3,7 @@
 
 namespace unicore
 {
-	class Render;
+	class Renderer;
 
 	class RenderResource : public Resource
 	{

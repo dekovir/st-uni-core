@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Render2D.hpp"
+#include "unicore/Renderer2D.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include "unicore/Surface.hpp"
 #include "unicore/Texture.hpp"
@@ -41,9 +41,9 @@ namespace unicore
 		bool fullscreen = false;
 	};
 
-	class SDL2Render : public Render2D
+	class SDL2Render : public Renderer2D
 	{
-		UC_OBJECT(SDL2Render, Render2D)
+		UC_OBJECT(SDL2Render, Renderer2D)
 	public:
 		explicit SDL2Render(Logger& logger, const SDL2RenderSettings& settings);
 		~SDL2Render() override;

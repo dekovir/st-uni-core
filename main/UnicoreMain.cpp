@@ -9,7 +9,7 @@ namespace unicore
 	{
 	public:
 		Unique<Platform> platform;
-		Unique<Render2D> render;
+		Unique<Renderer2D> render;
 		Unique<ProxyLogger> render_logger;
 		Unique<Core> core;
 
@@ -18,7 +18,7 @@ namespace unicore
 			platform = Platform::create();
 
 			render_logger = make_unique<ProxyLogger>("[Render] ", platform->logger);
-			render = Render2D::create(*render_logger);
+			render = Renderer2D::create(*render_logger);
 
 			core = create_main_core({ *platform, *render });
 		}

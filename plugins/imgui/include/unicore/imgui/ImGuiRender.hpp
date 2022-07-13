@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/imgui/ImGuiDefs.hpp"
-#include "unicore/Render2D.hpp"
+#include "unicore/Renderer2D.hpp"
 
 namespace unicore
 {
@@ -10,7 +10,7 @@ namespace unicore
 	public:
 		explicit ImGuiRender(Logger& logger);
 
-		void init(Render& render);
+		void init(Renderer& render);
 
 		virtual void begin_frame(ImGui::IO& io) = 0;
 		virtual void render(const ImDrawData* data) = 0;
@@ -24,14 +24,14 @@ namespace unicore
 	{
 		UC_OBJECT(ImGuiRender2D, Object)
 	public:
-		ImGuiRender2D(Render2D& render, Logger& logger);
+		ImGuiRender2D(Renderer2D& render, Logger& logger);
 
 		void begin_frame(ImGui::IO& io) override;
 
 		void render(const ImDrawData* data) override;
 
 	protected:
-		Render2D& _render;
+		Renderer2D& _render;
 
 		void setup_render_state();
 	};

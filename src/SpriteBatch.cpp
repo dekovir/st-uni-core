@@ -2,7 +2,7 @@
 #include "unicore/Texture.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/Sprite.hpp"
-#include "unicore/Render2D.hpp"
+#include "unicore/Renderer2D.hpp"
 
 namespace unicore
 {
@@ -23,11 +23,11 @@ namespace unicore
 		_vertices.clear();
 	}
 
-	void SpriteBatch::render(Render2D& render) const
+	void SpriteBatch::render(Renderer2D& renderer) const
 	{
 		for (const auto& batch : _batches)
 		{
-			render.draw_triangles(&_vertices[batch.vstart],
+			renderer.draw_triangles(&_vertices[batch.vstart],
 				batch.vcount, batch.texture.get());
 		}
 	}

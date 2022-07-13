@@ -3,7 +3,7 @@
 #include "unicore/Input.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/Texture.hpp"
-#include "unicore/Render2D.hpp"
+#include "unicore/Renderer2D.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore
@@ -61,7 +61,7 @@ namespace unicore
 		else _add_time = TimeSpanConst::Zero;
 
 		// UPDATE ENTITIES ///////////////////////////////////////////////////////////
-		auto& screen_size = render.screen_size();
+		auto& screen_size = renderer.screen_size();
 		const auto delta = static_cast<float>(time.delta().total_seconds());
 		for (auto& entity : _entites)
 			entity.update(screen_size, delta);
@@ -69,7 +69,7 @@ namespace unicore
 		// UPDATE SPRITE BATCH /////////////////////////////////////////////////////
 		const String count_str = "Count: " + std::to_string(_entites.size());
 
-		auto& size = render.screen_size();
+		auto& size = renderer.screen_size();
 		_sprite_batch.begin();
 
 		for (const auto& entity : _entites)
@@ -83,7 +83,7 @@ namespace unicore
 
 	void Example02::draw() const
 	{
-		_sprite_batch.render(render);
+		_sprite_batch.render(renderer);
 	}
 
 	void Example02::spawn_entity(const Vector2f& position, const Vector2i& size)
@@ -107,7 +107,7 @@ namespace unicore
 
 	void Example02::spawn_entities(unsigned count)
 	{
-		auto& screen_size = render.screen_size();
+		auto& screen_size = renderer.screen_size();
 		auto& size = _tex->size();
 
 		for (unsigned i = 0; i < count; i++)

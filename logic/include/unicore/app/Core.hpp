@@ -10,7 +10,7 @@ namespace unicore
 	struct CoreSettings
 	{
 		Platform& platform;
-		Render2D& render;
+		Renderer2D& render;
 	};
 
 	class Core
@@ -24,7 +24,7 @@ namespace unicore
 		Time& time;
 		Input& input;
 		ResourceCache& resources;
-		Render2D& render;
+		Renderer2D& renderer;
 
 		Context context;
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Render2D.hpp"
+#include "unicore/Renderer2D.hpp"
 #include "unicore/Transform2.hpp"
 
 namespace unicore
@@ -15,7 +15,7 @@ namespace unicore
 		void end();
 
 		void clear();
-		void render(Render2D& render) const;
+		void render(Renderer2D& renderer) const;
 
 		Graphics2D& move(const Vector2f& move);
 		Graphics2D& rotate(Radians angle);

@@ -130,7 +130,7 @@ namespace unicore
 
 	void Example04::draw() const
 	{
-		_sprite_batch.render(render);
+		_sprite_batch.render(renderer);
 	}
 }
 #endif

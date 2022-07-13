@@ -1,5 +1,5 @@
 #include "example03.hpp"
-#include "unicore/Render2D.hpp"
+#include "unicore/Renderer2D.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore
@@ -8,10 +8,10 @@ namespace unicore
 
 	Example03::Example03(const ExampleContext& context) : Example(context)
 		, _imgui_logger("[IMGUI] ", logger)
-		, _imgui_render(render, _imgui_logger)
+		, _imgui_render(renderer, _imgui_logger)
 		, _imgui(_imgui_render, time, input, _imgui_logger)
 	{
-		_imgui_render.init(render);
+		_imgui_render.init(renderer);
 	}
 
 	bool Example03::load(ResourceCache& resources)
