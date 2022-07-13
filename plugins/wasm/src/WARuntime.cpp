@@ -47,8 +47,8 @@ namespace unicore
 	{
 		for (auto mod = _handle->modules; mod != nullptr; mod = mod->next)
 		{
-			const auto count = mod->numFunctions + mod->numFuncImports;
-			for (unsigned i = 0; i < count; i++)
+			//const auto count = mod->numFunctions + mod->numFuncImports;
+			for (unsigned i = 0; i < mod->numFunctions; i++)
 				action(WAFunction(&mod->functions[i]));
 		}
 	}
