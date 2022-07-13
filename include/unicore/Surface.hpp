@@ -6,6 +6,7 @@
 
 namespace unicore
 {
+	// TODO: Rename to something else (Bitmap, PixelBuffer, ColorBuffer)
 	class Surface : public Resource, public IBuffer2<Color4b>
 	{
 		UC_OBJECT(Surface, Resource)
