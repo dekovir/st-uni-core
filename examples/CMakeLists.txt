@@ -2,6 +2,7 @@
 option(UNICORE_EXAMPLES "Add all examples projects" OFF)
 option(UNICORE_MINIMAL "Add Minimal project" ${UNICORE_EXAMPLES})
 option(UNICORE_TESTBED "Add Testbed project" ${UNICORE_EXAMPLES})
+option(UNICORE_EXAMPLE_WASM "Add Testbed project" ${UNICORE_EXAMPLES})
 
 # MINIMAL ######################################################################
 if (UNICORE_MINIMAL)
@@ -25,7 +26,7 @@ if (UNICORE_TESTBED)
 endif()
 
 # WASM #########################################################################
-if (UNICORE_TESTBED)
+if (UNICORE_EXAMPLE_WASM)
 	set(WASM_DIR "${EXAMPLES_DIR}/wasm")
 	file(GLOB WASM_SRC "${WASM_DIR}/*.cpp" "${WASM_DIR}/*.hpp")
 
