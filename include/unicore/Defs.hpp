@@ -128,6 +128,9 @@ namespace unicore
 
 	template<typename ... Args>
 	using Action = std::function<void(Args...)>;
+
+	template<typename Ret, typename ... Args>
+	using Function = std::function<Ret(Args...)>;
 }
 
 #define UC_NODISCARD [[nodiscard]]
