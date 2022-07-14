@@ -20,6 +20,17 @@ if (UNICORE_TESTBED)
 
 	add_executable(testbed "${TESTBED_SRC}")
 	unicore_init_executable(testbed)
-	unicore_init_assets(testbed assets)
+	unicore_init_assets(testbed "${CMAKE_CURRENT_SOURCE_DIR}/assets")
 	set_target_properties(testbed PROPERTIES FOLDER "Examples")
+endif()
+
+# WASM #########################################################################
+if (UNICORE_TESTBED)
+	set(WASM_DIR "${EXAMPLES_DIR}/wasm")
+	file(GLOB WASM_SRC "${WASM_DIR}/*.cpp" "${WASM_DIR}/*.hpp")
+
+	add_executable(wasm "${WASM_SRC}")
+	unicore_init_executable(wasm)
+	unicore_init_assets(wasm "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+	set_target_properties(wasm PROPERTIES FOLDER "Examples")
 endif()

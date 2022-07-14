@@ -37,8 +37,8 @@ namespace unicore
 
 	bool Example02::load(ResourceCache& resources)
 	{
-		_font = resources.load<Font>(L"assets/font_004.fnt"_path);
-		_tex = resources.load<Texture>(L"assets/zazaka.png"_path);
+		_font = resources.load<Font>(L"font_004.fnt"_path);
+		_tex = resources.load<Texture>(L"zazaka.png"_path);
 
 		return _tex != nullptr;
 	}

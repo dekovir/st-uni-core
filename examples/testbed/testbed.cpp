@@ -11,7 +11,7 @@ namespace unicore
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
-		_font = resources.load<Font>(L"assets/font_004.fnt"_path);
+		_font = resources.load<Font>(L"font_004.fnt"_path);
 
 		set_example(0);
 	}

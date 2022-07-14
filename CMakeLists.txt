@@ -162,12 +162,12 @@ endfunction()
 function(unicore_init_assets target_name directory)
 	if(EMSCRIPTEN)
 		target_link_libraries(${target_name} PRIVATE
-			"--preload-file ../../${directory}@/${directory}"
+			"--preload-file ${directory}"
 		)
 	endif()
 	if (MSVC)
 		set_target_properties(${target_name} PROPERTIES
-			VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_DIR}"
+			VS_DEBUGGER_WORKING_DIRECTORY "${directory}"
 		)
 	endif()
 endfunction()
