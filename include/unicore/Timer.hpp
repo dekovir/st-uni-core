@@ -25,4 +25,22 @@ namespace unicore
 		const auto duration = a.data() - b.data();
 		return TimeSpan::from_duration(duration);
 	}
+
+	class AutoTimer
+	{
+	public:
+		explicit AutoTimer(TimeSpan& elapsed)
+			: _elapsed(elapsed), _start(Timer::now())
+		{}
+
+		~AutoTimer()
+		{
+			const auto end = Timer::now();
+			_elapsed = end - _start;
+		}
+
+	protected:
+		TimeSpan& _elapsed;
+		const Timer _start;
+	};
 }

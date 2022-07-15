@@ -225,20 +225,18 @@ namespace unicore
 		static constexpr auto fps_lock = TimeSpan::from_seconds(1. / 60.);
 		while (s_state_time > fps_lock)
 		{
-			const auto t_start = Timer::now();
-			s_state->update(fps_lock);
-			const auto t_end = Timer::now();
-			_update_time = t_end - t_start;
+			{
+				AutoTimer timer(_update_time);
+				s_state->update(fps_lock);
+			}
 			s_state_time -= fps_lock;
 		}
 
 		// DRAW STATE
 		_sprite_count = 0;
 		{
-			const auto t_start = Timer::now();
+			AutoTimer timer(_draw_time);
 			s_state->draw();
-			const auto t_end = Timer::now();
-			_draw_time = t_end - t_start;
 		}
 
 		// DRAW CONSOLE
