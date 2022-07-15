@@ -1,26 +1,28 @@
 #pragma once
 #include "unicore/TimeSpan.hpp"
-#include <ctime>
+#include <chrono>
 
 namespace unicore
 {
 	class Timer
 	{
 	public:
-		explicit constexpr Timer(clock_t data) noexcept
+		using ClockType = std::chrono::high_resolution_clock;
+
+		explicit constexpr Timer(const ClockType::time_point data) noexcept
 			: _data(data) {}
 
-		static Timer now() { return Timer(clock()); }
+		static Timer now() { return Timer(ClockType::now()); }
 
-		UC_NODISCARD constexpr clock_t data() const { return _data; }
+		UC_NODISCARD constexpr ClockType::time_point data() const { return _data; }
 
 	protected:
-		clock_t _data;
+		ClockType::time_point _data;
 	};
 
 	static constexpr TimeSpan operator-(const Timer& a, const Timer& b)
 	{
-		const double delta = a.data() - b.data();
-		return TimeSpan::from_seconds(delta / CLOCKS_PER_SEC);
+		const auto duration = a.data() - b.data();
+		return TimeSpan::from_duration(duration);
 	}
 }

@@ -6,15 +6,40 @@ namespace unicore
 	class DateTime
 	{
 	public:
-		constexpr DateTime() : _data(0) {}
-		explicit constexpr DateTime(time_t data) : _data(data) {}
+		using ClockType = std::chrono::system_clock;
+		using DataType = std::chrono::time_point<ClockType>;
 
-		UC_NODISCARD constexpr time_t data() const { return _data; }
+		constexpr DateTime() = default;
+
+		explicit constexpr DateTime(const DataType& data) noexcept
+			: _data(data) {}
+
+		explicit DateTime(time_t data) noexcept;
+
+		template<typename Duration>
+		explicit constexpr DateTime(const std::chrono::time_point<ClockType, Duration>& data)
+			: _data(std::chrono::time_point_cast<ClockType::duration>(data))
+		{
+		}
+
+		UC_NODISCARD constexpr DataType data() const { return _data; }
+
+		UC_NODISCARD time_t to_time_t() const noexcept;
+
+		static DateTime now() noexcept;
+
+		template<typename Duration>
+		static constexpr DateTime from_duration(const std::chrono::time_point<ClockType, Duration>& duration)
+		{
+			const DataType data = duration;
+			return DateTime(data);
+		}
 
 	protected:
-		time_t _data;
+		DataType _data;
 	};
 
+	// COMPARE OPERATORS /////////////////////////////////////////////////////////
 	static constexpr bool operator==(const DateTime& a, const DateTime& b)
 	{
 		return a.data() == b.data();
@@ -23,6 +48,16 @@ namespace unicore
 	static constexpr bool operator!=(const DateTime& a, const DateTime& b)
 	{
 		return a.data() != b.data();
+	}
+
+	static constexpr bool operator>=(const DateTime& a, const DateTime& b)
+	{
+		return a.data() >= b.data();
+	}
+
+	static constexpr bool operator<=(const DateTime& a, const DateTime& b)
+	{
+		return a.data() <= b.data();
 	}
 
 	static constexpr bool operator<(const DateTime& a, const DateTime& b)
@@ -35,13 +70,21 @@ namespace unicore
 		return a.data() > b.data();
 	}
 
-	static constexpr bool operator>=(const DateTime& a, const DateTime& b)
+	// OPERATORS WITH TIMESPAN ///////////////////////////////////////////////////
+	static constexpr DateTime operator+(const DateTime& time, const TimeSpan& delta)
 	{
-		return a.data() >= b.data();
+		return DateTime(time.data() + delta.data());
 	}
 
-	static constexpr bool operator<=(const DateTime& a, const DateTime& b)
+	static constexpr DateTime operator-(const DateTime& time, const TimeSpan& delta)
 	{
-		return a.data() <= b.data();
+		return DateTime(time.data() - delta.data());
+	}
+
+	// ARITHMETIC OPERATORS //////////////////////////////////////////////////////
+	static constexpr TimeSpan operator-(const DateTime& a, const DateTime& b)
+	{
+		const auto duration = a.data() - b.data();
+		return TimeSpan::from_duration(duration);
 	}
 }

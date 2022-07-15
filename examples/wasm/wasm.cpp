@@ -131,10 +131,8 @@ namespace unicore
 
 	m3ApiRawFunction(wa_mouse_button)
 	{
-		auto pressed = s_example->input.mouse().down();
-
 		m3ApiReturnType(int);
-		m3ApiReturn(pressed ? 1 : 0);
+		m3ApiReturn(s_example->input.mouse().down() ? 1 : 0);
 
 		m3ApiSuccess();
 	}
@@ -160,8 +158,7 @@ namespace unicore
 		_font = resources.load<Font>(L"font_004.fnt"_path);
 
 		_font = resources.load<Font>(L"font_004.fnt"_path);
-		auto tex = resources.load<Texture>(L"zazaka.png"_path);
-		if (tex)
+		if (auto tex = resources.load<Texture>(L"zazaka.png"_path))
 			_spr = std::make_shared<Sprite>(tex);
 
 		ConsoleLogger wasm_logger(_console);
@@ -269,8 +266,8 @@ namespace unicore
 		// DRAW TEXT
 		const String fps_str = "FPS: " + std::to_string(fps());
 		const String sprites_str = "Sprites: " + std::to_string(_sprite_count);
-		const String update_str = "Update time: " + std::to_string(_update_time.total_seconds());
-		const String draw_str = "Draw time: " + std::to_string(_draw_time.total_seconds());
+		const String update_str = "Update time: " + std::to_string(_update_time.total_milliseconds()) + "ms";
+		const String draw_str = "Draw time: " + std::to_string(_draw_time.total_milliseconds()) + "ms";
 
 		_sprite_batch.print(_font, { 0, 0 }, fps_str);
 		_sprite_batch.print(_font, { 0, 20 }, sprites_str);
