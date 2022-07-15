@@ -166,7 +166,7 @@ namespace unicore
 		_env = WAEnvironment::create(wasm_logger);
 
 		UC_LOG_INFO(wasm_logger) << "Loading release.wasm";
-		if (const auto data = resources.load<BinaryData>(L"release.wasm"_path))
+		if (const auto data = resources.load<BinaryData>(L"logic.wasm"_path))
 		{
 			_runtime = _env->new_runtime();
 			if (_runtime)
@@ -220,6 +220,20 @@ namespace unicore
 
 		_sprite_batch.begin();
 
+		// UPDATE STATE
+		s_state_time += time.delta();
+
+		static constexpr auto fps_lock = TimeSpan::from_seconds(1. / 60.);
+		while (s_state_time > fps_lock)
+		{
+			s_state->update(fps_lock);
+			s_state_time -= fps_lock;
+		}
+
+		// DRAW STATE
+		s_state->draw();
+
+		// DRAW CONSOLE
 		const auto size = _console.size();
 		for (int y = 0; y < size.y; y++)
 			for (int x = 0; x < size.x; x++)
@@ -241,17 +255,7 @@ namespace unicore
 				_sprite_batch.print(_font, pos, str, color);
 			}
 
-		s_state_time += time.delta();
-
-		static constexpr auto fps_lock = TimeSpan::from_seconds(1. / 60.);
-		while (s_state_time > fps_lock)
-		{
-			s_state->update(fps_lock);
-			s_state_time -= fps_lock;
-		}
-
-		s_state->draw();
-
+		// DRAW TEXT
 		const String fps_str = "FPS: " + std::to_string(fps());
 		_sprite_batch.print(_font, { 0, 0 }, fps_str);
 

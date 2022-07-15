@@ -1,0 +1,23 @@
+{
+  "name": "st-logic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests",
+    "build-debug": "asc index.ts --target debug && cp build/debug/logic.wasm ../../assets/",
+    "build-release": "asc index.ts --target release && cp build/release/logic.wasm ../../assets/"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "assemblyscript": "^0.20.13"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./build/release.js",
+      "types": "./build/release.d.ts"
+    }
+  }
+}

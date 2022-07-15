@@ -1,0 +1,25 @@
+{
+  "extends": "assemblyscript/std/assembly.json",
+  "targets": {
+    "debug": {
+      "outFile": "build/debug/logic.wasm",
+      "textFile": "build/debug/debug.wat",
+      "debug": true
+    },
+    "release": {
+      "outFile": "build/release/logic.wasm",
+      "textFile": "build/release/logic.wat",
+      "optimize": true,
+      "bindings": "raw",
+      "optimizeLevel": 3,
+      "shrinkLevel": 2,
+      "converge": false,
+      "noAssert": false
+    }
+  },
+  "options": {
+    "bindings": "esm",
+    "runtime": "incremental",
+    "sourceMap": true
+  }
+}
