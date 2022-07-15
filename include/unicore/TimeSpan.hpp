@@ -148,4 +148,7 @@ namespace unicore
 		static constexpr TimeSpan Zero = TimeSpan::from_milliseconds(0);
 		static constexpr TimeSpan OneSecond = TimeSpan::from_seconds(1.f);
 	};
+
+	class LogHelper;
+	extern LogHelper& operator << (LogHelper& helper, const TimeSpan& value);
 }

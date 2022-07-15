@@ -1,4 +1,5 @@
 #include "unicore/DateTime.hpp"
+#include "unicore/Logger.hpp"
 
 namespace unicore
 {
@@ -14,5 +15,11 @@ namespace unicore
 	DateTime DateTime::now() noexcept
 	{
 		return DateTime(ClockType::now());
+	}
+
+	LogHelper& operator<<(LogHelper& helper, const DateTime& time)
+	{
+		const auto value = time.to_time_t();
+		return helper << ctime(&value);
 	}
 }

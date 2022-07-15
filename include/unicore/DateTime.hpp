@@ -87,4 +87,7 @@ namespace unicore
 		const auto duration = a.data() - b.data();
 		return TimeSpan::from_duration(duration);
 	}
+
+	class LogHelper;
+	extern LogHelper& operator << (LogHelper& helper, const DateTime& time);
 }
