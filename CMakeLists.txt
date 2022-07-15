@@ -162,7 +162,7 @@ endfunction()
 function(unicore_init_assets target_name directory)
 	if(EMSCRIPTEN)
 		target_link_libraries(${target_name} PRIVATE
-			"--preload-file ${directory}"
+			"--preload-file ${directory}@/"
 		)
 	endif()
 	if (MSVC)

@@ -243,7 +243,7 @@ namespace unicore
 
 		s_state_time += time.delta();
 
-		static constexpr auto fps_lock = TimeSpan::from_seconds(1. / 30.);
+		static constexpr auto fps_lock = TimeSpan::from_seconds(1. / 60.);
 		while (s_state_time > fps_lock)
 		{
 			s_state->update(fps_lock);

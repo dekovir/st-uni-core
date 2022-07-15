@@ -6,7 +6,6 @@
 #include "unicore/Sprite.hpp"
 #include "unicore/SpriteBatch.hpp"
 
-
 namespace unicore
 {
 	class WAEnvironment;
@@ -19,7 +18,7 @@ namespace unicore
 		explicit MyCore(const CoreSettings& settings);
 		~MyCore() override;
 
-	//protected:
+		//protected:
 		Shared<Font> _font;
 		DefaultConsole _console;
 		Shared<Sprite> _spr;
