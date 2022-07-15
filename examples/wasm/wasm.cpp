@@ -1,6 +1,7 @@
 #include "wasm.hpp"
 #include "UnicoreMain.h"
 #include "unicore/Time.hpp"
+#include "unicore/Timer.hpp"
 #include "unicore/Data.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/TimeSpan.hpp"
@@ -144,6 +145,7 @@ namespace unicore
 		m3ApiGetArg(float, y);
 
 		s_example->_sprite_batch.draw(s_example->_spr, Vector2f(x, y));
+		s_example->_sprite_count++;
 
 		m3ApiSuccess();
 	}
@@ -226,12 +228,21 @@ namespace unicore
 		static constexpr auto fps_lock = TimeSpan::from_seconds(1. / 60.);
 		while (s_state_time > fps_lock)
 		{
+			const auto t_start = Timer::now();
 			s_state->update(fps_lock);
+			const auto t_end = Timer::now();
+			_update_time = t_end - t_start;
 			s_state_time -= fps_lock;
 		}
 
 		// DRAW STATE
-		s_state->draw();
+		_sprite_count = 0;
+		{
+			const auto t_start = Timer::now();
+			s_state->draw();
+			const auto t_end = Timer::now();
+			_draw_time = t_end - t_start;
+		}
 
 		// DRAW CONSOLE
 		const auto size = _console.size();
@@ -257,7 +268,14 @@ namespace unicore
 
 		// DRAW TEXT
 		const String fps_str = "FPS: " + std::to_string(fps());
+		const String sprites_str = "Sprites: " + std::to_string(_sprite_count);
+		const String update_str = "Update time: " + std::to_string(_update_time.total_seconds());
+		const String draw_str = "Draw time: " + std::to_string(_draw_time.total_seconds());
+
 		_sprite_batch.print(_font, { 0, 0 }, fps_str);
+		_sprite_batch.print(_font, { 0, 20 }, sprites_str);
+		_sprite_batch.print(_font, { 0, 40 }, update_str);
+		_sprite_batch.print(_font, { 0, 60 }, draw_str);
 
 		_sprite_batch.end();
 	}
