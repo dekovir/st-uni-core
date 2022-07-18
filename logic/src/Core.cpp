@@ -60,18 +60,24 @@ namespace unicore
 	// TODO: Refactor this
 	namespace details
 	{
+		static Shared<Logger> logger;
 		static Shared<SDLRenderer> renderer;
 
 		static SDLRenderer& get_sdl_renderer(const Core::Settings& settings)
 		{
 			if (!renderer)
-				renderer = SDLRenderer::create(settings.platform.logger);
+			{
+				logger = std::make_shared<ProxyLogger>("[Renderer] ", settings.platform.logger);
+				renderer = SDLRenderer::create(*logger);
+			}
+
 			return *renderer;
 		}
 
 		static void remove_sdl_renderer()
 		{
 			renderer = nullptr;
+			logger = nullptr;
 		};
 	}
 
