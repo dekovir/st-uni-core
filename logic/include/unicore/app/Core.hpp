@@ -1,13 +1,12 @@
 #pragma once
-#include "unicore/TimeSpan.hpp"
 #include "unicore/Platform.hpp"
-#include "unicore/Time.hpp"
+#include "unicore/TimeSpan.hpp"
 #include "unicore/Context.hpp"
-#include "unicore/SDLRenderer.hpp"
 
 namespace unicore
 {
 	class Plugin;
+	class Renderer;
 	class SDLRenderer;
 
 	class Core
@@ -43,49 +42,16 @@ namespace unicore
 	public:
 		Renderer& renderer;
 
-		explicit RendererCore(const Settings& settings, Renderer& renderer_)
-			: Core(settings)
-			, renderer(renderer_)
-		{
-			renderer.register_module(context);
-		}
+		explicit RendererCore(const Settings& settings, Renderer& renderer_);
 
-		~RendererCore() override
-		{
-			renderer.unregister_module(context);
-		}
+		~RendererCore() override;
 
 		UC_NODISCARD constexpr int fps() const { return _fps_current; }
 
-		void update() override
-		{
-			Core::update();
+		void update() override;
 
-			_fps_time += time.delta();
-			if (_fps_time >= TimeSpanConst::OneSecond)
-			{
-				_fps_current = _fps_counter;
-
-				_fps_counter = 0;
-				_fps_time -= TimeSpanConst::OneSecond;
-			}
-		}
-
-		virtual void draw()
-		{
-			_fps_counter++;
-			if (renderer.begin_scene())
-			{
-				on_draw();
-				renderer.end_scene();
-			}
-		}
-
-		virtual void frame()
-		{
-			update();
-			draw();
-		}
+		virtual void draw();
+		virtual void frame();
 
 	protected:
 		virtual void on_draw() = 0;
@@ -96,7 +62,7 @@ namespace unicore
 		TimeSpan _fps_time = TimeSpanConst::Zero;
 	};
 
-	template<typename RendererType = Renderer>
+	template<typename RendererType>
 	class RendererCoreT : public RendererCore
 	{
 	public:
