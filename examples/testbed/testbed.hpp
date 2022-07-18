@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/app/Core.hpp"
+#include "unicore/app/SDLCore.hpp"
 #include "unicore/SpriteBatch.hpp"
 #include "example.hpp"
 

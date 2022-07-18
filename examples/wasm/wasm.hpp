@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/app/Core.hpp"
+#include "unicore/app/SDLCore.hpp"
 #include "unicore/Console.hpp"
 #include "unicore/Random.hpp"
 #include "unicore/Font.hpp"
