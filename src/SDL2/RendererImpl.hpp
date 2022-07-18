@@ -38,6 +38,12 @@ namespace unicore
 		void set_viewport(const Optional<Recti>& rect) override;
 		UC_NODISCARD const Optional<Recti>& get_viewport() const override { return _viewport; }
 
+		void set_scale(const Vector2f& value) override;
+		UC_NODISCARD const Vector2f& get_scale() const override { return _scale; }
+
+		void set_logical_size(const Vector2i& size) override;
+		UC_NODISCARD const Vector2i& get_logical_size() const override { return _logical_size; }
+
 		void set_clip(const Optional<Recti>& clip_rect) override;
 		UC_NODISCARD const Optional<Recti>& get_clip() const override { return _clip_rect; }
 
@@ -98,10 +104,15 @@ namespace unicore
 		// STATES
 		Optional<Recti> _viewport;
 		Optional<Recti> _clip_rect;
+		Vector2f _scale;
+		Vector2i _logical_size;
 		uint32_t _draw_calls = 0;
 		Color4b _color = ColorConst4b::White;
 
 		void update_size();
+		void update_scale();
+		void update_viewport();
+		void update_logical_size();
 
 		static SDL_RendererFlip convert_flip(SDLRenderFlipFlags flags);
 	};

@@ -20,6 +20,12 @@ namespace unicore
 			return dst;
 		}
 
+		static Recti& convert(const SDL_Rect& src, Recti& dst)
+		{
+			dst = { src.x, src.y, src.w, src.h };
+			return dst;
+		}
+
 		static SDL_FRect& convert(const Rectf& src, SDL_FRect& dst)
 		{
 			dst = { src.x, src.y, src.w, src.h };

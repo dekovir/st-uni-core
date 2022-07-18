@@ -66,6 +66,9 @@ namespace unicore
 		}
 
 		update_size();
+		update_scale();
+		update_viewport();
+		update_logical_size();
 	}
 
 	RendererImpl::~RendererImpl()
@@ -147,6 +150,27 @@ namespace unicore
 		{
 			SDL_RenderSetViewport(_renderer, nullptr);
 		}
+
+		update_scale();
+		update_logical_size();
+	}
+
+	void RendererImpl::set_scale(const Vector2f& value)
+	{
+		_scale = value;
+		SDL_RenderSetScale(_renderer, _scale.x, _scale.y);
+
+		update_viewport();
+		update_logical_size();
+	}
+
+	void RendererImpl::set_logical_size(const Vector2i& size)
+	{
+		_logical_size = size;
+		SDL_RenderSetLogicalSize(_renderer, _logical_size.x, _logical_size.y);
+
+		update_scale();
+		update_viewport();
 	}
 
 	void RendererImpl::set_clip(const Optional<Recti>& clip_rect)
@@ -412,6 +436,30 @@ namespace unicore
 	void RendererImpl::update_size()
 	{
 		SDL_GetRendererOutputSize(_renderer, &_size.x, &_size.y);
+	}
+
+	void RendererImpl::update_scale()
+	{
+		SDL_RenderGetScale(_renderer, &_scale.x, &_scale.y);
+	}
+
+	void RendererImpl::update_viewport()
+	{
+		SDL_Rect r;
+		SDL_RenderGetViewport(_renderer, &r);
+		if (r.x == 0 && r.y == 0 && r.w == _size.x && r.h == _size.y)
+			_viewport = std::nullopt;
+		else
+		{
+			Recti viewport;
+			SDL2Utils::convert(r, viewport);
+			_viewport = viewport;
+		}
+	}
+
+	void RendererImpl::update_logical_size()
+	{
+		SDL_RenderGetLogicalSize(_renderer, &_logical_size.x, &_logical_size.y);
 	}
 
 	SDL_RendererFlip RendererImpl::convert_flip(SDLRenderFlipFlags flags)

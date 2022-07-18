@@ -53,32 +53,30 @@ namespace unicore
 		// If there's a scale factor set by the user, use that instead
 		// If the user has specified a scale factor to SDL_Renderer already via SDL_RenderSetScale(), SDL will scale whatever we pass
 		// to SDL_RenderGeometryRaw() by that scale factor. In that case we don't want to be also scaling it ourselves here.
-		float rsx = 1.0f;
-		float rsy = 1.0f;
-		//SDL_RenderGetScale(bd->SDLRenderer, &rsx, &rsy);
+		const auto scale = _render.get_scale();
 		ImVec2 render_scale;
-		render_scale.x = (rsx == 1.0f) ? draw_data->FramebufferScale.x : 1.0f;
-		render_scale.y = (rsy == 1.0f) ? draw_data->FramebufferScale.y : 1.0f;
+		render_scale.x = (scale.x == 1.0f) ? draw_data->FramebufferScale.x : 1.0f;
+		render_scale.y = (scale.y == 1.0f) ? draw_data->FramebufferScale.y : 1.0f;
 
 		// Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
-		int fb_width = (int)(draw_data->DisplaySize.x * render_scale.x);
-		int fb_height = (int)(draw_data->DisplaySize.y * render_scale.y);
+		const int fb_width = static_cast<int>(draw_data->DisplaySize.x * render_scale.x);
+		const int fb_height = static_cast<int>(draw_data->DisplaySize.y * render_scale.y);
 		if (fb_width == 0 || fb_height == 0)
 			return;
 
 		// Backup SDL_Renderer state that will be modified to restore it afterwards
 		struct BackupSDLRendererState
 		{
-			Recti Viewport;
-			Optional<Recti> ClipRect;
+			Optional<Recti> viewport;
+			Optional<Recti> clip_rect;
 		};
 		BackupSDLRendererState old = {};
 
-		old.ClipRect = _render.get_clip();
-		//SDL_RenderGetViewport(bd->SDLRenderer, &old.Viewport);
+		old.clip_rect = _render.get_clip();
+		old.viewport = _render.get_viewport();
 
 		// Will project scissor/clipping rectangles into framebuffer space
-		ImVec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
+		ImVec2 clip_off = draw_data->DisplayPos; // (0,0) unless using multi-viewports
 		ImVec2 clip_scale = render_scale;
 
 		// Render command lists
@@ -141,13 +139,13 @@ namespace unicore
 		}
 
 		// Restore modified SDL_Renderer state
-		//SDL_RenderSetViewport(bd->SDLRenderer, &old.Viewport);
-		_render.set_clip(old.ClipRect);
+		_render.set_viewport(old.viewport);
+		_render.set_clip(old.clip_rect);
 	}
 
 	void ImGuiRender2D::setup_render_state()
 	{
-		//SDL_RenderSetViewport(bd->SDLRenderer, NULL);
+		_render.set_viewport(std::nullopt);
 		_render.set_clip(std::nullopt);
 	}
 }
