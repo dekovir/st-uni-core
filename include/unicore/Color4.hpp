@@ -1,4 +1,5 @@
 #pragma once
+#include "unicore/Math.hpp"
 #include "unicore/Random.hpp"
 #include "unicore/PixelFormat.hpp"
 

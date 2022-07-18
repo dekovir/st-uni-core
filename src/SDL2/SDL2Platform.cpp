@@ -10,6 +10,14 @@ namespace unicore
 		, _provider_logger("[FS] ", _logger)
 		, _provider(_provider_logger)
 	{
+		SDL_SetMainReady();
+		SDL_Init(SDL_INIT_EVENTS);
+
+		SDL_version version;
+		SDL_GetVersion(&version);
+		UC_LOG_INFO(_logger) << "SDL version "
+			<< version.major << "." << version.minor << "." << version.minor;
+
 		resources.add_provider(_provider);
 	}
 
