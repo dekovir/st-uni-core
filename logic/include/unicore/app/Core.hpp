@@ -38,13 +38,12 @@ namespace unicore
 		List<Unique<Plugin>> _plugins;
 	};
 
-	template<typename RendererType = Renderer>
 	class RendererCore : public Core
 	{
 	public:
-		RendererType& renderer;
+		Renderer& renderer;
 
-		explicit RendererCore(const Settings& settings, RendererType& renderer_)
+		explicit RendererCore(const Settings& settings, Renderer& renderer_)
 			: Core(settings)
 			, renderer(renderer_)
 		{
@@ -97,7 +96,21 @@ namespace unicore
 		TimeSpan _fps_time = TimeSpanConst::Zero;
 	};
 
-	class SDLCore : public RendererCore<SDLRenderer>
+	template<typename RendererType = Renderer>
+	class RendererCoreT : public RendererCore
+	{
+	public:
+		RendererType& renderer;
+
+		explicit RendererCoreT(const Settings& settings, RendererType& renderer_)
+			: RendererCore(settings, renderer_)
+			, renderer(renderer_)
+		{
+			renderer.register_module(context);
+		}
+	};
+
+	class SDLCore : public RendererCoreT<SDLRenderer>
 	{
 	public:
 		explicit SDLCore(const Settings& settings);

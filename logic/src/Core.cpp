@@ -76,12 +76,13 @@ namespace unicore
 	}
 
 	SDLCore::SDLCore(const Settings& settings)
-		: RendererCore<SDLRenderer>(settings, details::get_sdl_renderer(settings))
+		: RendererCoreT<SDLRenderer>(settings, details::get_sdl_renderer(settings))
 	{
 	}
 
 	SDLCore::~SDLCore()
 	{
-		details::remove_sdl_renderer();
+		// TODO: Implement delete logic
+		//details::remove_sdl_renderer();
 	}
 }

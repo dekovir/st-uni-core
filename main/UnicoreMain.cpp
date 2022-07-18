@@ -10,12 +10,12 @@ namespace unicore
 	public:
 		Unique<Platform> platform;
 		Unique<Core> core;
-		RendererCore<>* core_render = nullptr;
+		RendererCore* core_render = nullptr;
 
 		State()
 			: platform(Platform::create())
 			, core(create_main_core({ *platform }))
-			, core_render(dynamic_cast<RendererCore<>*>(core.get()))
+			, core_render(dynamic_cast<RendererCore*>(core.get()))
 		{
 		}
 
