@@ -3,7 +3,6 @@
 #include "unicore/Input.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/Texture.hpp"
-#include "unicore/Renderer2D.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore

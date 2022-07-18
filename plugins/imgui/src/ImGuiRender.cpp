@@ -2,6 +2,7 @@
 #include "unicore/Logger.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Texture.hpp"
+#include "unicore/SDLRenderer.hpp"
 
 namespace unicore
 {
@@ -32,7 +33,7 @@ namespace unicore
 		}
 	}
 
-	ImGuiRender2D::ImGuiRender2D(Renderer2D& render, Logger& logger)
+	ImGuiRender2D::ImGuiRender2D(SDLRenderer& render, Logger& logger)
 		: ImGuiRender(logger), _render(render)
 	{
 	}

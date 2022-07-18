@@ -7,7 +7,7 @@ namespace unicore
 	class Texture;
 	class Sprite;
 	class Font;
-	class Renderer2D;
+	class SDLRenderer;
 
 	class SpriteBatch : public Object
 	{
@@ -19,7 +19,7 @@ namespace unicore
 		void end();
 
 		void clear();
-		void render(Renderer2D& renderer) const;
+		void render(SDLRenderer& renderer) const;
 
 		// TRIANGLE
 		SpriteBatch& draw(const Shared<Texture>& texture,

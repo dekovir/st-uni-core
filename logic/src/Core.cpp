@@ -1,6 +1,7 @@
 #include "unicore/app/Core.hpp"
-#include "unicore/Time.hpp"
+#include "unicore/app/Core.hpp"
 #include "unicore/Input.hpp"
+#include "unicore/SDLRenderer.hpp"
 
 #if defined(UNICORE_USE_XML)
 #	include "unicore/xml/XMLPlugin.hpp"
@@ -12,17 +13,15 @@
 
 namespace unicore
 {
-	Core::Core(const CoreSettings& settings)
+	Core::Core(const Settings& settings)
 		: platform(settings.platform)
 		, logger(settings.platform.logger)
 		, time(settings.platform.time)
 		, input(settings.platform.input)
 		, resources(settings.platform.resources)
-		, renderer(settings.render)
 	{
 		platform.register_module(context);
 		input.register_module(context);
-		renderer.register_module(context);
 		resources.register_module(context);
 
 #if defined(UNICORE_USE_XML)
@@ -47,7 +46,6 @@ namespace unicore
 
 		resources.unregister_module(context);
 		platform.unregister_module(context);
-		renderer.unregister_module(context);
 		input.unregister_module(context);
 	}
 
@@ -56,33 +54,34 @@ namespace unicore
 		platform.poll_events();
 
 		if (time.delta() > TimeSpanConst::Zero)
-		{
 			on_update();
-
-			_fps_time += time.delta();
-			if (_fps_time >= TimeSpanConst::OneSecond)
-			{
-				_fps_current = _fps_counter;
-
-				_fps_counter = 0;
-				_fps_time -= TimeSpanConst::OneSecond;
-			}
-		}
 	}
 
-	void Core::draw()
+	// TODO: Refactor this
+	namespace details
 	{
-		_fps_counter++;
-		if (renderer.begin_scene())
+		static Shared<SDLRenderer> renderer;
+
+		static SDLRenderer& get_sdl_renderer(const Core::Settings& settings)
 		{
-			on_draw();
-			renderer.end_scene();
+			if (!renderer)
+				renderer = SDLRenderer::create(settings.platform.logger);
+			return *renderer;
 		}
+
+		static void remove_sdl_renderer()
+		{
+			renderer = nullptr;
+		};
 	}
 
-	void Core::frame()
+	SDLCore::SDLCore(const Settings& settings)
+		: RendererCore<SDLRenderer>(settings, details::get_sdl_renderer(settings))
 	{
-		update();
-		draw();
+	}
+
+	SDLCore::~SDLCore()
+	{
+		details::remove_sdl_renderer();
 	}
 }

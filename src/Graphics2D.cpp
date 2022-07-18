@@ -1,4 +1,5 @@
 #include "unicore/Graphics2D.hpp"
+#include "unicore/SDLRenderer.hpp"
 
 namespace unicore
 {
@@ -23,27 +24,35 @@ namespace unicore
 		_current = {};
 	}
 
-	void Graphics2D::render(Renderer2D& renderer) const
+	void Graphics2D::render(SDLRenderer& renderer) const
 	{
 		for (const auto& batch : _batches)
 		{
-			renderer.set_color(batch.color);
+			renderer.set_draw_color(batch.color);
 			switch (batch.type)
 			{
 			case BatchType::Point:
-				renderer.draw_geometry(GeometryType::Points, &_points[batch.start], batch.count);
+				renderer.draw_points_f(&_points[batch.start], batch.count);
 				break;
 
 			case BatchType::Line:
-				renderer.draw_geometry(GeometryType::LineList, &_points[batch.start], batch.count);
+				for (unsigned i = 0; i + 1 < batch.count; i += 2)
+				{
+					const auto& p0 = _points[batch.start + i + 0];
+					const auto& p1 = _points[batch.start + i + 1];
+					renderer.draw_line_f(p0, p1);
+				}
 				break;
 
 			case BatchType::Rect:
-				renderer.draw_geometry(GeometryType::Rects, &_points[batch.start], batch.count);
-				break;
-
 			case BatchType::RectFilled:
-				renderer.draw_geometry(GeometryType::RectsFilled, &_points[batch.start], batch.count);
+				for (unsigned i = 0; i + 1 < batch.count; i += 2)
+				{
+					const auto& p0 = _points[batch.start + i + 0];
+					const auto& p1 = _points[batch.start + i + 1];
+					const Rectf r(p0, p1);
+					renderer.draw_rect_f(r, batch.type == BatchType::RectFilled);
+				}
 				break;
 
 			default:

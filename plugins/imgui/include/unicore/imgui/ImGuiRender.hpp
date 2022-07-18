@@ -1,9 +1,14 @@
 #pragma once
+#include "unicore/Object.hpp"
 #include "unicore/imgui/ImGuiDefs.hpp"
-#include "unicore/Renderer2D.hpp"
 
 namespace unicore
 {
+	class Logger;
+	class Texture;
+	class Renderer;
+	class SDLRenderer;
+
 	class ImGuiRender : public Object
 	{
 		UC_OBJECT(ImGuiRender, Object)
@@ -24,14 +29,14 @@ namespace unicore
 	{
 		UC_OBJECT(ImGuiRender2D, Object)
 	public:
-		ImGuiRender2D(Renderer2D& render, Logger& logger);
+		ImGuiRender2D(SDLRenderer& render, Logger& logger);
 
 		void begin_frame(ImGui::IO& io) override;
 
 		void render(const ImDrawData* data) override;
 
 	protected:
-		Renderer2D& _render;
+		SDLRenderer& _render;
 
 		void setup_render_state();
 	};

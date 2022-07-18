@@ -5,7 +5,7 @@
 #include "unicore/Data.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/TimeSpan.hpp"
-#include "unicore/Renderer2D.hpp"
+#include "unicore/SDLRenderer.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/wasm/WAEnvironment.hpp"
 #include "unicore/wasm/WAModule.hpp"
@@ -148,8 +148,8 @@ namespace unicore
 		m3ApiSuccess();
 	}
 
-	MyCore::MyCore(const CoreSettings& settings)
-		: Core(settings), _console(80, 20)
+	MyCore::MyCore(const Settings& settings)
+		: SDLCore(settings), _console(80, 20)
 	{
 		UC_LOG_INFO(logger) << "Starting";
 

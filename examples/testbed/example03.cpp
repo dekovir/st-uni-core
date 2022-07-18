@@ -1,5 +1,4 @@
 #include "example03.hpp"
-#include "unicore/Renderer2D.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore

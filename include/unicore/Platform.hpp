@@ -1,5 +1,4 @@
 #pragma once
-#include "unicore/Renderer2D.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore

@@ -1,4 +1,5 @@
 #pragma once
+#include "unicore/Rect.hpp"
 #include "unicore/Stream.hpp"
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_USE_SDL2)

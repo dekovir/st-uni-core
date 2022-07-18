@@ -3,9 +3,9 @@
 
 namespace unicore
 {
-	extern Unique<Core> create_main_core(const CoreSettings& settings);
+	extern Unique<Core> create_main_core(const Core::Settings& settings);
 }
 
 #define UNICORE_MAIN_CORE(CoreType) \
-	Unique<Core> create_main_core(const CoreSettings& settings) \
+	Unique<Core> create_main_core(const Core::Settings& settings) \
 	{ return make_unique<CoreType>(settings); }

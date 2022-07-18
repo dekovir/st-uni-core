@@ -1,7 +1,6 @@
 #include "example01.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Transform2.hpp"
-#include "unicore/Renderer2D.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore

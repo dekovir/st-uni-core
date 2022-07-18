@@ -2,6 +2,7 @@
 #include "unicore/app/Core.hpp"
 #include "unicore/Graphics2D.hpp"
 #include "unicore/SpriteBatch.hpp"
+#include "unicore/SDLRenderer.hpp"
 
 namespace unicore
 {
@@ -21,10 +22,10 @@ namespace unicore
 		void update(const Vector2i& size, float delta);
 	};
 
-	class MyCore : public Core
+	class MyCore : public SDLCore
 	{
 	public:
-		explicit MyCore(const CoreSettings& settings);
+		explicit MyCore(const Settings& settings);
 
 	protected:
 		Shared<Texture> _tex;

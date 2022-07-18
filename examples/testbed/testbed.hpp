@@ -5,10 +5,10 @@
 
 namespace unicore
 {
-	class MyCore : public Core
+	class MyCore : public SDLCore
 	{
 	public:
-		explicit MyCore(const CoreSettings& settings);
+		explicit MyCore(const Settings& settings);
 
 	protected:
 		Shared<Example> _example;

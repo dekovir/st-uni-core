@@ -27,8 +27,8 @@ namespace unicore
 		angle += angle_speed * delta;
 	}
 
-	MyCore::MyCore(const CoreSettings& settings)
-		: Core(settings)
+	MyCore::MyCore(const Settings& settings)
+		: SDLCore(settings)
 	{
 		UC_LOG_INFO(logger) << "Starting";
 

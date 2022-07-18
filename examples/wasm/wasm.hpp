@@ -12,10 +12,10 @@ namespace unicore
 	class WARuntime;
 	class WAModule;
 
-	class MyCore : public Core
+	class MyCore : public SDLCore
 	{
 	public:
-		explicit MyCore(const CoreSettings& settings);
+		explicit MyCore(const Settings& settings);
 		~MyCore() override;
 
 		//protected:

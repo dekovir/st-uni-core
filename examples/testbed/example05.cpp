@@ -2,7 +2,6 @@
 
 #include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
-#include "unicore/Renderer2D.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore

@@ -1,9 +1,12 @@
 #pragma once
-#include "unicore/Renderer2D.hpp"
+#include "unicore/Color4.hpp"
+#include "unicore/Rect.hpp"
 #include "unicore/Transform2.hpp"
 
 namespace unicore
 {
+	class SDLRenderer;
+
 	class Graphics2D
 	{
 	public:
@@ -15,7 +18,7 @@ namespace unicore
 		void end();
 
 		void clear();
-		void render(Renderer2D& renderer) const;
+		void render(SDLRenderer& renderer) const;
 
 		Graphics2D& move(const Vector2f& move);
 		Graphics2D& rotate(Radians angle);

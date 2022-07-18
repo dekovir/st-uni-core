@@ -9,16 +9,21 @@ namespace unicore
 	{
 	public:
 		Unique<Platform> platform;
-		ProxyLogger render_logger;
-		Unique<Renderer2D> render;
 		Unique<Core> core;
+		RendererCore<>* core_render = nullptr;
 
 		State()
 			: platform(Platform::create())
-			, render_logger("[Render] ", platform->logger)
-			, render(Renderer2D::create(render_logger))
-			, core(create_main_core({ *platform, *render }))
+			, core(create_main_core({ *platform }))
+			, core_render(dynamic_cast<RendererCore<>*>(core.get()))
 		{
+		}
+
+		void frame()
+		{
+			if (core_render)
+				core_render->frame();
+			else core->update();
 		}
 	};
 
@@ -41,7 +46,7 @@ namespace unicore
 
 	void state_frame()
 	{
-		g_state->core->frame();
+		g_state->frame();
 	}
 }
 
