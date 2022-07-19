@@ -1,16 +1,19 @@
 #pragma once
-#include "unicore/app/Core.hpp"
+#include "unicore/app/DisplayCore.hpp"
 #include "unicore/TimeSpan.hpp"
 #include "unicore/Renderer.hpp"
 
 namespace unicore
 {
-	class RendererCore : public Core
+	class RendererCore : public DisplayCore
 	{
+		ProxyLogger _renderer_logger;
 	public:
+		using RendererFactory = std::function<Renderer&(Logger& logger, Display& display)>;
+
 		Renderer& renderer;
 
-		explicit RendererCore(const Settings& settings, Renderer& renderer_);
+		explicit RendererCore(const DisplayCoreSettings& settings, const RendererFactory& renderer_factory);
 
 		~RendererCore() override;
 
@@ -35,11 +38,13 @@ namespace unicore
 	class RendererCoreT : public RendererCore
 	{
 	public:
+		using RendererFactoryT = std::function<RendererType&(Logger& logger, Display& display)>;
+
 		RendererType& renderer;
 
-		explicit RendererCoreT(const Settings& settings, RendererType& renderer_)
-			: RendererCore(settings, renderer_)
-			, renderer(renderer_)
+		explicit RendererCoreT(const DisplayCoreSettings& settings, const RendererFactoryT& renderer_factory)
+			: RendererCore(settings, renderer_factory)
+			, renderer(static_cast<RendererType&>(RendererCore::renderer))
 		{
 			renderer.register_module(context);
 		}

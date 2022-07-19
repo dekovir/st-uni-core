@@ -11,14 +11,21 @@ namespace unicore
 		, _provider(_provider_logger)
 	{
 		SDL_SetMainReady();
-		SDL_Init(SDL_INIT_EVENTS);
+		SDL_Init(SDL_INIT_EVENTS | SDL_INIT_VIDEO);
 
 		SDL_version version;
 		SDL_GetVersion(&version);
 		UC_LOG_INFO(_logger) << "SDL version "
 			<< version.major << "." << version.minor << "." << version.minor;
 
+		update_native_size();
+
 		resources.add_provider(_provider);
+	}
+
+	Unique<Display> SDL2Platform::create_display(const DisplaySettings& settings)
+	{
+		return std::make_unique<SDL2Display>(settings);
 	}
 
 	bool SDL2Platform::running() const
@@ -57,6 +64,21 @@ namespace unicore
 
 		_time.update();
 		_input.update();
+	}
+
+	void SDL2Platform::update_native_size()
+	{
+		SDL_DisplayMode mode;
+		if (SDL_GetDesktopDisplayMode(0, &mode) == 0)
+		{
+			_native_size.x = mode.w;
+			_native_size.y = mode.h;
+		}
+		else
+		{
+			_native_size.set(0, 0);
+			UC_LOG_ERROR(_logger) << SDL_GetError();
+		}
 	}
 }
 #endif

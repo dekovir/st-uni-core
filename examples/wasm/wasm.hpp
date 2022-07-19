@@ -15,7 +15,7 @@ namespace unicore
 	class MyCore : public SDLCore
 	{
 	public:
-		explicit MyCore(const Settings& settings);
+		explicit MyCore(const CoreSettings& settings);
 		~MyCore() override;
 
 		//protected:

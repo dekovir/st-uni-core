@@ -8,7 +8,7 @@ namespace unicore
 	class MyCore : public SDLCore
 	{
 	public:
-		explicit MyCore(const Settings& settings);
+		explicit MyCore(const CoreSettings& settings);
 
 	protected:
 		Shared<Example> _example;

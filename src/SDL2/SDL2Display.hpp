@@ -5,33 +5,19 @@
 
 namespace unicore
 {
-	enum class SDL2DisplayFlag
-	{
-		Resizable = 1 << 0,
-		Borderless = 1 << 1,
-		Fullscreen = 1 << 2,
-	};
-	UNICORE_ENUMFLAGS(SDL2DisplayFlag, SDL2DisplayFlags);
-
 	class SDL2Display : public Display
 	{
+		UC_OBJECT(SDL2Display, Display)
 	public:
-		struct Settings
-		{
-			Logger& logger;
-			StringView title;
-			Vector2i size;
-			SDL2DisplayFlags flags;
-		};
 
-		SDL2Display(SDL_Window* handle, Logger& logger);
+		explicit SDL2Display(const DisplaySettings& settings);
+		~SDL2Display() override;
 
 		UC_NODISCARD const Vector2i& size() const override { return _size; }
-		UC_NODISCARD void* handle() const override;
+		UC_NODISCARD void* native_handle() const override;
+		UC_NODISCARD SDL_Window* handle() const { return _handle; }
 
 		void apply(const SDL_WindowEvent& evt);
-
-		static Shared<SDL2Display> create(const Settings& settings);
 
 	protected:
 		SDL_Window* _handle;
@@ -40,7 +26,7 @@ namespace unicore
 
 		void update_size();
 
-		static Uint32 convert_flags(SDL2DisplayFlags flags);
+		static Uint32 convert_flags(DisplayFlags flags);
 	};
 }
 #endif

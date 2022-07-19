@@ -13,12 +13,12 @@
 
 namespace unicore
 {
-	Core::Core(const Settings& settings)
+	Core::Core(const CoreSettings& settings)
 		: platform(settings.platform)
-		, logger(settings.platform.logger)
-		, time(settings.platform.time)
-		, input(settings.platform.input)
-		, resources(settings.platform.resources)
+		, logger(platform.logger)
+		, time(platform.time)
+		, input(platform.input)
+		, resources(platform.resources)
 	{
 		platform.register_module(context);
 		input.register_module(context);

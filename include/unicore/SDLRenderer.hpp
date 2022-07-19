@@ -5,6 +5,8 @@
 
 namespace unicore
 {
+	class Display;
+
 	enum class SDLRenderFlip
 	{
 		Horizontal = 1 << 0,
@@ -82,6 +84,6 @@ namespace unicore
 			const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect,
 			Degrees angle, const Optional<Vector2f>& center, SDLRenderFlipFlags flip) = 0;
 
-		static Shared<SDLRenderer> create(Logger& logger);
+		static Unique<SDLRenderer> create(Logger& logger, Display& display);
 	};
 }

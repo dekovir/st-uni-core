@@ -8,16 +8,10 @@ namespace unicore
 	{
 	}
 
-	Shared<SDLRenderer> SDLRenderer::create(Logger& logger)
+	Unique<SDLRenderer> SDLRenderer::create(Logger& logger, Display& display)
 	{
 #if defined(UNICORE_USE_SDL2)
-		SDL2RenderSettings settings;
-		settings.size = VectorConst2i::Zero;
-		//settings.size = Vector2i(800, 600);
-		settings.resizeable = false;
-		settings.borderless = false;
-		settings.fullscreen = false;
-		return make_unique<RendererImpl>(logger, settings);
+		return RendererImpl::create(logger, display);
 #else
 		UC_STATIC_ASSERT_ALWAYS("Unknown platform");
 #endif

@@ -7,20 +7,13 @@
 
 namespace unicore
 {
-	struct SDL2RenderSettings
-	{
-		const char* title = "Title";
-		Vector2i size = { 800, 600 };
-		bool resizeable = false;
-		bool borderless = false;
-		bool fullscreen = false;
-	};
+	class SDL2Display;
 
 	class RendererImpl : public SDLRenderer
 	{
 		UC_OBJECT(RendererImpl, SDLRenderer)
 	public:
-		RendererImpl(Logger& logger, const SDL2RenderSettings& settings);
+		RendererImpl(Logger& logger, SDL2Display& display);
 		~RendererImpl() override;
 
 		UC_NODISCARD const Vector2i& screen_size() const override { return _size; }
@@ -96,8 +89,10 @@ namespace unicore
 			const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect,
 			Degrees angle, const Optional<Vector2f>& center, SDLRenderFlipFlags flip) override;
 
+		static Unique<RendererImpl> create(Logger& logger, Display& display);
+
 	protected:
-		SDL_Window* _window;
+		SDL2Display& _display;
 		SDL_Renderer* _renderer;
 		Vector2i _size = VectorConst2i::Zero;
 

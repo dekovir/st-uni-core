@@ -1,9 +1,9 @@
 #pragma once
 #include "unicore/ResourceCache.hpp"
+#include "unicore/Display.hpp"
 
 namespace unicore
 {
-	class Logger;
 	class Time;
 	class Input;
 
@@ -26,6 +26,10 @@ namespace unicore
 
 		ProxyLogger resources_logger;
 		ResourceCache resources;
+
+		UC_NODISCARD virtual const Vector2i& native_size() const = 0;
+
+		virtual Unique<Display> create_display(const DisplaySettings& settings) = 0;
 
 		UC_NODISCARD virtual bool running() const = 0;
 		virtual void quit() = 0;

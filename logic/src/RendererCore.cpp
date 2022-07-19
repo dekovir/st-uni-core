@@ -3,9 +3,10 @@
 
 namespace unicore
 {
-	RendererCore::RendererCore(const Settings& settings, Renderer& renderer_)
-		: Core(settings)
-		, renderer(renderer_)
+	RendererCore::RendererCore(const DisplayCoreSettings& settings, const RendererFactory& renderer_factory)
+		: DisplayCore(settings)
+		, _renderer_logger("Renderer", platform.logger)
+		, renderer(renderer_factory(_renderer_logger, display))
 	{
 		renderer.register_module(context);
 	}

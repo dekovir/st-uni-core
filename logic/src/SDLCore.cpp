@@ -5,35 +5,25 @@ namespace unicore
 	// TODO: Refactor this
 	namespace details
 	{
-		static Shared<Logger> logger;
-		static Shared<SDLRenderer> renderer;
+		Unique<SDLRenderer> renderer;
 
-		static SDLRenderer& get_sdl_renderer(const Core::Settings& settings)
+		SDLRenderer& create_renderer(Logger& logger, Display& display)
 		{
 			if (!renderer)
-			{
-				logger = std::make_shared<ProxyLogger>("[Renderer] ", settings.platform.logger);
-				renderer = SDLRenderer::create(*logger);
-			}
+				renderer = SDLRenderer::create(logger, display);
 
 			return *renderer;
 		}
-
-		static void remove_sdl_renderer()
-		{
-			renderer = nullptr;
-			logger = nullptr;
-		};
 	}
 
-	SDLCore::SDLCore(const Settings& settings)
-		: RendererCoreT<SDLRenderer>(settings, details::get_sdl_renderer(settings))
+	SDLCore::SDLCore(const DisplayCoreSettings& settings)
+		: RendererCoreT(settings, &details::create_renderer)
 	{
 	}
 
 	SDLCore::~SDLCore()
 	{
 		// TODO: Implement delete logic
-		//details::remove_sdl_renderer();
+		//details::renderer = nullptr;
 	}
 }

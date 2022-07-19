@@ -4,15 +4,29 @@
 
 namespace unicore
 {
-	SDL2Display::SDL2Display(SDL_Window* handle, Logger& logger)
-		: _handle(handle), _logger(logger)
+	SDL2Display::SDL2Display(const DisplaySettings& settings)
+		: ParentType(settings)
+		, _handle(nullptr)
+		, _logger(settings.logger)
 	{
+		SDL_Init(SDL_INIT_VIDEO);
+
+		const auto flags = SDL_WINDOW_OPENGL | convert_flags(settings.flags);
+		_handle = SDL_CreateWindow(settings.title.data(),
+			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+			settings.size.x, settings.size.y, flags);
+
 		update_size();
 
 		SDL_DisableScreenSaver();
 	}
 
-	void* SDL2Display::handle() const
+	SDL2Display::~SDL2Display()
+	{
+		SDL_DestroyWindow(_handle);
+	}
+
+	void* SDL2Display::native_handle() const
 	{
 		SDL_SysWMinfo wmi;
 		if (!SDL_GetWindowWMInfo(_handle, &wmi))
@@ -42,45 +56,23 @@ namespace unicore
 		}
 	}
 
-	Shared<SDL2Display> SDL2Display::create(const Settings& settings)
-	{
-		if (SDL_Init(SDL_INIT_VIDEO) != 0)
-		{
-			UC_LOG_ERROR(settings.logger) << SDL_GetError();
-			return nullptr;
-		}
-
-		const auto flags = SDL_WINDOW_OPENGL | convert_flags(settings.flags);
-		auto handle = SDL_CreateWindow(settings.title.data(),
-			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-			settings.size.x, settings.size.y, flags);
-
-		if (!handle)
-		{
-			UC_LOG_ERROR(settings.logger) << SDL_GetError();
-			return nullptr;
-		}
-
-		return std::make_shared<SDL2Display>(handle, settings.logger);
-	}
-
 	// PROTECTED /////////////////////////////////////////////////////////////////
 	void SDL2Display::update_size()
 	{
 		SDL_GetWindowSize(_handle, &_size.x, &_size.y);
 	}
 
-	Uint32 SDL2Display::convert_flags(SDL2DisplayFlags flags)
+	Uint32 SDL2Display::convert_flags(DisplayFlags flags)
 	{
 		Uint32 value = 0;
 
-		if (flags.has(SDL2DisplayFlag::Resizable))
+		if (flags.has(DisplayFlag::Resizable))
 			value |= SDL_WINDOW_RESIZABLE;
 
-		if (flags.has(SDL2DisplayFlag::Borderless))
+		if (flags.has(DisplayFlag::Borderless))
 			value |= SDL_WINDOW_BORDERLESS;
 
-		if (flags.has(SDL2DisplayFlag::Fullscreen))
+		if (flags.has(DisplayFlag::Fullscreen))
 			value |= SDL_WINDOW_FULLSCREEN;
 
 		return value;

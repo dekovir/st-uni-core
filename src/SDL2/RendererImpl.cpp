@@ -2,6 +2,7 @@
 #if defined(UNICORE_USE_SDL2)
 #include "SDL2Texture.hpp"
 #include "SDL2Loaders.hpp"
+#include "SDL2Display.hpp"
 
 namespace unicore
 {
@@ -13,47 +14,15 @@ namespace unicore
 
 	static std::vector<SDL_Vertex> s_vertices;
 
-	RendererImpl::RendererImpl(Logger& logger, const SDL2RenderSettings& settings)
-		: ParentType(logger)
+	RendererImpl::RendererImpl(Logger& logger, SDL2Display& display)
+		: ParentType(logger), _display(display)
 	{
 		SDL_Init(SDL_INIT_VIDEO);
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
-		//SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-
-		Uint32 flags = SDL_WINDOW_OPENGL;
-		if (settings.resizeable)
-			flags |= SDL_WINDOW_RESIZABLE;
-		if (settings.borderless)
-			flags |= SDL_WINDOW_BORDERLESS;
-		if (settings.fullscreen)
-			flags |= SDL_WINDOW_FULLSCREEN;
-
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
 
-		auto width = settings.size.x;
-		auto height = settings.size.y;
-		if (width <= 0 || height <= 0)
-		{
-			SDL_DisplayMode dm;
-			if (SDL_GetCurrentDisplayMode(0, &dm) == 0)
-			{
-				width = dm.w;
-				height = dm.h;
-			}
-			else
-			{
-				width = 800;
-				height = 600;
-			}
-		}
-
-		_window = SDL_CreateWindow(settings.title,
-			SDL_WINDOWPOS_UNDEFINED,
-			SDL_WINDOWPOS_UNDEFINED,
-			width, height, flags);
-
-		_renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED);
+		_renderer = SDL_CreateRenderer(_display.handle(), -1, SDL_RENDERER_ACCELERATED);
 
 		SDL_RendererInfo info;
 		if (SDL_GetRendererInfo(_renderer, &info) == 0)
@@ -74,7 +43,6 @@ namespace unicore
 	RendererImpl::~RendererImpl()
 	{
 		SDL_DestroyRenderer(_renderer);
-		SDL_DestroyWindow(_window);
 	}
 
 	Shared<Texture> RendererImpl::create_texture(Surface& surface)
@@ -430,6 +398,18 @@ namespace unicore
 		}
 
 		return false;
+	}
+
+	Unique<RendererImpl> RendererImpl::create(Logger& logger, Display& display)
+	{
+		const auto sdl_display = dynamic_cast<SDL2Display*>(&display);
+		if (!sdl_display)
+		{
+			UC_LOG_ERROR(logger) << "SDL Renderer can be created only from SDL2Display";
+			return nullptr;
+		}
+
+		return std::make_unique<RendererImpl>(logger, *sdl_display);
 	}
 
 	// PROTECTED //////////////////////////////////////////////////////////////////

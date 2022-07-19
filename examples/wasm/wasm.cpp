@@ -148,8 +148,9 @@ namespace unicore
 		m3ApiSuccess();
 	}
 
-	MyCore::MyCore(const Settings& settings)
-		: SDLCore(settings), _console(80, 20)
+	MyCore::MyCore(const CoreSettings& settings)
+		: SDLCore({ settings, create_settings(settings.platform, "Wasm") })
+		, _console(80, 20)
 	{
 		UC_LOG_INFO(logger) << "Starting";
 

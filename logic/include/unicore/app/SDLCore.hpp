@@ -7,9 +7,9 @@ namespace unicore
 	class SDLCore : public RendererCoreT<SDLRenderer>
 	{
 	public:
-		explicit SDLCore(const Settings& settings);
+		explicit SDLCore(const DisplayCoreSettings& settings);
 		~SDLCore() override;
 	};
 
-	typedef Shared<Core>(*CoreFactory)(const Core::Settings& settings);
+	typedef Shared<Core>(*CoreFactory)(Platform& platform);
 }

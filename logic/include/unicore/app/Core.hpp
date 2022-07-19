@@ -6,15 +6,15 @@ namespace unicore
 {
 	class Plugin;
 
+	struct CoreSettings
+	{
+		Platform& platform;
+	};
+
 	class Core
 	{
 	public:
-		struct Settings
-		{
-			Platform& platform;
-		};
-
-		explicit Core(const Settings& settings);
+		explicit Core(const CoreSettings& settings);
 		virtual ~Core();
 
 		Platform& platform;

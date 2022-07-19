@@ -3,6 +3,7 @@
 #if defined(UNICORE_USE_SDL2)
 #include "SDL2Time.hpp"
 #include "SDL2Input.hpp"
+#include "SDL2Display.hpp"
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #	include "../Windows/WinLogger.hpp"
@@ -20,6 +21,10 @@ namespace unicore
 		UC_OBJECT(SDL2Platform, Platform)
 	public:
 		SDL2Platform();
+
+		UC_NODISCARD const Vector2i& native_size() const override { return _native_size; }
+
+		Unique<Display> create_display(const DisplaySettings& settings) override;
 
 		UC_NODISCARD bool running() const override;
 		void quit() override;
@@ -45,6 +50,10 @@ namespace unicore
 #elif defined(UNICORE_PLATFORM_LINUX)
 		LinuxStreamProvider _provider;
 #endif
+
+		Vector2i _native_size;
+
+		void update_native_size();
 	};
 }
 #endif
