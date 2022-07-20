@@ -13,6 +13,7 @@ namespace unicore
 
 	class Core
 	{
+		ProxyLogger _logger;
 	public:
 		explicit Core(const CoreSettings& settings);
 		virtual ~Core();

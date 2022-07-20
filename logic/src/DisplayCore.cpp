@@ -26,7 +26,8 @@ namespace unicore
 	}
 
 	DisplayCoreSettings DisplayCore::create_settings(
-		const CoreSettings& settings, StringView title, const Vector2i& size, DisplayFlags flags)
+		const CoreSettings& settings, StringView title,
+		const Vector2i& size, DisplayMode mode, DisplayWindowFlags flags)
 	{
 		static ProxyLogger logger("[Display] ", settings.platform.logger);
 
@@ -36,6 +37,7 @@ namespace unicore
 				logger,
 				title,
 				size.x <= 0 || size.y <= 0 ? settings.platform.native_size() : size,
+				mode,
 				flags
 			}
 		};

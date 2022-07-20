@@ -38,15 +38,6 @@ namespace unicore
 		update_scale();
 		update_viewport();
 		update_logical_size();
-
-		display.on_resize() += [&](auto size)
-		{
-			UC_LOG_DEBUG(_logger) << "Renderer resized";
-			update_size();
-			update_scale();
-			update_viewport();
-			update_logical_size();
-		};
 	}
 
 	RendererImpl::~RendererImpl()

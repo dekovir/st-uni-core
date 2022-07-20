@@ -14,8 +14,9 @@
 namespace unicore
 {
 	Core::Core(const CoreSettings& settings)
-		: platform(settings.platform)
-		, logger(platform.logger)
+		: _logger("[Core] ", settings.platform.logger)
+		, platform(settings.platform)
+		, logger(_logger)
 		, time(platform.time)
 		, input(platform.input)
 		, resources(platform.resources)

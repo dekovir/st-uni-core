@@ -10,14 +10,32 @@ namespace unicore
 		: ParentType(settings)
 		, _platform(platform)
 		, _handle(nullptr)
-		, _logger(settings.logger)
 	{
 		SDL_Init(SDL_INIT_VIDEO);
 
-		const auto flags = SDL_WINDOW_OPENGL | convert_flags(settings.flags);
+		Vector2i size = settings.size;
+		Uint32 flags = SDL_WINDOW_OPENGL;
+		switch (settings.mode)
+		{
+		case DisplayMode::Window:
+#if !defined(UNICORE_PLATFORM_WEB)
+			if (settings.window_flags.has(DisplayWindowFlag::Borderless))
+				flags |= SDL_WINDOW_BORDERLESS;
+
+			if (settings.window_flags.has(DisplayWindowFlag::Resizable))
+				flags |= SDL_WINDOW_RESIZABLE;
+#endif
+			break;
+
+		case DisplayMode::Fullscreen:
+			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+			size = platform.native_size();
+			break;
+		}
+
 		_handle = SDL_CreateWindow(settings.title.data(),
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-			settings.size.x, settings.size.y, flags);
+			size.x, size.y, flags);
 
 		if (!_handle)
 		{
@@ -28,12 +46,6 @@ namespace unicore
 		update_size();
 
 		_platform.add_listener(this);
-
-		//platform.on_sdl_event() += [&](const SDL_Event& evt)
-		//{
-		//	if (evt.type == SDL_WINDOWEVENT)
-		//		apply(evt.window);
-		//};
 	}
 
 	SDL2Display::~SDL2Display()
@@ -66,11 +78,10 @@ namespace unicore
 		{
 			switch (evt.window.event)
 			{
-			case SDL_WINDOWEVENT_RESIZED:
+			//case SDL_WINDOWEVENT_RESIZED:
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
 				update_size();
 				UC_LOG_DEBUG(_logger) << "Resized to " << _size;
-				_event_resize(_size);
 				break;
 			}
 
@@ -84,23 +95,6 @@ namespace unicore
 	void SDL2Display::update_size()
 	{
 		SDL_GetWindowSize(_handle, &_size.x, &_size.y);
-	}
-
-	Uint32 SDL2Display::convert_flags(DisplayFlags flags)
-	{
-		Uint32 value = 0;
-#if !defined(UNICORE_PLATFORM_WEB)
-		if (flags.has(DisplayFlag::Resizable))
-			value |= SDL_WINDOW_RESIZABLE;
-
-		if (flags.has(DisplayFlag::Borderless))
-			value |= SDL_WINDOW_BORDERLESS;
-
-		if (flags.has(DisplayFlag::Fullscreen))
-			value |= SDL_WINDOW_FULLSCREEN;
-#endif
-
-		return value;
 	}
 }
 #endif

@@ -1,33 +1,44 @@
 #pragma once
 #include "unicore/Object.hpp"
 #include "unicore/EnumFlag.hpp"
-#include "unicore/Event.hpp"
 #include "unicore/Vector2.hpp"
 
 namespace unicore
 {
 	class Logger;
 
-	enum class DisplayFlag : uint8_t
+	enum class DisplayState : uint8_t
+	{
+		Visible = 1 << 0,
+		Focused = 1 << 1,
+	};
+	UNICORE_ENUMFLAGS(DisplayState, DisplayStateFlags);
+
+	enum class DisplayWindowFlag : uint8_t
 	{
 		Resizable = 1 << 0,
 		Borderless = 1 << 1,
-		Fullscreen = 1 << 2,
 	};
-	UNICORE_ENUMFLAGS(DisplayFlag, DisplayFlags);
+	UNICORE_ENUMFLAGS(DisplayWindowFlag, DisplayWindowFlags);
+
+	enum class DisplayMode
+	{
+		Window,
+		Fullscreen,
+	};
 
 	struct DisplaySettings
 	{
 		Logger& logger;
 		StringView title;
 		Vector2i size;
-		DisplayFlags flags;
+		DisplayMode mode = DisplayMode::Fullscreen;
+		DisplayWindowFlags window_flags = DisplayWindowFlags::Zero;
 	};
 
 	class Display : public Object
 	{
 		UC_OBJECT(Display, Object)
-			UC_OBJECT_EVENT(resize, const Vector2i&)
 	public:
 		explicit Display(const DisplaySettings& settings);
 

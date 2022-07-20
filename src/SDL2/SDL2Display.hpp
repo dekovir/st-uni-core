@@ -24,12 +24,9 @@ namespace unicore
 	protected:
 		SDL2Platform& _platform;
 		SDL_Window* _handle;
-		Logger& _logger;
 		Vector2i _size = VectorConst2i::Zero;
 
 		void update_size();
-
-		static Uint32 convert_flags(DisplayFlags flags);
 	};
 }
 #endif
