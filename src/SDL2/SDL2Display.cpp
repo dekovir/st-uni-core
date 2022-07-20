@@ -13,12 +13,12 @@ namespace unicore
 	{
 		SDL_Init(SDL_INIT_VIDEO);
 
-		Vector2i size = settings.size;
-		const auto flags = make_flags(size, settings.mode, settings.window_flags);
+		_mode = settings.mode;
+		const auto flags = make_flags(_mode);
 
 		_handle = SDL_CreateWindow(settings.title.data(),
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-			size.x, size.y, flags);
+			_mode.size.x, _mode.size.y, flags);
 
 		if (!_handle)
 		{
@@ -37,54 +37,33 @@ namespace unicore
 		SDL_DestroyWindow(_handle);
 	}
 
-	DisplayMode SDL2Display::mode() const
+	void SDL2Display::set_mode(const DisplayMode& mode)
 	{
-		const auto flags = SDL_GetWindowFlags(_handle);
-		return (flags & SDL_WINDOW_FULLSCREEN_DESKTOP) || (flags & SDL_WINDOW_FULLSCREEN)
-			? DisplayMode::Fullscreen : DisplayMode::Window;
-	}
+		auto new_mode = mode;
+		const auto flags = make_flags(new_mode);
 
-	DisplayWindowFlags SDL2Display::window_flags() const
-	{
-		auto flags = DisplayWindowFlags::Zero;
-		const auto value = SDL_GetWindowFlags(_handle);
-
-		if (value & SDL_WINDOW_RESIZABLE)
-			flags |= DisplayWindowFlag::Resizable;
-		if (value & SDL_WINDOW_BORDERLESS)
-			flags |= DisplayWindowFlag::Borderless;
-
-		return flags;
-	}
-
-	void SDL2Display::set_windowed(const Vector2i& size_, DisplayWindowFlags window_flags)
-	{
-		Vector2i size = size_;
-		const auto flags = make_flags(size, DisplayMode::Window, window_flags);
-
-		if (SDL_SetWindowFullscreen(_handle, flags) != 0)
+		if (mode.fullscreen)
 		{
-			UC_LOG_ERROR(_logger) << SDL_GetError();
-			return;
+			if (SDL_SetWindowFullscreen(_handle, flags) != 0)
+			{
+				UC_LOG_ERROR(_logger) << SDL_GetError();
+				return;
+			}
+
+			_mode = new_mode;
 		}
-
-		SDL_SetWindowSize(_handle, size.x, size.y);
-		SDL_SetWindowPosition(_handle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-		_size = size;
-	}
-
-	void SDL2Display::set_fullscreen()
-	{
-		Vector2i size;
-		const auto flags = make_flags(size, DisplayMode::Fullscreen, DisplayWindowFlags::Zero);
-
-		if (SDL_SetWindowFullscreen(_handle, flags) != 0)
+		else
 		{
-			UC_LOG_ERROR(_logger) << SDL_GetError();
-			return;
-		}
+			if (SDL_SetWindowFullscreen(_handle, flags) != 0)
+			{
+				UC_LOG_ERROR(_logger) << SDL_GetError();
+				return;
+			}
 
-		update_size();
+			_mode = new_mode;
+			SDL_SetWindowSize(_handle, _mode.size.x, _mode.size.y);
+			SDL_SetWindowPosition(_handle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+		}
 	}
 
 	Vector2i SDL2Display::get_maximum_size() const
@@ -150,7 +129,7 @@ namespace unicore
 				//case SDL_WINDOWEVENT_RESIZED:
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
 				update_size();
-				UC_LOG_DEBUG(_logger) << "Resized to " << _size;
+				UC_LOG_DEBUG(_logger) << "Resized to " << _mode.size;
 				break;
 			}
 
@@ -163,31 +142,30 @@ namespace unicore
 	// PROTECTED /////////////////////////////////////////////////////////////////
 	void SDL2Display::update_size()
 	{
-		SDL_GetWindowSize(_handle, &_size.x, &_size.y);
+		SDL_GetWindowSize(_handle, &_mode.size.x, &_mode.size.y);
 	}
 
-	Uint32 SDL2Display::make_flags(Vector2i& size, DisplayMode mode, DisplayWindowFlags window_flags) const
+	Uint32 SDL2Display::make_flags(DisplayMode& mode) const
 	{
 		Uint32 flags = SDL_WINDOW_OPENGL;
-		switch (mode)
+		if (mode.fullscreen)
 		{
-		case DisplayMode::Window:
+			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+			mode.size = _platform.native_size();
+			mode.window_flags = DisplayWindowFlags::Zero;
+		}
+		else
+		{
 #if !defined(UNICORE_PLATFORM_WEB)
-			if (window_flags.has(DisplayWindowFlag::Borderless))
+			if (mode.window_flags.has(DisplayWindowFlag::Borderless))
 				flags |= SDL_WINDOW_BORDERLESS;
 
-			if (window_flags.has(DisplayWindowFlag::Resizable))
+			if (mode.window_flags.has(DisplayWindowFlag::Resizable))
 				flags |= SDL_WINDOW_RESIZABLE;
 #endif
-			break;
-
-		case DisplayMode::Fullscreen:
-			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-			size = _platform.native_size();
-			break;
 		}
 
 		return flags;
 	}
-}
+	}
 #endif

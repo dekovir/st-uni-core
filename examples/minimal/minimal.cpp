@@ -31,7 +31,7 @@ namespace unicore
 	}
 
 	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore(create_settings(settings, "Minimal", WindowSize, DisplayMode::Window, WindowFlags))
+		: SDLCore(create_settings(settings, "Minimal", { false, WindowSize, WindowFlags }))
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
@@ -65,9 +65,11 @@ namespace unicore
 			input.keyboard().down_change(KeyCode::Enter) &&
 			input.keyboard().mods(KeyModCombine::Alt))
 		{
-			if (display.mode() == DisplayMode::Window)
-				display.set_fullscreen();
-			else display.set_windowed(WindowSize, WindowFlags);
+			auto mode = display.get_mode();
+			mode.fullscreen = !mode.fullscreen;
+			mode.size = WindowSize;
+			mode.window_flags = WindowFlags;
+			display.set_mode(mode);
 		}
 #endif
 

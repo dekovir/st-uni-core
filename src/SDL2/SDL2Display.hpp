@@ -15,12 +15,8 @@ namespace unicore
 		SDL2Display(SDL2Platform& platform, const DisplaySettings& settings);
 		~SDL2Display() override;
 
-		UC_NODISCARD const Vector2i& size() const override { return _size; }
-		UC_NODISCARD DisplayMode mode() const override;
-		UC_NODISCARD DisplayWindowFlags window_flags() const override;
-
-		void set_windowed(const Vector2i& size, DisplayWindowFlags window_flags) override;
-		void set_fullscreen() override;
+		UC_NODISCARD const DisplayMode& get_mode() const override { return _mode; }
+		void set_mode(const DisplayMode& mode) override;
 
 		UC_NODISCARD Vector2i get_maximum_size() const override;
 		UC_NODISCARD Vector2i get_minimum_size() const override;
@@ -33,12 +29,11 @@ namespace unicore
 	protected:
 		SDL2Platform& _platform;
 		SDL_Window* _handle;
-
-		Vector2i _size = VectorConst2i::Zero;
+		DisplayMode _mode;
 
 		void update_size();
 
-		Uint32 make_flags(Vector2i& size, DisplayMode mode, DisplayWindowFlags window_flags) const;
+		Uint32 make_flags(DisplayMode& mode) const;
 	};
 }
 #endif

@@ -28,13 +28,11 @@ namespace unicore
 			input.keyboard().down_change(KeyCode::Enter) &&
 			input.keyboard().mods(KeyModCombine::Alt))
 		{
-			if (display.mode() == DisplayMode::Window)
-				display.set_fullscreen();
-			else 
-			{
-				const auto size = display.get_maximum_size();
-				display.set_windowed(size, WindowFlags);
-			}
+			auto mode = display.get_mode();
+			mode.fullscreen = !mode.fullscreen;
+			mode.size = display.get_maximum_size();
+			mode.window_flags = WindowFlags;
+			display.set_mode(mode);
 		}
 #endif
 

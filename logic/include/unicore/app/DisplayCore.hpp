@@ -20,7 +20,6 @@ namespace unicore
 
 	protected:
 		static DisplayCoreSettings create_settings(
-			const CoreSettings& settings, StringView title, const Vector2i& size = VectorConst2i::Zero,
-			DisplayMode mode = DisplayMode::Fullscreen, DisplayWindowFlags flags = DisplayWindowFlags::Zero);
+			const CoreSettings& settings, StringView title, DisplayMode mode = { true });
 	};
 }

@@ -7,12 +7,12 @@ namespace unicore
 {
 	class Logger;
 
-	enum class DisplayState : uint8_t
-	{
-		Visible = 1 << 0,
-		Focused = 1 << 1,
-	};
-	UNICORE_ENUMFLAGS(DisplayState, DisplayStateFlags);
+	//enum class DisplayState : uint8_t
+	//{
+	//	Visible = 1 << 0,
+	//	Focused = 1 << 1,
+	//};
+	//UNICORE_ENUMFLAGS(DisplayState, DisplayStateFlags);
 
 	enum class DisplayWindowFlag : uint8_t
 	{
@@ -21,19 +21,19 @@ namespace unicore
 	};
 	UNICORE_ENUMFLAGS(DisplayWindowFlag, DisplayWindowFlags);
 
-	enum class DisplayMode
+
+	struct DisplayMode
 	{
-		Window,
-		Fullscreen,
+		bool fullscreen;
+		Vector2i size = VectorConst2i::Zero;
+		DisplayWindowFlags window_flags = DisplayWindowFlags::Zero;
 	};
 
 	struct DisplaySettings
 	{
 		Logger& logger;
 		StringView title;
-		Vector2i size;
-		DisplayMode mode = DisplayMode::Fullscreen;
-		DisplayWindowFlags window_flags = DisplayWindowFlags::Zero;
+		DisplayMode mode;
 	};
 
 	class Display : public Object
@@ -42,17 +42,15 @@ namespace unicore
 	public:
 		explicit Display(const DisplaySettings& settings);
 
-		UC_NODISCARD virtual const Vector2i& size() const = 0;
-		UC_NODISCARD virtual DisplayMode mode() const = 0;
-		UC_NODISCARD virtual DisplayWindowFlags window_flags() const = 0;
-
-		virtual void set_windowed(const Vector2i& size, DisplayWindowFlags window_flags = DisplayWindowFlags::Zero) = 0;
-		virtual void set_fullscreen() = 0;
+		UC_NODISCARD virtual const DisplayMode& get_mode() const = 0;
+		virtual void set_mode(const DisplayMode& mode) = 0;
 
 		UC_NODISCARD virtual Vector2i get_maximum_size() const = 0;
 		UC_NODISCARD virtual Vector2i get_minimum_size() const = 0;
 
 		UC_NODISCARD virtual void* native_handle() const = 0;
+
+		UC_NODISCARD const Vector2i& size() const { return get_mode().size; }
 
 	protected:
 		Logger& _logger;
