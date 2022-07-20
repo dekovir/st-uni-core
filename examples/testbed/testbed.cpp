@@ -6,6 +6,8 @@
 
 namespace unicore
 {
+	constexpr DisplayWindowFlags WindowFlags = DisplayWindowFlag::Resizable;
+
 	MyCore::MyCore(const CoreSettings& settings)
 		: SDLCore(create_settings(settings, "Testbed"))
 	{
@@ -21,6 +23,19 @@ namespace unicore
 #if !defined(UNICORE_PLATFORM_WEB)
 		if (input.keyboard().down(KeyCode::Escape))
 			platform.quit();
+
+		if (
+			input.keyboard().down_change(KeyCode::Enter) &&
+			input.keyboard().mods(KeyModCombine::Alt))
+		{
+			if (display.mode() == DisplayMode::Window)
+				display.set_fullscreen();
+			else 
+			{
+				const auto size = display.get_maximum_size();
+				display.set_windowed(size, WindowFlags);
+			}
+		}
 #endif
 
 		auto& examples = ExampleCatalog::get_all();
@@ -33,15 +48,19 @@ namespace unicore
 			_example->update();
 
 		// SPRITE BATCH ////////////////////////////////////////////////////////////
+		const auto screen_size = renderer.screen_size();
+
 		const String title_str = "Example: " + examples[_example_index].title;
 		const String fps_str = "FPS: " + std::to_string(fps());
 		const String draw_str = "Draw: " + std::to_string(_draw_calls);
+		const String screen_str = "Screen: " + std::to_string(screen_size.x) + "x" + std::to_string(screen_size.y);
 
 		_sprite_batch.begin();
 
 		_sprite_batch.print(_font, { 0, 0 }, fps_str);
 		_sprite_batch.print(_font, { 200, 0 }, title_str);
 		_sprite_batch.print(_font, { 0, 20 }, draw_str);
+		_sprite_batch.print(_font, { 0, 40 }, screen_str);
 
 		_sprite_batch.end();
 	}

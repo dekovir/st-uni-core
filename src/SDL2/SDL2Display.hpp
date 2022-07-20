@@ -22,6 +22,9 @@ namespace unicore
 		void set_windowed(const Vector2i& size, DisplayWindowFlags window_flags) override;
 		void set_fullscreen() override;
 
+		UC_NODISCARD Vector2i get_maximum_size() const override;
+		UC_NODISCARD Vector2i get_minimum_size() const override;
+
 		UC_NODISCARD void* native_handle() const override;
 		UC_NODISCARD SDL_Window* handle() const { return _handle; }
 

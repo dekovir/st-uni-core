@@ -69,6 +69,7 @@ namespace unicore
 		}
 
 		SDL_SetWindowSize(_handle, size.x, size.y);
+		SDL_SetWindowPosition(_handle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		_size = size;
 	}
 
@@ -84,6 +85,42 @@ namespace unicore
 		}
 
 		update_size();
+	}
+
+	Vector2i SDL2Display::get_maximum_size() const
+	{
+		Vector2i size;
+		SDL_GetWindowMaximumSize(_handle, &size.x, &size.y);
+		if (size.x == 0 || size.y == 0)
+		{
+			UC_LOG_WARNING(_logger) << "Failed to get SDL_GetWindowMaximumSize";
+
+			SDL_DisplayMode mode;
+			if (SDL_GetDesktopDisplayMode(0, &mode) == 0)
+			{
+				size.x = mode.w - 200;
+				size.y = mode.h - 200;
+				return size;
+			}
+
+			UC_LOG_ERROR(_logger) << SDL_GetError();
+		}
+
+		return size;
+	}
+
+	Vector2i SDL2Display::get_minimum_size() const
+	{
+		Vector2i size;
+		SDL_GetWindowMinimumSize(_handle, &size.x, &size.y);
+		if (size.x == 0 || size.y == 0)
+		{
+			UC_LOG_WARNING(_logger) << "Failed to get SDL_GetWindowMinimumSize";
+			size.x = 100;
+			size.y = 100;
+		}
+
+		return size;
 	}
 
 	void* SDL2Display::native_handle() const

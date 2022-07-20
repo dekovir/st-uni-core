@@ -101,7 +101,7 @@ namespace unicore
 			.draw_line(VectorConst2i::Zero, size)
 			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))
 			.set_color(ColorConst4b::Cyan)
-			.draw_rect(Recti{ 600, 100, 200, 100 }, true)
+			.draw_rect(Recti{ size.x - 200, 100, 200, 100 }, true)
 			.draw_point(Vector2i{ 300, 300 })
 			;
 
