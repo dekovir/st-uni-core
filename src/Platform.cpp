@@ -13,7 +13,7 @@
 
 namespace unicore
 {
-	Platform::Platform(const PlatformSettings& settings)
+	Platform::Platform(const Settings& settings)
 		: logger(settings.logger)
 		, time(settings.time)
 		, input(settings.input)

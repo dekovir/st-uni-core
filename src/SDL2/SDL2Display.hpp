@@ -5,21 +5,24 @@
 
 namespace unicore
 {
-	class SDL2Display : public Display
+	class SDL2Platform;
+
+	class SDL2Display : public Display, public SDL2EventListener
 	{
 		UC_OBJECT(SDL2Display, Display)
 	public:
 
-		explicit SDL2Display(const DisplaySettings& settings);
+		SDL2Display(SDL2Platform& platform, const DisplaySettings& settings);
 		~SDL2Display() override;
 
 		UC_NODISCARD const Vector2i& size() const override { return _size; }
 		UC_NODISCARD void* native_handle() const override;
 		UC_NODISCARD SDL_Window* handle() const { return _handle; }
 
-		void apply(const SDL_WindowEvent& evt);
+		bool on_event(const SDL_Event& evt) override;
 
 	protected:
+		SDL2Platform& _platform;
 		SDL_Window* _handle;
 		Logger& _logger;
 		Vector2i _size = VectorConst2i::Zero;

@@ -38,6 +38,15 @@ namespace unicore
 		update_scale();
 		update_viewport();
 		update_logical_size();
+
+		display.on_resize() += [&](auto size)
+		{
+			UC_LOG_DEBUG(_logger) << "Renderer resized";
+			update_size();
+			update_scale();
+			update_viewport();
+			update_logical_size();
+		};
 	}
 
 	RendererImpl::~RendererImpl()
@@ -84,7 +93,14 @@ namespace unicore
 
 	bool RendererImpl::begin_scene()
 	{
-		set_viewport(std::nullopt);
+		if (_display.size() != _size)
+		{
+			UC_LOG_DEBUG(_logger) << "Resized";
+			update_size();
+			update_scale();
+			update_viewport();
+		}
+
 		set_clip(std::nullopt);
 		set_draw_color(ColorConst4b::White);
 		_draw_calls = 0;

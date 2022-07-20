@@ -28,7 +28,7 @@ namespace unicore
 	}
 
 	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore({ settings, create_settings(settings.platform, "Minimal") })
+		: SDLCore(create_settings(settings, "Minimal", Vector2i(800, 600), DisplayFlag::Resizable))
 	{
 		UC_LOG_INFO(logger) << "Starting";
 

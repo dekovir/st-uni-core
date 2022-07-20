@@ -25,7 +25,7 @@ namespace unicore
 
 	Unique<Display> SDL2Platform::create_display(const DisplaySettings& settings)
 	{
-		return std::make_unique<SDL2Display>(settings);
+		return std::make_unique<SDL2Display>(*this, settings);
 	}
 
 	bool SDL2Platform::running() const
@@ -48,22 +48,27 @@ namespace unicore
 			case SDL_QUIT:
 				_running = false;
 				break;
+			}
 
-			case SDL_WINDOWEVENT:
-				//_log.debug("Evt: Wnd: " + Strings::From(event.window.event));
-				switch (evt.window.event)
-				{
-				case SDL_WINDOWEVENT_RESIZED:
-					UC_LOG_DEBUG(logger) << "Resized";
-					//_render.update_size();
+			for (const auto listener : _listeners)
+			{
+				if (listener->on_event(evt))
 					break;
-				}
-				break;
 			}
 		}
 
 		_time.update();
 		_input.update();
+	}
+
+	void SDL2Platform::add_listener(SDL2EventListener* listener)
+	{
+		_listeners.insert(listener);
+	}
+
+	void SDL2Platform::remove_listener(SDL2EventListener* listener)
+	{
+		_listeners.erase(listener);
 	}
 
 	void SDL2Platform::update_native_size()

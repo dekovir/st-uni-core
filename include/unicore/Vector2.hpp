@@ -210,4 +210,11 @@ namespace unicore
 
 	using VectorConst2i = VectorConst2<int>;
 	using VectorConst2f = VectorConst2<float>;
+
+	class LogHelper;
+	template<typename T>
+	extern LogHelper& operator << (LogHelper& helper, const Vector2<T>& value)
+	{
+		return helper << value.x << "x" << value.y;
+	}
 }

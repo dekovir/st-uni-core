@@ -1,11 +1,14 @@
 #include "SDL2Display.hpp"
+
+#include "SDL2Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include <SDL_syswm.h>
 
 namespace unicore
 {
-	SDL2Display::SDL2Display(const DisplaySettings& settings)
+	SDL2Display::SDL2Display(SDL2Platform& platform, const DisplaySettings& settings)
 		: ParentType(settings)
+		, _platform(platform)
 		, _handle(nullptr)
 		, _logger(settings.logger)
 	{
@@ -16,13 +19,26 @@ namespace unicore
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 			settings.size.x, settings.size.y, flags);
 
+		if (!_handle)
+		{
+			UC_LOG_ERROR(_logger) << SDL_GetError();
+			return;
+		}
+
 		update_size();
 
-		SDL_DisableScreenSaver();
+		_platform.add_listener(this);
+
+		//platform.on_sdl_event() += [&](const SDL_Event& evt)
+		//{
+		//	if (evt.type == SDL_WINDOWEVENT)
+		//		apply(evt.window);
+		//};
 	}
 
 	SDL2Display::~SDL2Display()
 	{
+		_platform.remove_listener(this);
 		SDL_DestroyWindow(_handle);
 	}
 
@@ -44,16 +60,24 @@ namespace unicore
 #endif
 	}
 
-	void SDL2Display::apply(const SDL_WindowEvent& evt)
+	bool SDL2Display::on_event(const SDL_Event& evt)
 	{
-		switch (evt.event)
+		if (evt.type == SDL_WINDOWEVENT)
 		{
-		case SDL_WINDOWEVENT_RESIZED:
-		case SDL_WINDOWEVENT_SIZE_CHANGED:
-			update_size();
-			_event_resize(_size);
-			break;
+			switch (evt.window.event)
+			{
+			case SDL_WINDOWEVENT_RESIZED:
+			case SDL_WINDOWEVENT_SIZE_CHANGED:
+				update_size();
+				UC_LOG_DEBUG(_logger) << "Resized to " << _size;
+				_event_resize(_size);
+				break;
+			}
+
+			return true;
 		}
+
+		return false;
 	}
 
 	// PROTECTED /////////////////////////////////////////////////////////////////
@@ -65,7 +89,7 @@ namespace unicore
 	Uint32 SDL2Display::convert_flags(DisplayFlags flags)
 	{
 		Uint32 value = 0;
-
+#if !defined(UNICORE_PLATFORM_WEB)
 		if (flags.has(DisplayFlag::Resizable))
 			value |= SDL_WINDOW_RESIZABLE;
 
@@ -74,6 +98,7 @@ namespace unicore
 
 		if (flags.has(DisplayFlag::Fullscreen))
 			value |= SDL_WINDOW_FULLSCREEN;
+#endif
 
 		return value;
 	}

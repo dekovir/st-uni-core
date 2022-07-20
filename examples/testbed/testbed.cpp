@@ -7,7 +7,7 @@
 namespace unicore
 {
 	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore({ settings, create_settings(settings.platform, "Testbed") })
+		: SDLCore(create_settings(settings, "Testbed"))
 	{
 		UC_LOG_INFO(logger) << "Starting";
 

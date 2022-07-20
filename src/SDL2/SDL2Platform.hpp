@@ -31,6 +31,9 @@ namespace unicore
 
 		void poll_events() override;
 
+		void add_listener(SDL2EventListener* listener);
+		void remove_listener(SDL2EventListener* listener);
+
 	protected:
 #if defined(UNICORE_PLATFORM_WINDOWS)
 		WinLogger _logger;
@@ -51,7 +54,9 @@ namespace unicore
 		LinuxStreamProvider _provider;
 #endif
 
-		Vector2i _native_size;
+		Vector2i _native_size = VectorConst2i::Zero;
+
+		Set<SDL2EventListener*> _listeners;
 
 		void update_native_size();
 	};

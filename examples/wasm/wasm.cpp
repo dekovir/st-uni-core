@@ -149,7 +149,7 @@ namespace unicore
 	}
 
 	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore({ settings, create_settings(settings.platform, "Wasm") })
+		: SDLCore(create_settings(settings, "Wasm"))
 		, _console(80, 20)
 	{
 		UC_LOG_INFO(logger) << "Starting";

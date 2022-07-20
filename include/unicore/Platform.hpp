@@ -7,18 +7,18 @@ namespace unicore
 	class Time;
 	class Input;
 
-	struct PlatformSettings
-	{
-		Logger& logger;
-		Time& time;
-		Input& input;
-	};
-
 	class Platform : public Module
 	{
 		UC_OBJECT(Platform, Module)
 	public:
-		explicit Platform(const PlatformSettings& settings);
+		struct Settings
+		{
+			Logger& logger;
+			Time& time;
+			Input& input;
+		};
+
+		explicit Platform(const Settings& settings);
 
 		Logger& logger;
 		Time& time;

@@ -19,8 +19,8 @@ namespace unicore
 		Display& display;
 
 	protected:
-		static DisplaySettings create_settings(
-			Platform& platform, StringView title, const Vector2i& size = VectorConst2i::Zero,
+		static DisplayCoreSettings create_settings(
+			const CoreSettings& settings, StringView title, const Vector2i& size = VectorConst2i::Zero,
 			DisplayFlags flags = DisplayFlag::Fullscreen | DisplayFlag::Borderless);
 	};
 }

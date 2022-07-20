@@ -7,6 +7,12 @@
 
 namespace unicore
 {
+	class SDL2EventListener
+	{
+	public:
+		virtual bool on_event(const SDL_Event& evt) = 0;
+	};
+
 	namespace SDL2Utils
 	{
 		extern SDL_RWops* from_stream(ReadStream& stream);
