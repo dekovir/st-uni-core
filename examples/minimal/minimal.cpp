@@ -7,6 +7,9 @@
 
 namespace unicore
 {
+	constexpr Vector2i WindowSize = Vector2i(800, 600);
+	constexpr DisplayWindowFlags WindowFlags = DisplayWindowFlag::Resizable;
+
 	void Entity::update(const Vector2i& size, float delta)
 	{
 		center += velocity * delta;
@@ -28,7 +31,7 @@ namespace unicore
 	}
 
 	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore(create_settings(settings, "Minimal", Vector2i(800, 600), DisplayMode::Window, DisplayWindowFlag::Resizable))
+		: SDLCore(create_settings(settings, "Minimal", WindowSize, DisplayMode::Window, WindowFlags))
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
@@ -57,6 +60,15 @@ namespace unicore
 #if !defined(UNICORE_PLATFORM_WEB)
 		if (input.keyboard().down(KeyCode::Escape))
 			platform.quit();
+
+		if (
+			input.keyboard().down_change(KeyCode::Enter) &&
+			input.keyboard().mods(KeyModCombine::Alt))
+		{
+			if (display.mode() == DisplayMode::Window)
+				display.set_fullscreen();
+			else display.set_windowed(WindowSize, WindowFlags);
+		}
 #endif
 
 		_add_active = input.mouse().down(MouseButton::Left);

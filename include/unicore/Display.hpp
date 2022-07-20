@@ -43,6 +43,12 @@ namespace unicore
 		explicit Display(const DisplaySettings& settings);
 
 		UC_NODISCARD virtual const Vector2i& size() const = 0;
+		UC_NODISCARD virtual DisplayMode mode() const = 0;
+		UC_NODISCARD virtual DisplayWindowFlags window_flags() const = 0;
+
+		virtual void set_windowed(const Vector2i& size, DisplayWindowFlags window_flags = DisplayWindowFlags::Zero) = 0;
+		virtual void set_fullscreen() = 0;
+
 		UC_NODISCARD virtual void* native_handle() const = 0;
 
 	protected:

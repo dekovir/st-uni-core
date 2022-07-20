@@ -1,5 +1,7 @@
 #include "unicore/app/DisplayCore.hpp"
 
+#include "unicore/Input.hpp"
+
 namespace unicore
 {
 	namespace internal

@@ -18,7 +18,7 @@ namespace unicore
 
 	void RendererCore::update()
 	{
-		Core::update();
+		DisplayCore::update();
 
 		_fps_time += time.delta();
 		if (_fps_time >= TimeSpanConst::OneSecond)
