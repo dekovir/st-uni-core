@@ -79,7 +79,14 @@ namespace unicore
 		}
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_version& item);
+	LogHelper& operator<<(LogHelper& helper, const SDL_version& value);
+	LogHelper& operator<<(LogHelper& helper, const SDL_DisplayOrientation& value);
+
+	LogHelper& operator<<(LogHelper& helper, const SDL_Point& value);
+	LogHelper& operator<<(LogHelper& helper, const SDL_FPoint& value);
+
+	LogHelper& operator<<(LogHelper& helper, const SDL_Rect& value);
+	LogHelper& operator<<(LogHelper& helper, const SDL_FRect& value);
 }
 
 #endif

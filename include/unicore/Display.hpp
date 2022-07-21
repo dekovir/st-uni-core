@@ -21,11 +21,10 @@ namespace unicore
 	};
 	UNICORE_ENUMFLAGS(DisplayWindowFlag, DisplayWindowFlags);
 
-
 	struct DisplayMode
 	{
 		bool fullscreen;
-		Vector2i size = VectorConst2i::Zero;
+		Vector2i window_size = VectorConst2i::Zero;
 		DisplayWindowFlags window_flags = DisplayWindowFlags::Zero;
 	};
 
@@ -50,7 +49,7 @@ namespace unicore
 
 		UC_NODISCARD virtual void* native_handle() const = 0;
 
-		UC_NODISCARD const Vector2i& size() const { return get_mode().size; }
+		UC_NODISCARD const Vector2i& size() const { return get_mode().window_size; }
 
 	protected:
 		Logger& _logger;

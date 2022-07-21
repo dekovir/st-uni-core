@@ -114,9 +114,43 @@ namespace unicore
 		return c;
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_version& item)
+	LogHelper& operator<<(LogHelper& helper, const SDL_version& value)
 	{
-		return helper << item.major << L"." << item.minor << L"." << item.patch;
+		return helper << value.major << L"." << value.minor << L"." << value.patch;
+	}
+
+	LogHelper& operator<<(LogHelper& helper, const SDL_DisplayOrientation& value)
+	{
+		switch (value)
+		{
+		case SDL_ORIENTATION_UNKNOWN: return helper << "Unknown";
+		case SDL_ORIENTATION_LANDSCAPE: return helper << "Landscape";
+		case SDL_ORIENTATION_LANDSCAPE_FLIPPED: helper << "LandscapeFlipped";
+		case SDL_ORIENTATION_PORTRAIT: return helper << "Portrait";
+		case SDL_ORIENTATION_PORTRAIT_FLIPPED: return helper << "PortraitFlipped";
+		}
+	}
+
+	LogHelper& operator<<(LogHelper& helper, const SDL_Point& value)
+	{
+		return helper << value.x << "x" << value.y;
+	}
+
+	LogHelper& operator<<(LogHelper& helper, const SDL_FPoint& value)
+	{
+		return helper << value.x << "x" << value.y;
+	}
+
+	LogHelper& operator<<(LogHelper& helper, const SDL_Rect& value)
+	{
+		return helper << "[" << value.x << "," << value.y << ","
+			<< value.w << "," << value.h << "]";
+	}
+
+	LogHelper& operator<<(LogHelper& helper, const SDL_FRect& value)
+	{
+		return helper << "[" << value.x << "," << value.y << ","
+			<< value.w << "," << value.h << "]";
 	}
 }
 

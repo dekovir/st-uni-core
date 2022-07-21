@@ -30,7 +30,7 @@ namespace unicore
 		{
 			auto mode = display.get_mode();
 			mode.fullscreen = !mode.fullscreen;
-			mode.size = display.get_maximum_size();
+			mode.window_size = display.get_maximum_size();
 			mode.window_flags = WindowFlags;
 			display.set_mode(mode);
 		}

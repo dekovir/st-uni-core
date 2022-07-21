@@ -6,6 +6,8 @@
 
 namespace unicore
 {
+	static const char* window_data_name = "user_data";
+
 	SDL2Display::SDL2Display(SDL2Platform& platform, const DisplaySettings& settings)
 		: ParentType(settings)
 		, _platform(platform)
@@ -18,7 +20,7 @@ namespace unicore
 
 		_handle = SDL_CreateWindow(settings.title.data(),
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-			_mode.size.x, _mode.size.y, flags);
+			_mode.window_size.x, _mode.window_size.y, flags);
 
 		if (!_handle)
 		{
@@ -26,7 +28,8 @@ namespace unicore
 			return;
 		}
 
-		update_size();
+		SDL_SetWindowData(_handle, window_data_name, this);
+		update_mode();
 
 		_platform.add_listener(this);
 	}
@@ -61,7 +64,7 @@ namespace unicore
 			}
 
 			_mode = new_mode;
-			SDL_SetWindowSize(_handle, _mode.size.x, _mode.size.y);
+			SDL_SetWindowSize(_handle, _mode.window_size.x, _mode.window_size.y);
 			SDL_SetWindowPosition(_handle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 		}
 	}
@@ -128,8 +131,8 @@ namespace unicore
 			{
 				//case SDL_WINDOWEVENT_RESIZED:
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
-				update_size();
-				UC_LOG_DEBUG(_logger) << "Resized to " << _mode.size;
+				update_mode();
+				UC_LOG_DEBUG(_logger) << "Resized to " << _mode.window_size;
 				break;
 			}
 
@@ -140,9 +143,17 @@ namespace unicore
 	}
 
 	// PROTECTED /////////////////////////////////////////////////////////////////
-	void SDL2Display::update_size()
+	void SDL2Display::update_mode()
 	{
-		SDL_GetWindowSize(_handle, &_mode.size.x, &_mode.size.y);
+		SDL_GetWindowSize(_handle, &_mode.window_size.x, &_mode.window_size.y);
+		const auto flags = SDL_GetWindowFlags(_handle);
+
+		_mode.window_flags = DisplayWindowFlags::Zero;
+		if (flags & SDL_WINDOW_BORDERLESS)
+			_mode.window_flags |= DisplayWindowFlag::Borderless;
+
+		if (flags & SDL_WINDOW_RESIZABLE)
+			_mode.window_flags |= DisplayWindowFlag::Resizable;
 	}
 
 	Uint32 SDL2Display::make_flags(DisplayMode& mode) const
@@ -151,7 +162,7 @@ namespace unicore
 		if (mode.fullscreen)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-			mode.size = _platform.native_size();
+			mode.window_size = _platform.native_size();
 			mode.window_flags = DisplayWindowFlags::Zero;
 		}
 		else
@@ -167,5 +178,5 @@ namespace unicore
 
 		return flags;
 	}
-	}
+}
 #endif

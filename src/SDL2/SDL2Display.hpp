@@ -31,7 +31,7 @@ namespace unicore
 		SDL_Window* _handle;
 		DisplayMode _mode;
 
-		void update_size();
+		void update_mode();
 
 		Uint32 make_flags(DisplayMode& mode) const;
 	};

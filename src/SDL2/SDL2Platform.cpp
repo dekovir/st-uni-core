@@ -20,6 +20,39 @@ namespace unicore
 
 		update_native_size();
 
+		const auto display_count = SDL_GetNumVideoDisplays();
+		if (display_count >= 1)
+		{
+			for (auto display_index = 0; display_index < display_count; display_index++)
+			{
+				float ddpi, hdpi, vdpi;
+				if (SDL_GetDisplayDPI(display_index, &ddpi, &hdpi, &vdpi) != 0)
+				{
+					UC_LOG_WARNING(_logger) << SDL_GetError();
+					ddpi = 0; hdpi = 0; vdpi = 0;
+				}
+
+				SDL_Rect bounds;
+				SDL_GetDisplayBounds(display_index, &bounds);
+				SDL_DisplayMode mode;
+
+				SDL_GetCurrentDisplayMode(display_index, &mode);
+
+				auto display_orientation = SDL_GetDisplayOrientation(display_index);
+
+				SDL_Rect usable_bounds;
+				SDL_GetDisplayUsableBounds(display_index, &usable_bounds);
+
+				auto helper = UC_LOG_INFO(_logger);
+				helper << "Display " << display_index << ": " << SDL_GetDisplayName(display_index);
+				helper << " " << mode.w << "x" << mode.h << " " << mode.refresh_rate;
+				if (ddpi == hdpi && hdpi == vdpi)
+					helper << " (" << ddpi << ")";
+				else helper << " (" << ddpi << "," << hdpi << "," << vdpi << ")";
+				helper << " " << bounds << " " << usable_bounds << " " << display_orientation;
+			}
+		}
+
 		resources.add_provider(_provider);
 	}
 

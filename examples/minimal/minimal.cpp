@@ -67,7 +67,7 @@ namespace unicore
 		{
 			auto mode = display.get_mode();
 			mode.fullscreen = !mode.fullscreen;
-			mode.size = WindowSize;
+			mode.window_size = WindowSize;
 			mode.window_flags = WindowFlags;
 			display.set_mode(mode);
 		}
