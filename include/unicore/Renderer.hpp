@@ -2,7 +2,7 @@
 #include "unicore/Module.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Rect.hpp"
-#include "unicore/RenderResource.hpp"
+#include "unicore/RendererResource.hpp"
 
 namespace unicore
 {

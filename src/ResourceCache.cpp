@@ -1,7 +1,7 @@
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
-#include "unicore/RenderResource.hpp"
+#include "unicore/RendererResource.hpp"
 
 namespace unicore
 {
@@ -167,7 +167,7 @@ namespace unicore
 					*system += resource->system_memory_use();
 				if (video != nullptr)
 				{
-					if (const auto render_resource = std::dynamic_pointer_cast<RenderResource>(resource))
+					if (const auto render_resource = std::dynamic_pointer_cast<RendererResource>(resource))
 						*video += render_resource->video_memory_use();
 				}
 			}

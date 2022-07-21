@@ -17,9 +17,4 @@ namespace unicore
 	{
 		return sizeof(Recti) + _texture->system_memory_use();
 	}
-
-	uint32_t Sprite::video_memory_use() const
-	{
-		return _texture->video_memory_use();
-	}
 }

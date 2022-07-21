@@ -9,7 +9,7 @@ namespace unicore
 		update_size();
 	}
 
-	uint32_t SDL2Texture::video_memory_use() const
+	size_t SDL2Texture::video_memory_use() const
 	{
 		Uint32 format;
 		if (SDL_QueryTexture(_context, &format, nullptr, nullptr, nullptr) == 0)

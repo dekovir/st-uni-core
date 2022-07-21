@@ -5,11 +5,11 @@ namespace unicore
 {
 	class Renderer;
 
-	class RenderResource : public Resource
+	class RendererResource : public Resource
 	{
-		UC_OBJECT(RenderResource, Resource)
+		UC_OBJECT(RendererResource, Resource)
 	public:
-		UC_NODISCARD virtual uint32_t video_memory_use() const = 0;
+		UC_NODISCARD virtual size_t video_memory_use() const = 0;
 		//UC_NODISCARD virtual Render& render() const = 0;
 	};
 }
