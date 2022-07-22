@@ -52,62 +52,28 @@ namespace unicore
 		LogHelper(Logger& logger, LogType type);
 		~LogHelper();
 
-		LogHelper& operator <<(bool value);
+		void append(char c);
+		void append(wchar_t c);
 
-#if defined (_HAS_EXCEPTIONS)
-		LogHelper& operator <<(const std::exception& ex);
+		void append(StringView text);
+		void append(WStringView text);
+
+		static bool allow(UC_UNUSED LogType type)
+		{
+#if defined (_DEBUG)
+			return true;
+#else
+			return type != LogType::Debug;
 #endif
-
-		LogHelper& operator << (const char value) { append(value); return *this; }
-		LogHelper& operator << (const wchar_t value) { append(value); return *this; }
-
-		LogHelper& operator << (const char* value);
-		LogHelper& operator << (const wchar_t* value);
-
-		LogHelper& operator << (const StringView value) { append(value); return *this; }
-		LogHelper& operator << (const WStringView value) { append(value); return *this; }
-
-		LogHelper& operator << (const String& value) { append(value); return *this; }
-		LogHelper& operator << (const WString& value) { append(value); return *this; }
-
-		template<typename T, std::enable_if_t<std::is_enum_v<T>>* = nullptr>
-		LogHelper& operator<<(T value)
-		{
-			const auto tmp = static_cast<int>(value);
-			const auto str = std::to_wstring(tmp);
-			append(str.c_str());
-			return *this;
 		}
 
-		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-		LogHelper& operator<<(T value)
-		{
-			const auto str = std::to_wstring(value);
-			append(str.c_str());
-			return *this;
-		}
+		struct LValueFix {};
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-		LogHelper& operator<<(T value)
-		{
-			const auto str = std::to_wstring(value);
-			append(str.c_str());
-			return *this;
-		}
+		LogHelper& operator<<(UC_UNUSED LValueFix) { return *this; }
 
-		template<typename T>
-		LogHelper& operator<<(std::initializer_list<T> list)
+		static LogHelper create(Logger& logger, LogType type)
 		{
-			int index = 0;
-			for (const auto* value : list)
-			{
-				if (index > 0)
-					append(L",");
-
-				this->operator<<(value);
-				index++;
-			}
-			return *this;
+			return { logger, type };
 		}
 
 		static LogHelper create(const std::shared_ptr<Logger>& logger, LogType type)
@@ -120,66 +86,119 @@ namespace unicore
 			return { *logger, type };
 		}
 
-		static LogHelper create(Logger& logger, LogType type)
-		{
-			return { logger, type };
-		}
-
-		struct DebugSource
-		{
-			constexpr DebugSource(StringView _file, int _line)
-				: file(_file), line(_line)
-			{
-			}
-
-			const StringView file;
-			const int line;
-		};
-
-		struct DebugFunction
-		{
-			explicit constexpr DebugFunction(StringView func) : _func(func) {}
-
-			StringView _func;
-		};
-
-		LogHelper& operator << (const DebugSource& source);
-		LogHelper& operator << (const DebugFunction& source);
-
-		void append(const char c);
-		void append(const wchar_t c);
-
-		void append(const StringView text);
-		void append(const WStringView text);
-
-		static bool allow(LogType type)
-		{
-#if defined (_DEBUG)
-			return true;
-#else
-			return type != LogType::Debug;
-#endif
-		}
-
 	protected:
 		Logger& _logger;
 		const LogType _type;
 		String _text;
 	};
+
+	LogHelper& operator <<(LogHelper& helper, bool value);
+
+#if defined (_HAS_EXCEPTIONS)
+	LogHelper& operator <<(LogHelper& helper, const std::exception& ex);
+#endif
+
+	extern LogHelper& operator << (LogHelper& helper, char value);
+	extern LogHelper& operator << (LogHelper& helper, wchar_t value);
+
+	extern LogHelper& operator <<(LogHelper& helper, const char* value);
+	extern LogHelper& operator <<(LogHelper& helper, const wchar_t* value);
+
+	template<typename TChar,
+		std::enable_if_t<std::is_same_v<TChar, char> || std::is_same_v<TChar, wchar_t>>* = nullptr>
+	extern LogHelper& operator << (LogHelper& helper, const BasicStringView<TChar> value)
+	{
+		helper.append(value);
+		return helper;
+	}
+
+	template<typename TChar,
+		std::enable_if_t<std::is_same_v<TChar, char> || std::is_same_v<TChar, wchar_t>>* = nullptr>
+	extern LogHelper& operator << (LogHelper& helper, const BasicString<TChar>& value)
+	{
+		helper.append(value);
+		return helper;
+	}
+
+	template<typename T, std::enable_if_t<std::is_enum_v<T>>* = nullptr>
+	extern LogHelper& operator<<(LogHelper& helper, T value)
+	{
+		const auto tmp = static_cast<int>(value);
+		const auto str = std::to_wstring(tmp);
+		return helper << str.c_str();
+	}
+
+	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+	extern LogHelper& operator<<(LogHelper& helper, T value)
+	{
+		const auto str = std::to_wstring(value);
+		return helper << str.c_str();
+	}
+
+	template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+	extern LogHelper& operator<<(LogHelper& helper, T value)
+	{
+		const auto str = std::to_wstring(value);
+		return helper << str.c_str();
+	}
+
+	template<typename T>
+	extern LogHelper& operator<<(LogHelper& helper, std::initializer_list<T> list)
+	{
+		int index = 0;
+		for (const auto* value : list)
+		{
+			if (index > 0)
+				helper << ',';
+			helper << value;
+			index++;
+		}
+		return helper;
+	}
+
+	struct DebugSource
+	{
+		constexpr DebugSource(StringView _file, int _line)
+			: file(_file), line(_line)
+		{
+		}
+
+		const StringView file;
+		const int line;
+
+		static DebugSource create(const char* file, int line)
+		{
+#if defined (UNICORE_PLATFORM_WINDOWS) || defined(UNICORE_PLATFORM_ANDROID)
+			const auto pos = std::string_view(file).find_last_of('\\');
+#else
+			const auto pos = std::string_view(file).find_last_of('/');
+#endif
+			return { (pos != std::string_view::npos ? &file[pos + 1] : file), line };
+		}
+	};
+
+	struct DebugFunction
+	{
+		explicit constexpr DebugFunction(StringView func) : _func(func) {}
+
+		StringView _func;
+	};
+
+	extern LogHelper& operator << (LogHelper& helper, const DebugSource& source);
+	extern LogHelper& operator << (LogHelper& helper, const DebugFunction& source);
 }
 
+#define UC_LOG_TYPE(logger, type) \
+		LogHelper::create(logger, type) << LogHelper::LValueFix{}
+
 #define UC_LOG_INFO(logger) \
-		LogHelper::create(logger, LogType::Info)
+		UC_LOG_TYPE(logger, LogType::Info)
 
 #define UC_LOG_DEBUG(logger) \
-		if (LogHelper::allow(LogType::Debug)) \
-				LogHelper::create(logger, LogType::Debug) \
-				<< LogHelper::DebugSource(__FILE__, __LINE__) << L" "
+	UC_LOG_TYPE(logger, LogType::Debug) << DebugSource(__FILE__, __LINE__) << ' '
 
 #define UC_LOG_WARNING(logger) \
-		LogHelper::create(logger, LogType::Warning) \
-		<< LogHelper::DebugSource(__FILE__, __LINE__) << L" "
+		UC_LOG_TYPE(logger, LogType::Warning) << DebugSource(__FILE__, __LINE__) << ' '
 
 #define UC_LOG_ERROR(logger) \
-		LogHelper::create(logger, LogType::Error) \
-		<< LogHelper::DebugSource(__FILE__, __LINE__) << L" "
+		UC_LOG_TYPE(logger, LogType::Error) << DebugSource(__FILE__, __LINE__) << ' '
