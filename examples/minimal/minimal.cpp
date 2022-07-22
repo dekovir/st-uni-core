@@ -52,11 +52,16 @@ namespace unicore
 				return Color4b::lerp(ColorConst4b::White, ColorConst4b::Clear, t);
 			});
 
+		circle.fill(ColorConst4b::Clear, Recti(0, radius_outer - 3, side, 6));
+		circle.fill(ColorConst4b::Clear, Recti(radius_outer - 3, 0, 6, side));
+
 		_tex = renderer.create_texture(circle);
 	}
 
 	void MyCore::on_update()
 	{
+		const auto screen_size = renderer.screen_size();
+
 #if !defined(UNICORE_PLATFORM_WEB)
 		if (input.keyboard().down(KeyCode::Escape))
 			platform.quit();
@@ -89,21 +94,21 @@ namespace unicore
 		else _add_time = TimeSpanConst::Zero;
 
 		// UPDATE ENTITIES ///////////////////////////////////////////////////////////
-		auto& screen_size = renderer.screen_size();
-		const auto delta = static_cast<float>(time.delta().total_seconds());
-		for (auto& entity : _entites)
-			entity.update(screen_size, delta);
-
-		auto& size = renderer.screen_size();
+		if (!input.keyboard().down(KeyCode::Space))
+		{
+			const auto delta = static_cast<float>(time.delta().total_seconds());
+			for (auto& entity : _entites)
+				entity.update(screen_size, delta);
+		}
 
 		// GRAPHICS ////////////////////////////////////////////////////////////////
 		_graphics.begin();
 		_graphics
 			.set_color(ColorConst4b::Magenta)
-			.draw_line(VectorConst2i::Zero, size)
-			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))
+			.draw_line(VectorConst2i::Zero, screen_size)
+			.draw_line(Vector2i(0, screen_size.y), Vector2i(screen_size.x, 0))
 			.set_color(ColorConst4b::Cyan)
-			.draw_rect(Recti{ size.x - 200, 100, 200, 100 }, true)
+			.draw_rect(Recti{ screen_size.x - 200, 100, 200, 100 }, true)
 			.draw_point(Vector2i{ 300, 300 })
 			;
 
@@ -112,7 +117,7 @@ namespace unicore
 		// SPRITE BATCH ////////////////////////////////////////////////////////////
 		_sprite_batch.begin();
 
-		_sprite_batch.draw(_tex, (size / 2).cast<float>());
+		_sprite_batch.draw(_tex, (screen_size / 2).cast<float>());
 		for (const auto& entity : _entites)
 			_sprite_batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
 
