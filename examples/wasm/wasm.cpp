@@ -208,6 +208,8 @@ namespace unicore
 		}
 
 		s_state->init();
+
+		resources.unload_unused();
 	}
 
 	MyCore::~MyCore()
@@ -228,14 +230,14 @@ namespace unicore
 		// UPDATE STATE
 		s_state_time += time.delta();
 
-		static constexpr auto fps_lock = TimeSpan::from_seconds(1. / 60.);
-		while (s_state_time > fps_lock)
 		{
+			AutoTimer timer(_update_time);
+			static constexpr auto fps_lock = TimeSpan::from_seconds(1. / 60.);
+			while (s_state_time > fps_lock)
 			{
-				AutoTimer timer(_update_time);
 				s_state->update(fps_lock);
+				s_state_time -= fps_lock;
 			}
-			s_state_time -= fps_lock;
 		}
 
 		// DRAW STATE

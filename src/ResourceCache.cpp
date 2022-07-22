@@ -23,7 +23,7 @@ namespace unicore
 			{
 				if (it->second.use_count() == 1)
 				{
-					UC_LOG_DEBUG(_logger) << "Unload resource " << it->first << " from " << path;
+					UC_LOG_DEBUG(_logger) << "Unload resource " << *it->first << " from " << path;
 					it = dict.erase(it);
 				}
 				else ++it;
