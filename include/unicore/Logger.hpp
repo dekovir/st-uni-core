@@ -52,16 +52,15 @@ namespace unicore
 		LogHelper(Logger& logger, LogType type);
 		~LogHelper();
 
-		LogHelper& begin()
-		{
-			return *this;
-		}
-
 		void append(char c);
 		void append(wchar_t c);
 
 		void append(StringView text);
 		void append(WStringView text);
+
+		struct LValueFix {};
+
+		LogHelper& operator<<(UC_UNUSED LValueFix) { return *this; }
 
 		static LogHelper create(Logger& logger, LogType type)
 		{
@@ -181,7 +180,7 @@ namespace unicore
 }
 
 #define UC_LOG_TYPE(logger, type) \
-		LogHelper::create(logger, type).begin()
+		LogHelper::create(logger, type) << LogHelper::LValueFix{}
 
 #define UC_LOG_INFO(logger) \
 		UC_LOG_TYPE(logger, LogType::Info)
