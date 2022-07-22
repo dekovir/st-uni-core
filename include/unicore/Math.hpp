@@ -6,14 +6,14 @@ namespace unicore
 {
 	namespace Math
 	{
-		constexpr float PI = 3.14159265358979323846f;
-		constexpr float PI2 = PI * 2;
+		constexpr float Pi = 3.14159265358979323846f;
+		constexpr float DoublePi = Pi * 2;
+		constexpr float HalfPi = Pi / 2;
 
-		constexpr float DEG_TO_RAD = PI / 180;
-		constexpr float RAD_TO_DEG = 180 / PI;
+		constexpr float DEG_TO_RAD = Pi / 180;
+		constexpr float RAD_TO_DEG = 180 / Pi;
 
-		constexpr float MatrixEpsilon = 1e-6f;
-		constexpr float MatrixInverseEpsilon = 1e-14f;
+		constexpr float Epsilon = 1.192092896e-07F; // FLT_EPSILON
 
 		static constexpr bool even(int value) { return (value % 2) == 0; }
 		static constexpr bool odd(int value) { return (value % 2) == 1; }
@@ -38,11 +38,27 @@ namespace unicore
 
 		static inline float sqrt(float value) { return std::sqrt(value); }
 
-		template<typename T>
-		static inline T abs(T value) { return std::abs(value); }
+		template<typename T,
+			std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+		static constexpr T abs(T value)
+		{
+			return value < 0 ? -value : value;
+		}
 
 		template<typename T>
 		static constexpr T sign(T value) { return value >= 0 ? +1 : -1; }
+
+		template<typename T>
+		static constexpr bool equals(T a, T b)
+		{
+			return a == b;
+		}
+
+		template<>
+		constexpr bool equals<float>(float a, float b)
+		{
+			return abs(a - b) < Epsilon;
+		}
 
 		template<typename T>
 		static constexpr int compare(T a, T b)
@@ -224,8 +240,8 @@ namespace unicore
 	struct AngleConst
 	{
 		static constexpr auto Zero = Angle<AngleTag>(0);
-		static constexpr auto Pi = Angle<AngleTag>(Angle<AngleTypeRad>(Math::PI));
-		static constexpr auto PiHalf = Angle<AngleTag>(Angle<AngleTypeRad>(Math::PI / 2));
+		static constexpr auto Pi = Angle<AngleTag>(Angle<AngleTypeRad>(Math::Pi));
+		static constexpr auto PiHalf = Angle<AngleTag>(Angle<AngleTypeRad>(Math::Pi / 2));
 	};
 
 	using DegreesConst = AngleConst<AngleTypeDeg>;

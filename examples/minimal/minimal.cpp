@@ -48,7 +48,7 @@ namespace unicore
 				if (distance < radius_inner || distance > radius_outer)
 					return ColorConst4b::Clear;
 
-				const float t = 1 - Math::sin(Math::PI * (distance - radius_inner) / (radius_outer - radius_inner));
+				const float t = 1 - Math::sin(Math::Pi * (distance - radius_inner) / (radius_outer - radius_inner));
 				return Color4b::lerp(ColorConst4b::White, ColorConst4b::Clear, t);
 			});
 

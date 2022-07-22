@@ -46,7 +46,7 @@ namespace unicore
 				auto helper = UC_LOG_INFO(_logger);
 				helper << "Display " << display_index << ": " << SDL_GetDisplayName(display_index);
 				helper << " " << mode.w << "x" << mode.h << " " << mode.refresh_rate;
-				if (ddpi == hdpi && hdpi == vdpi)
+				if (Math::equals(ddpi, hdpi) && Math::equals(hdpi, vdpi))
 					helper << " (" << ddpi << ")";
 				else helper << " (" << ddpi << "," << hdpi << "," << vdpi << ")";
 				helper << " " << bounds << " " << usable_bounds << " " << display_orientation;
