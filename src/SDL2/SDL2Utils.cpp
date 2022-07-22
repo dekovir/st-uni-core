@@ -129,6 +129,8 @@ namespace unicore
 		case SDL_ORIENTATION_PORTRAIT: return helper << "Portrait";
 		case SDL_ORIENTATION_PORTRAIT_FLIPPED: return helper << "PortraitFlipped";
 		}
+		UC_ASSERT_ALWAYS_MSG("Invalid type");
+		return helper;
 	}
 
 	LogHelper& operator<<(LogHelper& helper, const SDL_Point& value)

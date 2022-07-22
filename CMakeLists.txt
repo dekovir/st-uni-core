@@ -49,6 +49,11 @@ function(unicore_group_sources_by_folder target)
 endfunction()
 
 function(unicore_init_target target)
+	#if(MSVC)
+	#	target_compile_options(${target} PRIVATE /W4 /WX)
+	#else()
+	#	target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+	#endif()
 endfunction()
 
 # UNICORE ######################################################################

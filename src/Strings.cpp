@@ -11,9 +11,9 @@ namespace unicore
 			// TODO: Replace with no exception library
 			//try
 			//{
-				static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> conv;
-				to = conv.to_bytes(from.data());
-				return true;
+			static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> conv;
+			to = conv.to_bytes(from.data());
+			return true;
 			//}
 			//catch (...)
 			//{
@@ -21,14 +21,21 @@ namespace unicore
 			//}
 		}
 
+		bool try_convert(const std::basic_string_view<char16_t> from, String& to)
+		{
+			static std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> converter;
+			to = converter.to_bytes(from.data());
+			return true;
+		}
+
 		bool try_convert(const StringView from, WString& to)
 		{
 			// TODO: Replace with no exception library
 			//try
 			//{
-				static std::wstring_convert< std::codecvt_utf8<wchar_t>, wchar_t > conv;
-				to = conv.from_bytes(from.data());
-				return true;
+			static std::wstring_convert< std::codecvt_utf8<wchar_t>, wchar_t > conv;
+			to = conv.from_bytes(from.data());
+			return true;
 			//}
 			//catch (...)
 			//{
@@ -38,6 +45,19 @@ namespace unicore
 
 		//
 		String to_utf8(const WStringView str, bool* success)
+		{
+			std::string result;
+			if (try_convert(str, result))
+			{
+				if (success != nullptr) *success = true;
+				return result;
+			}
+
+			if (success != nullptr) *success = false;
+			return {};
+		}
+
+		String to_utf8(const std::basic_string_view<char16_t> str, bool* success)
 		{
 			std::string result;
 			if (try_convert(str, result))
@@ -82,7 +102,7 @@ namespace unicore
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
 			return _wcsicmp(a.data(), b.data());
-#else 
+#else
 			return wcscasecmp(a.data(), b.data());
 #endif
 		}

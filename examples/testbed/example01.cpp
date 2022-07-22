@@ -14,14 +14,14 @@ namespace unicore
 
 	void Example01::update()
 	{
-		_angle += 90_deg * time.delta().total_seconds();
+		_angle += 90_deg * static_cast<float>(time.delta().total_seconds());
 
 		auto& size = renderer.screen_size();
 
 		Transform2 tr;
 		tr.move = size.cast<float>() / 2.f;
 		tr.angle = _angle;
-		tr.scale.x = 1 + .5f * Math::sin(time.elapsed().total_seconds());
+		tr.scale.x = 1 + .5f * Math::sin(static_cast<float>(time.elapsed().total_seconds()));
 
 		_graphics.begin();
 		_graphics

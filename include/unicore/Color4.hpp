@@ -63,10 +63,10 @@ namespace unicore
 			typename ComponentType>
 		static constexpr Color4 from_format(PixelFormat<DataType, ComponentType> format, DataType value)
 		{
-			const auto r = static_cast<uint8_t>(value >> format.r_shift) & format.component_mask;
-			const auto g = static_cast<uint8_t>(value >> format.g_shift) & format.component_mask;
-			const auto b = static_cast<uint8_t>(value >> format.b_shift) & format.component_mask;
-			const auto a = static_cast<uint8_t>(value >> format.a_shift) & format.component_mask;
+			const auto r = static_cast<uint8_t>((value >> format.r_shift) & format.component_mask);
+			const auto g = static_cast<uint8_t>((value >> format.g_shift) & format.component_mask);
+			const auto b = static_cast<uint8_t>((value >> format.b_shift) & format.component_mask);
+			const auto a = static_cast<uint8_t>((value >> format.a_shift) & format.component_mask);
 			return {
 				convert_component_from_uint8(r),
 				convert_component_from_uint8(g),

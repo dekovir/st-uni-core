@@ -7,7 +7,7 @@ namespace unicore
 	{
 		UC_OBJECT(Module, Object)
 	public:
-		virtual void register_module(Context& context) {}
-		virtual void unregister_module(Context& context) {}
+		virtual void register_module(UC_UNUSED Context& context) {}
+		virtual void unregister_module(UC_UNUSED Context& context) {}
 	};
 }

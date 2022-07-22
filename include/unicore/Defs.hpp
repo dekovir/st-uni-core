@@ -134,6 +134,7 @@ namespace unicore
 }
 
 #define UC_NODISCARD [[nodiscard]]
+#define UC_UNUSED [[maybe_unused]]
 
 #define UC_ASSERT(cond) assert(cond)
 #define UC_ASSERT_MSG(cond, msg) assert(cond && msg)

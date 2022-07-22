@@ -17,7 +17,6 @@ namespace unicore
 	public: \
 		using ParentType = Parent; \
 		static TypeConstRef type_static() { \
-			auto parent = std::is_same_v<Parent, Base> ? nullptr : &get_type<Parent>(); \
 			static const auto s_type = internal::create<Base, Parent>(#Base); \
 			return s_type; } \
 	private:

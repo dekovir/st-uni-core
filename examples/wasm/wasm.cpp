@@ -4,6 +4,7 @@
 #include "unicore/Timer.hpp"
 #include "unicore/Data.hpp"
 #include "unicore/Input.hpp"
+#include "unicore/Strings.hpp"
 #include "unicore/TimeSpan.hpp"
 #include "unicore/SDLRenderer.hpp"
 #include "unicore/ResourceCache.hpp"
@@ -62,11 +63,10 @@ namespace unicore
 	m3ApiRawFunction(wa_log)
 	{
 		m3ApiGetArgMem(const uint32_t*, ptr);
-		uint32_t lenInPoints = *(ptr - 1) / 2;
+		const uint32_t lenInPoints = *(ptr - 1) / 2;
 
-		std::u16string strUtf16(reinterpret_cast<const char16_t*>(ptr), 0, lenInPoints);
-		std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> converter;
-		auto text = converter.to_bytes(strUtf16);
+		const std::basic_string_view strUtf16(reinterpret_cast<const char16_t*>(ptr), lenInPoints);
+		const auto text = Strings::to_utf8(strUtf16);
 
 		s_example->logger.write(LogType::Info, text);
 
