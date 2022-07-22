@@ -62,6 +62,26 @@ namespace unicore
 		UC_NODISCARD constexpr Vector2<T> bottom_left() const { return Vector2<T>(x, y); }
 		UC_NODISCARD constexpr Vector2<T> bottom_right() const { return Vector2<T>(x + w, y); }
 
+		UC_NODISCARD constexpr bool contains(const Vector2<T>& point) const
+		{
+			return (point.x >= min_x()) && (point.x < max_x()) && (point.y >= min_y()) && (point.y < max_y());
+		}
+
+		UC_NODISCARD constexpr Optional<Rect> intersection(const Rect& rectangle) const
+		{
+			// Compute the intersection boundaries
+			const T inter_left = Math::max(min_x(), rectangle.min_x());
+			const T inter_top = Math::max(min_y(), rectangle.min_y());
+			const T inter_right = Math::min(max_x(), rectangle.max_x());
+			const T inter_bottom = Math::min(max_y(), rectangle.max_y());
+
+			// If the intersection is valid (positive non zero area), then there is an intersection
+			if ((inter_left < inter_right) && (inter_top < inter_bottom))
+				return Rect<T>(inter_left, inter_top, inter_right - inter_left, inter_bottom - inter_top);
+
+			return std::nullopt;
+		}
+
 		template<typename U>
 		constexpr Rect<U> cast() const
 		{
