@@ -14,3 +14,7 @@ target_include_directories(unicore-gridmap PUBLIC "${UNICORE_GRIDMAP_INCLUDE}")
 set_target_properties(unicore-gridmap PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-gridmap PUBLIC unicore)
 target_compile_definitions(unicore-gridmap PUBLIC UNICORE_USE_GRIDMAP)
+
+function(unciore_link_gridmap target)
+	target_link_libraries(${target} PUBLIC unicore-gridmap)
+endfunction()

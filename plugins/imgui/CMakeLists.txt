@@ -22,3 +22,7 @@ target_include_directories(unicore-imgui PUBLIC "${UNICORE_IMGUI_INCLUDE}")
 set_target_properties(unicore-imgui PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-imgui PUBLIC unicore imgui)
 target_compile_definitions(unicore-imgui PUBLIC UNICORE_USE_IMGUI)
+
+function(unciore_link_imgui target)
+	target_link_libraries(${target} PUBLIC unicore-imgui)
+endfunction()

@@ -7,5 +7,6 @@ namespace unicore
 	{
 		UC_OBJECT(ImGuiPlugin, Plugin)
 	public:
+		ImGuiPlugin() = default;
 	};
 }

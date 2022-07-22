@@ -11,6 +11,8 @@
 #include "unicore/wasm/WAEnvironment.hpp"
 #include "unicore/wasm/WAModule.hpp"
 #include "unicore/wasm/WARuntime.hpp"
+#include "unicore/xml/XMLPlugin.hpp"
+#include "unicore/fnt/FNTPlugin.hpp"
 #include <locale>
 #include <codecvt>
 
@@ -155,6 +157,9 @@ namespace unicore
 		UC_LOG_INFO(logger) << "Starting";
 
 		s_example = this;
+
+		add_plugin<XMLPlugin>();
+		add_plugin<FNTPlugin>();
 
 		_font = resources.load<Font>(L"font_004.fnt"_path);
 

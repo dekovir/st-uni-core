@@ -2,14 +2,7 @@
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/TimeSpan.hpp"
-
-#if defined(UNICORE_USE_XML)
-#	include "unicore/xml/XMLPlugin.hpp"
-#endif
-
-#if defined(UNICORE_USE_FNT)
-#	include "unicore/fnt/FNTPlugin.hpp"
-#endif
+#include "unicore/Plugin.hpp"
 
 namespace unicore
 {
@@ -25,14 +18,7 @@ namespace unicore
 		input.register_module(context);
 		resources.register_module(context);
 
-#if defined(UNICORE_USE_XML)
-		_plugins.push_back(std::make_unique<XMLPlugin>());
-#endif
-
-#if defined(UNICORE_USE_FNT)
-		_plugins.push_back(std::make_unique<FNTPlugin>());
-#endif
-
+		_plugins_registered = true;
 		for (const auto& plugin : _plugins)
 			plugin->register_module(context);
 	}
@@ -56,5 +42,12 @@ namespace unicore
 
 		if (time.delta() > TimeSpanConst::Zero)
 			on_update();
+	}
+
+	void Core::add_plugin(Unique<Plugin>&& plugin)
+	{
+		if (_plugins_registered)
+			plugin->register_module(context);
+		_plugins.push_back(std::move(plugin));
 	}
 }

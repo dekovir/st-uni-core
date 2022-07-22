@@ -14,3 +14,7 @@ target_include_directories(unicore-wasm PUBLIC "${UNICORE_WASM_INCLUDE}")
 set_target_properties(unicore-wasm PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-wasm PUBLIC unicore m3)
 target_compile_definitions(unicore-wasm PUBLIC UNICORE_USE_WASM)
+
+function(unciore_link_wasm target)
+	target_link_libraries(${target} PUBLIC unicore-wasm)
+endfunction()

@@ -13,23 +13,3 @@ unicore_group_sources_by_folder(unicore-app)
 target_include_directories(unicore-app PUBLIC "${LOGIC_INCLUDE}")
 set_target_properties(unicore-app PROPERTIES FOLDER "UniCore")
 target_link_libraries(unicore-app PUBLIC unicore)
-
-if (UNICORE_XML)
-	target_link_libraries(unicore-app PUBLIC unicore-xml)
-endif()
-
-if (UNICORE_FNT)
-	target_link_libraries(unicore-app PUBLIC unicore-fnt)
-endif()
-
-if (UNICORE_WASM)
-	target_link_libraries(unicore-app PUBLIC unicore-wasm)
-endif()
-
-if (UNICORE_IMGUI)
-	target_link_libraries(unicore-app PUBLIC unicore-imgui)
-endif()
-
-if (UNICORE_GRIDMAP)
-	target_link_libraries(unicore-app PUBLIC unicore-gridmap)
-endif()

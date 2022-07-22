@@ -14,3 +14,7 @@ target_include_directories(unicore-fnt PUBLIC "${UNICORE_FNT_INCLUDE}")
 set_target_properties(unicore-fnt PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-fnt PUBLIC unicore unicore-xml)
 target_compile_definitions(unicore-fnt PUBLIC UNICORE_USE_FNT)
+
+function(unciore_link_fnt target)
+	target_link_libraries(${target} PUBLIC unicore-fnt)
+endfunction()

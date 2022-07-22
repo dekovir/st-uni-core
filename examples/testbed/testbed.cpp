@@ -3,6 +3,8 @@
 #include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Font.hpp"
+#include "unicore/xml/XMLPlugin.hpp"
+#include "unicore/fnt/FNTPlugin.hpp"
 
 namespace unicore
 {
@@ -12,6 +14,9 @@ namespace unicore
 		: SDLCore(create_settings(settings, "Testbed"))
 	{
 		UC_LOG_INFO(logger) << "Starting";
+
+		add_plugin<XMLPlugin>();
+		add_plugin<FNTPlugin>();
 
 		_font = resources.load<Font>(L"font_004.fnt"_path);
 

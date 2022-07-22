@@ -7,6 +7,8 @@ namespace unicore
 	{
 		UC_OBJECT(FNTPlugin, Plugin)
 	public:
+		FNTPlugin() = default;
+
 		void register_module(Context& context) override;
 		void unregister_module(Context& context) override;
 	};

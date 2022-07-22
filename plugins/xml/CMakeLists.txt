@@ -14,3 +14,7 @@ target_include_directories(unicore-xml PUBLIC "${UNICORE_XML_INCLUDE}")
 set_target_properties(unicore-xml PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-xml PUBLIC unicore tinyxml2)
 target_compile_definitions(unicore-xml PUBLIC UNICORE_USE_XML)
+
+function(unciore_link_xml target)
+	target_link_libraries(${target} PUBLIC unicore-xml)
+endfunction()
