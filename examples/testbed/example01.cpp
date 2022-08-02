@@ -15,12 +15,12 @@ namespace unicore
 
 		UC_NODISCARD constexpr bool empty() const { return bits == 0; }
 
-		UC_NODISCARD ColorType max_value() const
+		UC_NODISCARD constexpr ColorType max_value() const
 		{
-			return static_cast<ColorType>(Math::pow(2, bits)) - 1;
+			return static_cast<ColorType>(1 << bits) - 1;
 		}
 
-		UC_NODISCARD ColorType make_mask() const
+		UC_NODISCARD constexpr ColorType mask() const
 		{
 			return max_value() << offset;
 		}
@@ -31,19 +31,18 @@ namespace unicore
 			if (!empty())
 			{
 				const auto normalized = static_cast<float>(value) / color_limits<T>::max();
-				return (static_cast<ColorType>(normalized * max_value()) << offset) & make_mask();
+				return (static_cast<ColorType>(normalized * max_value()) << offset) & mask();
 			}
 			return 0;
 		}
 
 		template<typename T>
-		T to_value(ColorType value) const
+		UC_NODISCARD T to_value(ColorType value) const
 		{
 			if (!empty())
 			{
-				auto mask = make_mask();
-				auto raw = (value & mask) >> offset;
-				auto normalized = static_cast<float>(raw) / max_value();
+				const auto raw = (value & mask()) >> offset;
+				const auto normalized = static_cast<float>(raw) / max_value();
 				return static_cast<T>(normalized * color_limits<T>::max());
 			}
 
@@ -81,8 +80,8 @@ namespace unicore
 
 	bool Example01::load(ResourceCache& resources)
 	{
-		const auto formated = to_format(RGB_565, ColorConst4b::Blue);
-		auto color = from_format<uint8_t>(RGB_565, formated);
+		const auto formated = to_format(RGB_565, ColorConst4b::Yellow);
+		auto color = from_format<float>(RGB_565, formated);
 		return true;
 	}
 
