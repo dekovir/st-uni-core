@@ -3,8 +3,75 @@
 
 namespace unicore
 {
-	class Surface;
-	class Texture;
+	enum class VertexElementType : uint8_t
+	{
+		Position,
+		Normal,
+		Color0,
+		Texture0,
+		Count,
+	};
+
+	enum class VertexElementValue : uint8_t
+	{
+		Byte4,
+		Float2,
+		Float4,
+	};
+
+	struct VertexElement
+	{
+		VertexElementValue value;
+		uint16_t offset;
+	};
+
+	class VertexLayout
+	{
+	public:
+		using ArrayType = Array<VertexElement, static_cast<int>(VertexElementType::Count)>;
+
+		VertexLayout(const ArrayType& elements_, uint16_t stride_)
+			: elements(elements_), stride(stride_)
+		{}
+
+		const ArrayType elements;
+		uint16_t stride;
+
+		static constexpr size_t get_value_size(VertexElementValue value)
+		{
+			switch (value)
+			{
+			case VertexElementValue::Byte4: return sizeof(uint8_t) * 4;
+			case VertexElementValue::Float2: return sizeof(float) * 2;
+			case VertexElementValue::Float4: return sizeof(float) * 4;
+			}
+			return 0;
+		}
+	};
+
+	class VertexLayoutBuilder
+	{
+	public:
+		VertexLayoutBuilder()
+			: _elements({ VertexElementValue::Byte4, 0 })
+			, _stride(0)
+		{
+		}
+
+		VertexLayoutBuilder& add(VertexElementType type, VertexElementValue value, uint16_t offset)
+		{
+			_elements[static_cast<int>(type)] = { value, offset };
+		}
+
+		VertexLayout build()
+		{
+			return { _elements, _stride };
+		}
+
+	protected:
+		VertexLayout::ArrayType _elements;
+		uint16_t _stride;
+	};
 
 	class RendererBuffer : public RendererResource
 	{

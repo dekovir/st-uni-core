@@ -7,8 +7,82 @@ namespace unicore
 {
 	UC_EXAMPLE_REGISTER(Example01, "Graphics2D");
 
+	template<typename ColorType>
+	struct ColorChannel
+	{
+		uint8_t bits;
+		uint8_t offset;
+
+		UC_NODISCARD constexpr bool empty() const { return bits == 0; }
+
+		UC_NODISCARD ColorType max_value() const
+		{
+			return static_cast<ColorType>(Math::pow(2, bits)) - 1;
+		}
+
+		UC_NODISCARD ColorType make_mask() const
+		{
+			return max_value() << offset;
+		}
+
+		template<typename T>
+		UC_NODISCARD ColorType from_value(T value) const
+		{
+			if (!empty())
+			{
+				const auto normalized = static_cast<float>(value) / color_limits<T>::max();
+				return (static_cast<ColorType>(normalized * max_value()) << offset) & make_mask();
+			}
+			return 0;
+		}
+
+		template<typename T>
+		T to_value(ColorType value) const
+		{
+			if (!empty())
+			{
+				auto mask = make_mask();
+				auto raw = (value & mask) >> offset;
+				auto normalized = static_cast<float>(raw) / max_value();
+				return static_cast<T>(normalized * color_limits<T>::max());
+			}
+
+			return 0;
+		}
+	};
+
+	template<typename ColorType>
+	struct ColorFormat
+	{
+		ColorChannel<ColorType> r, g, b, a;
+	};
+
+	static constexpr ColorFormat<uint16_t> RGB_565 = { {5, 0}, {6, 5}, {5, 11}, {0, 0} };
+
+	template<typename T, typename ColorType>
+	static Color4<T> from_format(const ColorFormat<ColorType>& format, ColorType value)
+	{
+		const auto r = format.r.template to_value<T>(value);
+		const auto g = format.g.template to_value<T>(value);
+		const auto b = format.b.template to_value<T>(value);
+		const auto a = format.a.template to_value<T>(value);
+		return Color4<T>(r, g, b, a);
+	}
+
+	template<typename T, typename ColorType>
+	static ColorType to_format(const ColorFormat<ColorType>& format, const Color4<T>& color)
+	{
+		const auto r = format.r.template from_value<T>(color.r);
+		const auto g = format.g.template from_value<T>(color.g);
+		const auto b = format.b.template from_value<T>(color.b);
+		const auto a = format.a.template from_value<T>(color.a);
+		return r | g | b | a;
+	}
+
 	bool Example01::load(ResourceCache& resources)
 	{
+		const auto formated = to_format(RGB_565, ColorConst4b::Blue);
+		auto color = from_format<uint8_t>(RGB_565, formated);
 		return true;
 	}
 
