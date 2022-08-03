@@ -37,6 +37,7 @@ namespace unicore
 		return *this;
 	}
 
+	// DRAW TRIANGLE /////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
 		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2)
 	{
@@ -51,6 +52,7 @@ namespace unicore
 		return *this;
 	}
 
+	// DRAW QUAD /////////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
 		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2, const VertexTexColor2& v3)
 	{
@@ -215,6 +217,7 @@ namespace unicore
 		return *this;
 	}
 
+	// DRAW FONT /////////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::print(const Shared<Font>& font,
 		const Vector2f& pos, StringView text, const Color4b& color)
 	{
@@ -238,6 +241,7 @@ namespace unicore
 		return *this;
 	}
 
+	// ===========================================================================
 	bool SpriteBatch::set_texture(const Shared<Texture>& texture)
 	{
 		if (texture != nullptr)
