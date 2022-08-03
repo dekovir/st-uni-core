@@ -23,10 +23,5 @@ namespace unicore
 
 		Shared<Texture> get_char_print_info(uint32_t code,
 			Vector2f& pos, Rectf* rect, Rectf* uv_rect) const override;
-
-		Shared<Texture> print_char(uint32_t code, Vector2f& pos,
-			VertexTexColor2& v0, VertexTexColor2& v1,
-			VertexTexColor2& v2, VertexTexColor2& v3,
-			const Color4b& color = ColorConst4b::White) const override;
 	};
 }

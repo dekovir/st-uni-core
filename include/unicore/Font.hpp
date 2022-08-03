@@ -23,6 +23,6 @@ namespace unicore
 		virtual Shared<Texture> print_char(uint32_t code, Vector2f& pos,
 			VertexTexColor2& v0, VertexTexColor2& v1,
 			VertexTexColor2& v2, VertexTexColor2& v3,
-			const Color4b& color = ColorConst4b::White) const = 0;
+			const Color4b& color = ColorConst4b::White) const;
 	};
 }
