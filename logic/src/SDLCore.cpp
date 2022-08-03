@@ -5,12 +5,12 @@ namespace unicore
 	// TODO: Refactor this
 	namespace details
 	{
-		Unique<SDLRenderer> renderer;
+		Unique<RendererSDL> renderer;
 
-		SDLRenderer& create_renderer(Logger& logger, Display& display)
+		RendererSDL& create_renderer(Logger& logger, Display& display)
 		{
 			if (!renderer)
-				renderer = SDLRenderer::create(logger, display);
+				renderer = RendererSDL::create(logger, display);
 
 			return *renderer;
 		}

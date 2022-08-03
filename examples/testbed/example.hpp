@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/Object.hpp"
-#include "unicore/SDLRenderer.hpp"
+#include "unicore/RendererSDL.hpp"
 
 namespace unicore
 {
@@ -8,7 +8,7 @@ namespace unicore
 	class Random;
 	class Time;
 	class Input;
-	class SDLRenderer;
+	class RendererSDL;
 	class ResourceCache;
 
 	struct ExampleContext
@@ -17,7 +17,7 @@ namespace unicore
 		Random& random;
 		Time& time;
 		Input& input;
-		SDLRenderer& renderer;
+		RendererSDL& renderer;
 	};
 
 	class Example : public Object
@@ -27,7 +27,7 @@ namespace unicore
 		Random& random;
 		Time& time;
 		Input& input;
-		SDLRenderer& renderer;
+		RendererSDL& renderer;
 
 		explicit Example(const ExampleContext& context);
 

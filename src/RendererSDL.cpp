@@ -1,14 +1,14 @@
-#include "unicore/SDLRenderer.hpp"
+#include "unicore/RendererSDL.hpp"
 #include "SDL2/RendererImpl.hpp"
 
 namespace unicore
 {
-	SDLRenderer::SDLRenderer(Logger& logger)
+	RendererSDL::RendererSDL(Logger& logger)
 		: ParentType(logger)
 	{
 	}
 
-	Unique<SDLRenderer> SDLRenderer::create(Logger& logger, Display& display)
+	Unique<RendererSDL> RendererSDL::create(Logger& logger, Display& display)
 	{
 #if defined(UNICORE_USE_SDL2)
 		return RendererImpl::create(logger, display);

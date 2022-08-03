@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/SDLRenderer.hpp"
+#include "unicore/RendererSDL.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include "unicore/Surface.hpp"
 #include "unicore/Texture.hpp"
@@ -9,9 +9,9 @@ namespace unicore
 {
 	class SDL2Display;
 
-	class RendererImpl : public SDLRenderer
+	class RendererImpl : public RendererSDL
 	{
-		UC_OBJECT(RendererImpl, SDLRenderer)
+		UC_OBJECT(RendererImpl, RendererSDL)
 	public:
 		RendererImpl(Logger& logger, SDL2Display& display);
 		~RendererImpl() override;

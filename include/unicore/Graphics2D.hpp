@@ -5,7 +5,7 @@
 
 namespace unicore
 {
-	class SDLRenderer;
+	class RendererSDL;
 
 	class Graphics2D
 	{
@@ -18,7 +18,7 @@ namespace unicore
 		void end();
 
 		void clear();
-		void render(SDLRenderer& renderer) const;
+		void render(RendererSDL& renderer) const;
 
 		Graphics2D& move(const Vector2f& move);
 		Graphics2D& rotate(Radians angle);

@@ -2,7 +2,7 @@
 #include "unicore/Texture.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/Sprite.hpp"
-#include "unicore/SDLRenderer.hpp"
+#include "unicore/RendererSDL.hpp"
 
 namespace unicore
 {
@@ -23,7 +23,7 @@ namespace unicore
 		_vertices.clear();
 	}
 
-	void SpriteBatch::render(SDLRenderer& renderer) const
+	void SpriteBatch::render(RendererSDL& renderer) const
 	{
 		for (const auto& batch : _batches)
 		{

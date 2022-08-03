@@ -14,11 +14,11 @@ namespace unicore
 	};
 	UNICORE_ENUMFLAGS(SDLRenderFlip, SDLRenderFlipFlags);
 
-	class SDLRenderer : public Renderer
+	class RendererSDL : public Renderer
 	{
-		UC_OBJECT(SDLRenderer, Renderer)
+		UC_OBJECT(RendererSDL, Renderer)
 	public:
-		explicit SDLRenderer(Logger& logger);
+		explicit RendererSDL(Logger& logger);
 
 		virtual void clear(const Color4b& color) = 0;
 
@@ -84,6 +84,6 @@ namespace unicore
 			const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect,
 			Degrees angle, const Optional<Vector2f>& center, SDLRenderFlipFlags flip) = 0;
 
-		static Unique<SDLRenderer> create(Logger& logger, Display& display);
+		static Unique<RendererSDL> create(Logger& logger, Display& display);
 	};
 }

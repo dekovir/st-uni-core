@@ -1,5 +1,5 @@
 #include "unicore/Graphics2D.hpp"
-#include "unicore/SDLRenderer.hpp"
+#include "unicore/RendererSDL.hpp"
 
 namespace unicore
 {
@@ -24,7 +24,7 @@ namespace unicore
 		_current = {};
 	}
 
-	void Graphics2D::render(SDLRenderer& renderer) const
+	void Graphics2D::render(RendererSDL& renderer) const
 	{
 		for (const auto& batch : _batches)
 		{

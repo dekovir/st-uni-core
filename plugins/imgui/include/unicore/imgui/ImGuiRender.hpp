@@ -7,7 +7,7 @@ namespace unicore
 	class Logger;
 	class Texture;
 	class Renderer;
-	class SDLRenderer;
+	class RendererSDL;
 
 	class ImGuiRender : public Object
 	{
@@ -29,14 +29,14 @@ namespace unicore
 	{
 		UC_OBJECT(ImGuiRender2D, Object)
 	public:
-		ImGuiRender2D(SDLRenderer& render, Logger& logger);
+		ImGuiRender2D(RendererSDL& render, Logger& logger);
 
 		void begin_frame(ImGui::IO& io) override;
 
 		void render(const ImDrawData* data) override;
 
 	protected:
-		SDLRenderer& _render;
+		RendererSDL& _render;
 
 		void setup_render_state();
 	};
