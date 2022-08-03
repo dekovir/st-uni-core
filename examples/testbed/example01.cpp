@@ -131,8 +131,8 @@ namespace unicore
 		tr.angle = _angle;
 		tr.scale.x = 1 + .5f * Math::sin(static_cast<float>(time.elapsed().total_seconds()));
 
-		_graphics.begin();
 		_graphics
+			.clear()
 			// screen bounds
 			.set_color(ColorConst4b::Magenta)
 			.draw_line(VectorConst2i::Zero, size)
@@ -152,9 +152,8 @@ namespace unicore
 			.draw_circle(VectorConst2f::Zero, 20)
 			.move(VectorConst2f::AxisY * 90.f)
 			.draw_circle(VectorConst2f::Zero, 20)
+			.flush()
 			;
-
-		_graphics.end();
 	}
 
 	void Example01::draw() const

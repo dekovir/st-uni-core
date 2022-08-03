@@ -36,7 +36,7 @@ namespace unicore
 		auto& size = _map.size();
 
 		// DRAW CELLS //////////////////////////////////////////////////////////////
-		_graphics.begin();
+		_graphics.clear();
 		_graphics.set_transform(_tr);
 
 		_graphics.set_color(ColorConst4b::White);
@@ -58,7 +58,7 @@ namespace unicore
 				const auto pos = _map.topology.cell_to_pos(index);
 				_graphics.draw_point(pos);
 			}
-		_graphics.end();
+		_graphics.flush();
 
 		// DRAW TILES //////////////////////////////////////////////////////////////
 

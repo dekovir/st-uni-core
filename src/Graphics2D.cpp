@@ -5,25 +5,6 @@ namespace unicore
 {
 	static List<Vector2f> s_points;
 
-	void Graphics2D::begin()
-	{
-		clear();
-	}
-
-	void Graphics2D::end()
-	{
-		flush();
-	}
-
-	void Graphics2D::clear()
-	{
-		transform.clear();
-
-		_points.clear();
-		_batches.clear();
-		_current = {};
-	}
-
 	void Graphics2D::render(RendererSDL& renderer) const
 	{
 		for (const auto& batch : _batches)
@@ -60,6 +41,32 @@ namespace unicore
 				break;
 			}
 		}
+	}
+
+	Graphics2D& Graphics2D::clear()
+	{
+		transform.clear();
+
+		_points.clear();
+		_batches.clear();
+		_current = {};
+
+		return *this;
+	}
+
+	Graphics2D& Graphics2D::flush()
+	{
+		if (_current.count > 0)
+		{
+			const auto color = _current.color;
+			_batches.push_back(_current);
+
+			_current = {};
+			_current.color = color;
+			_current.start = _points.size();
+		}
+
+		return *this;
 	}
 
 	Graphics2D& Graphics2D::move(const Vector2f& move)
@@ -221,19 +228,6 @@ namespace unicore
 			flush();
 
 			_current.type = type;
-		}
-	}
-
-	void Graphics2D::flush()
-	{
-		if (_current.count > 0)
-		{
-			const auto color = _current.color;
-			_batches.push_back(_current);
-
-			_current = {};
-			_current.color = color;
-			_current.start = _points.size();
 		}
 	}
 }

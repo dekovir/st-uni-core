@@ -102,17 +102,16 @@ namespace unicore
 		}
 
 		// GRAPHICS ////////////////////////////////////////////////////////////////
-		_graphics.begin();
 		_graphics
+			.clear()
 			.set_color(ColorConst4b::Magenta)
 			.draw_line(VectorConst2i::Zero, screen_size)
 			.draw_line(Vector2i(0, screen_size.y), Vector2i(screen_size.x, 0))
 			.set_color(ColorConst4b::Cyan)
 			.draw_rect(Recti{ screen_size.x - 200, 100, 200, 100 }, true)
 			.draw_point(Vector2i{ 300, 300 })
+			.flush()
 			;
-
-		_graphics.end();
 
 		// SPRITE BATCH ////////////////////////////////////////////////////////////
 		_sprite_batch.clear();

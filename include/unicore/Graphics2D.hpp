@@ -14,11 +14,10 @@ namespace unicore
 
 		Transform2 transform;
 
-		void begin();
-		void end();
-
-		void clear();
 		void render(RendererSDL& renderer) const;
+
+		Graphics2D& clear();
+		Graphics2D& flush();
 
 		Graphics2D& move(const Vector2f& move);
 		Graphics2D& rotate(Radians angle);
@@ -62,7 +61,5 @@ namespace unicore
 		Batch _current;
 
 		void set_type(BatchType type);
-
-		void flush();
 	};
 }
