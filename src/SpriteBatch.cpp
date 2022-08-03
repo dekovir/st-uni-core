@@ -6,14 +6,25 @@
 
 namespace unicore
 {
-	void SpriteBatch::clear()
+	void SpriteBatch::render(RendererSDL& renderer) const
+	{
+		for (const auto& batch : _batches)
+		{
+			renderer.draw_triangles(&_vertices[batch.vstart],
+				batch.vcount, batch.texture.get());
+		}
+	}
+
+	SpriteBatch& SpriteBatch::clear()
 	{
 		_batches.clear();
 		_current = {};
 		_vertices.clear();
+
+		return *this;
 	}
 
-	void SpriteBatch::flush()
+	SpriteBatch& SpriteBatch::flush()
 	{
 		if (_current.vcount > 0)
 		{
@@ -22,15 +33,8 @@ namespace unicore
 			_current = {};
 			_current.vstart = _vertices.size();
 		}
-	}
 
-	void SpriteBatch::render(RendererSDL& renderer) const
-	{
-		for (const auto& batch : _batches)
-		{
-			renderer.draw_triangles(&_vertices[batch.vstart],
-				batch.vcount, batch.texture.get());
-		}
+		return *this;
 	}
 
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,

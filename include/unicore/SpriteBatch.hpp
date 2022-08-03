@@ -15,10 +15,10 @@ namespace unicore
 	public:
 		SpriteBatch() = default;
 
-		void clear();
-		void flush();
-
 		void render(RendererSDL& renderer) const;
+
+		SpriteBatch& clear();
+		SpriteBatch& flush();
 
 		// TRIANGLE
 		SpriteBatch& draw(const Shared<Texture>& texture,
