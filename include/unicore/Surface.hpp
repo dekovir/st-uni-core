@@ -22,7 +22,7 @@ namespace unicore
 		Surface& operator=(const Surface& other);
 		Surface& operator=(Surface&& other) noexcept;
 
-		UC_NODISCARD size_t system_memory_use() const override { return sizeof(Surface) + _chunk.size(); }
+		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(Surface) + _chunk.size(); }
 		UC_NODISCARD const Vector2i& size() const override { return _size; }
 
 		UC_NODISCARD auto data() { return _chunk.data(); }

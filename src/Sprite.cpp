@@ -13,8 +13,19 @@ namespace unicore
 	{
 	}
 
-	size_t Sprite::system_memory_use() const
+	size_t Sprite::get_system_memory_use() const
 	{
-		return sizeof(Recti) + _texture->system_memory_use();
+		return sizeof(Recti) + _texture->get_system_memory_use();
+	}
+
+	size_t Sprite::get_used_resources(Set<Shared<Resource>>& resources)
+	{
+		if (_texture)
+		{
+			resources.insert(_texture);
+			return 1;
+		}
+
+		return 0;
 	}
 }

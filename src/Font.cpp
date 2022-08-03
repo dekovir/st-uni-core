@@ -3,7 +3,7 @@
 
 namespace unicore
 {
-	size_t Font::system_memory_use() const
+	size_t Font::get_system_memory_use() const
 	{
 		// TODO: Add kerning dictionary size;
 		return sizeof(Font);

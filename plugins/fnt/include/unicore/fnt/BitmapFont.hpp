@@ -16,7 +16,8 @@ namespace unicore
 	{
 		UC_OBJECT(BitmapFont, Font)
 	public:
-		UC_NODISCARD size_t system_memory_use() const override;
+		UC_NODISCARD size_t get_system_memory_use() const override;
+		size_t get_used_resources(Set<Shared<Resource>>& resources) override;
 
 		List<Shared<Texture>> pages;
 		Dictionary<uint32_t, BitmapFontGlyph> glyphs;

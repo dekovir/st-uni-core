@@ -8,7 +8,7 @@ namespace unicore
 	{
 		UC_OBJECT(XMLData, Resource)
 	public:
-		UC_NODISCARD size_t system_memory_use() const override { return sizeof(XMLData); }
+		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(XMLData); }
 		tinyxml2::XMLDocument doc;
 
 		XMLValue<tinyxml2::XMLElement> get_root()

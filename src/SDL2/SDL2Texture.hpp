@@ -16,8 +16,8 @@ namespace unicore
 			SDL_DestroyTexture(_context);
 		}
 
-		UC_NODISCARD size_t system_memory_use() const override { return sizeof(SDL2Texture); }
-		UC_NODISCARD size_t video_memory_use() const override;
+		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(SDL2Texture); }
+		UC_NODISCARD size_t get_video_memory_use() const override;
 
 		UC_NODISCARD const Vector2i& size() const override { return _size; }
 

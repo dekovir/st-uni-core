@@ -2,10 +2,22 @@
 
 namespace unicore
 {
-	size_t BitmapFont::system_memory_use() const
+	size_t BitmapFont::get_system_memory_use() const
 	{
-		return Font::system_memory_use() +
+		return Font::get_system_memory_use() +
 			(sizeof(BitmapFontGlyph) + sizeof(uint32_t)) * glyphs.size();
+	}
+
+	size_t BitmapFont::get_used_resources(Set<Shared<Resource>>& resources)
+	{
+		if (!pages.empty())
+		{
+			for (const auto& texture : pages)
+				resources.insert(texture);
+			return pages.size();
+		}
+
+		return 0;
 	}
 
 	Shared<Texture> BitmapFont::get_char_print_info(uint32_t code,

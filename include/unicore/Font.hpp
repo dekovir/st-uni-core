@@ -13,7 +13,7 @@ namespace unicore
 		Dictionary<uint32_t, Dictionary<uint32_t, int>> kerning;
 		uint8_t space_w = 0;
 
-		UC_NODISCARD size_t system_memory_use() const override;
+		UC_NODISCARD size_t get_system_memory_use() const override;
 
 		UC_NODISCARD int find_kerning(uint32_t a, uint32_t b) const;
 

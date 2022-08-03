@@ -17,7 +17,8 @@ namespace unicore
 		UC_NODISCARD const Recti& rect() const { return _rect; }
 		UC_NODISCARD const Shared<Texture>& texture() const { return _texture; }
 
-		UC_NODISCARD size_t system_memory_use() const override;
+		UC_NODISCARD size_t get_system_memory_use() const override;
+		size_t get_used_resources(Set<Shared<Resource>>& resources) override;
 
 	protected:
 		Shared<Texture> _texture;

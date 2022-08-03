@@ -12,7 +12,7 @@ namespace unicore
 		explicit BinaryData(const Shared<MemoryChunk>& chunk)
 			: _chunk(chunk) {}
 
-		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BinaryData) + _chunk->size(); }
+		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(BinaryData) + _chunk->size(); }
 
 		UC_NODISCARD void* data() { return _chunk->data(); }
 		UC_NODISCARD const void* data() const { return _chunk->data(); }
@@ -45,7 +45,7 @@ namespace unicore
 		explicit BasicTextData(BasicString<Char>&& data)
 			: _data(std::move(data)) {}
 
-		UC_NODISCARD size_t system_memory_use() const override { return sizeof(BasicTextData<Char>) + _data.size() * sizeof(Char); }
+		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(BasicTextData<Char>) + _data.size() * sizeof(Char); }
 
 		UC_NODISCARD const BasicString<Char>& data() const { return _data; }
 

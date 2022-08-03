@@ -88,7 +88,7 @@ namespace unicore
 	public:
 		UC_NODISCARD virtual size_t size() const = 0;
 
-		UC_NODISCARD size_t video_memory_use() const override { return elements_count() * element_size(); }
+		UC_NODISCARD size_t get_video_memory_use() const override { return elements_count() * element_size(); }
 
 		UC_NODISCARD virtual size_t element_size() const = 0;
 		UC_NODISCARD virtual size_t elements_count() const = 0;

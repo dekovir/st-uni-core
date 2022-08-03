@@ -136,7 +136,7 @@ namespace unicore
 		{
 			for (const auto& [type, resource] : map)
 			{
-				const auto memory_use = MemorySize{ resource->system_memory_use() };
+				const auto memory_use = MemorySize{ resource->get_system_memory_use() };
 				sys_mem += memory_use;
 				UC_LOG_INFO(_logger) << index << ": " << path << " " << type
 					<< " [" << resource.use_count()
@@ -164,11 +164,11 @@ namespace unicore
 			for (const auto& [_, resource] : it.second)
 			{
 				if (system != nullptr)
-					*system += resource->system_memory_use();
+					*system += resource->get_system_memory_use();
 				if (video != nullptr)
 				{
 					if (const auto render_resource = std::dynamic_pointer_cast<RendererResource>(resource))
-						*video += render_resource->video_memory_use();
+						*video += render_resource->get_video_memory_use();
 				}
 			}
 		}
@@ -245,7 +245,7 @@ namespace unicore
 	{
 		_cached[path].insert_or_assign(&type, resource);
 		UC_LOG_DEBUG(_logger) << "Loaded " << type << " from " << path
-			<< " " << MemorySize{ resource->system_memory_use() };
+			<< " " << MemorySize{ resource->get_system_memory_use() };
 		return true;
 	}
 }
