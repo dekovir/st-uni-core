@@ -3,6 +3,15 @@
 
 namespace unicore
 {
+	enum class PrimitiveType
+	{
+		LineList,
+		//LineStrip,
+		PointList,
+		TriangleList,
+		//TriangleStrip,
+	};
+
 	enum class VertexElementType : uint8_t
 	{
 		Position,
