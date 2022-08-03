@@ -225,7 +225,7 @@ namespace unicore
 			platform.quit();
 #endif
 
-		_sprite_batch.begin();
+		_sprite_batch.clear();
 
 		// UPDATE STATE
 		s_state_time += time.delta();
@@ -280,7 +280,7 @@ namespace unicore
 		_sprite_batch.print(_font, { 0, 40 }, update_str);
 		_sprite_batch.print(_font, { 0, 60 }, draw_str);
 
-		_sprite_batch.end();
+		_sprite_batch.flush();
 	}
 
 	void MyCore::on_draw()

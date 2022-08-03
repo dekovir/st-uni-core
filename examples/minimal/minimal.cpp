@@ -115,13 +115,13 @@ namespace unicore
 		_graphics.end();
 
 		// SPRITE BATCH ////////////////////////////////////////////////////////////
-		_sprite_batch.begin();
+		_sprite_batch.clear();
 
 		_sprite_batch.draw(_tex, (screen_size / 2).cast<float>());
 		for (const auto& entity : _entites)
 			_sprite_batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
 
-		_sprite_batch.end();
+		_sprite_batch.flush();
 	}
 
 	void MyCore::on_draw()

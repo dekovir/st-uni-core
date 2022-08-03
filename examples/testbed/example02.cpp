@@ -69,7 +69,7 @@ namespace unicore
 		const String count_str = "Count: " + std::to_string(_entites.size());
 
 		auto& size = renderer.screen_size();
-		_sprite_batch.begin();
+		_sprite_batch.clear();
 
 		for (const auto& entity : _entites)
 			_sprite_batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
@@ -77,7 +77,7 @@ namespace unicore
 
 		_sprite_batch.print(_font, { 200, 20 }, count_str);
 
-		_sprite_batch.end();
+		_sprite_batch.flush();
 	}
 
 	void Example02::draw() const

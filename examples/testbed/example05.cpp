@@ -62,7 +62,7 @@ namespace unicore
 
 		// DRAW TILES //////////////////////////////////////////////////////////////
 
-		_sprite_batch.begin();
+		_sprite_batch.clear();
 		for (auto y = 0; y < size.y; y++)
 			for (auto x = 0; x < size.x; x++)
 			{
@@ -79,7 +79,7 @@ namespace unicore
 				auto center = _map.topology.cell_to_pos(index);
 				_sprite_batch.draw(tile, _tr * center, _graphics.transform.angle, scale);
 			}
-		_sprite_batch.end();
+		_sprite_batch.flush();
 	}
 
 	void Example05::draw() const

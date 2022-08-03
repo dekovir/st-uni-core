@@ -58,14 +58,14 @@ namespace unicore
 		const String draw_str = "Draw: " + std::to_string(_draw_calls);
 		const String screen_str = "Screen: " + std::to_string(screen_size.x) + "x" + std::to_string(screen_size.y);
 
-		_sprite_batch.begin();
+		_sprite_batch.clear();
 
 		_sprite_batch.print(_font, { 0, 0 }, fps_str);
 		_sprite_batch.print(_font, { 200, 0 }, title_str);
 		_sprite_batch.print(_font, { 0, 20 }, draw_str);
 		_sprite_batch.print(_font, { 0, 40 }, screen_str);
 
-		_sprite_batch.end();
+		_sprite_batch.flush();
 	}
 
 	void MyCore::on_draw()

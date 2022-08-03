@@ -15,10 +15,9 @@ namespace unicore
 	public:
 		SpriteBatch() = default;
 
-		void begin();
-		void end();
-
 		void clear();
+		void flush();
+
 		void render(RendererSDL& renderer) const;
 
 		// TRIANGLE
@@ -34,7 +33,7 @@ namespace unicore
 		SpriteBatch& draw(const Shared<Texture>& texture,
 			const Vector2f& center, const Color4b& color = ColorConst4b::White);
 
-		SpriteBatch& draw(const Shared<Texture>& texture, 
+		SpriteBatch& draw(const Shared<Texture>& texture,
 			const Vector2f& center, const Recti& part, const Color4b& color = ColorConst4b::White);
 
 		SpriteBatch& draw(const Shared<Texture>& texture,
@@ -70,7 +69,6 @@ namespace unicore
 		List<Batch> _batches;
 		Batch _current;
 
-		void flush();
 		bool set_texture(const Shared<Texture>& texture);
 
 		static void calc_quad_position(const Vector2f& center, const Vector2i& size,

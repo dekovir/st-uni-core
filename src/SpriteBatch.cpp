@@ -6,21 +6,22 @@
 
 namespace unicore
 {
-	void SpriteBatch::begin()
-	{
-		clear();
-	}
-
-	void SpriteBatch::end()
-	{
-		flush();
-	}
-
 	void SpriteBatch::clear()
 	{
 		_batches.clear();
 		_current = {};
 		_vertices.clear();
+	}
+
+	void SpriteBatch::flush()
+	{
+		if (_current.vcount > 0)
+		{
+			_batches.push_back(_current);
+
+			_current = {};
+			_current.vstart = _vertices.size();
+		}
 	}
 
 	void SpriteBatch::render(RendererSDL& renderer) const
@@ -231,17 +232,6 @@ namespace unicore
 		}
 
 		return *this;
-	}
-
-	void SpriteBatch::flush()
-	{
-		if (_current.vcount > 0)
-		{
-			_batches.push_back(_current);
-
-			_current = {};
-			_current.vstart = _vertices.size();
-		}
 	}
 
 	bool SpriteBatch::set_texture(const Shared<Texture>& texture)
