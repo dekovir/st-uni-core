@@ -21,4 +21,20 @@ namespace unicore
 	static constexpr PixelFormat<uint32_t, uint8_t> pixel_format_abgr{ 0, 8, 16, 24 };
 
 	static constexpr PixelFormat<uint32_t, uint8_t> pixel_format_rgba{ 24, 16, 8, 0 };
+
+	template<typename T>
+	struct color_limits
+	{
+		static constexpr T min() noexcept { return std::numeric_limits<T>::min(); }
+		static constexpr T max() noexcept { return std::numeric_limits<T>::max(); }
+		static constexpr T range() noexcept { return std::numeric_limits<T>::max() - std::numeric_limits<T>::min(); }
+	};
+
+	template<>
+	struct color_limits<float>
+	{
+		static constexpr float min() noexcept { return 0.0f; }
+		static constexpr float max() noexcept { return 1.0f; }
+		static constexpr float range() noexcept { return 1.0f; }
+	};
 }

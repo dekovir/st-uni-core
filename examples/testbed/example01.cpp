@@ -1,5 +1,6 @@
 #include "example01.hpp"
 #include "unicore/Time.hpp"
+#include "unicore/Color3.hpp"
 #include "unicore/Transform2.hpp"
 #include "unicore/ResourceCache.hpp"
 
@@ -56,10 +57,34 @@ namespace unicore
 		ColorChannel<ColorType> r, g, b, a;
 	};
 
-	static constexpr ColorFormat<uint16_t> RGB_565 = { {5, 0}, {6, 5}, {5, 11}, {0, 0} };
+	// 8 bit formats
+	static constexpr ColorFormat<uint8_t> PIXELFORMAT_R3G3B2 = { {3, 0}, {3, 3}, {2, 6}, {0, 0} };
+	static constexpr ColorFormat<uint8_t> PIXELFORMAT_A8 = { {0, 0}, {0, 0}, {0, 0}, {8, 0} };
+
+	// 16 bit formats
+	static constexpr ColorFormat<uint16_t> PIXELFORMAT_R3G3B2A8 = { {3, 0}, {3, 3}, {2, 6}, {8, 8} };
+	static constexpr ColorFormat<uint16_t> PIXELFORMAT_R5G6B5 = { {5, 0}, {6, 5}, {5, 11}, {0, 0} };
+	static constexpr ColorFormat<uint16_t> PIXELFORMAT_R5G5B5A1 = { {5, 0}, {5, 5}, {5, 10}, {1, 15} };
+	static constexpr ColorFormat<uint16_t> PIXELFORMAT_R4G4B4A4 = { {4, 0}, {4, 4}, {4, 8}, {4, 12} };
+
+	// 32 bit formats
+	static constexpr ColorFormat<uint32_t> PIXELFORMAT_R8G8B8A8 = { {8, 0}, {8, 8}, {8, 16}, {8, 24} };
+	static constexpr ColorFormat<uint32_t> PIXELFORMAT_R10G10B10A2 = { {10, 0}, {10, 10}, {10, 20}, {2, 30} };
+
+	// 64 bit formats
+	static constexpr ColorFormat<uint64_t> PIXELFORMAT_R16G16B16A16 = { {16, 0}, {16, 16}, {16, 32}, {8, 48} };
 
 	template<typename T, typename ColorType>
-	static Color4<T> from_format(const ColorFormat<ColorType>& format, ColorType value)
+	static Color3<T> from_format3(const ColorFormat<ColorType>& format, ColorType value)
+	{
+		const auto r = format.r.template to_value<T>(value);
+		const auto g = format.g.template to_value<T>(value);
+		const auto b = format.b.template to_value<T>(value);
+		return Color3<T>(r, g, b);
+	}
+
+	template<typename T, typename ColorType>
+	static Color4<T> from_format4(const ColorFormat<ColorType>& format, ColorType value)
 	{
 		const auto r = format.r.template to_value<T>(value);
 		const auto g = format.g.template to_value<T>(value);
@@ -69,7 +94,17 @@ namespace unicore
 	}
 
 	template<typename T, typename ColorType>
-	static ColorType to_format(const ColorFormat<ColorType>& format, const Color4<T>& color)
+	static ColorType to_format3(const ColorFormat<ColorType>& format, const Color3<T>& color)
+	{
+		const auto r = format.r.template from_value<T>(color.r);
+		const auto g = format.g.template from_value<T>(color.g);
+		const auto b = format.b.template from_value<T>(color.b);
+		const auto a = format.a.template from_value<T>(Color3<T>::MaxValue);
+		return r | g | b | a;
+	}
+
+	template<typename T, typename ColorType>
+	static ColorType to_format4(const ColorFormat<ColorType>& format, const Color4<T>& color)
 	{
 		const auto r = format.r.template from_value<T>(color.r);
 		const auto g = format.g.template from_value<T>(color.g);
@@ -80,8 +115,8 @@ namespace unicore
 
 	bool Example01::load(ResourceCache& resources)
 	{
-		const auto formated = to_format(RGB_565, ColorConst4b::Yellow);
-		auto color = from_format<float>(RGB_565, formated);
+		const auto formated = to_format4(PIXELFORMAT_R8G8B8A8, ColorConst4f::Yellow);
+		auto color = from_format3<float>(PIXELFORMAT_R8G8B8A8, (uint32_t)0x00FF00FF);
 		return true;
 	}
 
