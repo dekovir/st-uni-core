@@ -218,7 +218,10 @@ namespace unicore
 			return draw_point(center);
 
 		if (segments == 0)
-			segments = Math::max(5, Math::floor(radius * .7f));
+		{
+			const float lng = 2 * Math::Pi * radius;
+			segments = Math::max(3, Math::floor(lng / 10));
+		}
 
 		s_points.resize(segments);
 		for (unsigned i = 0; i < segments; i++)
@@ -232,6 +235,60 @@ namespace unicore
 		return !filled
 			? draw_poly_line(s_points, true)
 			: draw_convex_poly(s_points);
+	}
+
+	Graphics2D& Graphics2D::draw_ellipse(const Vector2f& center, const Vector2f& radius, bool filled, unsigned segments)
+	{
+		if (segments == 0)
+		{
+			const float a = Math::Pi * radius.x * radius.y + Math::pow(radius.x + radius.y);
+			const float lng = 4 * (a / (radius.x - radius.y));
+			segments = Math::max(3, Math::floor(lng / 100));
+		}
+
+		s_points.resize(segments);
+		for (unsigned i = 0; i < segments; i++)
+		{
+			const Radians angle = (360_deg / segments) * i;
+			const auto cos = angle.cos();
+			const auto sin = angle.sin();
+			s_points[i] = Vector2f(center.x + radius.x * cos, center.y + radius.y * sin);
+		}
+
+		return !filled
+			? draw_poly_line(s_points, true)
+			: draw_convex_poly(s_points);
+	}
+
+	Graphics2D& Graphics2D::draw_star(const Vector2f& center, unsigned count, float radius, bool filled)
+	{
+		if (count >= 2)
+		{
+			const int segments = count * 2;
+			const float step = 360.f / segments;
+			s_points.clear();
+			s_points.reserve(segments + 2);
+
+			for (int i = 0; i <= segments; i++)
+			{
+				const auto angle = -Degrees(180 + step * i);
+				const float size = Math::even(i) ? radius : radius / 2;
+
+				float sin, cos;
+				angle.sin_cos(sin, cos);
+
+				s_points.emplace_back(center.x + size * sin, center.y + size * cos);
+			}
+
+			if (filled)
+				s_points.insert(s_points.begin(), center);
+
+			return !filled
+				? draw_poly_line(s_points, true)
+				: draw_convex_poly(s_points);
+		}
+
+		return *this;
 	}
 
 	Graphics2D& Graphics2D::draw_triangle(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2)

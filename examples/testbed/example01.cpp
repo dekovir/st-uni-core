@@ -146,6 +146,9 @@ namespace unicore
 			.set_color(ColorConst4b::Yellow)
 			.draw_triangle({ 100, 100 }, { 200, 100 }, { 100, 200 })
 			.draw_quad({ 400, 400 }, { 500,500 }, { 400, 600 }, { 300, 500 })
+			.draw_star({ 500, 200 }, 6, 50)
+			.draw_star({ 900, 200 }, 5, 50, true)
+			.draw_ellipse({ 900, 300 }, { 100, 50 })
 			// transformed
 			.set_color(ColorConst4b::Green)
 			.set_transform(tr)
