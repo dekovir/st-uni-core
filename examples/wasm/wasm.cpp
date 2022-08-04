@@ -162,8 +162,6 @@ namespace unicore
 		add_plugin<FNTPlugin>();
 
 		_font = resources.load<Font>(L"font_004.fnt"_path);
-
-		_font = resources.load<Font>(L"font_004.fnt"_path);
 		if (auto tex = resources.load<Texture>(L"zazaka.png"_path))
 			_spr = std::make_shared<Sprite>(tex);
 
