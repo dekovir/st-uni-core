@@ -37,7 +37,15 @@ namespace unicore
 		Graphics2D& draw_rect(const Recti& rect, bool filled = false);
 		Graphics2D& draw_rect(const Rectf& rect, bool filled = false);
 
-		Graphics2D& draw_circle(const Vector2f& center, float radius, unsigned segments = 0);
+		Graphics2D& draw_circle(const Vector2f& center, float radius, bool filled = false, unsigned segments = 0);
+
+		Graphics2D& draw_triangle(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2);
+		Graphics2D& draw_quad(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2, const Vector2f& p3);
+
+		Graphics2D& draw_convex_poly(const List<Vector2f>& points);
+
+		Graphics2D& draw_grid(const Vector2i& count, const Vector2f& step,
+		                      const Action<Graphics2D&, const Vector2f&>& draw_func, const Vector2f& offset = VectorConst2f::Zero);
 
 	protected:
 		enum class BatchType
@@ -46,6 +54,7 @@ namespace unicore
 			Line,
 			Rect,
 			RectFilled,
+			Triangles,
 		};
 
 		struct Batch

@@ -140,7 +140,12 @@ namespace unicore
 			// other
 			.set_color(ColorConst4b::Cyan)
 			.draw_rect(Recti{ 600, 100, 200, 100 }, true)
-			.draw_point(Vector2i{ 300, 300 })
+			.draw_grid({ 10, 10 }, { 10, 10 },
+				[](Graphics2D& graphics, const Vector2f& center) { graphics.draw_point(center); }, { 200, 200 })
+			// triangle
+			.set_color(ColorConst4b::Yellow)
+			.draw_triangle({ 100, 100 }, { 200, 100 }, { 100, 200 })
+			.draw_quad({ 400, 400 }, { 500,500 }, { 400, 600 }, { 300, 500 })
 			// transformed
 			.set_color(ColorConst4b::Green)
 			.set_transform(tr)
@@ -149,7 +154,7 @@ namespace unicore
 				VectorConst2f::AxisX * +150.f)
 			.draw_rect(Recti(-50, -50, 100, 100))
 			.move(VectorConst2f::AxisX * -150.f)
-			.draw_circle(VectorConst2f::Zero, 20)
+			.draw_circle(VectorConst2f::Zero, 20, true)
 			.move(VectorConst2f::AxisY * 90.f)
 			.draw_circle(VectorConst2f::Zero, 20)
 			.flush()

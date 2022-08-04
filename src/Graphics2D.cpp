@@ -4,6 +4,7 @@
 namespace unicore
 {
 	static List<Vector2f> s_points;
+	static List<VertexColor2> s_verts;
 
 	void Graphics2D::render(RendererSDL& renderer) const
 	{
@@ -34,6 +35,16 @@ namespace unicore
 					const Rectf r(p0, p1);
 					renderer.draw_rect_f(r, batch.type == BatchType::RectFilled);
 				}
+				break;
+
+			case BatchType::Triangles:
+				s_verts.resize(batch.count);
+				for (unsigned i = 0; i < batch.count; i++)
+				{
+					s_verts[i].pos = _points[batch.start + i];
+					s_verts[i].col = batch.color;
+				}
+				renderer.draw_triangles(s_verts.data(), batch.count);
 				break;
 
 			default:
@@ -201,7 +212,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_circle(const Vector2f& center, float radius, unsigned segments)
+	Graphics2D& Graphics2D::draw_circle(const Vector2f& center, float radius, bool filled, unsigned segments)
 	{
 		if (radius == 0)
 			return draw_point(center);
@@ -218,9 +229,61 @@ namespace unicore
 			s_points[i] = Vector2f(center.x + radius * cos, center.y + radius * sin);
 		}
 
-		return draw_poly_line(s_points, true);
+		return !filled
+			? draw_poly_line(s_points, true)
+			: draw_convex_poly(s_points);
 	}
 
+	Graphics2D& Graphics2D::draw_triangle(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2)
+	{
+		set_type(BatchType::Triangles);
+
+		_points.push_back(transform * p0);
+		_points.push_back(transform * p1);
+		_points.push_back(transform * p2);
+		_current.count += 3;
+
+		return *this;
+	}
+
+	Graphics2D& Graphics2D::draw_quad(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2, const Vector2f& p3)
+	{
+		set_type(BatchType::Triangles);
+
+		_points.push_back(transform * p0);
+		_points.push_back(transform * p1);
+		_points.push_back(transform * p2);
+
+		_points.push_back(transform * p0);
+		_points.push_back(transform * p2);
+		_points.push_back(transform * p3);
+		_current.count += 6;
+
+		return *this;
+	}
+
+	Graphics2D& Graphics2D::draw_convex_poly(const List<Vector2f>& points)
+	{
+		for (unsigned i = 0; i + 2 < points.size(); i += 1)
+			draw_triangle(points[0], points[i + 1], points[i + 2]);
+
+		return *this;
+	}
+
+	Graphics2D& Graphics2D::draw_grid(const Vector2i& count, const Vector2f& step,
+		const Action<Graphics2D&, const Vector2f&>& draw_func, const Vector2f& offset)
+	{
+		for (auto y = 0; y < count.y; y++)
+			for (auto x = 0; x < count.x; x++)
+			{
+				const auto center = offset + step * Vector2f(x, y);
+				draw_func(*this, center);
+			}
+
+		return *this;
+	}
+
+	// ============================================================================
 	void Graphics2D::set_type(BatchType type)
 	{
 		if (_current.type != type)
