@@ -5,12 +5,9 @@
 
 namespace unicore
 {
-	struct MapIndexTag {};
+	struct GridIndexTag {};
 
-	struct GridIndex : Index<Vector2i, MapIndexTag>
-	{
-		constexpr GridIndex(int x, int y) : Index({ x, y }) {}
-	};
+	using GridIndex = Index<Vector2i, GridIndexTag>;
 
 	class GridTopology : public Object
 	{
@@ -21,10 +18,11 @@ namespace unicore
 		UC_NODISCARD virtual Vector2f cell_to_pos(const GridIndex index) const = 0;
 		UC_NODISCARD virtual GridIndex pos_to_cell(const Vector2f& pos) const = 0;
 
-		virtual void get_cell_points(const GridIndex index, List<Vector2f>& points) const = 0;
-		UC_NODISCARD virtual GridIndex get_cell_neighbor(const GridIndex index, uint8_t dir) const = 0;
+		virtual void get_cell_points(const GridIndex& index, List<Vector2f>& points) const = 0;
+		UC_NODISCARD virtual bool get_cell_neighbor(const GridIndex& index, uint8_t dir, GridIndex& neighbor) const = 0;
 	};
 
+	// RectangleTopology //////////////////////////////////////////////////////////
 	enum class RectangleTopologyDir : uint8_t
 	{
 		PositiveY,
@@ -51,8 +49,8 @@ namespace unicore
 		UC_NODISCARD Vector2f cell_to_pos(const GridIndex index) const override;
 		UC_NODISCARD GridIndex pos_to_cell(const Vector2f& pos) const override;
 
-		void get_cell_points(const GridIndex index, List<Vector2f>& points) const override;
-		UC_NODISCARD GridIndex get_cell_neighbor(const GridIndex index, uint8_t dir) const override;
+		void get_cell_points(const GridIndex& index, List<Vector2f>& points) const override;
+		UC_NODISCARD bool get_cell_neighbor(const GridIndex& index, uint8_t dir, GridIndex& neighbor) const override;
 
 	protected:
 		Vector2f _size;

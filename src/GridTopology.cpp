@@ -15,35 +15,44 @@ namespace unicore
 	GridIndex RectangleTopology::pos_to_cell(const Vector2f& pos) const
 	{
 		// TODO: Implement gap
-		return {
+		return GridIndex(
 			Math::ceil(pos.x / _size.x),
 			Math::ceil(pos.y / _size.y)
-		};
+		);
 	}
 
-	void RectangleTopology::get_cell_points(const GridIndex index, List<Vector2f>& points) const
+	void RectangleTopology::get_cell_points(const GridIndex& index, List<Vector2f>& points) const
 	{
 		const auto w = _size.x / 2;
 		const auto h = _size.y / 2;
 		const auto pos = cell_to_pos(index);
 
-		points.push_back({ pos.x - w, pos.y - h });
-		points.push_back({ pos.x + w, pos.y - h });
-		points.push_back({ pos.x + w, pos.y + h });
-		points.push_back({ pos.x - w, pos.y + h });
+		points.emplace_back(pos.x - w, pos.y - h);
+		points.emplace_back(pos.x + w, pos.y - h);
+		points.emplace_back(pos.x + w, pos.y + h);
+		points.emplace_back(pos.x - w, pos.y + h);
 	}
 
-	GridIndex RectangleTopology::get_cell_neighbor(const GridIndex index, uint8_t dir) const
+	bool RectangleTopology::get_cell_neighbor(const GridIndex& index, uint8_t dir, GridIndex& neighbor) const
 	{
+		static constexpr GridIndex s_rect_dir_offset[4] = {
+			GridIndex(0, +1), // PositiveY
+			GridIndex(-1, 0), // NegativeX
+			GridIndex(0, -1), // NegativeY
+			GridIndex(+1, 0), // PositiveX
+		};
+
 		switch (dir)
 		{
-		case static_cast<uint8_t>(RectangleTopologyDir::PositiveX): return { index.value.x + 1, index.value.y };
-		case static_cast<uint8_t>(RectangleTopologyDir::NegativeX): return { index.value.x - 1, index.value.y };
-		case static_cast<uint8_t>(RectangleTopologyDir::PositiveY): return { index.value.x, index.value.y + 1 };
-		case static_cast<uint8_t>(RectangleTopologyDir::NegativeY): return { index.value.x, index.value.y - 1 };
+		case static_cast<uint8_t>(RectangleTopologyDir::PositiveX):
+		case static_cast<uint8_t>(RectangleTopologyDir::NegativeX):
+		case static_cast<uint8_t>(RectangleTopologyDir::PositiveY):
+		case static_cast<uint8_t>(RectangleTopologyDir::NegativeY):
+			neighbor = index + s_rect_dir_offset[dir];
+			return true;
+
 		default:
-			UC_ASSERT_ALWAYS_MSG("Invalid dir");
-			return index;
+			return false;
 		}
 	}
 }

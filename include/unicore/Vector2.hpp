@@ -9,11 +9,11 @@ namespace unicore
 		T x;
 		T y;
 
-		constexpr Vector2() = default;
-		constexpr Vector2(T x, T y);
-		explicit constexpr Vector2(T value);
+		constexpr Vector2() noexcept = default;
+		constexpr Vector2(T x, T y) noexcept;
+		explicit constexpr Vector2(T value) noexcept;
 
-		constexpr Vector2(const Vector2<T>& other) = default;
+		constexpr Vector2(const Vector2<T>& other) noexcept = default;
 		constexpr Vector2(Vector2<T>&& other) noexcept = default;
 
 		~Vector2() = default;
@@ -136,12 +136,12 @@ namespace unicore
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
 	template <typename T>
-	constexpr Vector2<T>::Vector2(T _x, T _y)
+	constexpr Vector2<T>::Vector2(T _x, T _y) noexcept
 		: x(_x), y(_y)
 	{}
 
 	template <typename T>
-	constexpr Vector2<T>::Vector2(T value)
+	constexpr Vector2<T>::Vector2(T value) noexcept
 		: x(value), y(value)
 	{}
 

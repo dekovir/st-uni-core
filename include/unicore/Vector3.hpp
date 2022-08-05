@@ -10,11 +10,11 @@ namespace unicore
 		T y;
 		T z;
 
-		constexpr Vector3() = default;
-		constexpr Vector3(T x, T y, T z);
-		explicit constexpr Vector3(T value);
+		constexpr Vector3() noexcept = default;
+		constexpr Vector3(T x, T y, T z) noexcept;
+		explicit constexpr Vector3(T value) noexcept;
 
-		constexpr Vector3(const Vector3<T>& other) = default;
+		constexpr Vector3(const Vector3<T>& other) noexcept = default;
 		constexpr Vector3(Vector3<T>&& other) noexcept = default;
 
 		~Vector3() = default;
@@ -91,13 +91,13 @@ namespace unicore
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
 	template <typename T>
-	constexpr Vector3<T>::Vector3(T _x, T _y, T _z)
+	constexpr Vector3<T>::Vector3(T _x, T _y, T _z) noexcept
 		: x(_x), y(_y), z(_z)
 	{
 	}
 
 	template <typename T>
-	constexpr Vector3<T>::Vector3(T value)
+	constexpr Vector3<T>::Vector3(T value) noexcept
 		: x(value), y(value), z(value)
 	{
 	}
