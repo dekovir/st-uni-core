@@ -1,5 +1,6 @@
 #pragma once
 #include "example.hpp"
+#include "unicore/SpriteBatch.hpp"
 
 namespace unicore
 {
@@ -12,5 +13,8 @@ namespace unicore
 		bool load(ResourceCache& resources) override;
 		void update() override;
 		void draw() const override;
+
+	protected:
+		SpriteBatch _sprite_batch;
 	};
 }

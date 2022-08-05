@@ -6,6 +6,8 @@
 
 namespace unicore
 {
+	static VertexTexColor2 s_quad[4];
+
 	void SpriteBatch::render(RendererSDL& renderer) const
 	{
 		for (const auto& batch : _batches)
@@ -38,40 +40,74 @@ namespace unicore
 	}
 
 	// DRAW TRIANGLE /////////////////////////////////////////////////////////////
-	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
-		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2)
+	SpriteBatch& SpriteBatch::draw(
+		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2,
+		const Shared<Texture>& texture)
 	{
-		if (set_texture(texture))
-		{
-			_vertices.push_back(v0);
-			_vertices.push_back(v1);
-			_vertices.push_back(v2);
-			_current.vcount += 3;
-		}
+		set_texture(texture);
+
+		_vertices.push_back(v0);
+		_vertices.push_back(v1);
+		_vertices.push_back(v2);
+		_current.vcount += 3;
 
 		return *this;
 	}
 
 	// DRAW QUAD /////////////////////////////////////////////////////////////////
-	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
-		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2, const VertexTexColor2& v3)
+	SpriteBatch& SpriteBatch::draw(
+		const VertexTexColor2& v0, const VertexTexColor2& v1,
+		const VertexTexColor2& v2, const VertexTexColor2& v3,
+		const Shared<Texture>& texture)
 	{
-		if (set_texture(texture))
-		{
-			_vertices.push_back(v0);
-			_vertices.push_back(v1);
-			_vertices.push_back(v3);
+		set_texture(texture);
 
-			_vertices.push_back(v3);
-			_vertices.push_back(v1);
-			_vertices.push_back(v2);
-			_current.vcount += 6;
-		}
+		_vertices.push_back(v0);
+		_vertices.push_back(v1);
+		_vertices.push_back(v3);
+
+		_vertices.push_back(v3);
+		_vertices.push_back(v1);
+		_vertices.push_back(v2);
+		_current.vcount += 6;
 
 		return *this;
 	}
 
-	static VertexTexColor2 s_quad[4];
+	// DRAW RECT //////////////////////////////////////////////////////////////////
+	SpriteBatch& SpriteBatch::draw(const Rectf& rect, const Color4b& color,
+		const Shared<Texture>& texture, const Optional<Rectf>& uv)
+	{
+		set_texture(texture);
+
+		s_quad[0].pos = Vector2f(rect.x, rect.y);
+		s_quad[1].pos = Vector2f(rect.x + rect.w, rect.y);
+		s_quad[2].pos = Vector2f(rect.x + rect.w, rect.y + rect.h);
+		s_quad[3].pos = Vector2f(rect.x, rect.y + rect.h);
+
+		if (uv.has_value())
+		{
+			const auto r = uv.value();
+			s_quad[0].uv = Vector2f(r.x, r.y);
+			s_quad[1].uv = Vector2f(r.x + r.w, r.y);
+			s_quad[2].uv = Vector2f(r.x + r.w, r.y + r.h);
+			s_quad[3].uv = Vector2f(r.x, r.y + r.h);
+		}
+		else
+		{
+			s_quad[0].uv = Vector2f(0, 0);
+			s_quad[1].uv = Vector2f(1, 0);
+			s_quad[2].uv = Vector2f(1, 1);
+			s_quad[3].uv = Vector2f(0, 1);
+		}
+
+		s_quad[0].col = color;
+		s_quad[1].col = color;
+		s_quad[2].col = color;
+		s_quad[3].col = color;
+
+		return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
+	}
 
 	// DRAW TEXTURE ///////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
@@ -92,7 +128,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
 		}
 
 		return *this;
@@ -113,7 +149,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
 		}
 
 		return *this;
@@ -138,7 +174,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
 		}
 
 		return *this;
@@ -161,7 +197,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
 		}
 
 		return *this;
@@ -186,7 +222,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
 		}
 
 		return *this;
@@ -211,7 +247,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(texture, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
 		}
 
 		return *this;
@@ -230,7 +266,7 @@ namespace unicore
 				const auto c = text[i];
 				if (auto tex = font->print_char(c, cur, s_quad[0], s_quad[1], s_quad[2], s_quad[3], color))
 				{
-					draw(tex, s_quad[0], s_quad[1], s_quad[2], s_quad[3]);
+					draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], tex);
 
 					if (i + 1 < text.size())
 						cur.x += static_cast<float>(font->find_kerning(c, text[i + 1]));
@@ -242,19 +278,13 @@ namespace unicore
 	}
 
 	// ===========================================================================
-	bool SpriteBatch::set_texture(const Shared<Texture>& texture)
+	void SpriteBatch::set_texture(const Shared<Texture>& texture)
 	{
-		if (texture != nullptr)
+		if (_current.texture != texture)
 		{
-			if (_current.texture != texture)
-			{
-				flush();
-				_current.texture = texture;
-			}
-			return true;
+			flush();
+			_current.texture = texture;
 		}
-
-		return false;
 	}
 
 	void SpriteBatch::calc_quad_position(

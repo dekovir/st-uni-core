@@ -7,7 +7,7 @@
 
 namespace unicore
 {
-	UC_EXAMPLE_REGISTER(Example02, "SpriteBatch");
+	UC_EXAMPLE_REGISTER(Example02, "Stress test");
 
 	void Entity::update(const Vector2i& size, float delta)
 	{

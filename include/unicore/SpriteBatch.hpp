@@ -21,13 +21,21 @@ namespace unicore
 		SpriteBatch& flush();
 
 		// TRIANGLE
-		SpriteBatch& draw(const Shared<Texture>& texture,
-			const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2);
+		SpriteBatch& draw(
+			const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2,
+			const Shared<Texture>& texture = nullptr);
 
 		// QUAD
-		SpriteBatch& draw(const Shared<Texture>& texture,
+		SpriteBatch& draw(
 			const VertexTexColor2& v0, const VertexTexColor2& v1,
-			const VertexTexColor2& v2, const VertexTexColor2& v3);
+			const VertexTexColor2& v2, const VertexTexColor2& v3,
+			const Shared<Texture>& texture = nullptr);
+
+		// RECT
+		SpriteBatch& draw(
+			const Rectf& rect, const Color4b& color = ColorConst4b::White,
+			const Shared<Texture>& texture = nullptr,
+			const Optional<Rectf>& uv = std::nullopt);
 
 		// TEXTURE
 		SpriteBatch& draw(const Shared<Texture>& texture,
@@ -69,7 +77,7 @@ namespace unicore
 		List<Batch> _batches;
 		Batch _current;
 
-		bool set_texture(const Shared<Texture>& texture);
+		void set_texture(const Shared<Texture>& texture);
 
 		static void calc_quad_position(const Vector2f& center, const Vector2i& size,
 			Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3);
