@@ -16,13 +16,15 @@ namespace unicore
 		explicit constexpr Index(Args&&... args) noexcept : value(std::forward<Args>(args)...) {}
 	};
 
-	template<typename Type, typename Tag>
+	template<typename Type, typename Tag,
+		std::enable_if_t<std::is_same_v<bool, decltype(std::declval<Type>() == std::declval<Type>())>>* = nullptr>
 	static constexpr bool operator==(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
 	{
 		return a.value == b.value;
 	}
 
-	template<typename Type, typename Tag>
+	template<typename Type, typename Tag,
+		std::enable_if_t<std::is_same_v<bool, decltype(std::declval<Type>() != std::declval<Type>())>>* = nullptr>
 	static constexpr bool operator!=(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
 	{
 		return a.value != b.value;
