@@ -23,6 +23,17 @@ namespace unicore
 		return "";
 	}
 
+	MultiLogger::MultiLogger(std::initializer_list<Logger*> args)
+		: list(args)
+	{
+	}
+
+	void MultiLogger::write(LogType type, const StringView text)
+	{
+		for (const auto logger : list)
+			logger->write(type, text);
+	}
+
 	ProxyLogger::ProxyLogger(const StringView prefix, Logger& logger)
 		: _prefix(prefix), _logger(logger)
 	{}

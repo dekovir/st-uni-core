@@ -26,6 +26,17 @@ namespace unicore
 		static const char* type_to_str(LogType type);
 	};
 
+	class MultiLogger : public Logger
+	{
+	public:
+		List<Logger*> list;
+
+		MultiLogger() = default;
+		MultiLogger(std::initializer_list<Logger*> args);
+
+		void write(LogType type, const StringView text) override;
+	};
+
 	class PrintLogger : public Logger
 	{
 		UC_OBJECT(PrintLogger, Logger)
