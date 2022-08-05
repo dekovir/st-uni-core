@@ -146,19 +146,19 @@ namespace unicore
 				{
 					_module->load_to(*_runtime);
 					_module->link_function_raw("env", "abort", "v(iiii)", &wa_abort);
-					_module->link("index", "log", &api_log);
+					_module->link("log", &api_log);
 
-					_module->link("index", "random", &api_random);
-					_module->link("index", "random_f", &api_random_f);
+					_module->link("random", &api_random, true);
+					_module->link("random_f", &api_random_f, true);
 
-					_module->link("index", "screen_x", &api_screen_x);
-					_module->link("index", "screen_y", &api_screen_y);
+					_module->link("screen_x", &api_screen_x);
+					_module->link("screen_y", &api_screen_y);
 
-					_module->link("index", "mouse_x", &api_mouse_x);
-					_module->link("index", "mouse_y", &api_mouse_y);
-					_module->link("index", "mouse_button", &api_mouse_button);
+					_module->link("mouse_x", &api_mouse_x);
+					_module->link("mouse_y", &api_mouse_y);
+					_module->link("mouse_button", &api_mouse_button);
 
-					_module->link("index", "sprite_draw_at", &api_sprite_draw_at);
+					_module->link("sprite_draw_at", &api_sprite_draw_at);
 
 					UC_LOG_INFO(wasm_logger) << "Runtime functions:";
 					unsigned index = 0;
