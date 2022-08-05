@@ -6,10 +6,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 
-if (EMSCRIPTEN)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -sUSE_SDL=2")
-endif ()
-
 # OPTIONS ######################################################################
 option(UNICORE_XML "Add unicore-xml plugin (tinyxml2)" ON)
 option(UNICORE_FNT "Add unicore-fnt plugin" ON)
@@ -81,9 +77,13 @@ if (NOT EMSCRIPTEN)
 	add_subdirectory("${LIBS_DIR}/SDL2")
 	set_target_properties(SDL2-static SDL2main PROPERTIES FOLDER "Libs")
 	target_link_libraries(unicore PRIVATE SDL2-static)
+else()
+	target_link_options(unicore PUBLIC -sUSE_SDL=2)
+	target_compile_options(unicore PUBLIC -sUSE_SDL=2)
 endif()
 target_compile_definitions(unicore PUBLIC UNICORE_USE_SDL2)
 
+# PLUGINS
 if (UNICORE_XML OR UNICORE_FNT)
 	set(tinyxml2_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 	add_subdirectory("${LIBS_DIR}/tinyxml2")
