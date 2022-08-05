@@ -15,7 +15,6 @@ option(UNICORE_XML "Add unicore-xml plugin (tinyxml2)" ON)
 option(UNICORE_FNT "Add unicore-fnt plugin" ON)
 option(UNICORE_WASM "Add unicore-wasm plugin" ON)
 option(UNICORE_IMGUI "Add unicore-imgui plugin" ON)
-option(UNICORE_GRIDMAP "Add unicore-gridmap plugin" ON)
 
 # PROJECT ######################################################################
 project(UniCore)
@@ -106,10 +105,6 @@ endif()
 
 if (UNICORE_IMGUI)
 	add_subdirectory("${PLUGINS_DIR}/imgui")
-endif()
-
-if (UNICORE_GRIDMAP)
-	add_subdirectory("${PLUGINS_DIR}/gridmap")
 endif()
 
 # stb

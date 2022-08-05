@@ -1,5 +1,4 @@
 #include "example05.hpp"
-
 #include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/ResourceCache.hpp"
@@ -43,7 +42,7 @@ namespace unicore
 		for (auto y = 0; y < size.y; y++)
 			for (auto x = 0; x < size.x; x++)
 			{
-				const CellIndex index(x, y);
+				const GridIndex index(x, y);
 
 				points.clear();
 				_map.topology.get_cell_points(index, points);
@@ -54,7 +53,7 @@ namespace unicore
 		for (auto y = 0; y < size.y; y++)
 			for (auto x = 0; x < size.x; x++)
 			{
-				const CellIndex index(x, y);
+				const GridIndex index(x, y);
 				const auto pos = _map.topology.cell_to_pos(index);
 				_graphics.draw_point(pos);
 			}
@@ -75,7 +74,7 @@ namespace unicore
 					continue;
 
 				const auto scale = _map.topology.size() / tile->rect().size().cast<float>();
-				const CellIndex index(x, y);
+				const GridIndex index(x, y);
 				auto center = _map.topology.cell_to_pos(index);
 				_sprite_batch.draw(tile, _tr * center, _graphics.transform.angle, scale);
 			}

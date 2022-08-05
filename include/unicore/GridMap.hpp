@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/Buffer2.hpp"
-#include "unicore/gridmap/Topology.hpp"
+#include "unicore/GridTopology.hpp"
 
 namespace unicore
 {
@@ -8,15 +8,15 @@ namespace unicore
 	class GridMap : public Buffer2<TCell>
 	{
 	public:
-		Topology& topology;
+		GridTopology& topology;
 
-		GridMap(const Vector2i& size, Topology& topology)
+		GridMap(const Vector2i& size, GridTopology& topology)
 			: Buffer2<TCell>(size),
 			topology(topology)
 		{
 		}
 
-		GridMap(int x, int y, Topology& topology)
+		GridMap(int x, int y, GridTopology& topology)
 			: Buffer2<TCell>(x, y),
 			topology(topology)
 		{

@@ -1,9 +1,9 @@
-#include "unicore/gridmap/Topology.hpp"
+#include "unicore/GridTopology.hpp"
 #include "unicore/Math.hpp"
 
 namespace unicore
 {
-	Vector2f RectangleTopology::cell_to_pos(const CellIndex index) const
+	Vector2f RectangleTopology::cell_to_pos(const GridIndex index) const
 	{
 		// TODO: Implement gap
 		return {
@@ -12,7 +12,7 @@ namespace unicore
 		};
 	}
 
-	CellIndex RectangleTopology::pos_to_cell(const Vector2f& pos) const
+	GridIndex RectangleTopology::pos_to_cell(const Vector2f& pos) const
 	{
 		// TODO: Implement gap
 		return {
@@ -21,7 +21,7 @@ namespace unicore
 		};
 	}
 
-	void RectangleTopology::get_cell_points(const CellIndex index, List<Vector2f>& points) const
+	void RectangleTopology::get_cell_points(const GridIndex index, List<Vector2f>& points) const
 	{
 		const auto w = _size.x / 2;
 		const auto h = _size.y / 2;
@@ -33,7 +33,7 @@ namespace unicore
 		points.push_back({ pos.x - w, pos.y + h });
 	}
 
-	CellIndex RectangleTopology::get_cell_neighbor(const CellIndex index, uint8_t dir) const
+	GridIndex RectangleTopology::get_cell_neighbor(const GridIndex index, uint8_t dir) const
 	{
 		switch (dir)
 		{
