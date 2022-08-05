@@ -2,16 +2,19 @@
 #include "unicore/wasm/WasmDefs.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
+#include "unicore/Resource.hpp"
 
 namespace unicore
 {
 	class WasmRuntime;
 
-	class WasmModule : public WasmObject<IM3Module>
+	class WasmModule : public WasmObject<IM3Module, Resource>
 	{
 	public:
 		WasmModule(IM3Module handle, const Shared<MemoryChunk>& memory, Logger& logger);
 		~WasmModule() override;
+
+		UC_NODISCARD size_t get_system_memory_use() const override;
 
 		UC_NODISCARD StringView get_name() const;
 		void set_name(StringView name);

@@ -15,6 +15,11 @@ namespace unicore
 			m3_FreeModule(_handle);
 	}
 
+	size_t WasmModule::get_system_memory_use() const
+	{
+		return sizeof(WasmModule) + (_memory ? _memory->size() : 0);
+	}
+
 	StringView WasmModule::get_name() const
 	{
 		return m3_GetModuleName(_handle);

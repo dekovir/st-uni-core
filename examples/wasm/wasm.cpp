@@ -14,7 +14,6 @@
 #include "unicore/xml/XMLPlugin.hpp"
 #include "unicore/fnt/FNTPlugin.hpp"
 #include <locale>
-#include <codecvt>
 
 namespace unicore
 {

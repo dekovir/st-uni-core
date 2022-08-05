@@ -17,8 +17,9 @@ namespace unicore
 		T _handle;
 	};
 
-	template<typename T>
-	class WasmObject : public WasmValue<T>, public Object
+	template<typename T, typename TParent = Object,
+		std::enable_if_t<std::is_base_of_v<Object, TParent>>* = nullptr>
+	class WasmObject : public TParent, public WasmValue<T>
 	{
 	public:
 		explicit WasmObject(T handle)
