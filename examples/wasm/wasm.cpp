@@ -62,92 +62,59 @@ namespace unicore
 		m3ApiSuccess();
 	}
 
-	m3ApiRawFunction(wa_log)
+	static void api_log(const void* void_ptr)
 	{
-		m3ApiGetArgMem(const uint32_t*, ptr);
+		const auto ptr = static_cast<const uint32_t*>(void_ptr);
 		const uint32_t lenInPoints = *(ptr - 1) / 2;
-
 		const std::basic_string_view strUtf16(reinterpret_cast<const char16_t*>(ptr), lenInPoints);
 		const auto text = Strings::to_utf8(strUtf16);
 
 		s_example->logger.write(LogType::Info, text);
-
-		m3ApiSuccess();
 	}
 
-	m3ApiRawFunction(wa_random)
+	static int32_t api_random()
 	{
-		m3ApiReturnType(uint32_t);
-		m3ApiReturn(s_example->_random.next());
-
-		m3ApiSuccess();
+		return s_example->_random.next();
 	}
 
-	m3ApiRawFunction(wa_random_f)
+	static float api_random_f()
 	{
-		m3ApiReturnType(float);
-		m3ApiReturn(s_example->_random.next_float());
-
-		m3ApiSuccess();
+		return s_example->_random.next_float();
 	}
 
-	m3ApiRawFunction(wa_screen_x)
+	static int api_screen_x()
 	{
 		auto& size = s_example->renderer.screen_size();
-
-		m3ApiReturnType(int);
-		m3ApiReturn(size.x);
-
-		m3ApiSuccess();
+		return size.x;
 	}
 
-	m3ApiRawFunction(wa_screen_y)
+	static int api_screen_y()
 	{
 		auto& size = s_example->renderer.screen_size();
-
-		m3ApiReturnType(int);
-		m3ApiReturn(size.y);
-
-		m3ApiSuccess();
+		return size.y;
 	}
 
-	m3ApiRawFunction(wa_mouse_x)
+	static int api_mouse_x()
 	{
 		auto& pos = s_example->input.mouse().position();
-
-		m3ApiReturnType(int);
-		m3ApiReturn(pos.x);
-
-		m3ApiSuccess();
+		return pos.x;
 	}
 
-	m3ApiRawFunction(wa_mouse_y)
+	static int api_mouse_y()
 	{
 		auto& pos = s_example->input.mouse().position();
-
-		m3ApiReturnType(int);
-		m3ApiReturn(pos.y);
-
-		m3ApiSuccess();
+		return pos.y;
 	}
 
-	m3ApiRawFunction(wa_mouse_button)
+	static int api_mouse_button()
 	{
-		m3ApiReturnType(int);
-		m3ApiReturn(s_example->input.mouse().down() ? 1 : 0);
-
-		m3ApiSuccess();
+		return s_example->input.mouse().down() ? 1 : 0;
 	}
 
-	m3ApiRawFunction(wa_sprite_draw_at)
+	static void api_sprite_draw_at(float x, float y)
 	{
-		m3ApiGetArg(float, x);
-		m3ApiGetArg(float, y);
-
 		s_example->_sprite_batch.draw(s_example->_spr, Vector2f(x, y));
 		s_example->_sprite_count++;
-
-		m3ApiSuccess();
 	}
 
 	MyCore::MyCore(const CoreSettings& settings)
@@ -179,18 +146,19 @@ namespace unicore
 				{
 					_module->load_to(*_runtime);
 					_module->link_function_raw("env", "abort", "v(iiii)", &wa_abort);
-					_module->link_function_raw("index", "log", "v(i)", &wa_log);
-					_module->link_function_raw("index", "random", "i()", &wa_random);
-					_module->link_function_raw("index", "random_f", "f()", &wa_random_f);
+					_module->link("index", "log", &api_log);
 
-					_module->link_function_raw("index", "screen_x", "i()", &wa_screen_x);
-					_module->link_function_raw("index", "screen_y", "i()", &wa_screen_y);
+					_module->link("index", "random", &api_random);
+					_module->link("index", "random_f", &api_random_f);
 
-					_module->link_function_raw("index", "mouse_x", "i()", &wa_mouse_x);
-					_module->link_function_raw("index", "mouse_y", "i()", &wa_mouse_y);
-					_module->link_function_raw("index", "mouse_button", "i()", &wa_mouse_button);
+					_module->link("index", "screen_x", &api_screen_x);
+					_module->link("index", "screen_y", &api_screen_y);
 
-					_module->link_function_raw("index", "sprite_draw_at", "v(ff)", &wa_sprite_draw_at);
+					_module->link("index", "mouse_x", &api_mouse_x);
+					_module->link("index", "mouse_y", &api_mouse_y);
+					_module->link("index", "mouse_button", &api_mouse_button);
+
+					_module->link("index", "sprite_draw_at", &api_sprite_draw_at);
 
 					UC_LOG_INFO(wasm_logger) << "Runtime functions:";
 					unsigned index = 0;

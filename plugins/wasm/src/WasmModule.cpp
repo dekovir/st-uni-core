@@ -28,12 +28,14 @@ namespace unicore
 	bool WasmModule::link_function_raw(StringView module_name,
 		StringView function_name, StringView signature, M3RawCall func)
 	{
-		const auto error = m3_LinkRawFunction(_handle,
-			module_name.data(), function_name.data(), signature.data(), func);
-		if (!error) return true;
+		if (const auto error = m3_LinkRawFunction(_handle,
+			module_name.data(), function_name.data(), signature.data(), func))
+		{
+			UC_LOG_ERROR(_logger) << error;
+			return false;
+		}
 
-		UC_LOG_ERROR(_logger) << error;
-		return false;
+		return true;
 	}
 
 	bool WasmModule::load_to(WasmRuntime& runtime)
