@@ -60,7 +60,6 @@ namespace unicore
 		_graphics.flush();
 
 		// DRAW TILES //////////////////////////////////////////////////////////////
-
 		_sprite_batch.clear();
 		for (auto y = 0; y < size.y; y++)
 			for (auto x = 0; x < size.x; x++)

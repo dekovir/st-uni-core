@@ -14,18 +14,6 @@ namespace unicore
 		template<typename... Args,
 			std::enable_if_t<std::is_nothrow_constructible_v<Type, Args...>>* = nullptr>
 		explicit constexpr Index(Args&&... args) noexcept : value(std::forward<Args>(args)...) {}
-
-		Index& operator+(const Index& other)
-		{
-			value += other.value;
-			return *this;
-		}
-
-		Index& operator-(const Index& other)
-		{
-			value -= other.value;
-			return *this;
-		}
 	};
 
 	template<typename Type, typename Tag>
@@ -40,15 +28,31 @@ namespace unicore
 		return a.value != b.value;
 	}
 
-	template<typename Type, typename Tag>
+	template<typename Type, typename Tag,
+		class = decltype(std::declval<Type>() + std::declval<Type>())>
 	static constexpr Index<Type, Tag> operator+(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
 	{
 		return Index<Type, Tag>(a.value + b.value);
 	}
 
-	template<typename Type, typename Tag>
+	template<typename Type, typename Tag,
+		class = decltype(std::declval<Type>() - std::declval<Type>())>
 	static constexpr Index<Type, Tag> operator-(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
 	{
 		return Index<Type, Tag>(a.value - b.value);
+	}
+
+	template<typename Type, typename Tag,
+		class = decltype(std::declval<Type>()* std::declval<Type>())>
+	static constexpr Index<Type, Tag> operator*(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
+	{
+		return Index<Type, Tag>(a.value * b.value);
+	}
+
+	template<typename Type, typename Tag,
+		class = decltype(std::declval<Type>() / std::declval<Type>())>
+	static constexpr Index<Type, Tag> operator/(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
+	{
+		return Index<Type, Tag>(a.value / b.value);
 	}
 }
