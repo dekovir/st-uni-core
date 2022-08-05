@@ -1,14 +1,14 @@
 #pragma once
-#include "unicore/wasm/WADefs.hpp"
+#include "unicore/wasm/WasmDefs.hpp"
 
 namespace unicore
 {
 	class LogHelper;
 
-	class WAFunction : public WAValue<IM3Function>
+	class WasmFunction : public WasmValue<IM3Function>
 	{
 	public:
-		explicit WAFunction(IM3Function handle);
+		explicit WasmFunction(IM3Function handle);
 
 		UC_NODISCARD StringView name() const;
 
@@ -57,5 +57,5 @@ namespace unicore
 	};
 
 	extern LogHelper& operator << (LogHelper& helper, M3ValueType type);
-	extern LogHelper& operator << (LogHelper& helper, const WAFunction& func);
+	extern LogHelper& operator << (LogHelper& helper, const WasmFunction& func);
 }

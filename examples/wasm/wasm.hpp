@@ -8,9 +8,9 @@
 
 namespace unicore
 {
-	class WAEnvironment;
-	class WARuntime;
-	class WAModule;
+	class WasmEnvironment;
+	class WasmRuntime;
+	class WasmModule;
 
 	class MyCore : public SDLCore
 	{
@@ -25,9 +25,9 @@ namespace unicore
 		SpriteBatch _sprite_batch;
 		DefaultRandom _random;
 
-		Shared<WAEnvironment> _env;
-		Shared<WARuntime> _runtime;
-		Shared<WAModule> _module;
+		Shared<WasmEnvironment> _env;
+		Shared<WasmRuntime> _runtime;
+		Shared<WasmModule> _module;
 
 		int _sprite_count = 0;
 		TimeSpan _update_time, _draw_time;

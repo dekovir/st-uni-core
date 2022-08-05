@@ -5,10 +5,10 @@
 namespace unicore
 {
 	template<typename T>
-	class WAValue
+	class WasmValue
 	{
 	public:
-		explicit WAValue(T handle)
+		explicit WasmValue(T handle)
 			: _handle(handle) {}
 
 		T handle() const { return _handle; }
@@ -18,11 +18,11 @@ namespace unicore
 	};
 
 	template<typename T>
-	class WAObject : public WAValue<T>, public Object
+	class WasmObject : public WasmValue<T>, public Object
 	{
 	public:
-		explicit WAObject(T handle)
-			: WAValue<T>(handle)
+		explicit WasmObject(T handle)
+			: WasmValue<T>(handle)
 		{
 		}
 	};

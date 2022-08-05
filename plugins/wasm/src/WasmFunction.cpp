@@ -1,25 +1,25 @@
-#include "unicore/wasm/WAFunction.hpp"
+#include "unicore/wasm/WasmFunction.hpp"
 #include "unicore/Logger.hpp"
 
 namespace unicore
 {
-	WAFunction::WAFunction(IM3Function handle)
-		: WAValue(handle)
+	WasmFunction::WasmFunction(IM3Function handle)
+		: WasmValue(handle)
 	{}
 
-	StringView WAFunction::name() const
+	StringView WasmFunction::name() const
 	{
 		return m3_GetFunctionName(_handle);
 	}
 
-	void WAFunction::get_arguments(List<M3ValueType>& types) const
+	void WasmFunction::get_arguments(List<M3ValueType>& types) const
 	{
 		const auto count = m3_GetArgCount(_handle);
 		for (unsigned i = 0; i < count; i++)
 			types.push_back(m3_GetArgType(_handle, i));
 	}
 
-	void WAFunction::get_returns(List<M3ValueType>& types) const
+	void WasmFunction::get_returns(List<M3ValueType>& types) const
 	{
 		const auto count = m3_GetRetCount(_handle);
 		for (unsigned i = 0; i < count; i++)
@@ -42,7 +42,7 @@ namespace unicore
 		return helper << "error";
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const WAFunction& func)
+	LogHelper& operator<<(LogHelper& helper, const WasmFunction& func)
 	{
 		const auto handle = func.handle();
 

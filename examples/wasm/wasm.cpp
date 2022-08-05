@@ -8,9 +8,9 @@
 #include "unicore/TimeSpan.hpp"
 #include "unicore/RendererSDL.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "unicore/wasm/WAEnvironment.hpp"
-#include "unicore/wasm/WAModule.hpp"
-#include "unicore/wasm/WARuntime.hpp"
+#include "unicore/wasm/WasmEnvironment.hpp"
+#include "unicore/wasm/WasmModule.hpp"
+#include "unicore/wasm/WasmRuntime.hpp"
 #include "unicore/xml/XMLPlugin.hpp"
 #include "unicore/fnt/FNTPlugin.hpp"
 #include <locale>
@@ -21,7 +21,7 @@ namespace unicore
 	class State
 	{
 	public:
-		explicit State(WARuntime& runtime)
+		explicit State(WasmRuntime& runtime)
 		{
 			_init = runtime.find_function("app_init");
 			_update = runtime.find_function("app_update");
@@ -47,9 +47,9 @@ namespace unicore
 		}
 
 	protected:
-		Optional<WAFunction> _init;
-		Optional<WAFunction> _update;
-		Optional<WAFunction> _draw;
+		Optional<WasmFunction> _init;
+		Optional<WasmFunction> _update;
+		Optional<WasmFunction> _draw;
 	};
 
 	static MyCore* s_example = nullptr;
@@ -166,7 +166,7 @@ namespace unicore
 			_spr = std::make_shared<Sprite>(tex);
 
 		ConsoleLogger wasm_logger(_console);
-		_env = WAEnvironment::create(wasm_logger);
+		_env = WasmEnvironment::create(wasm_logger);
 
 		UC_LOG_INFO(wasm_logger) << "Loading release.wasm";
 		if (const auto data = resources.load<BinaryData>(L"logic.wasm"_path))
@@ -194,7 +194,7 @@ namespace unicore
 
 					UC_LOG_INFO(wasm_logger) << "Runtime functions:";
 					unsigned index = 0;
-					_runtime->enum_functions([&wasm_logger, &index](WAFunction func)
+					_runtime->enum_functions([&wasm_logger, &index](WasmFunction func)
 						{
 							UC_LOG_INFO(wasm_logger) << index << ": " << func;
 							index++;

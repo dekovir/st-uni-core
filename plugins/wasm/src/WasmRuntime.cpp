@@ -1,23 +1,23 @@
-#include "unicore/wasm/WARuntime.hpp"
+#include "unicore/wasm/WasmRuntime.hpp"
 
 #include <m3_env.h>
 
 #include "unicore/Logger.hpp"
-#include "unicore/wasm/WAModule.hpp"
+#include "unicore/wasm/WasmModule.hpp"
 
 namespace unicore
 {
-	WARuntime::WARuntime(IM3Runtime handle, Logger& logger)
-		: WAObject(handle), _logger(logger)
+	WasmRuntime::WasmRuntime(IM3Runtime handle, Logger& logger)
+		: WasmObject(handle), _logger(logger)
 	{
 	}
 
-	WARuntime::~WARuntime()
+	WasmRuntime::~WasmRuntime()
 	{
 		m3_FreeRuntime(_handle);
 	}
 
-	MemoryChunk WARuntime::get_memory() const
+	MemoryChunk WasmRuntime::get_memory() const
 	{
 		uint32_t size;
 		auto data = m3_GetMemory(_handle, &size, 0);
@@ -27,33 +27,33 @@ namespace unicore
 		return {};
 	}
 
-	WAError WARuntime::get_error() const
+	WasmError WasmRuntime::get_error() const
 	{
-		WAError error{};
+		WasmError error{};
 		m3_GetErrorInfo(_handle, &error.info);
 		return error;
 	}
 
-	Optional<WAFunction> WARuntime::find_function(StringView function_name) const
+	Optional<WasmFunction> WasmRuntime::find_function(StringView function_name) const
 	{
 		IM3Function func;
 		if (const auto error = m3_FindFunction(&func, _handle, function_name.data()); !error)
-			return WAFunction(func);
+			return WasmFunction(func);
 
 		return std::nullopt;
 	}
 
-	void WARuntime::enum_functions(const Action<WAFunction>& action) const
+	void WasmRuntime::enum_functions(const Action<WasmFunction>& action) const
 	{
 		for (auto mod = _handle->modules; mod != nullptr; mod = mod->next)
 		{
 			//const auto count = mod->numFunctions + mod->numFuncImports;
 			for (unsigned i = 0; i < mod->numFunctions; i++)
-				action(WAFunction(&mod->functions[i]));
+				action(WasmFunction(&mod->functions[i]));
 		}
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const WAError& error)
+	LogHelper& operator<<(LogHelper& helper, const WasmError& error)
 	{
 		helper << "Error: " << error.info.result
 			<< " (" << error.info.message << ")";
