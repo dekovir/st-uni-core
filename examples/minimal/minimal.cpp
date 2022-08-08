@@ -67,7 +67,7 @@ namespace unicore
 			platform.quit();
 
 		if (
-			input.keyboard().down_change(KeyCode::Enter) &&
+			input.keyboard().down_changed(KeyCode::Enter) &&
 			input.keyboard().mods(KeyModCombine::Alt))
 		{
 			auto mode = display.get_mode();

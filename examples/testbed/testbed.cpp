@@ -30,7 +30,7 @@ namespace unicore
 			platform.quit();
 
 		if (
-			input.keyboard().down_change(KeyCode::Enter) &&
+			input.keyboard().down_changed(KeyCode::Enter) &&
 			input.keyboard().mods(KeyModCombine::Alt))
 		{
 			auto mode = display.get_mode();
@@ -42,9 +42,9 @@ namespace unicore
 #endif
 
 		auto& examples = ExampleCatalog::get_all();
-		if (input.keyboard().down_change(KeyCode::BracketRight))
+		if (input.keyboard().down_changed(KeyCode::BracketRight))
 			set_example((_example_index + 1) % examples.size());
-		if (input.keyboard().down_change(KeyCode::BracketLeft))
+		if (input.keyboard().down_changed(KeyCode::BracketLeft))
 			set_example((_example_index + examples.size() - 1) % examples.size());
 
 		if (_example)

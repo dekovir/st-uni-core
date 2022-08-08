@@ -2,15 +2,15 @@
 
 namespace unicore
 {
-	ButtonState InputDevice::get_state(bool prev_down, bool cur_down)
+	ButtonState InputDevice::get_state(bool state_prev, bool state_cur)
 	{
-		if (prev_down == cur_down)
-			return cur_down ? ButtonState::Down : ButtonState::Up;
+		if (state_prev == state_cur)
+			return state_cur ? ButtonState::Down : ButtonState::Up;
 
-		if (prev_down)
-			return ButtonState::UpChange;
+		if (state_prev)
+			return ButtonState::UpChanged;
 
-		return ButtonState::DownChange;
+		return ButtonState::DownChanged;
 	}
 
 	ButtonState MouseDevice::state(MouseButton button) const

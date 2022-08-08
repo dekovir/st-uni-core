@@ -177,34 +177,44 @@ namespace unicore
 	{
 		Up, // button is held down
 		Down, // button is held released
-		UpChange, // button has been released on this frame
-		DownChange, // button has been pressed on this frame
+		UpChanged, // button has been released on this frame
+		DownChanged, // button has been pressed on this frame
+	};
+
+	enum class InputDeviceType
+	{
+		Mouse,
+		Keyboard,
 	};
 
 	class InputDevice : public Object
 	{
 		UC_OBJECT(InputDevice, Object)
 	public:
+		UC_NODISCARD virtual InputDeviceType device_type() const = 0;
+
 	protected:
-		static ButtonState get_state(bool prev_down, bool cur_down);
+		static ButtonState get_state(bool state_prev, bool state_cur);
 	};
 
 	class MouseDevice : public InputDevice
 	{
 		UC_OBJECT(MouseDevice, InputDevice)
 	public:
+		UC_NODISCARD InputDeviceType device_type() const override { return InputDeviceType::Mouse; }
+
 		UC_NODISCARD virtual ButtonState state(uint8_t button) const = 0;
 		UC_NODISCARD virtual ButtonState state(MouseButton button = MouseButton::Left) const;
 
 		UC_NODISCARD bool up(uint8_t button) const { return state(button) == ButtonState::Up; }
 		UC_NODISCARD bool down(uint8_t button) const { return state(button) == ButtonState::Down; }
-		UC_NODISCARD bool up_change(uint8_t button) const { return state(button) == ButtonState::UpChange; }
-		UC_NODISCARD bool down_change(uint8_t button) const { return state(button) == ButtonState::DownChange; }
+		UC_NODISCARD bool up_changed(uint8_t button) const { return state(button) == ButtonState::UpChanged; }
+		UC_NODISCARD bool down_changed(uint8_t button) const { return state(button) == ButtonState::DownChanged; }
 
 		UC_NODISCARD bool up(MouseButton button = MouseButton::Left) const { return state(button) == ButtonState::Up; }
 		UC_NODISCARD bool down(MouseButton button = MouseButton::Left) const { return state(button) == ButtonState::Down; }
-		UC_NODISCARD bool up_change(MouseButton button = MouseButton::Left) const { return state(button) == ButtonState::UpChange; }
-		UC_NODISCARD bool down_change(MouseButton button = MouseButton::Left) const { return state(button) == ButtonState::DownChange; }
+		UC_NODISCARD bool up_changed(MouseButton button = MouseButton::Left) const { return state(button) == ButtonState::UpChanged; }
+		UC_NODISCARD bool down_changed(MouseButton button = MouseButton::Left) const { return state(button) == ButtonState::DownChanged; }
 
 		UC_NODISCARD virtual const Vector2i& position() const = 0;
 		UC_NODISCARD virtual const Vector2i& delta() const = 0;
@@ -215,12 +225,14 @@ namespace unicore
 	{
 		UC_OBJECT(KeyboardDevice, InputDevice)
 	public:
+		UC_NODISCARD InputDeviceType device_type() const override { return InputDeviceType::Keyboard; }
+
 		UC_NODISCARD virtual ButtonState state(KeyCode code) const = 0;
 
 		UC_NODISCARD bool up(KeyCode code) const { return state(code) == ButtonState::Up; }
 		UC_NODISCARD bool down(KeyCode code) const { return state(code) == ButtonState::Down; }
-		UC_NODISCARD bool up_change(KeyCode code) const { return state(code) == ButtonState::UpChange; }
-		UC_NODISCARD bool down_change(KeyCode code) const { return state(code) == ButtonState::DownChange; }
+		UC_NODISCARD bool up_changed(KeyCode code) const { return state(code) == ButtonState::UpChanged; }
+		UC_NODISCARD bool down_changed(KeyCode code) const { return state(code) == ButtonState::DownChanged; }
 
 		UC_NODISCARD virtual KeyModFlags mods() const = 0;
 		UC_NODISCARD virtual bool mods(KeyModCombine mod) const;
