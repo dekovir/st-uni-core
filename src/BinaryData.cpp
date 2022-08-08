@@ -5,6 +5,46 @@
 
 namespace unicore
 {
+	BinaryData::BinaryData(size_t size)
+		: _chunk(std::make_shared<MemoryChunk>(size))
+	{
+	}
+
+	BinaryData::BinaryData(const Shared<MemoryChunk>& chunk)
+		: _chunk(chunk)
+	{}
+
+	BinaryData::BinaryData(const BinaryData& other)
+		: _chunk(other._chunk)
+	{
+	}
+
+	BinaryData::BinaryData(BinaryData&& other) noexcept
+		: _chunk(std::move(other._chunk))
+	{
+	}
+
+	BinaryData& BinaryData::operator=(const BinaryData& other)
+	{
+		if (_chunk && other._chunk)
+			*_chunk = *other._chunk;
+		else if (other._chunk)
+		{
+			_chunk = std::make_shared<MemoryChunk>(*other._chunk);
+		}
+		else
+		{
+			_chunk = nullptr;
+		}
+		return *this;
+	}
+
+	BinaryData& BinaryData::operator=(BinaryData&& other) noexcept
+	{
+		_chunk = std::exchange(other._chunk, nullptr);
+		return *this;
+	}
+
 	BinaryDataLoader::BinaryDataLoader()
 		: ResourceLoaderT({ L".dat" })
 	{
