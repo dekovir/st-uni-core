@@ -97,16 +97,6 @@ namespace unicore
 
 		const StringView file;
 		const int line;
-
-		static DebugSource create(const char* file, int line)
-		{
-#if defined (UNICORE_PLATFORM_WINDOWS) || defined(UNICORE_PLATFORM_ANDROID)
-			const auto pos = std::string_view(file).find_last_of('\\');
-#else
-			const auto pos = std::string_view(file).find_last_of('/');
-#endif
-			return { (pos != std::string_view::npos ? &file[pos + 1] : file), line };
-		}
 	};
 
 	struct DebugFunction

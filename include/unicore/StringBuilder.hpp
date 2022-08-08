@@ -74,53 +74,53 @@ namespace unicore
 
 	template<typename TChar,
 		std::enable_if_t<std::is_same_v<TChar, char> || std::is_same_v<TChar, wchar_t>>* = nullptr>
-	extern StringBuilder& operator << (StringBuilder& helper, const BasicStringView<TChar> value)
+	extern StringBuilder& operator << (StringBuilder& builder, const BasicStringView<TChar> value)
 	{
-		helper.append(value);
-		return helper;
+		builder.append(value);
+		return builder;
 	}
 
 	template<typename TChar,
 		std::enable_if_t<std::is_same_v<TChar, char> || std::is_same_v<TChar, wchar_t>>* = nullptr>
-	extern StringBuilder& operator << (StringBuilder& helper, const BasicString<TChar>& value)
+	extern StringBuilder& operator << (StringBuilder& builder, const BasicString<TChar>& value)
 	{
-		helper.append(value);
-		return helper;
+		builder.append(value);
+		return builder;
 	}
 
 	template<typename T, std::enable_if_t<std::is_enum_v<T>>* = nullptr>
-	extern StringBuilder& operator<<(StringBuilder& helper, T value)
+	extern StringBuilder& operator<<(StringBuilder& builder, T value)
 	{
 		const auto tmp = static_cast<int>(value);
 		const auto str = std::to_wstring(tmp);
-		return helper << str.c_str();
+		return builder << str.c_str();
 	}
 
 	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-	extern StringBuilder& operator<<(StringBuilder& helper, T value)
+	extern StringBuilder& operator<<(StringBuilder& builder, T value)
 	{
 		const auto str = std::to_wstring(value);
-		return helper << str.c_str();
+		return builder << str.c_str();
 	}
 
 	template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-	extern StringBuilder& operator<<(StringBuilder& helper, T value)
+	extern StringBuilder& operator<<(StringBuilder& builder, T value)
 	{
 		const auto str = std::to_wstring(value);
-		return helper << str.c_str();
+		return builder << str.c_str();
 	}
 
 	template<typename T>
-	extern StringBuilder& operator<<(StringBuilder& helper, std::initializer_list<T> list)
+	extern StringBuilder& operator<<(StringBuilder& builder, std::initializer_list<T> list)
 	{
 		int index = 0;
 		for (const auto* value : list)
 		{
 			if (index > 0)
-				helper << ',';
-			helper << value;
+				builder << ',';
+			builder << value;
 			index++;
 		}
-		return helper;
+		return builder;
 	}
 }
