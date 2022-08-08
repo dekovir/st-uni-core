@@ -24,23 +24,25 @@ namespace unicore
 		unsigned index = 0;
 		for (const auto& type : _types)
 		{
-			auto helper = UC_LOG_INFO(logger);
-			helper << index << ": " << type->classname;
+			StringBuilder builder;
+			builder << index << ": " << type->classname;
 			if (type->parent)
-				helper << " (" << type->parent->classname << ")";
+				builder << " (" << type->parent->classname << ")";
 
 			if (auto it = _derived_types.find(type); it != _derived_types.end())
 			{
-				helper << " -> [";
+				builder << " -> [";
 				unsigned i = 0;
 				for (const auto& derived_type : it->second)
 				{
-					if (i > 0) helper << ',';
-					helper << derived_type->classname;
+					if (i > 0) builder << ',';
+					builder << derived_type->classname;
 					i++;
 				}
-				helper << "]";
+				builder << "]";
 			}
+
+			UC_LOG_INFO(logger) << builder;
 
 			index++;
 		}

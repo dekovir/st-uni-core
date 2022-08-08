@@ -29,5 +29,5 @@ namespace unicore
 		Logger& _logger;
 	};
 
-	extern LogHelper& operator << (LogHelper& helper, const WasmError& error);
+	extern UNICODE_STRING_BUILDER_FORMAT(const WasmError&);
 }

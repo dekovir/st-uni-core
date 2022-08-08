@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Module.hpp"
+#include "unicore/StringBuilder.hpp"
 
 namespace unicore
 {
@@ -57,17 +58,11 @@ namespace unicore
 		Logger& _logger;
 	};
 
-	class LogHelper
+	class LogHelper : public StringBuilder
 	{
 	public:
 		LogHelper(Logger& logger, LogType type);
 		~LogHelper();
-
-		void append(char c);
-		void append(wchar_t c);
-
-		void append(StringView text);
-		void append(WStringView text);
 
 		struct LValueFix {};
 
@@ -91,72 +86,7 @@ namespace unicore
 	protected:
 		Logger& _logger;
 		const LogType _type;
-		String _text;
 	};
-
-	LogHelper& operator <<(LogHelper& helper, bool value);
-
-#if defined (_HAS_EXCEPTIONS)
-	LogHelper& operator <<(LogHelper& helper, const std::exception& ex);
-#endif
-
-	extern LogHelper& operator << (LogHelper& helper, char value);
-	extern LogHelper& operator << (LogHelper& helper, wchar_t value);
-
-	extern LogHelper& operator <<(LogHelper& helper, const char* value);
-	extern LogHelper& operator <<(LogHelper& helper, const wchar_t* value);
-
-	template<typename TChar,
-		std::enable_if_t<std::is_same_v<TChar, char> || std::is_same_v<TChar, wchar_t>>* = nullptr>
-	extern LogHelper& operator << (LogHelper& helper, const BasicStringView<TChar> value)
-	{
-		helper.append(value);
-		return helper;
-	}
-
-	template<typename TChar,
-		std::enable_if_t<std::is_same_v<TChar, char> || std::is_same_v<TChar, wchar_t>>* = nullptr>
-	extern LogHelper& operator << (LogHelper& helper, const BasicString<TChar>& value)
-	{
-		helper.append(value);
-		return helper;
-	}
-
-	template<typename T, std::enable_if_t<std::is_enum_v<T>>* = nullptr>
-	extern LogHelper& operator<<(LogHelper& helper, T value)
-	{
-		const auto tmp = static_cast<int>(value);
-		const auto str = std::to_wstring(tmp);
-		return helper << str.c_str();
-	}
-
-	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-	extern LogHelper& operator<<(LogHelper& helper, T value)
-	{
-		const auto str = std::to_wstring(value);
-		return helper << str.c_str();
-	}
-
-	template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-	extern LogHelper& operator<<(LogHelper& helper, T value)
-	{
-		const auto str = std::to_wstring(value);
-		return helper << str.c_str();
-	}
-
-	template<typename T>
-	extern LogHelper& operator<<(LogHelper& helper, std::initializer_list<T> list)
-	{
-		int index = 0;
-		for (const auto* value : list)
-		{
-			if (index > 0)
-				helper << ',';
-			helper << value;
-			index++;
-		}
-		return helper;
-	}
 
 	struct DebugSource
 	{
@@ -186,8 +116,8 @@ namespace unicore
 		StringView _func;
 	};
 
-	extern LogHelper& operator << (LogHelper& helper, const DebugSource& source);
-	extern LogHelper& operator << (LogHelper& helper, const DebugFunction& source);
+	extern UNICODE_STRING_BUILDER_FORMAT(const DebugSource&);
+	extern UNICODE_STRING_BUILDER_FORMAT(const DebugFunction&);
 }
 
 #define UC_LOG_TYPE(logger, type) \

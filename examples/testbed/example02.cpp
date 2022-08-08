@@ -66,7 +66,7 @@ namespace unicore
 			entity.update(screen_size, delta);
 
 		// UPDATE SPRITE BATCH /////////////////////////////////////////////////////
-		const String count_str = "Count: " + std::to_string(_entites.size());
+		const auto count_str = StringBuilder::format("Count: {}", _entites.size());
 
 		auto& size = renderer.screen_size();
 		_sprite_batch.clear();

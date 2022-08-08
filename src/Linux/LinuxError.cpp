@@ -24,9 +24,9 @@ namespace unicore
 		return LinuxError(errno);
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const LinuxError& error)
+	UNICODE_STRING_BUILDER_FORMAT(const LinuxError&)
 	{
-		return helper << error.get_text() << ":" << error.code();
+		return builder << value.get_text() << ":" << value.code();
 	}
 }
 

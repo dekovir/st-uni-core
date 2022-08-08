@@ -36,10 +36,46 @@ namespace unicore
 		return *this;
 	}
 
-	UNICODE_STRING_BUILDER_FORMAT(int)
+	UNICODE_STRING_BUILDER_FORMAT(const StringBuilder&)
 	{
-		const auto str = std::to_string(value);
-		builder.append(str);
+		return builder << value.data;
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(bool)
+	{
+		return builder << (value ? L"true" : L"false");
+	}
+
+#if defined (_HAS_EXCEPTIONS)
+	UNICODE_STRING_BUILDER_FORMAT(std::exception&)
+	{
+		return builder << value.what();
+	}
+#endif
+
+	UNICODE_STRING_BUILDER_FORMAT(const char)
+	{
+		builder.append(value);
+		return builder;
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const wchar_t)
+	{
+		builder.append(value);
+		return builder;
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const char*)
+	{
+		if (value != nullptr)
+			builder.append(value);
+		return builder;
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const wchar_t*)
+	{
+		if (value != nullptr)
+			builder.append(value);
 		return builder;
 	}
 }

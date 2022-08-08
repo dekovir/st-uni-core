@@ -361,8 +361,8 @@ namespace unicore
 		return !str.empty() ? hash_func(str.data()) : 0;
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const Path& path)
+	UNICODE_STRING_BUILDER_FORMAT(const Path&)
 	{
-		return helper << '\'' << path.data() << '\'';
+		return builder << '\'' << value.data() << '\'';
 	}
 }

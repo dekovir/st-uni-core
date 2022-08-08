@@ -36,6 +36,5 @@ namespace unicore
 	static bool operator<(const Type& a, const Type& b);
 	static bool operator>(const Type& a, const Type& b);
 
-	class LogHelper;
-	extern LogHelper& operator << (LogHelper& helper, const Type& type);
+	extern UNICODE_STRING_BUILDER_FORMAT(const Type&);
 }

@@ -17,9 +17,9 @@ namespace unicore
 		return DateTime(ClockType::now());
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const DateTime& time)
+	UNICODE_STRING_BUILDER_FORMAT(const DateTime&)
 	{
-		const auto value = time.to_time_t();
-		return helper << ctime(&value);
+		const auto time = value.to_time_t();
+		return builder << ctime(&time);
 	}
 }

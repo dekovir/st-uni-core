@@ -56,6 +56,6 @@ namespace unicore
 		}
 	};
 
-	extern LogHelper& operator << (LogHelper& helper, M3ValueType type);
-	extern LogHelper& operator << (LogHelper& helper, const WasmFunction& func);
+	extern UNICODE_STRING_BUILDER_FORMAT(M3ValueType);
+	extern UNICODE_STRING_BUILDER_FORMAT(const WasmFunction&);
 }

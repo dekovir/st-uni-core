@@ -114,7 +114,7 @@ namespace unicore
 	}
 
 	// ===========================================================================
-	LogHelper& operator<<(LogHelper& helper, const MemorySize& value)
+	UNICODE_STRING_BUILDER_FORMAT(const MemorySize&)
 	{
 		constexpr auto KB = 1024;
 		constexpr auto MB = KB * 1024;
@@ -122,17 +122,17 @@ namespace unicore
 		if (value.bytes > MB)
 		{
 			const auto amount = static_cast<float>(value.bytes) / MB;
-			helper << amount << "Mb";
+			builder << amount << "Mb";
 		}
 		else if (value.bytes > KB)
 		{
 			const auto amount = static_cast<float>(value.bytes) / KB;
-			helper << amount << "Kb";
+			builder << amount << "Kb";
 		}
 		else
 		{
-			helper << value.bytes << "b";
+			builder << value.bytes << "b";
 		}
-		return helper;
+		return builder;
 	}
 }

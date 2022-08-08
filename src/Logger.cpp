@@ -40,10 +40,7 @@ namespace unicore
 
 	void ProxyLogger::write(LogType type, const StringView text)
 	{
-		String str;
-		str.reserve(_prefix.size() + text.size());
-		str += _prefix;
-		str += text;
+		const auto str = StringBuilder::format("{}{}", _prefix, text);
 		_logger.write(type, str);
 	}
 
@@ -54,85 +51,25 @@ namespace unicore
 
 	LogHelper::~LogHelper()
 	{
-		_logger.write(_type, _text);
+		_logger.write(_type, data);
 	}
 
-	void LogHelper::append(char c)
-	{
-		const char str[] = { c, 0 };
-		append(str);
-	}
-
-	void LogHelper::append(wchar_t c)
-	{
-		const wchar_t str[] = { c, 0 };
-		append(str);
-	}
-
-	void LogHelper::append(StringView text)
-	{
-		_text.append(text.data());
-	}
-
-	void LogHelper::append(WStringView text)
-	{
-		_text.append(Strings::to_utf8(text.data()));
-	}
-
-	LogHelper& operator<<(LogHelper& helper, bool value)
-	{
-		return helper << (value ? L"true" : L"false");
-	}
-
-#if defined (_HAS_EXCEPTIONS)
-	LogHelper& operator<<(LogHelper& helper, const std::exception& ex)
-	{
-		return helper << ex.what();
-	}
-#endif
-
-	LogHelper& operator<<(LogHelper& helper, const char value)
-	{
-		helper.append(value);
-		return helper;
-	}
-
-	LogHelper& operator<<(LogHelper& helper, const wchar_t value)
-	{
-		helper.append(value);
-		return helper;
-	}
-
-	LogHelper& operator<<(LogHelper& helper, const char* value)
-	{
-		if (value != nullptr)
-			helper.append(value);
-		return helper;
-	}
-
-	LogHelper& operator<<(LogHelper& helper, const wchar_t* value)
-	{
-		if (value != nullptr)
-			helper.append(value);
-		return helper;
-	}
-
-	LogHelper& operator<<(LogHelper& helper, const DebugSource& source)
+	UNICODE_STRING_BUILDER_FORMAT(const DebugSource&)
 	{
 		// TODO: Replace with constexpr
 #if defined (UNICORE_PLATFORM_WINDOWS) || defined(UNICORE_PLATFORM_ANDROID)
-		const auto* pos = strrchr(source.file.data(), '\\');
+		const auto* pos = strrchr(value.file.data(), '\\');
 #else
-		const auto* pos = strrchr(source.file.data(), '/');
+		const auto* pos = strrchr(value.file.data(), '/');
 #endif
 		if (pos != nullptr)
-			helper.append(pos + 1);
-		else helper.append(source.file);
-		return helper << ":" << source.line;
+			builder.append(pos + 1);
+		else builder.append(value.file);
+		return builder << ":" << value.line;
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const DebugFunction& source)
+	UNICODE_STRING_BUILDER_FORMAT(const DebugFunction&)
 	{
-		return helper << source._func << " - ";
+		return builder << value._func << " - ";
 	}
 }

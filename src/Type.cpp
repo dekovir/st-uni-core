@@ -50,8 +50,8 @@ namespace unicore
 		return &a.info > &b.info;
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const Type& type)
+	UNICODE_STRING_BUILDER_FORMAT(const Type&)
 	{
-		return helper << '<' << type.classname << '>';
+		return builder << '<' << value.classname << '>';
 	}
 }

@@ -88,6 +88,5 @@ namespace unicore
 		return TimeSpan::from_duration(duration);
 	}
 
-	class LogHelper;
-	extern LogHelper& operator << (LogHelper& helper, const DateTime& time);
+	extern UNICODE_STRING_BUILDER_FORMAT(const DateTime&);
 }

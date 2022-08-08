@@ -114,44 +114,44 @@ namespace unicore
 		return c;
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_version& value)
+	UNICODE_STRING_BUILDER_FORMAT(const SDL_version&)
 	{
-		return helper << value.major << L"." << value.minor << L"." << value.patch;
+		return builder << value.major << L"." << value.minor << L"." << value.patch;
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_DisplayOrientation& value)
+	UNICODE_STRING_BUILDER_FORMAT(const SDL_DisplayOrientation&)
 	{
 		switch (value)
 		{
-		case SDL_ORIENTATION_UNKNOWN: return helper << "Unknown";
-		case SDL_ORIENTATION_LANDSCAPE: return helper << "Landscape";
-		case SDL_ORIENTATION_LANDSCAPE_FLIPPED: helper << "LandscapeFlipped";
-		case SDL_ORIENTATION_PORTRAIT: return helper << "Portrait";
-		case SDL_ORIENTATION_PORTRAIT_FLIPPED: return helper << "PortraitFlipped";
+		case SDL_ORIENTATION_UNKNOWN: return builder << "Unknown";
+		case SDL_ORIENTATION_LANDSCAPE: return builder << "Landscape";
+		case SDL_ORIENTATION_LANDSCAPE_FLIPPED: builder << "LandscapeFlipped";
+		case SDL_ORIENTATION_PORTRAIT: return builder << "Portrait";
+		case SDL_ORIENTATION_PORTRAIT_FLIPPED: return builder << "PortraitFlipped";
 		}
 		UC_ASSERT_ALWAYS_MSG("Invalid type");
-		return helper;
+		return builder;
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_Point& value)
+	UNICODE_STRING_BUILDER_FORMAT(const SDL_Point&)
 	{
-		return helper << value.x << "x" << value.y;
+		return builder << value.x << "x" << value.y;
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_FPoint& value)
+	UNICODE_STRING_BUILDER_FORMAT(const SDL_FPoint&)
 	{
-		return helper << value.x << "x" << value.y;
+		return builder << value.x << "x" << value.y;
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_Rect& value)
+	UNICODE_STRING_BUILDER_FORMAT(const SDL_Rect&)
 	{
-		return helper << "[" << value.x << "," << value.y << ","
+		return builder << "[" << value.x << "," << value.y << ","
 			<< value.w << "," << value.h << "]";
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_FRect& value)
+	UNICODE_STRING_BUILDER_FORMAT(const SDL_FRect&)
 	{
-		return helper << "[" << value.x << "," << value.y << ","
+		return builder << "[" << value.x << "," << value.y << ","
 			<< value.w << "," << value.h << "]";
 	}
 }

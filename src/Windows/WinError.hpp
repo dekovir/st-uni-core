@@ -22,7 +22,6 @@ namespace unicore
 		const DWORD _code;
 	};
 
-	class LogHelper;
-	extern LogHelper& operator << (LogHelper& helper, const WinError& error);
+	extern UNICODE_STRING_BUILDER_FORMAT(const WinError&);
 }
 #endif

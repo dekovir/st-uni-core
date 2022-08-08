@@ -43,13 +43,13 @@ namespace unicore
 				SDL_Rect usable_bounds;
 				SDL_GetDisplayUsableBounds(display_index, &usable_bounds);
 
-				auto helper = UC_LOG_INFO(_logger);
-				helper << "Display " << display_index << ": " << SDL_GetDisplayName(display_index);
-				helper << " " << mode.w << "x" << mode.h << " " << mode.refresh_rate;
-				if (Math::equals(ddpi, hdpi) && Math::equals(hdpi, vdpi))
-					helper << " (" << ddpi << ")";
-				else helper << " (" << ddpi << "," << hdpi << "," << vdpi << ")";
-				helper << " " << bounds << " " << usable_bounds << " " << display_orientation;
+				UC_LOG_INFO(_logger)
+					<< "Display " << display_index << ": " << SDL_GetDisplayName(display_index)
+					<< " " << mode.w << "x" << mode.h << " " << mode.refresh_rate
+					<< (Math::equals(ddpi, hdpi) && Math::equals(hdpi, vdpi)
+						? StringBuilder::format(" ({})", ddpi)
+						: StringBuilder::format(" ({},{},{})", ddpi, hdpi, vdpi))
+					<< " " << bounds << " " << usable_bounds << " " << display_orientation;
 			}
 		}
 

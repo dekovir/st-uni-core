@@ -79,6 +79,5 @@ namespace unicore
 		return { a.bytes + b.bytes };
 	}
 
-	class LogHelper;
-	extern LogHelper& operator << (LogHelper& helper, const MemorySize& value);
+	extern UNICODE_STRING_BUILDER_FORMAT(const MemorySize&);
 }

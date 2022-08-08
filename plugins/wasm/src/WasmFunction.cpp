@@ -26,49 +26,49 @@ namespace unicore
 			types.push_back(m3_GetRetType(_handle, i));
 	}
 
-	LogHelper& operator<<(LogHelper& helper, M3ValueType type)
+	UNICODE_STRING_BUILDER_FORMAT(M3ValueType)
 	{
-		switch (type)
+		switch (value)
 		{
-		case c_m3Type_none: return helper << "none";
-		case c_m3Type_i32: return helper << "i32";
-		case c_m3Type_i64: return helper << "i64";
-		case c_m3Type_f32: return helper << "f32";
-		case c_m3Type_f64: return helper << "i64";
-		case c_m3Type_unknown: return helper << "unknown";
+		case c_m3Type_none: return builder << "none";
+		case c_m3Type_i32: return builder << "i32";
+		case c_m3Type_i64: return builder << "i64";
+		case c_m3Type_f32: return builder << "f32";
+		case c_m3Type_f64: return builder << "i64";
+		case c_m3Type_unknown: return builder << "unknown";
 		}
 
 		UC_ASSERT_ALWAYS_MSG("Invalid value");
-		return helper << "error";
+		return builder << "error";
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const WasmFunction& func)
+	UNICODE_STRING_BUILDER_FORMAT(const WasmFunction&)
 	{
-		const auto handle = func.handle();
+		const auto handle = value.handle();
 
 		// RET /////////////////////////////////////////////////////////////////////
 		if (const auto ret_count = m3_GetRetCount(handle); ret_count == 0)
 		{
-			helper << "void";
+			builder << "void";
 		}
 		else if (ret_count == 1)
 		{
-			helper << m3_GetRetType(handle, 0);
+			builder << m3_GetRetType(handle, 0);
 		}
 		else
 		{
-			helper << "[";
+			builder << "[";
 			for (unsigned i = 0; i < ret_count; i++)
 			{
-				if (i > 0) helper << ",";
-				helper << m3_GetRetType(handle, i);
+				if (i > 0) builder << ",";
+				builder << m3_GetRetType(handle, i);
 			}
-			helper << "]";
+			builder << "]";
 		}
 
 		// NAME ////////////////////////////////////////////////////////////////////
 
-		helper << " " << func.name() << "(";
+		builder << " " << value.name() << "(";
 
 		// ARG /////////////////////////////////////////////////////////////////////
 		if (const auto arg_count = m3_GetArgCount(handle); arg_count == 0)
@@ -76,18 +76,18 @@ namespace unicore
 		}
 		else if (arg_count == 1)
 		{
-			helper << m3_GetArgType(handle, 0);
+			builder << m3_GetArgType(handle, 0);
 		}
 		else
 		{
 			for (unsigned i = 0; i < arg_count; i++)
 			{
-				if (i > 0) helper << ",";
-				helper << m3_GetArgType(handle, i);
+				if (i > 0) builder << ",";
+				builder << m3_GetArgType(handle, i);
 			}
 		}
-		helper << ")";
+		builder << ")";
 
-		return helper;
+		return builder;
 	}
 }

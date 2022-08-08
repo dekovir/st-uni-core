@@ -79,14 +79,14 @@ namespace unicore
 		}
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_version& value);
-	LogHelper& operator<<(LogHelper& helper, const SDL_DisplayOrientation& value);
+	extern UNICODE_STRING_BUILDER_FORMAT(const SDL_version&);
+	extern UNICODE_STRING_BUILDER_FORMAT(const SDL_DisplayOrientation&);
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_Point& value);
-	LogHelper& operator<<(LogHelper& helper, const SDL_FPoint& value);
+	extern UNICODE_STRING_BUILDER_FORMAT(const SDL_Point&);
+	extern UNICODE_STRING_BUILDER_FORMAT(const SDL_FPoint&);
 
-	LogHelper& operator<<(LogHelper& helper, const SDL_Rect& value);
-	LogHelper& operator<<(LogHelper& helper, const SDL_FRect& value);
+	extern UNICODE_STRING_BUILDER_FORMAT(const SDL_Rect&);
+	extern UNICODE_STRING_BUILDER_FORMAT(const SDL_FRect&);
 }
 
 #endif

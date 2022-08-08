@@ -235,10 +235,10 @@ namespace unicore
 			}
 
 		// DRAW TEXT
-		const String fps_str = "FPS: " + std::to_string(fps());
-		const String sprites_str = "Sprites: " + std::to_string(_sprite_count);
-		const String update_str = "Update time: " + std::to_string(_update_time.total_milliseconds()) + "ms";
-		const String draw_str = "Draw time: " + std::to_string(_draw_time.total_milliseconds()) + "ms";
+		const auto fps_str = StringBuilder::format("FPS: {}", fps());
+		const auto sprites_str = StringBuilder::format("Sprites: {}", _sprite_count);
+		const auto update_str = StringBuilder::format("Update time: {}ms", _update_time.total_milliseconds());
+		const auto draw_str = StringBuilder::format("Draw time: {}ms", _draw_time.total_milliseconds());
 
 		_sprite_batch.print(_font, { 0, 0 }, fps_str);
 		_sprite_batch.print(_font, { 0, 20 }, sprites_str);

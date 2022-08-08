@@ -45,6 +45,5 @@ namespace unicore
 	static constexpr bool operator <(const Version& a, const Version& b);
 	static constexpr bool operator >(const Version& a, const Version& b);
 
-	class LogHelper;
-	extern LogHelper& operator << (LogHelper& helper, const Version& ver);
+	extern UNICODE_STRING_BUILDER_FORMAT(const Version&);
 }

@@ -21,8 +21,7 @@ namespace unicore
 		int _code;
 	};
 
-	class LogHelper;
-	extern LogHelper& operator << (LogHelper& helper, const LinuxError& error);
+	extern UNICODE_STRING_BUILDER_FORMAT(const LinuxError&);
 }
 
 #endif

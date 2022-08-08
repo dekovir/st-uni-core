@@ -101,6 +101,5 @@ namespace unicore
 		return Path(WStringView(path, len));
 	}
 
-	class LogHelper;
-	extern LogHelper& operator << (LogHelper& helper, const Path& path);
+	extern UNICODE_STRING_BUILDER_FORMAT(const Path&);
 }

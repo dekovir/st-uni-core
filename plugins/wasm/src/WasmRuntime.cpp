@@ -1,7 +1,5 @@
 #include "unicore/wasm/WasmRuntime.hpp"
-
 #include <m3_env.h>
-
 #include "unicore/Logger.hpp"
 #include "unicore/wasm/WasmModule.hpp"
 
@@ -53,12 +51,12 @@ namespace unicore
 		}
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const WasmError& error)
+	UNICODE_STRING_BUILDER_FORMAT(const WasmError&)
 	{
-		helper << "Error: " << error.info.result
-			<< " (" << error.info.message << ")";
-		if (error.info.file)
-			helper << " at " << error.info.file << ":" << error.info.line;
-		return helper;
+		builder << "Error: " << value.info.result
+			<< " (" << value.info.message << ")";
+		if (value.info.file)
+			builder << " at " << value.info.file << ":" << value.info.line;
+		return builder;
 	}
 }

@@ -3,8 +3,8 @@
 
 namespace unicore
 {
-	LogHelper& operator<<(LogHelper& helper, const TimeSpan& value)
+	UNICODE_STRING_BUILDER_FORMAT(const TimeSpan&)
 	{
-		return helper << value.total_milliseconds() << "ms";
+		return builder << value.total_milliseconds() << "ms";
 	}
 }

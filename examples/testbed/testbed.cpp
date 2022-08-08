@@ -53,10 +53,10 @@ namespace unicore
 		// SPRITE BATCH ////////////////////////////////////////////////////////////
 		const auto screen_size = renderer.screen_size();
 
-		const String title_str = "Example: " + examples[_example_index].title;
-		const String fps_str = "FPS: " + std::to_string(fps());
-		const String draw_str = "Draw: " + std::to_string(_draw_calls);
-		const String screen_str = "Screen: " + std::to_string(screen_size.x) + "x" + std::to_string(screen_size.y);
+		const auto title_str = StringBuilder::format("Example: {}", examples[_example_index].title);
+		const auto fps_str = StringBuilder::format("FPS: {}", fps());
+		const auto draw_str = StringBuilder::format("Draw: {}", _draw_calls);
+		const auto screen_str = StringBuilder::format("Screen: {}x{}", screen_size.x, screen_size.y);
 
 		_sprite_batch
 			.clear()

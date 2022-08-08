@@ -47,9 +47,9 @@ namespace unicore
 		return WinError(::GetLastError());
 	}
 
-	LogHelper& operator<<(LogHelper& helper, const WinError& error)
+	UNICODE_STRING_BUILDER_FORMAT(const WinError&)
 	{
-		return helper << error.get_text() << L":" << error.code();
+		return builder << value.get_text() << L":" << value.code();
 	}
 }
 #endif

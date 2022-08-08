@@ -77,15 +77,15 @@ namespace unicore
 		return Version::compare(a, b) > 0;
 	}
 
-	LogHelper& operator << (LogHelper& helper, const Version& ver)
+	UNICODE_STRING_BUILDER_FORMAT(const Version&)
 	{
-		helper << ver.major << L"." << ver.minor;
+		builder << value.major << L"." << value.minor;
 
-		if (ver.build > 0 || ver.revision > 0)
-			helper << L"." << ver.build;
-		if (ver.revision > 0)
-			helper << L"." << ver.revision;
+		if (value.build > 0 || value.revision > 0)
+			builder << L"." << value.build;
+		if (value.revision > 0)
+			builder << L"." << value.revision;
 
-		return helper;
+		return builder;
 	}
 }
