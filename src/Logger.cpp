@@ -1,5 +1,5 @@
 #include "unicore/Logger.hpp"
-#include "unicore/Strings.hpp"
+#include "unicore/Unicode.hpp"
 #include <cstdio>
 
 namespace unicore

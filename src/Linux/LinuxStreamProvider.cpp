@@ -1,7 +1,7 @@
 #include "LinuxStreamProvider.hpp"
 #if defined(UNICORE_PLATFORM_LINUX)
 #include <sys/stat.h>
-#include "unicore/Strings.hpp"
+#include "unicore/Unicode.hpp"
 #include "unicore/Logger.hpp"
 #include "LinuxError.hpp"
 #include "LinuxStream.hpp"
@@ -86,7 +86,7 @@ namespace unicore
 
 	String LinuxStreamProvider::to_native(const Path& path)
 	{
-		return Strings::to_utf8(path.native_path());
+		return Unicode::to_utf8(path.native_path());
 	}
 }
 

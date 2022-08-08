@@ -1,6 +1,6 @@
 #include "WinError.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
-#include "unicore/Strings.hpp"
+#include "unicore/Unicode.hpp"
 #include "unicore/Logger.hpp"
 
 namespace unicore

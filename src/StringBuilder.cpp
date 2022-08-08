@@ -1,5 +1,5 @@
 #include "unicore/StringBuilder.hpp"
-#include "unicore/Strings.hpp"
+#include "unicore/Unicode.hpp"
 
 namespace unicore
 {
@@ -27,7 +27,7 @@ namespace unicore
 
 	void StringBuilder::append(WStringView text)
 	{
-		data.append(Strings::to_utf8(text));
+		data.append(Unicode::to_utf8(text));
 	}
 
 	StringBuilder& StringBuilder::operator=(StringBuilder&& other) noexcept

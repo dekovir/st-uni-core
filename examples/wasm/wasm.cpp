@@ -4,7 +4,7 @@
 #include "unicore/Timer.hpp"
 #include "unicore/Data.hpp"
 #include "unicore/Input.hpp"
-#include "unicore/Strings.hpp"
+#include "unicore/Unicode.hpp"
 #include "unicore/TimeSpan.hpp"
 #include "unicore/RendererSDL.hpp"
 #include "unicore/ResourceCache.hpp"
@@ -66,7 +66,7 @@ namespace unicore
 		const auto ptr = static_cast<const uint32_t*>(void_ptr);
 		const uint32_t lenInPoints = *(ptr - 1) / 2;
 		const std::basic_string_view strUtf16(reinterpret_cast<const char16_t*>(ptr), lenInPoints);
-		const auto text = Strings::to_utf8(strUtf16);
+		const auto text = Unicode::to_utf8(strUtf16);
 
 		s_example->logger.write(LogType::Info, text);
 	}

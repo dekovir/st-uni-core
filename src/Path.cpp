@@ -2,9 +2,10 @@
 #include <cwctype>
 #include <algorithm>
 #if defined (UNICORE_PLATFORM_WINDOWS)
-#include <Shlwapi.h>
+#	include <Shlwapi.h>
 #endif
-#include "unicore/Strings.hpp"
+#include "unicore/Unicode.hpp"
+#include "unicore/StringHelper.hpp"
 #include "unicore/Logger.hpp"
 
 namespace unicore
@@ -208,7 +209,7 @@ namespace unicore
 	{
 		for (const auto& ext : extensions)
 		{
-			if (!Strings::ends_with<wchar_t>(_data, ext, true))
+			if (!StringHelper::ends_with<wchar_t>(_data, ext, true))
 				continue;
 
 			_data = _data.substr(0, _data.size() - ext.length());
@@ -220,7 +221,7 @@ namespace unicore
 	bool Path::equals(const Path& other) const
 	{
 		return _hash == other._hash ||
-			Strings::compare(_data, other._data, false) == 0;
+			StringHelper::compare(_data, other._data, false) == 0;
 	}
 
 	int Path::compare(const Path& other) const
@@ -230,7 +231,7 @@ namespace unicore
 		if (_hash > other._hash)
 			return +1;
 
-		return Strings::compare(_data, other._data, false);
+		return StringHelper::compare(_data, other._data, false);
 	}
 
 	Path Path::operator/(const WString& file) const
