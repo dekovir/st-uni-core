@@ -1,5 +1,4 @@
 #include "BitmapFontLoader.hpp"
-#include "unicore/Data.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/xml/XMLData.hpp"
 

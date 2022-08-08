@@ -16,12 +16,13 @@ namespace unicore
 			m3_FreeEnvironment(_handle);
 	}
 
-	Shared<WasmModule> WasmEnvironment::parse_module(const Shared<MemoryChunk>& memory) const
+	Shared<WasmModule> WasmEnvironment::parse_module(const Shared<BinaryData>& data) const
 	{
 		IM3Module mod;
-		const auto error = m3_ParseModule(_handle, &mod, memory->data(), memory->size());
+		const auto error = m3_ParseModule(_handle,
+			&mod, static_cast<const uint8_t*>(data->data()), data->size());
 		if (!error)
-			return std::make_shared<WasmModule>(mod, memory, _logger);
+			return std::make_shared<WasmModule>(mod, data, _logger);
 
 		UC_LOG_ERROR(_logger) << error;
 		return nullptr;

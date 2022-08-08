@@ -4,8 +4,8 @@
 
 namespace unicore
 {
-	WasmModule::WasmModule(IM3Module handle, const Shared<MemoryChunk>& memory, Logger& logger)
-		: WasmObject(handle), _memory(memory), _logger(logger)
+	WasmModule::WasmModule(IM3Module handle, const Shared<BinaryData>& data, Logger& logger)
+		: WasmObject(handle), _data(data), _logger(logger)
 	{
 	}
 
@@ -17,7 +17,7 @@ namespace unicore
 
 	size_t WasmModule::get_system_memory_use() const
 	{
-		return sizeof(WasmModule) + (_memory ? _memory->size() : 0);
+		return sizeof(WasmModule) + (_data ? _data->get_system_memory_use() : 0);
 	}
 
 	StringView WasmModule::get_name() const

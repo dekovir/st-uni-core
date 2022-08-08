@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/wasm/WasmDefs.hpp"
-#include "unicore/Memory.hpp"
+#include "unicore/BinaryData.hpp"
 #include "unicore/Logger.hpp"
 #include "unicore/Resource.hpp"
 
@@ -11,7 +11,7 @@ namespace unicore
 	class WasmModule : public WasmObject<IM3Module, Resource>
 	{
 	public:
-		WasmModule(IM3Module handle, const Shared<MemoryChunk>& memory, Logger& logger);
+		WasmModule(IM3Module handle, const Shared<BinaryData>& data, Logger& logger);
 		~WasmModule() override;
 
 		UC_NODISCARD size_t get_system_memory_use() const override;
@@ -48,7 +48,7 @@ namespace unicore
 		bool run_start();
 
 	protected:
-		Shared<MemoryChunk> _memory;
+		Shared<BinaryData> _data;
 		WasmRuntime* _runtime = nullptr;
 		Logger& _logger;
 	};

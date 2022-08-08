@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/wasm/WasmDefs.hpp"
-#include "unicore/Memory.hpp"
+#include "unicore/BinaryData.hpp"
 
 namespace unicore
 {
@@ -14,7 +14,7 @@ namespace unicore
 		WasmEnvironment(IM3Environment handle, Logger& logger);
 		~WasmEnvironment() override;
 
-		UC_NODISCARD Shared<WasmModule> parse_module(const Shared<MemoryChunk>& memory) const;
+		UC_NODISCARD Shared<WasmModule> parse_module(const Shared<BinaryData>& data) const;
 
 		Shared<WasmRuntime> new_runtime(uint32_t stack_size = 1024);
 

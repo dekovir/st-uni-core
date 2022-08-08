@@ -53,16 +53,6 @@ namespace unicore
 		bool _free_data;
 	};
 
-	static constexpr bool operator==(const MemoryChunk& a, const MemoryChunk& b)
-	{
-		return a.data() == b.data();
-	}
-
-	static constexpr bool operator!=(const MemoryChunk& a, const MemoryChunk& b)
-	{
-		return !(a == b);
-	}
-
 	struct MemorySize
 	{
 		size_t bytes;

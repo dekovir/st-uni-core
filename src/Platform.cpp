@@ -2,7 +2,8 @@
 #include "unicore/Logger.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Time.hpp"
-#include "unicore/Data.hpp"
+#include "unicore/BinaryData.hpp"
+#include "unicore/StringData.hpp"
 #if defined(UNICORE_USE_SDL2)
 #	include "SDL2/SDL2Platform.hpp"
 #elif defined(UNICORE_PLATFORM_WINDOWS)
@@ -26,11 +27,11 @@ namespace unicore
 	{
 		Module::register_module(context);
 
-		static BinaryDataLoader data_loader;
-		static TextDataLoader text_loader;
+		static BinaryDataLoader binary_data_loader;
+		static StringDataLoader string_data_loader;
 
-		context.add_loader(data_loader);
-		context.add_loader(text_loader);
+		context.add_loader(binary_data_loader);
+		context.add_loader(string_data_loader);
 	}
 
 	void Platform::unregister_module(Context& context)

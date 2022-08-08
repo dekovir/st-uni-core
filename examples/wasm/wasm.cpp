@@ -2,10 +2,10 @@
 #include "UnicoreMain.h"
 #include "unicore/Time.hpp"
 #include "unicore/Timer.hpp"
-#include "unicore/Data.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Unicode.hpp"
 #include "unicore/TimeSpan.hpp"
+#include "unicore/BinaryData.hpp"
 #include "unicore/RendererSDL.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/wasm/WasmEnvironment.hpp"
@@ -140,7 +140,7 @@ namespace unicore
 			_runtime = _env->new_runtime();
 			if (_runtime)
 			{
-				_module = _env->parse_module(data->chunk());
+				_module = _env->parse_module(data);
 				if (_module)
 				{
 					_module->load_to(*_runtime);
