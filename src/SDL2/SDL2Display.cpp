@@ -14,6 +14,11 @@ namespace unicore
 		, _handle(nullptr)
 	{
 		SDL_Init(SDL_INIT_VIDEO);
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
+		SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 8);
 
 		_mode = settings.mode;
 		const auto flags = make_flags(_mode);

@@ -9,12 +9,12 @@ namespace unicore
 {
 	class SDL2Display;
 
-	class RendererImpl : public RendererSDL
+	class SDL2RendererSDL : public RendererSDL
 	{
-		UC_OBJECT(RendererImpl, RendererSDL)
+		UC_OBJECT(SDL2RendererSDL, RendererSDL)
 	public:
-		RendererImpl(Logger& logger, SDL2Display& display);
-		~RendererImpl() override;
+		SDL2RendererSDL(Logger& logger, SDL2Display& display);
+		~SDL2RendererSDL() override;
 
 		UC_NODISCARD const Vector2i& screen_size() const override { return _size; }
 		UC_NODISCARD uint32_t draw_calls() const override { return _draw_calls; }
@@ -89,7 +89,7 @@ namespace unicore
 			const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect,
 			Degrees angle, const Optional<Vector2f>& center, SDLRenderFlipFlags flip) override;
 
-		static Unique<RendererImpl> create(Logger& logger, Display& display);
+		static Unique<SDL2RendererSDL> create(Logger& logger, Display& display);
 
 	protected:
 		SDL2Display& _display;

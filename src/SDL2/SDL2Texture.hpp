@@ -27,7 +27,7 @@ namespace unicore
 
 		void update_size();
 
-		friend class RendererImpl;
+		friend class SDL2RendererSDL;
 	};
 }
 #endif
