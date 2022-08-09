@@ -76,6 +76,13 @@ namespace unicore
 			return value;
 		}
 
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static constexpr T clamp_01(T value)
+		{
+			return clamp(value, static_cast<T>(0), static_cast<T>(1));
+		}
+
 		template<typename T>
 		static constexpr T clamp_max(T value, T max_value)
 		{

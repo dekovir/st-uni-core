@@ -131,6 +131,10 @@ namespace unicore
 		tr.angle = _angle;
 		tr.scale.x = 1 + .5f * Math::sin(static_cast<float>(time.elapsed().total_seconds()));
 
+		static List<Vector2f> points;
+
+		points.clear();
+
 		_graphics
 			.clear()
 			// screen bounds
@@ -142,13 +146,23 @@ namespace unicore
 			.draw_rect(Recti{ 600, 100, 200, 100 }, true)
 			.draw_grid({ 10, 10 }, { 10, 10 },
 				[](Graphics2D& graphics, const Vector2f& center) { graphics.draw_point(center); }, { 200, 200 })
-			// triangle
+			// shapes
 			.set_color(ColorConst4b::Yellow)
 			.draw_triangle({ 100, 100 }, { 200, 100 }, { 100, 200 })
 			.draw_quad({ 400, 400 }, { 500,500 }, { 400, 600 }, { 300, 500 })
 			.draw_star({ 500, 200 }, 6, 50)
 			.draw_star({ 900, 200 }, 5, 50, true)
 			.draw_ellipse({ 900, 300 }, { 100, 50 })
+			// path
+			.set_color(ColorConst4b::Blue)
+			.draw_path({ {100, 800}, {200, 800}, {200, 900}, {100, 900} }, { 15 }, true)
+			.draw_path({ {400, 800}, {500, 850}, {600, 800}, {700, 850}, {800, 800} }, { 20 })
+			// ellipse
+			.gen_ellipse(points, { 900, 900 }, { 80, 50 })
+			.set_color(Color4b::from_rgb(0xAA4F08))
+			.draw_convex_poly(points)
+			.set_color(Color4b::from_rgb(0xFFFFFF))
+			.draw_path(points, { 2 }, true)
 			// transformed
 			.set_color(ColorConst4b::Green)
 			.set_transform(tr)

@@ -78,6 +78,11 @@ namespace unicore
 			return vec;
 		}
 
+		UC_NODISCARD constexpr Vector2<T> perpendicular() const
+		{
+			return Vector2(y, -x);
+		}
+
 		template<typename U>
 		UC_NODISCARD constexpr Vector2<U> cast() const
 		{

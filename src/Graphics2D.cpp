@@ -180,6 +180,107 @@ namespace unicore
 		return *this;
 	}
 
+	struct PathEdge
+	{
+		unsigned i0, i1;
+		Vector2f dir, perpendicular;
+
+		PathEdge(const List<Vector2f>& points, unsigned index)
+			: i0(index), i1((index + 1) % points.size())
+			, dir((points[i1] - points[i0]).normalized())
+			, perpendicular(dir.perpendicular())
+		{
+		}
+	};
+
+	static List<PathEdge> s_path;
+
+	static int clamp_path_index(const List<PathEdge>& path, int index, bool closed)
+	{
+		const int count = static_cast<int>(path.size());
+		if (index < 0)
+		{
+			if (closed)
+			{
+				return index + count;
+			}
+		}
+		else if (index >= count)
+		{
+			return index % count;
+		}
+
+		return index;
+	}
+
+	static void draw_path_segment(Graphics2D& graphics, const List<Vector2f>& points,
+		const GraphicsLineStyle2D& style, const List<PathEdge>& path, unsigned index, bool closed)
+	{
+		auto& edge = path[index];
+		const auto p0 = points[edge.i0];
+		const auto p1 = points[edge.i1];
+
+		const auto outer_a = Math::clamp_01(style.alignment);
+		const auto inner_a = 1 - outer_a;
+
+		graphics.draw_line(p0, p1);
+
+		Vector2f v0, v1, v2, v3;
+
+		if (const auto prev_edge = clamp_path_index(path, static_cast<int>(index) - 1, closed); prev_edge >= 0)
+		{
+			auto& prev = path[prev_edge];
+			const auto p = (edge.perpendicular + prev.perpendicular).normalized();
+
+			v0 = p0 + p * style.width * outer_a;
+			v3 = p0 - p * style.width * inner_a;
+		}
+		else 
+		{
+			v0 = p0 + edge.perpendicular * style.width * outer_a;
+			v3 = p0 - edge.perpendicular * style.width * inner_a;
+		}
+
+		if (const auto next_edge = clamp_path_index(path, static_cast<int>(index) + 1, closed); next_edge >= 0)
+		{
+			auto& next = path[next_edge];
+			const auto p = (edge.perpendicular + next.perpendicular).normalized();
+
+			v1 = p1 + p * style.width * outer_a;
+			v2 = p1 - p * style.width * inner_a;
+		}
+		else 
+		{
+			v1 = p1 + edge.perpendicular * style.width * outer_a;
+			v2 = p1 - edge.perpendicular * style.width * inner_a;
+		}
+
+		graphics.draw_quad(v0, v1, v2, v3);
+
+		//graphics.draw_line(p0, p0_edge);
+		//graphics.draw_line(p1, p1_edge);
+
+	}
+
+	Graphics2D& Graphics2D::draw_path(const List<Vector2f>& points, const GraphicsLineStyle2D& style, bool closed)
+	{
+		if (points.size() >= 2)
+		{
+			s_path.clear();
+
+			for (unsigned i = 0; i + 1 < points.size(); i++)
+				s_path.emplace_back(points, i);
+
+			if (closed)
+				s_path.emplace_back(points, points.size() - 1);
+
+			for (unsigned i = 0; i < s_path.size(); i++)
+				draw_path_segment(*this, points, style, s_path, i, closed);
+		}
+
+		return *this;
+	}
+
 	Graphics2D& Graphics2D::draw_rect(const Recti& rect, bool filled)
 	{
 		set_type(filled ? BatchType::RectFilled : BatchType::Rect);
@@ -212,10 +313,10 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_circle(const Vector2f& center, float radius, bool filled, unsigned segments)
+	Graphics2D& Graphics2D::gen_circle(List<Vector2f>& points, const Vector2f& center, float radius, unsigned segments)
 	{
 		if (radius == 0)
-			return draw_point(center);
+			return *this;
 
 		if (segments == 0)
 		{
@@ -223,21 +324,20 @@ namespace unicore
 			segments = Math::max(3, Math::floor(lng / 10));
 		}
 
-		s_points.resize(segments);
+		points.reserve(segments);
 		for (unsigned i = 0; i < segments; i++)
 		{
 			const Radians angle = (360_deg / segments) * i;
 			const auto cos = angle.cos();
 			const auto sin = angle.sin();
-			s_points[i] = Vector2f(center.x + radius * cos, center.y + radius * sin);
+			points.emplace_back(center.x + radius * cos, center.y + radius * sin);
 		}
 
-		return !filled
-			? draw_poly_line(s_points, true)
-			: draw_convex_poly(s_points);
+		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_ellipse(const Vector2f& center, const Vector2f& radius, bool filled, unsigned segments)
+	Graphics2D& Graphics2D::gen_ellipse(List<Vector2f>& points,
+		const Vector2f& center, const Vector2f& radius, unsigned segments)
 	{
 		if (segments == 0)
 		{
@@ -246,14 +346,58 @@ namespace unicore
 			segments = Math::max(3, Math::floor(lng / 100));
 		}
 
-		s_points.resize(segments);
+		points.reserve(segments);
 		for (unsigned i = 0; i < segments; i++)
 		{
 			const Radians angle = (360_deg / segments) * i;
 			const auto cos = angle.cos();
 			const auto sin = angle.sin();
-			s_points[i] = Vector2f(center.x + radius.x * cos, center.y + radius.y * sin);
+			points.emplace_back(center.x + radius.x * cos, center.y + radius.y * sin);
 		}
+
+		return *this;
+	}
+
+	Graphics2D& Graphics2D::gen_star(List<Vector2f>& points, const Vector2f& center, unsigned count, float radius)
+	{
+		if (count >= 2)
+		{
+			const int segments = count * 2;
+			const float step = 360.f / segments;
+			points.reserve(segments + 2);
+
+			for (int i = 0; i <= segments; i++)
+			{
+				const auto angle = -Degrees(180 + step * i);
+				const float size = Math::even(i) ? radius : radius / 2;
+
+				float sin, cos;
+				angle.sin_cos(sin, cos);
+
+				points.emplace_back(center.x + size * sin, center.y + size * cos);
+			}
+		}
+
+		return *this;
+	}
+
+	Graphics2D& Graphics2D::draw_circle(const Vector2f& center, float radius, bool filled, unsigned segments)
+	{
+		if (radius == 0)
+			return draw_point(center);
+
+		s_points.clear();
+		gen_circle(s_points, center, radius, segments);
+
+		return !filled
+			? draw_poly_line(s_points, true)
+			: draw_convex_poly(s_points);
+	}
+
+	Graphics2D& Graphics2D::draw_ellipse(const Vector2f& center, const Vector2f& radius, bool filled, unsigned segments)
+	{
+		s_points.clear();
+		gen_ellipse(s_points, center, radius, segments);
 
 		return !filled
 			? draw_poly_line(s_points, true)
@@ -264,21 +408,8 @@ namespace unicore
 	{
 		if (count >= 2)
 		{
-			const int segments = count * 2;
-			const float step = 360.f / segments;
 			s_points.clear();
-			s_points.reserve(segments + 2);
-
-			for (int i = 0; i <= segments; i++)
-			{
-				const auto angle = -Degrees(180 + step * i);
-				const float size = Math::even(i) ? radius : radius / 2;
-
-				float sin, cos;
-				angle.sin_cos(sin, cos);
-
-				s_points.emplace_back(center.x + size * sin, center.y + size * cos);
-			}
+			gen_star(s_points, center, count, radius);
 
 			if (filled)
 				s_points.insert(s_points.begin(), center);
