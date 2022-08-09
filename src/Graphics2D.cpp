@@ -1,5 +1,6 @@
 #include "unicore/Graphics2D.hpp"
 #include "unicore/RendererSDL.hpp"
+#include "unicore/Shapes.hpp"
 
 namespace unicore
 {
@@ -235,7 +236,7 @@ namespace unicore
 			v0 = p0 + p * style.width * outer_a;
 			v3 = p0 - p * style.width * inner_a;
 		}
-		else 
+		else
 		{
 			v0 = p0 + edge.perpendicular * style.width * outer_a;
 			v3 = p0 - edge.perpendicular * style.width * inner_a;
@@ -249,7 +250,7 @@ namespace unicore
 			v1 = p1 + p * style.width * outer_a;
 			v2 = p1 - p * style.width * inner_a;
 		}
-		else 
+		else
 		{
 			v1 = p1 + edge.perpendicular * style.width * outer_a;
 			v2 = p1 - edge.perpendicular * style.width * inner_a;
@@ -259,7 +260,6 @@ namespace unicore
 
 		//graphics.draw_line(p0, p0_edge);
 		//graphics.draw_line(p1, p1_edge);
-
 	}
 
 	Graphics2D& Graphics2D::draw_path(const List<Vector2f>& points, const GraphicsLineStyle2D& style, bool closed)
@@ -313,81 +313,13 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::gen_circle(List<Vector2f>& points, const Vector2f& center, float radius, unsigned segments)
-	{
-		if (radius == 0)
-			return *this;
-
-		if (segments == 0)
-		{
-			const float lng = 2 * Math::Pi * radius;
-			segments = Math::max(3, Math::floor(lng / 10));
-		}
-
-		points.reserve(segments);
-		for (unsigned i = 0; i < segments; i++)
-		{
-			const Radians angle = (360_deg / segments) * i;
-			const auto cos = angle.cos();
-			const auto sin = angle.sin();
-			points.emplace_back(center.x + radius * cos, center.y + radius * sin);
-		}
-
-		return *this;
-	}
-
-	Graphics2D& Graphics2D::gen_ellipse(List<Vector2f>& points,
-		const Vector2f& center, const Vector2f& radius, unsigned segments)
-	{
-		if (segments == 0)
-		{
-			const float a = Math::Pi * radius.x * radius.y + Math::pow(radius.x + radius.y);
-			const float lng = 4 * (a / (radius.x - radius.y));
-			segments = Math::max(3, Math::floor(lng / 100));
-		}
-
-		points.reserve(segments);
-		for (unsigned i = 0; i < segments; i++)
-		{
-			const Radians angle = (360_deg / segments) * i;
-			const auto cos = angle.cos();
-			const auto sin = angle.sin();
-			points.emplace_back(center.x + radius.x * cos, center.y + radius.y * sin);
-		}
-
-		return *this;
-	}
-
-	Graphics2D& Graphics2D::gen_star(List<Vector2f>& points, const Vector2f& center, unsigned count, float radius)
-	{
-		if (count >= 2)
-		{
-			const int segments = count * 2;
-			const float step = 360.f / segments;
-			points.reserve(segments + 2);
-
-			for (int i = 0; i <= segments; i++)
-			{
-				const auto angle = -Degrees(180 + step * i);
-				const float size = Math::even(i) ? radius : radius / 2;
-
-				float sin, cos;
-				angle.sin_cos(sin, cos);
-
-				points.emplace_back(center.x + size * sin, center.y + size * cos);
-			}
-		}
-
-		return *this;
-	}
-
 	Graphics2D& Graphics2D::draw_circle(const Vector2f& center, float radius, bool filled, unsigned segments)
 	{
 		if (radius == 0)
 			return draw_point(center);
 
 		s_points.clear();
-		gen_circle(s_points, center, radius, segments);
+		Shapes::gen_circle(s_points, center, radius, segments);
 
 		return !filled
 			? draw_poly_line(s_points, true)
@@ -397,7 +329,7 @@ namespace unicore
 	Graphics2D& Graphics2D::draw_ellipse(const Vector2f& center, const Vector2f& radius, bool filled, unsigned segments)
 	{
 		s_points.clear();
-		gen_ellipse(s_points, center, radius, segments);
+		Shapes::gen_ellipse(s_points, center, radius, segments);
 
 		return !filled
 			? draw_poly_line(s_points, true)
@@ -409,7 +341,7 @@ namespace unicore
 		if (count >= 2)
 		{
 			s_points.clear();
-			gen_star(s_points, center, count, radius);
+			Shapes::gen_star(s_points, center, count, radius);
 
 			if (filled)
 				s_points.insert(s_points.begin(), center);

@@ -7,26 +7,26 @@ namespace unicore
 {
 	class RendererSDL;
 
-	enum class GraphicsLineCap2D
-	{
-		Butt,
-		Round,
-		Square,
-	};
+	//enum class GraphicsLineCap2D
+	//{
+	//	Butt,
+	//	Round,
+	//	Square,
+	//};
 
-	enum class GraphicsLineJoin2D
-	{
-		Bevel,
-		Miter,
-		Round,
-	};
+	//enum class GraphicsLineJoin2D
+	//{
+	//	Bevel,
+	//	Miter,
+	//	Round,
+	//};
 
 	struct GraphicsLineStyle2D
 	{
 		float width = 1;
 		float alignment = 0.5f;
-		GraphicsLineCap2D cap = GraphicsLineCap2D::Butt;
-		GraphicsLineJoin2D join = GraphicsLineJoin2D::Miter;
+		//GraphicsLineCap2D cap = GraphicsLineCap2D::Butt;
+		//GraphicsLineJoin2D join = GraphicsLineJoin2D::Miter;
 	};
 
 	class Graphics2D
@@ -60,10 +60,6 @@ namespace unicore
 
 		Graphics2D& draw_rect(const Recti& rect, bool filled = false);
 		Graphics2D& draw_rect(const Rectf& rect, bool filled = false);
-
-		Graphics2D& gen_circle(List<Vector2f>& points, const Vector2f& center, float radius, unsigned segments = 0);
-		Graphics2D& gen_ellipse(List<Vector2f>& points, const Vector2f& center, const Vector2f& radius, unsigned segments = 0);
-		Graphics2D& gen_star(List<Vector2f>& points, const Vector2f& center, unsigned count, float radius);
 
 		Graphics2D& draw_circle(const Vector2f& center, float radius, bool filled = false, unsigned segments = 0);
 		Graphics2D& draw_ellipse(const Vector2f& center, const Vector2f& radius, bool filled = false, unsigned segments = 0);

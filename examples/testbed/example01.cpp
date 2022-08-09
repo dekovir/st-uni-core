@@ -1,6 +1,7 @@
 #include "example01.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Color3.hpp"
+#include "unicore/Shapes.hpp"
 #include "unicore/Transform2.hpp"
 #include "unicore/ResourceCache.hpp"
 
@@ -134,6 +135,7 @@ namespace unicore
 		static List<Vector2f> points;
 
 		points.clear();
+		Shapes::gen_ellipse(points, { 900, 900 }, { 80, 50 });
 
 		_graphics
 			.clear()
@@ -153,12 +155,15 @@ namespace unicore
 			.draw_star({ 500, 200 }, 6, 50)
 			.draw_star({ 900, 200 }, 5, 50, true)
 			.draw_ellipse({ 900, 300 }, { 100, 50 })
+			// rect
+			.set_color(Color4b::from_rgb(0xC34288))
+			.draw_rect(Rectf{ 100, 800, 100, 100 }, true)
+			.set_color(Color4b::from_rgb(0xFFBD01))
+			.draw_path({ {100, 800}, {200, 800}, {200, 900}, {100, 900} }, { 10 }, true)
 			// path
 			.set_color(ColorConst4b::Blue)
-			.draw_path({ {100, 800}, {200, 800}, {200, 900}, {100, 900} }, { 15 }, true)
 			.draw_path({ {400, 800}, {500, 850}, {600, 800}, {700, 850}, {800, 800} }, { 20 })
 			// ellipse
-			.gen_ellipse(points, { 900, 900 }, { 80, 50 })
 			.set_color(Color4b::from_rgb(0xAA4F08))
 			.draw_convex_poly(points)
 			.set_color(Color4b::from_rgb(0xFFFFFF))
