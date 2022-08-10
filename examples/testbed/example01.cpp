@@ -132,10 +132,8 @@ namespace unicore
 		tr.angle = _angle;
 		tr.scale.x = 1 + .5f * Math::sin(static_cast<float>(time.elapsed().total_seconds()));
 
-		static List<Vector2f> points;
-
-		points.clear();
-		Shapes::gen_ellipse(points, { 900, 900 }, { 80, 50 });
+		const auto rect_points = Shapes::gen_rect({ 100, 800, 100, 100 });
+		const auto ellipse_points = Shapes::gen_ellipse({ 900, 900 }, { 80, 50 });
 
 		_graphics
 			.clear()
@@ -143,11 +141,15 @@ namespace unicore
 			.set_color(ColorConst4b::Magenta)
 			.draw_line(VectorConst2i::Zero, size)
 			.draw_line(Vector2i(0, size.y), Vector2i(size.x, 0))
-			// other
+			// rect
 			.set_color(ColorConst4b::Cyan)
 			.draw_rect(Recti{ 600, 100, 200, 100 }, true)
+			// point grid
+			.move({ 200, 200 })
+			.rotate(45_deg)
 			.draw_grid({ 10, 10 }, { 10, 10 },
-				[](Graphics2D& graphics, const Vector2f& center) { graphics.draw_point(center); }, { 200, 200 })
+				[](Graphics2D& graphics, const Vector2f& pos) { graphics.draw_point(Vector2f{ pos.x - 50, pos.y - 50 }); })
+			.reset_transform()
 			// shapes
 			.set_color(ColorConst4b::Yellow)
 			.draw_triangle({ 100, 100 }, { 200, 100 }, { 100, 200 })
@@ -155,19 +157,19 @@ namespace unicore
 			.draw_star({ 500, 200 }, 6, 50)
 			.draw_star({ 900, 200 }, 5, 50, true)
 			.draw_ellipse({ 900, 300 }, { 100, 50 })
-			// rect
+			// rect shape
 			.set_color(Color4b::from_rgb(0xC34288))
-			.draw_rect(Rectf{ 100, 800, 100, 100 }, true)
+			.draw_convex_poly(rect_points)
 			.set_color(Color4b::from_rgb(0xFFBD01))
-			.draw_path({ {100, 800}, {200, 800}, {200, 900}, {100, 900} }, { 10 }, true)
+			.draw_path(rect_points, { 10 }, true)
 			// path
 			.set_color(ColorConst4b::Blue)
 			.draw_path({ {400, 800}, {500, 850}, {600, 800}, {700, 850}, {800, 800} }, { 20 })
 			// ellipse
 			.set_color(Color4b::from_rgb(0xAA4F08))
-			.draw_convex_poly(points)
+			.draw_convex_poly(ellipse_points)
 			.set_color(Color4b::from_rgb(0xFFFFFF))
-			.draw_path(points, { 2 }, true)
+			.draw_path(ellipse_points, { 2 }, true)
 			// transformed
 			.set_color(ColorConst4b::Green)
 			.set_transform(tr)

@@ -10,6 +10,13 @@ namespace unicore::Shapes
 		points.emplace_back(rect.x, rect.y + rect.h);
 	}
 
+	List<Vector2f> gen_rect(const Rectf& rect)
+	{
+		List<Vector2f> points;
+		gen_rect(points, rect);
+		return points;
+	}
+
 	void gen_circle(List<Vector2f>& points, const Vector2f& center, float radius, unsigned segments)
 	{
 		if (radius == 0)
@@ -31,6 +38,13 @@ namespace unicore::Shapes
 		}
 	}
 
+	List<Vector2f> gen_circle(const Vector2f& center, float radius, unsigned segments)
+	{
+		List<Vector2f> points;
+		gen_circle(points, center, radius, segments);
+		return points;
+	}
+
 	void gen_ellipse(List<Vector2f>& points, const Vector2f& center, const Vector2f& radius, unsigned segments)
 	{
 		if (segments == 0)
@@ -50,10 +64,20 @@ namespace unicore::Shapes
 		}
 	}
 
+	List<Vector2f> gen_ellipse(const Vector2f& center, const Vector2f& radius, unsigned segments)
+	{
+		List<Vector2f> points;
+		gen_ellipse(points, center, radius, segments);
+		return points;
+	}
+
 	void gen_star(List<Vector2f>& points, const Vector2f& center, unsigned count, float radius, float radius_inner)
 	{
 		if (count >= 2)
 		{
+			if (radius_inner <= 0)
+				radius_inner = radius * .5f;
+
 			const int segments = count * 2;
 			const float step = 360.f / segments;
 			points.reserve(segments + 2);
@@ -71,8 +95,10 @@ namespace unicore::Shapes
 		}
 	}
 
-	void gen_star(List<Vector2f>& points, const Vector2f& center, unsigned count, float radius)
+	List<Vector2f> gen_star(const Vector2f& center, unsigned count, float radius, float radius_inner)
 	{
-		gen_star(points, center, count, radius, radius / 2);
+		List<Vector2f> points;
+		gen_star(points, center, count, radius, radius_inner);
+		return points;
 	}
 }
