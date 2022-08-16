@@ -1,3 +1,9 @@
+#tinyxml2
+set(tinyxml2_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+add_subdirectory("${LIBS_DIR}/tinyxml2" tinyxml2)
+set_target_properties(tinyxml2 PROPERTIES FOLDER "Libs")
+
+#unicore-xml
 set(UNICORE_XML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(UNICORE_XML_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 

@@ -6,11 +6,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 
+#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 # OPTIONS ######################################################################
-option(UNICORE_XML "Add unicore-xml plugin (tinyxml2)" ON)
-option(UNICORE_FNT "Add unicore-fnt plugin" ON)
-option(UNICORE_WASM "Add unicore-wasm plugin" ON)
-option(UNICORE_IMGUI "Add unicore-imgui plugin" ON)
+option(UNICORE_PLUGINS_ALL "Add all unciore plugins" ON)
+option(UNICORE_PLUGIN_XML "Add unicore-xml plugin (tinyxml2)" ${UNICORE_PLUGINS_ALL})
+option(UNICORE_PLUGIN_FNT "Add unicore-fnt plugin" ${UNICORE_PLUGINS_ALL})
+option(UNICORE_PLUGIN_WASM "Add unicore-wasm plugin" ${UNICORE_PLUGINS_ALL})
+option(UNICORE_PLUGIN_IMGUI "Add unicore-imgui plugin" ${UNICORE_PLUGINS_ALL})
 
 # PROJECT ######################################################################
 project(UniCore)
@@ -84,11 +87,7 @@ endif()
 target_compile_definitions(unicore PUBLIC UNICORE_USE_SDL2)
 
 # PLUGINS
-if (UNICORE_XML OR UNICORE_FNT)
-	set(tinyxml2_BUILD_TESTING OFF CACHE BOOL "" FORCE)
-	add_subdirectory("${LIBS_DIR}/tinyxml2")
-	set_target_properties(tinyxml2 PROPERTIES FOLDER "Libs")
-
+if (UNICORE_XML)
 	add_subdirectory("${PLUGINS_DIR}/xml")
 endif()
 
