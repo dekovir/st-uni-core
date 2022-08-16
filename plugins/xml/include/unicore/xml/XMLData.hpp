@@ -11,14 +11,7 @@ namespace unicore
 		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(XMLData); }
 		tinyxml2::XMLDocument doc;
 
-		XMLValue<tinyxml2::XMLElement> get_root()
-		{
-			return XMLValue(doc.RootElement());
-		}
-
-		XMLValue<const tinyxml2::XMLElement> get_root() const
-		{
-			return XMLValue(doc.RootElement());
-		}
+		XMLValue<tinyxml2::XMLElement> get_root();
+		XMLValue<const tinyxml2::XMLElement> get_root() const;
 	};
 }
