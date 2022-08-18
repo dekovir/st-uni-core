@@ -105,6 +105,24 @@ namespace unicore
 	template <class This, class... Rest>
 	using Tuple = std::tuple<This, Rest...>;
 
+	using TypeInfo = std::type_info;
+	using TypeIndex = std::type_index;
+
+	template<typename T>
+	using CleanType = std::remove_const<std::remove_reference<std::remove_pointer<T>>>;
+
+	template<typename T>
+	extern const TypeInfo& get_type_info() { return typeid(CleanType<T>); }
+
+	template<typename T>
+	extern const TypeInfo& get_type_info(const T& value) { return typeid(value); }
+
+	template<typename T>
+	extern TypeIndex get_type_index() { return TypeIndex(get_type_info<T>()); }
+
+	template<typename T>
+	extern TypeIndex get_type_index(const T& value) { return TypeIndex(get_type_info(value)); }
+
 	template<typename T>
 	using Shared = std::shared_ptr<T>;
 
@@ -132,6 +150,7 @@ namespace unicore
 	template<typename Ret, typename ... Args>
 	using Function = std::function<Ret(Args...)>;
 
+	class Logger;
 	class StringBuilder;
 
 	#define UNICODE_STRING_BUILDER_FORMAT(Type) \

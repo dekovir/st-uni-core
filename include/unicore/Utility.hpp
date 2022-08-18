@@ -17,4 +17,16 @@ namespace unicore::Utility
 
 #define UNICORE_EXECUTE_ACTION(action_code) \
 	UNICORE_EXECUTE_ACTION_NAME(UNICORE_CONCAT(s_execute_action_, __LINE__), action_code)
+
+#define UNICORE_EXECUTE_CODE_BLOCK(name) \
+	static void UNICORE_CONCAT(name, _auto_register_function) (); \
+	namespace { \
+		struct UNICORE_CONCAT(name, _auto_execute) { \
+			UNICORE_CONCAT(name, _auto_execute) () { \
+				UNICORE_CONCAT(name, _auto_register_function) (); \
+			} \
+		}; \
+	} \
+	static const UNICORE_CONCAT(name, _auto_execute) UNICORE_CONCAT(UNICORE_CONCAT(s_auto_execute_, name), __LINE__); \
+	void UNICORE_CONCAT(name, _auto_register_function)()
 }
