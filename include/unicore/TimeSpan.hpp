@@ -69,34 +69,34 @@ namespace unicore
 			return TimeSpan(std::chrono::duration_cast<decltype(_data)>(value));
 		}
 
-		static constexpr TimeSpan from_microseconds(uint64_t ms)
+		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+		static constexpr TimeSpan from_microseconds(T ms)
 		{
-			return TimeSpan(std::chrono::duration<uint64_t, std::micro>(ms));
+			return TimeSpan(std::chrono::duration<T, std::micro>(ms));
 		}
 
-		static constexpr TimeSpan from_milliseconds(uint64_t ms)
+		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+		static constexpr TimeSpan from_milliseconds(T ms)
 		{
-			return TimeSpan(std::chrono::duration<uint64_t, std::milli>(ms));
+			return TimeSpan(std::chrono::duration<T, std::milli>(ms));
 		}
 
-		static constexpr TimeSpan from_seconds(float value)
+		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static constexpr TimeSpan from_seconds(T value)
 		{
-			return from_duration(std::chrono::duration<float>(value));
+			return from_duration(std::chrono::duration<T>(value));
 		}
 
-		static constexpr TimeSpan from_seconds(double value)
+		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static constexpr TimeSpan from_minutes(T value)
 		{
-			return from_duration(std::chrono::duration<double>(value));
+			return from_duration(std::chrono::duration<T, std::ratio<60>>(value));
 		}
 
-		static constexpr TimeSpan from_minutes(double value)
+		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static constexpr TimeSpan from_hours(T value)
 		{
-			return from_duration(std::chrono::duration<double, std::ratio<60>>(value));
-		}
-
-		static constexpr TimeSpan from_hours(double value)
-		{
-			return from_duration(std::chrono::duration<double, std::ratio<3600>>(value));
+			return from_duration(std::chrono::duration<T, std::ratio<3600>>(value));
 		}
 
 	protected:
@@ -146,7 +146,9 @@ namespace unicore
 	struct TimeSpanConst
 	{
 		static constexpr TimeSpan Zero = TimeSpan::from_milliseconds(0);
-		static constexpr TimeSpan OneSecond = TimeSpan::from_seconds(1.f);
+		static constexpr TimeSpan OneSecond = TimeSpan::from_seconds(1.);
+		static constexpr TimeSpan OneMinute = TimeSpan::from_minutes(1.);
+		static constexpr TimeSpan OneHour = TimeSpan::from_hours(1.);
 	};
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const TimeSpan&);
