@@ -32,7 +32,7 @@ namespace unicore
 
 		template<typename TPlugin,
 			std::enable_if_t<std::is_base_of_v<Plugin, TPlugin>>* = nullptr>
-		void add_plugin()
+		void create_plugin()
 		{
 			add_plugin(std::make_unique<TPlugin>());
 		}
@@ -40,8 +40,9 @@ namespace unicore
 	protected:
 		virtual void on_update() = 0;
 
+		ModuleContainer _modules;
+
 	private:
-		bool _plugins_registered = false;
 		List<Unique<Plugin>> _plugins;
 	};
 }

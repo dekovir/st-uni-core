@@ -15,8 +15,8 @@ namespace unicore
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
-		add_plugin<XMLPlugin>();
-		add_plugin<FNTPlugin>();
+		create_plugin<XMLPlugin>();
+		create_plugin<FNTPlugin>();
 
 		_font = resources.load<Font>(L"font_004.fnt"_path);
 

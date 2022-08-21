@@ -23,6 +23,7 @@ namespace unicore
 
 #define UC_OBJECT(Base, Parent) \
 		UC_OBJECT_BASE(Base, Parent) \
+	public: \
 		UC_NODISCARD TypeConstRef type() const override { return type_static(); } \
 	private:
 

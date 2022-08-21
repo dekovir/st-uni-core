@@ -18,9 +18,11 @@ namespace unicore
 		input.register_module(context);
 		resources.register_module(context);
 
-		_plugins_registered = true;
-		for (const auto& plugin : _plugins)
-			plugin->register_module(context);
+		_modules.add(platform);
+		_modules.add(input);
+		_modules.add(resources);
+
+		_modules.register_all(context);
 	}
 
 	Core::~Core()
@@ -34,6 +36,8 @@ namespace unicore
 		resources.unregister_module(context);
 		platform.unregister_module(context);
 		input.unregister_module(context);
+
+		_modules.unregister_all();
 	}
 
 	void Core::update()
@@ -46,8 +50,7 @@ namespace unicore
 
 	void Core::add_plugin(Unique<Plugin>&& plugin)
 	{
-		if (_plugins_registered)
-			plugin->register_module(context);
+		_modules.add(*plugin);
 		_plugins.push_back(std::move(plugin));
 	}
 }

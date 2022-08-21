@@ -124,8 +124,8 @@ namespace unicore
 
 		s_example = this;
 
-		add_plugin<XMLPlugin>();
-		add_plugin<FNTPlugin>();
+		create_plugin<XMLPlugin>();
+		create_plugin<FNTPlugin>();
 
 		_font = resources.load<Font>(L"font_004.fnt"_path);
 		if (auto tex = resources.load<Texture>(L"zazaka.png"_path))

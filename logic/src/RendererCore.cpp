@@ -9,6 +9,8 @@ namespace unicore
 		, renderer(renderer_factory(_renderer_logger, display))
 	{
 		renderer.register_module(context);
+
+		_modules.add(renderer);
 	}
 
 	RendererCore::~RendererCore()
