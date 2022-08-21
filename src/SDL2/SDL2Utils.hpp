@@ -7,6 +7,19 @@
 
 namespace unicore
 {
+	template<typename T>
+	class SDLValue
+	{
+	public:
+		virtual ~SDLValue() = default;
+
+		T* handle() const { return _handle;  }
+	protected:
+		T* _handle;
+
+		explicit SDLValue(T* handle) : _handle(handle) {}
+	};
+
 	class SDL2EventListener
 	{
 	public:

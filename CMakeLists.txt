@@ -87,22 +87,22 @@ endif()
 target_compile_definitions(unicore PUBLIC UNICORE_USE_SDL2)
 
 # PLUGINS
-if (UNICORE_XML)
+if (UNICORE_PLUGIN_XML)
 	add_subdirectory("${PLUGINS_DIR}/xml")
 endif()
 
-if (UNICORE_FNT)
+if (UNICORE_PLUGIN_FNT)
 	add_subdirectory("${PLUGINS_DIR}/fnt")
 endif()
 
-if (UNICORE_WASM)
+if (UNICORE_PLUGIN_WASM)
 	set(BUILD_WASI none CACHE STRING "" FORCE)
 	add_subdirectory("${LIBS_DIR}/wasm3/source")
 	set_target_properties(m3 PROPERTIES FOLDER "Libs")
 	add_subdirectory("${PLUGINS_DIR}/wasm")
 endif()
 
-if (UNICORE_IMGUI)
+if (UNICORE_PLUGIN_IMGUI)
 	add_subdirectory("${PLUGINS_DIR}/imgui")
 endif()
 

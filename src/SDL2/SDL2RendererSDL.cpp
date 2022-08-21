@@ -65,18 +65,63 @@ namespace unicore
 #endif
 	}
 
-	bool SDL2RendererSDL::update_texture(Texture& texture, Surface& surface, Optional<Recti> rect)
+	Shared<DynamicTexture> SDL2RendererSDL::create_dynamic_texture(const Vector2i& size)
 	{
-		if (const auto tex = dynamic_cast<SDL2Texture*>(&texture))
+		auto sdl_texture = SDL_CreateTexture(_renderer,
+			SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, size.x, size.y);
+		SDL_SetTextureBlendMode(sdl_texture, SDL_BLENDMODE_BLEND);
+		
+		return make_shared<SDL2DynamicTexture>(sdl_texture);
+	}
+
+	bool SDL2RendererSDL::update_texture(DynamicTexture& texture, Surface& surface, Optional<Recti> rect)
+	{
+		if (const auto tex = dynamic_cast<SDL2DynamicTexture*>(&texture))
 		{
 			SDL_Rect r;
 			const auto prect = rect.has_value() ? &SDL2Utils::convert(rect.value(), r) : nullptr;
 			// TODO: Pass surface pitch from format
 			// The pixel data must be in the pixel format of the texture. Use SDL_QueryTexture() to query the pixel format of the texture.
-			return SDL_UpdateTexture(tex->_context, prect, surface.data(), surface.size().x * 4) == 0;
+			return SDL_UpdateTexture(tex->handle(), prect, surface.data(), surface.size().x * 4) == 0;
 		}
 
 		return false;
+	}
+
+	Shared<TargetTexture> SDL2RendererSDL::create_target_texture(const Vector2i& size)
+	{
+		auto sdl_texture = SDL_CreateTexture(_renderer,
+			SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, size.x, size.y);
+		SDL_SetTextureBlendMode(sdl_texture, SDL_BLENDMODE_BLEND);
+
+		return make_shared<SDL2TargetTexture>(sdl_texture);
+	}
+
+	bool SDL2RendererSDL::set_target(const Shared<TargetTexture>& texture)
+	{
+		if (_target == texture)
+			return true;
+
+		
+		if (const auto tex = std::dynamic_pointer_cast<SDL2TargetTexture>(texture))
+		{
+			if (SDL_SetRenderTarget(_renderer, tex->handle()) == 0)
+			{
+				_target = tex;
+				return true;
+			}
+
+			UC_LOG_ERROR(_logger) << SDL_GetError();
+			return false;
+		}
+
+		UC_LOG_ERROR(_logger) << "Invalid texture type";
+		return false;
+	}
+
+	const Shared<TargetTexture>& SDL2RendererSDL::get_target() const
+	{
+		return _target;
 	}
 
 	bool SDL2RendererSDL::begin_scene()
@@ -285,7 +330,7 @@ namespace unicore
 		unsigned num_vertices, const Texture* texture)
 	{
 		const auto tex = dynamic_cast<const SDL2Texture*>(texture);
-		const auto tex_handle = tex ? tex->_context : nullptr;
+		const auto tex_handle = tex ? tex->handle() : nullptr;
 
 		s_vertices.resize(num_vertices);
 		for (size_t i = 0; i < num_vertices; i++)
@@ -318,7 +363,7 @@ namespace unicore
 		if (const auto tex = std::dynamic_pointer_cast<SDL2Texture>(texture))
 		{
 			SDL_Rect src, dst;
-			const auto result = SDL_RenderCopy(_renderer, tex->_context,
+			const auto result = SDL_RenderCopy(_renderer, tex->handle(),
 				src_rect.has_value() ? &SDL2Utils::convert(src_rect.value(), src) : nullptr,
 				dst_rect.has_value() ? &SDL2Utils::convert(dst_rect.value(), dst) : nullptr);
 
@@ -338,7 +383,7 @@ namespace unicore
 		{
 			SDL_Rect src;
 			SDL_FRect dst;
-			const auto result = SDL_RenderCopyF(_renderer, tex->_context,
+			const auto result = SDL_RenderCopyF(_renderer, tex->handle(),
 				src_rect.has_value() ? &SDL2Utils::convert(src_rect.value(), src) : nullptr,
 				dst_rect.has_value() ? &SDL2Utils::convert(dst_rect.value(), dst) : nullptr);
 
@@ -360,7 +405,7 @@ namespace unicore
 			SDL_Point c;
 			SDL_Rect src, dst;
 
-			const auto result = SDL_RenderCopyEx(_renderer, tex->_context,
+			const auto result = SDL_RenderCopyEx(_renderer, tex->handle(),
 				src_rect.has_value() ? &SDL2Utils::convert(src_rect.value(), src) : nullptr,
 				dst_rect.has_value() ? &SDL2Utils::convert(dst_rect.value(), dst) : nullptr,
 				angle.value(),
@@ -387,7 +432,7 @@ namespace unicore
 			SDL_Rect src;
 			SDL_FRect dst;
 
-			const auto result = SDL_RenderCopyExF(_renderer, tex->_context,
+			const auto result = SDL_RenderCopyExF(_renderer, tex->handle(),
 				src_rect.has_value() ? &SDL2Utils::convert(src_rect.value(), src) : nullptr,
 				dst_rect.has_value() ? &SDL2Utils::convert(dst_rect.value(), dst) : nullptr,
 				angle.value(),

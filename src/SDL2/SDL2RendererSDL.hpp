@@ -8,6 +8,7 @@
 namespace unicore
 {
 	class SDL2Display;
+	class SDL2TargetTexture;
 
 	class SDL2RendererSDL : public RendererSDL
 	{
@@ -20,7 +21,13 @@ namespace unicore
 		UC_NODISCARD uint32_t draw_calls() const override { return _draw_calls; }
 
 		Shared<Texture> create_texture(Surface& surface) override;
-		bool update_texture(Texture& texture, Surface& surface, Optional<Recti> rect) override;
+
+		Shared<DynamicTexture> create_dynamic_texture(const Vector2i& size) override;
+		bool update_texture(DynamicTexture& texture, Surface& surface, Optional<Recti> rect) override;
+
+		Shared<TargetTexture> create_target_texture(const Vector2i& size) override;
+		bool set_target(const Shared<TargetTexture>& texture) override;
+		UC_NODISCARD const Shared<TargetTexture>& get_target() const override;
 
 		bool begin_scene() override;
 		void end_scene() override;
@@ -103,6 +110,7 @@ namespace unicore
 		Vector2i _logical_size;
 		uint32_t _draw_calls = 0;
 		Color4b _color = ColorConst4b::White;
+		Shared<SDL2TargetTexture> _target;
 
 		void update_size();
 		void update_scale();
