@@ -4,87 +4,16 @@
 namespace unicore
 {
 	template<typename T>
-	class IBuffer2
+	class IBuffer2;
+
+	template<typename T>
+	class IReadOnlyBuffer2
 	{
 	public:
-		using FillFunction = std::function<T(int x, int y)>;
-
-		virtual ~IBuffer2() = default;
-
 		UC_NODISCARD virtual const Vector2i& size() const = 0;
 
 		UC_NODISCARD virtual bool get(int x, int y, T& value) const = 0;
 		UC_NODISCARD virtual bool get(const Vector2i& pos, T& value) const { return get(pos.x, pos.y, value); }
-
-		virtual bool set(int x, int y, T value) = 0;
-		virtual bool set(const Vector2i& pos, T value) { return set(pos.x, pos.y, value); }
-
-		virtual void clip_rect(Recti& rect) const
-		{
-			if (rect.x < 0)
-			{
-				rect.w += rect.x;
-				rect.x = 0;
-			}
-
-			if (rect.y < 0)
-			{
-				rect.h += rect.y;
-				rect.y = 0;
-			}
-
-			const auto s = size();
-			if (rect.x + rect.w > s.x)
-				rect.w = s.x - rect.x;
-
-			if (rect.y + rect.h > s.y)
-				rect.h = s.y - rect.y;
-		}
-
-		UC_NODISCARD virtual Recti clip_rect(const Recti& rect) const
-		{
-			Recti result(rect);
-			clip_rect(result);
-			return result;
-		}
-
-		virtual void fill(const T& value, const Optional<Recti>& rect = std::nullopt)
-		{
-			const auto s = size();
-			if (rect.has_value())
-			{
-				const auto r = clip_rect(rect.value());
-				for (auto y = r.min_y(); y < r.max_y(); ++y)
-					for (auto x = r.min_x(); x < r.max_x(); ++x)
-						set(x, y, value);
-			}
-			else
-			{
-				for (auto y = 0; y < s.y; y++)
-					for (auto x = 0; x < s.x; x++)
-					{
-						set(x, y, value);
-					}
-			}
-		}
-
-		virtual void fill(FillFunction func, const Optional<Recti>& rect = std::nullopt)
-		{
-			const auto s = size();
-			if (rect.has_value())
-			{
-				const auto r = clip_rect(rect.value());
-				for (auto y = r.min_y(); y < r.max_y(); ++y)
-					for (auto x = r.min_x(); x < r.max_x(); ++x)
-						set(x, y, func(x, y));
-			}
-			else
-			{
-				for (auto y = 0; y < s.y; y++)
-					for (auto x = 0; x < s.x; x++)
-						set(x, y, func(x, y));
-			}
-		}
 
 		virtual void copy(const Recti& src_rect, IBuffer2<T>& dest, const Vector2i& offset = VectorConst2i::Zero) const
 		{
@@ -107,6 +36,85 @@ namespace unicore
 			const auto s = size();
 			const Recti rect{ 0, 0, s.x, s.y };
 			copy(rect, dest, offset);
+		}
+	};
+
+	template<typename T>
+	class IBuffer2 : public IReadOnlyBuffer2<T>
+	{
+	public:
+		using FillFunction = std::function<T(int x, int y)>;
+
+		virtual ~IBuffer2() = default;
+
+		virtual bool set(int x, int y, T value) = 0;
+		virtual bool set(const Vector2i& pos, T value) { return set(pos.x, pos.y, value); }
+
+		virtual void clip_rect(Recti& rect) const
+		{
+			if (rect.x < 0)
+			{
+				rect.w += rect.x;
+				rect.x = 0;
+			}
+
+			if (rect.y < 0)
+			{
+				rect.h += rect.y;
+				rect.y = 0;
+			}
+
+			const auto s = this->size();
+			if (rect.x + rect.w > s.x)
+				rect.w = s.x - rect.x;
+
+			if (rect.y + rect.h > s.y)
+				rect.h = s.y - rect.y;
+		}
+
+		UC_NODISCARD virtual Recti clip_rect(const Recti& rect) const
+		{
+			Recti result(rect);
+			clip_rect(result);
+			return result;
+		}
+
+		virtual void fill(const T& value, const Optional<Recti>& rect = std::nullopt)
+		{
+			const auto s = this->size();
+			if (rect.has_value())
+			{
+				const auto r = clip_rect(rect.value());
+				for (auto y = r.min_y(); y < r.max_y(); ++y)
+					for (auto x = r.min_x(); x < r.max_x(); ++x)
+						set(x, y, value);
+			}
+			else
+			{
+				for (auto y = 0; y < s.y; y++)
+					for (auto x = 0; x < s.x; x++)
+					{
+						set(x, y, value);
+					}
+			}
+		}
+
+		virtual void fill(FillFunction func, const Optional<Recti>& rect = std::nullopt)
+		{
+			const auto s = this->size();
+			if (rect.has_value())
+			{
+				const auto r = clip_rect(rect.value());
+				for (auto y = r.min_y(); y < r.max_y(); ++y)
+					for (auto x = r.min_x(); x < r.max_x(); ++x)
+						set(x, y, func(x, y));
+			}
+			else
+			{
+				for (auto y = 0; y < s.y; y++)
+					for (auto x = 0; x < s.x; x++)
+						set(x, y, func(x, y));
+			}
 		}
 	};
 
