@@ -23,7 +23,7 @@ namespace unicore
 			StringView function_name, StringView signature, M3RawCall func);
 
 		template<typename Func>
-		bool link(StringView module_name, StringView function_name, Func* function, bool optional = false) {
+		bool link_module(StringView module_name, StringView function_name, Func* function, bool optional = false) {
 			const M3Result ret = detail::m3_wrapper<Func>::link(_handle, module_name.data(), function_name.data(), function);
 			if (optional && ret == m3Err_functionLookupFailed)
 				return false;
@@ -39,7 +39,7 @@ namespace unicore
 
 		template<typename Func>
 		bool link(StringView function_name, Func* function, bool optional = false) {
-			return link("*", function_name, function, optional);
+			return link_module("*", function_name, function, optional);
 		}
 
 		bool load_to(WasmRuntime& runtime);

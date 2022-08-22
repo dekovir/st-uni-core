@@ -8,11 +8,12 @@
 #include "unicore/BinaryData.hpp"
 #include "unicore/RendererSDL.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/xml/XMLPlugin.hpp"
+#include "unicore/fnt/FNTPlugin.hpp"
 #include "unicore/wasm/WasmEnvironment.hpp"
 #include "unicore/wasm/WasmModule.hpp"
 #include "unicore/wasm/WasmRuntime.hpp"
-#include "unicore/xml/XMLPlugin.hpp"
-#include "unicore/fnt/FNTPlugin.hpp"
+#include "unicore/wasm/WasmPlugin.hpp"
 #include <locale>
 
 namespace unicore
@@ -55,19 +56,24 @@ namespace unicore
 	static Shared<State> s_state;
 	static TimeSpan s_state_time = TimeSpanConst::Zero;
 
-	m3ApiRawFunction(wa_abort)
-	{
-		m3ApiGetArg(int32_t, gas);
-		m3ApiSuccess();
-	}
-
-	static void api_log(const void* void_ptr)
+	static auto ptr_to_str(const void* void_ptr)
 	{
 		const auto ptr = static_cast<const uint32_t*>(void_ptr);
 		const uint32_t lenInPoints = *(ptr - 1) / 2;
 		const std::basic_string_view strUtf16(reinterpret_cast<const char16_t*>(ptr), lenInPoints);
-		const auto text = Unicode::to_utf8(strUtf16);
+		return Unicode::to_utf8(strUtf16);
+	}
 
+	static void wa_abort(const void* msg_ptr, const void* file_ptr, int line, int column)
+	{
+		const auto msg = ptr_to_str(msg_ptr);
+		const auto file = ptr_to_str(file_ptr);
+		UC_LOG_ERROR(s_example->logger) << file << ":" << line << "." << column << " - " << msg;
+	}
+
+	static void api_log(const void* void_ptr)
+	{
+		const auto text = ptr_to_str(void_ptr);
 		s_example->logger.write(LogType::Info, text);
 	}
 
@@ -126,6 +132,7 @@ namespace unicore
 
 		create_plugin<XMLPlugin>();
 		create_plugin<FNTPlugin>();
+		create_plugin<WasmPlugin>();
 	}
 
 	MyCore::~MyCore()
@@ -153,7 +160,7 @@ namespace unicore
 				if (_module)
 				{
 					_module->load_to(*_runtime);
-					_module->link_function_raw("env", "abort", "v(iiii)", &wa_abort);
+					_module->link_module("env", "abort", &wa_abort);
 					_module->link("log", &api_log);
 
 					_module->link("random", &api_random, true);
