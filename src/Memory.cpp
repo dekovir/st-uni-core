@@ -42,7 +42,7 @@ namespace unicore
 		_data = size > 0 ? static_cast<uint8_t*>(UC_ALLOC(size)) : nullptr;
 	}
 
-	MemoryChunk::MemoryChunk(uint8_t* data, size_t size, bool free_data)
+	MemoryChunk::MemoryChunk(void* data, size_t size, bool free_data)
 		: _data(data), _size(size), _free_data(free_data)
 	{
 	}

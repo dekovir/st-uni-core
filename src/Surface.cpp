@@ -102,7 +102,8 @@ namespace unicore
 		if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
 		{
 			const auto offset = calc_offset(x, y);
-			const auto ptr = reinterpret_cast<const uint32_t*>(&_chunk.data()[offset]);
+			const auto data = static_cast<const uint8_t*>(_chunk.data());
+			const auto ptr = reinterpret_cast<const uint32_t*>(&data[offset]);
 			value = Color4b::from_format(pixel_format_abgr, ptr[0]);
 			return true;
 		}
@@ -115,7 +116,8 @@ namespace unicore
 		if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
 		{
 			const auto offset = calc_offset(x, y);
-			const auto ptr = reinterpret_cast<uint32_t*>(&_chunk.data()[offset]);
+			const auto data = static_cast<uint8_t*>(_chunk.data());
+			const auto ptr = reinterpret_cast<uint32_t*>(&data[offset]);
 			ptr[0] = value.to_format(pixel_format_abgr);
 			return true;
 		}

@@ -17,12 +17,29 @@ namespace unicore
 #define UC_ALLOC(size) Memory::alloc(size)
 #define UC_FREE(ptr) Memory::free(ptr)
 
+	class MemoryView
+	{
+	public:
+		MemoryView()
+			: _data(nullptr), _size(0) {}
+		MemoryView(void* data, size_t size)
+			: _data(data), _size(size) {}
+
+		UC_NODISCARD constexpr size_t size() const { return _size; }
+		UC_NODISCARD constexpr bool empty() const { return _size == 0; }
+		UC_NODISCARD constexpr void* data() const { return _data; }
+
+	protected:
+		void* _data;
+		size_t _size;
+	};
+
 	class MemoryChunk
 	{
 	public:
 		MemoryChunk();
 		explicit MemoryChunk(size_t size);
-		explicit MemoryChunk(uint8_t* data, size_t size, bool free_data = true);
+		explicit MemoryChunk(void* data, size_t size, bool free_data = true);
 
 		MemoryChunk(const MemoryChunk& other);
 
@@ -42,8 +59,8 @@ namespace unicore
 		UC_NODISCARD constexpr size_t size() const { return _size; }
 		UC_NODISCARD constexpr bool empty() const { return _size == 0; }
 
-		UC_NODISCARD constexpr uint8_t* data() { return _data; }
-		UC_NODISCARD constexpr const uint8_t* data() const { return _data; }
+		UC_NODISCARD constexpr void* data() { return _data; }
+		UC_NODISCARD constexpr const void* data() const { return _data; }
 
 		void clear();
 
@@ -51,7 +68,7 @@ namespace unicore
 		void free();
 
 	protected:
-		uint8_t* _data;
+		void* _data;
 		size_t _size;
 		bool _free_data;
 	};

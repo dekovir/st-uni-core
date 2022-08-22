@@ -20,7 +20,7 @@ namespace unicore
 		io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 
 		Surface surface(width, height);
-		Memory::copy(surface.data(), pixels, surface.data_size());
+		Memory::copy(surface.data(), pixels, surface.size_bytes());
 
 		_font_texture = render.create_texture(surface);
 		if (_font_texture)

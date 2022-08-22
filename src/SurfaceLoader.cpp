@@ -44,7 +44,7 @@ namespace unicore
 		}
 
 		auto surface = std::make_shared<Surface>(w, h);
-		Memory::copy(surface->data(), data, surface->data_size());
+		Memory::copy(surface->data(), data, surface->size_bytes());
 
 		stbi_image_free(data);
 		return surface;

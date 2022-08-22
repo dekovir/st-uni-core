@@ -25,10 +25,10 @@ namespace unicore
 
 		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(Surface) + _chunk.size(); }
 		UC_NODISCARD const Vector2i& size() const override { return _size; }
+		UC_NODISCARD size_t size_bytes() const { return _chunk.size(); }
 
 		UC_NODISCARD auto data() { return _chunk.data(); }
 		UC_NODISCARD auto data() const { return _chunk.data(); }
-		UC_NODISCARD size_t data_size() const { return _chunk.size(); }
 
 		void fill(const Color4b& color, const Optional<Recti>& rect = std::nullopt) override;
 		void fill(FillFunction func, const Optional<Recti>& rect = std::nullopt) override;
@@ -41,6 +41,7 @@ namespace unicore
 	protected:
 		Vector2i _size = VectorConst2i::Zero;
 		MemoryChunk _chunk;
+		const void* _data;
 
 		UC_NODISCARD int calc_offset(int x, int y) const { return (y * _size.x + x) * 4; }
 	};

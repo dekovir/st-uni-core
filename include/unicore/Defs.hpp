@@ -153,10 +153,10 @@ namespace unicore
 
 	class Logger;
 	class StringBuilder;
-
-	#define UNICODE_STRING_BUILDER_FORMAT(Type) \
-	StringBuilder& operator << (StringBuilder& builder, Type value)
 }
+
+#define UNICODE_STRING_BUILDER_FORMAT(Type) \
+	StringBuilder& operator << (StringBuilder& builder, Type value)
 
 #define UC_NODISCARD [[nodiscard]]
 #define UC_UNUSED [[maybe_unused]]
