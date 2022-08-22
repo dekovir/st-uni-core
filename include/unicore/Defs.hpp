@@ -16,6 +16,7 @@
 #include <cstring>
 #include <typeindex>
 #include <algorithm>
+#include <utility>
 
 #if defined (_WIN32)
 

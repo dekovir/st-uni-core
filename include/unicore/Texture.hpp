@@ -4,6 +4,7 @@
 
 namespace unicore
 {
+	// TODO: on_resize event for derived classed and reload?
 	class Texture : public RendererResource
 	{
 		UC_OBJECT(Texture, RendererResource)

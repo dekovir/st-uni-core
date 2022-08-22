@@ -2,19 +2,28 @@
 
 namespace unicore
 {
+	BitmapFont::BitmapFont(
+		PagesList pages, GlyphsDictionary glyphs,
+		KerningDictionary kerning, uint8_t space_width)
+		: Font(std::move(kerning), space_width),
+		_pages(std::move(pages)),
+		_glyphs(std::move(glyphs))
+	{
+	}
+
 	size_t BitmapFont::get_system_memory_use() const
 	{
 		return Font::get_system_memory_use() +
-			(sizeof(BitmapFontGlyph) + sizeof(uint32_t)) * glyphs.size();
+			(sizeof(BitmapFontGlyph) + sizeof(uint32_t)) * _glyphs.size();
 	}
 
 	size_t BitmapFont::get_used_resources(Set<Shared<Resource>>& resources)
 	{
-		if (!pages.empty())
+		if (!_pages.empty())
 		{
-			for (const auto& texture : pages)
+			for (const auto& texture : _pages)
 				resources.insert(texture);
-			return pages.size();
+			return _pages.size();
 		}
 
 		return 0;
@@ -25,16 +34,16 @@ namespace unicore
 	{
 		if (code == 32)
 		{
-			pos.x += static_cast<float>(space_w);
+			pos.x += static_cast<float>(_space_width);
 			return nullptr;
 		}
 
-		if (const auto it = glyphs.find(code); it != glyphs.end())
+		if (const auto it = _glyphs.find(code); it != _glyphs.end())
 		{
 			const auto& c = it->second;
-			if (c.page < pages.size())
+			if (c.page < _pages.size())
 			{
-				auto page = pages[c.page];
+				auto page = _pages[c.page];
 
 				if (uv_rect)
 				{

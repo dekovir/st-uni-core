@@ -36,10 +36,13 @@ namespace unicore
 			return nullptr;
 		}
 
-		auto font = make_shared<BitmapFont>();
-		font->pages.push_back(texture);
+		BitmapFont::PagesList pages;
+		BitmapFont::GlyphsDictionary glyphs;
+		BitmapFont::KerningDictionary kerning;
 
-		font->space_w = static_cast<uint8_t>(root->IntAttribute("spaceWidth"));
+		pages.push_back(texture);
+
+		auto space_width = static_cast<uint8_t>(root->IntAttribute("spaceWidth"));
 
 		for (auto element = root->FirstChildElement("char"); element != nullptr; element = element->NextSiblingElement())
 		{
@@ -54,7 +57,7 @@ namespace unicore
 			glyph.yoffset = element->IntAttribute("dy");
 			glyph.xadvance = element->IntAttribute("advx");
 
-			font->glyphs.insert_or_assign(code, glyph);
+			glyphs.insert_or_assign(code, glyph);
 		}
 
 		for (auto element = root->FirstChildElement("kerning"); element != nullptr; element = element->NextSiblingElement())
@@ -63,9 +66,9 @@ namespace unicore
 			const auto c2 = element->IntAttribute("c2");
 			const auto offset = element->IntAttribute("offset");
 
-			font->kerning[c1][c2] = offset;
+			kerning[c1][c2] = offset;
 		}
 
-		return font;
+		return std::make_shared<BitmapFont>(pages, glyphs, kerning, space_width);
 	}
 }

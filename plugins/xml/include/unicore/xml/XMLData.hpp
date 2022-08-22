@@ -4,6 +4,7 @@
 
 namespace unicore
 {
+	// TODO: Implement as const
 	class XMLData : public Resource
 	{
 		UC_OBJECT(XMLData, Resource)

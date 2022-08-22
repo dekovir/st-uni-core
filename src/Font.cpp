@@ -2,6 +2,11 @@
 
 namespace unicore
 {
+	Font::Font(KerningDictionary kerning, uint8_t space_width)
+		: _kerning(std::move(kerning)), _space_width(space_width)
+	{
+	}
+
 	size_t Font::get_system_memory_use() const
 	{
 		// TODO: Add kerning dictionary size;
@@ -10,7 +15,7 @@ namespace unicore
 
 	int Font::find_kerning(uint32_t a, uint32_t b) const
 	{
-		if (const auto it = kerning.find(a); it != kerning.end())
+		if (const auto it = _kerning.find(a); it != _kerning.end())
 		{
 			if (const auto jt = it->second.find(b); jt != it->second.end())
 				return jt->second;

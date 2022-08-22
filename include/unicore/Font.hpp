@@ -10,8 +10,7 @@ namespace unicore
 	{
 		UC_OBJECT(Font, Resource)
 	public:
-		Dictionary<uint32_t, Dictionary<uint32_t, int>> kerning;
-		uint8_t space_w = 0;
+		using KerningDictionary = Dictionary<uint32_t, Dictionary<uint32_t, int>>;
 
 		UC_NODISCARD size_t get_system_memory_use() const override;
 
@@ -24,5 +23,11 @@ namespace unicore
 			VertexTexColor2& v0, VertexTexColor2& v1,
 			VertexTexColor2& v2, VertexTexColor2& v3,
 			const Color4b& color = ColorConst4b::White) const;
+
+	protected:
+		const KerningDictionary _kerning;
+		const uint8_t _space_width = 0;
+
+		explicit Font(KerningDictionary kerning, uint8_t space_width = 0);
 	};
 }

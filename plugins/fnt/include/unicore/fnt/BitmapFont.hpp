@@ -16,13 +16,21 @@ namespace unicore
 	{
 		UC_OBJECT(BitmapFont, Font)
 	public:
+		using PagesList = List<Shared<Texture>>;
+		using GlyphsDictionary = Dictionary<uint32_t, BitmapFontGlyph>;
+
+		BitmapFont(PagesList pages, GlyphsDictionary glyphs,
+			KerningDictionary kerning, uint8_t space_width
+		);
+
 		UC_NODISCARD size_t get_system_memory_use() const override;
 		size_t get_used_resources(Set<Shared<Resource>>& resources) override;
 
-		List<Shared<Texture>> pages;
-		Dictionary<uint32_t, BitmapFontGlyph> glyphs;
-
 		Shared<Texture> get_char_print_info(uint32_t code,
 			Vector2f& pos, Rectf* rect, Rectf* uv_rect) const override;
+
+	protected:
+		const List<Shared<Texture>> _pages;
+		const GlyphsDictionary _glyphs;
 	};
 }

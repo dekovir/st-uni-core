@@ -15,8 +15,6 @@ namespace unicore
 		explicit BinaryData(const BinaryData& other);
 		BinaryData(BinaryData&& other) noexcept;
 
-		~BinaryData() = default;
-
 		BinaryData& operator=(const BinaryData& other);
 		BinaryData& operator=(BinaryData&& other) noexcept;
 

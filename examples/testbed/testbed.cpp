@@ -5,6 +5,7 @@
 #include "unicore/Font.hpp"
 #include "unicore/xml/XMLPlugin.hpp"
 #include "unicore/fnt/FNTPlugin.hpp"
+#include "unicore/imgui/ImGuiPlugin.hpp"
 
 namespace unicore
 {
@@ -17,6 +18,7 @@ namespace unicore
 
 		create_plugin<XMLPlugin>();
 		create_plugin<FNTPlugin>();
+		create_plugin<ImGuiPlugin>();
 	}
 
 	void MyCore::on_init()
@@ -59,7 +61,7 @@ namespace unicore
 		const auto title_str = StringBuilder::format("Example: {}", examples[_example_index].title);
 		const auto fps_str = StringBuilder::format("FPS: {}", fps());
 		const auto draw_str = StringBuilder::format("Draw: {}", _draw_calls);
-		const auto screen_str = StringBuilder::format("Screen: {}x{}", screen_size.x, screen_size.y);
+		const auto screen_str = StringBuilder::format("Screen: {}", screen_size);
 
 		_sprite_batch
 			.clear()
