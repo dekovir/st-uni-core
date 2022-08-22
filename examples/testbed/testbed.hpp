@@ -20,6 +20,7 @@ namespace unicore
 
 		uint32_t _draw_calls = 0;
 
+		void on_init() override;
 		void on_update() override;
 		void on_draw() override;
 

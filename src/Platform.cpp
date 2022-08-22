@@ -23,20 +23,15 @@ namespace unicore
 	{
 	}
 
-	void Platform::register_module(Context& context)
+	void Platform::register_module(const ModuleContext& context)
 	{
 		Module::register_module(context);
 
-		static BinaryDataLoader binary_data_loader;
-		static StringDataLoader string_data_loader;
-
-		context.add_loader(binary_data_loader);
-		context.add_loader(string_data_loader);
-	}
-
-	void Platform::unregister_module(Context& context)
-	{
-		Module::unregister_module(context);
+		if (const auto cache = context.modules.find<ResourceCache>())
+		{
+			cache->add_loader(std::make_shared<BinaryDataLoader>());
+			cache->add_loader(std::make_shared<StringDataLoader>());
+		}
 	}
 
 	Unique<Platform> Platform::create()

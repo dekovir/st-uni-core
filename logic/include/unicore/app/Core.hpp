@@ -26,6 +26,7 @@ namespace unicore
 
 		Context context;
 
+		virtual void init();
 		virtual void update();
 
 		void add_plugin(Unique<Plugin>&& plugin);
@@ -38,6 +39,7 @@ namespace unicore
 		}
 
 	protected:
+		virtual void on_init() = 0;
 		virtual void on_update() = 0;
 
 		ModuleContainer _modules;

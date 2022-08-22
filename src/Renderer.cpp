@@ -3,6 +3,7 @@
 #include "unicore/Surface.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/ResourceLoader.hpp"
+#include "unicore/ResourceCache.hpp"
 #include <stb_image.h>
 
 namespace unicore
@@ -77,19 +78,14 @@ namespace unicore
 		: _logger(logger)
 	{}
 
-	void Renderer::register_module(Context& context)
+	void Renderer::register_module(const ModuleContext& context)
 	{
 		Module::register_module(context);
 
-		static SurfaceLoader surface_loader;
-		static TextureConverter texture_converter(*this);
-
-		context.add_loader(surface_loader);
-		context.add_converter(texture_converter);
-	}
-
-	void Renderer::unregister_module(Context& context)
-	{
-		Module::unregister_module(context);
+		if (const auto cache = context.modules.find<ResourceCache>())
+		{
+			cache->add_loader(std::make_shared<SurfaceLoader>());
+			cache->add_converter(std::make_shared<TextureConverter>(*this));
+		}
 	}
 }

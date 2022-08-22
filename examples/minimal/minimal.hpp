@@ -38,6 +38,7 @@ namespace unicore
 		TimeSpan _add_time = TimeSpanConst::Zero;
 		bool _add_active = false;
 
+		void on_init() override;
 		void on_update() override;
 		void on_draw() override;
 

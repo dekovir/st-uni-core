@@ -5,6 +5,8 @@
 
 namespace unicore
 {
+	static auto& s_resource_type = get_type<Resource>();
+
 	ResourceCache::ResourceCache(Logger& logger)
 		: _logger(logger)
 	{
@@ -92,18 +94,12 @@ namespace unicore
 		if (auto resource_find = find(path, type))
 			return resource_find;
 
-		if (_context == nullptr)
-		{
-			UC_LOG_ERROR(_logger) << "ResourceCache module not registered";
-			return nullptr;
-		}
-
 		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;
 
 		if (auto resource = load_resource(path, type, logger))
 			return resource;
 
-		if (const auto converters = _context->get_converters(type); !converters.empty())
+		if (const auto converters = get_converters(type); !converters.empty())
 		{
 			for (const auto& converter : converters)
 			{
@@ -174,22 +170,52 @@ namespace unicore
 		}
 	}
 
-	void ResourceCache::register_module(Context& context)
+	void ResourceCache::add_loader(const Shared<ResourceLoader>& loader)
 	{
-		Module::register_module(context);
-
-		_context = &context;
+		for (auto type = &loader->resource_type(); type != nullptr && type != &s_resource_type; type = type->parent)
+		{
+			_loaders[type].insert(loader);
+		}
 	}
 
-	void ResourceCache::unregister_module(Context& context)
+	const Set<Shared<ResourceLoader>>& ResourceCache::get_loaders(TypeConstRef type) const
 	{
-		_context = nullptr;
+		static Set<Shared<ResourceLoader>> s_empty;
+		const auto it = _loaders.find(&type);
+		return it != _loaders.end() ? it->second : s_empty;
+	}
+
+	void ResourceCache::add_converter(const Shared<ResourceConverter>& converter)
+	{
+		_converters[&converter->resource_type()].insert(converter);
+	}
+
+	const Set<Shared<ResourceConverter>>& ResourceCache::get_converters(TypeConstRef type) const
+	{
+		static Set<Shared<ResourceConverter>> s_empty;
+		const auto it = _converters.find(&type);
+		return it != _converters.end() ? it->second : s_empty;
+	}
+
+	void ResourceCache::register_module(const ModuleContext& context)
+	{
+		Module::register_module(context);
+	}
+
+	void ResourceCache::unregister_module(const ModuleContext& context)
+	{
 		Module::unregister_module(context);
+
+		_loaders.clear();
+		_converters.clear();
+
+		unload_all();
+		clear();
 	}
 
 	Shared<Resource> ResourceCache::load_resource(const Path& path, TypeConstRef type, Logger* logger)
 	{
-		const auto& loaders = _context->get_loaders(type);
+		const auto& loaders = get_loaders(type);
 		if (loaders.empty()) return nullptr;
 
 		// TODO: Implement loading stack for prevent recursive loading

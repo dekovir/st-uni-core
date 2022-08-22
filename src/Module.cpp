@@ -16,7 +16,7 @@ namespace unicore
 		return it != _modules.end() ? it->second : nullptr;
 	}
 
-	void ModuleContainer::register_all(Context& context)
+	void ModuleContainer::register_all(const ModuleContext& context)
 	{
 		if (_context) return;
 

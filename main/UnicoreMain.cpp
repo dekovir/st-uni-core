@@ -33,6 +33,7 @@ namespace unicore
 	void state_init()
 	{
 		g_state = new State();
+		g_state->core->init();
 	}
 
 	void state_done()

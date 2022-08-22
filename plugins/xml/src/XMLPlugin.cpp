@@ -1,19 +1,15 @@
 #include "unicore/xml/XMLPlugin.hpp"
+#include "unicore/ResourceCache.hpp"
 #include "XMLLoader.hpp"
 
 namespace unicore
 {
 	static XMLDataLoader xml_loader;
 
-	void XMLPlugin::register_module(Context& context)
+	void XMLPlugin::register_module(const ModuleContext& context)
 	{
 		Plugin::register_module(context);
-		context.add_loader(xml_loader);
-	}
-
-	void XMLPlugin::unregister_module(Context& context)
-	{
-		Plugin::unregister_module(context);
-		context.remove_loader(xml_loader);
+		if (const auto cache = context.modules.find<ResourceCache>())
+			cache->add_loader(std::make_shared<XMLDataLoader>());
 	}
 }

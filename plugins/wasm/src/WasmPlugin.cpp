@@ -2,7 +2,7 @@
 
 namespace unicore
 {
-	void WasmPlugin::register_module(Context& context)
+	void WasmPlugin::register_module(const ModuleContext& context)
 	{
 		Plugin::register_module(context);
 	}

@@ -9,7 +9,6 @@ namespace unicore
 	public:
 		FNTPlugin() = default;
 
-		void register_module(Context& context) override;
-		void unregister_module(Context& context) override;
+		void register_module(const ModuleContext& context) override;
 	};
 }

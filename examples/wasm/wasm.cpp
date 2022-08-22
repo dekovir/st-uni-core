@@ -126,7 +126,16 @@ namespace unicore
 
 		create_plugin<XMLPlugin>();
 		create_plugin<FNTPlugin>();
+	}
 
+	MyCore::~MyCore()
+	{
+		s_example = nullptr;
+		s_state = nullptr;
+	}
+
+	void MyCore::on_init()
+	{
 		_font = resources.load<Font>(L"font_004.fnt"_path);
 		if (auto tex = resources.load<Texture>(L"zazaka.png"_path))
 			_spr = std::make_shared<Sprite>(tex);
@@ -175,12 +184,6 @@ namespace unicore
 		s_state->init();
 
 		resources.unload_unused();
-	}
-
-	MyCore::~MyCore()
-	{
-		s_example = nullptr;
-		s_state = nullptr;
 	}
 
 	void MyCore::on_update()

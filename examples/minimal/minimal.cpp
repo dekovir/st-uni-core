@@ -33,6 +33,10 @@ namespace unicore
 	MyCore::MyCore(const CoreSettings& settings)
 		: SDLCore(create_settings(settings, "Minimal", { false, WindowSize, WindowFlags }))
 	{
+	}
+
+	void MyCore::on_init()
+	{
 		UC_LOG_INFO(logger) << "Starting";
 
 		constexpr auto side = 64;

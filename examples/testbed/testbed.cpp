@@ -17,7 +17,10 @@ namespace unicore
 
 		create_plugin<XMLPlugin>();
 		create_plugin<FNTPlugin>();
+	}
 
+	void MyCore::on_init()
+	{
 		_font = resources.load<Font>(L"font_004.fnt"_path);
 
 		set_example(0);

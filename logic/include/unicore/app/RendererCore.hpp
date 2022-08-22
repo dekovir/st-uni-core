@@ -15,8 +15,6 @@ namespace unicore
 
 		explicit RendererCore(const DisplayCoreSettings& settings, const RendererFactory& renderer_factory);
 
-		~RendererCore() override;
-
 		UC_NODISCARD constexpr int fps() const { return _fps_current; }
 
 		void update() override;
@@ -46,7 +44,6 @@ namespace unicore
 			: RendererCore(settings, renderer_factory)
 			, renderer(static_cast<RendererType&>(RendererCore::renderer))
 		{
-			renderer.register_module(context);
 		}
 	};
 }

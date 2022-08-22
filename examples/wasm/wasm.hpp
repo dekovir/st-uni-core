@@ -32,6 +32,7 @@ namespace unicore
 		int _sprite_count = 0;
 		TimeSpan _update_time, _draw_time;
 
+		void on_init() override;
 		void on_update() override;
 		void on_draw() override;
 	};

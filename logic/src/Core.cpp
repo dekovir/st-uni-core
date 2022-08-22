@@ -14,30 +14,21 @@ namespace unicore
 		, input(platform.input)
 		, resources(platform.resources)
 	{
-		platform.register_module(context);
-		input.register_module(context);
-		resources.register_module(context);
-
 		_modules.add(platform);
 		_modules.add(input);
 		_modules.add(resources);
-
-		_modules.register_all(context);
 	}
 
 	Core::~Core()
 	{
-		for (const auto& plugin : _plugins)
-			plugin->unregister_module(context);
-
-		resources.unload_all();
-		resources.clear();
-
-		resources.unregister_module(context);
-		platform.unregister_module(context);
-		input.unregister_module(context);
-
 		_modules.unregister_all();
+	}
+
+	void Core::init()
+	{
+		_modules.register_all({ _modules });
+
+		on_init();
 	}
 
 	void Core::update()
