@@ -56,6 +56,8 @@ namespace unicore
 		bool _free_data;
 	};
 
+	extern UNICODE_STRING_BUILDER_FORMAT(const MemoryChunk&);
+
 	struct MemorySize
 	{
 		size_t bytes;

@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Defs.hpp"
+#include "unicore/StringHelper.hpp"
 
 namespace unicore
 {
@@ -72,6 +72,9 @@ namespace unicore
 	extern UNICODE_STRING_BUILDER_FORMAT(const char*);
 	extern UNICODE_STRING_BUILDER_FORMAT(const wchar_t*);
 
+	extern UNICODE_STRING_BUILDER_FORMAT(float);
+	extern UNICODE_STRING_BUILDER_FORMAT(double);
+
 	template<typename TChar,
 		std::enable_if_t<std::is_same_v<TChar, char> || std::is_same_v<TChar, wchar_t>>* = nullptr>
 	extern StringBuilder& operator << (StringBuilder& builder, const BasicStringView<TChar> value)
@@ -92,21 +95,20 @@ namespace unicore
 	extern StringBuilder& operator<<(StringBuilder& builder, T value)
 	{
 		const auto tmp = static_cast<int>(value);
-		const auto str = std::to_wstring(tmp);
+		const auto str = std::to_string(tmp);
 		return builder << str.c_str();
+	}
+
+	template<typename T, std::enable_if_t<std::is_pointer_v<T>>* = nullptr>
+	extern StringBuilder& operator<<(StringBuilder& builder, T value)
+	{
+		return builder << "0x" << StringHelper::to_hex(reinterpret_cast<intptr_t>(value));
 	}
 
 	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 	extern StringBuilder& operator<<(StringBuilder& builder, T value)
 	{
-		const auto str = std::to_wstring(value);
-		return builder << str.c_str();
-	}
-
-	template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-	extern StringBuilder& operator<<(StringBuilder& builder, T value)
-	{
-		const auto str = std::to_wstring(value);
+		const auto str = std::to_string(value);
 		return builder << str.c_str();
 	}
 

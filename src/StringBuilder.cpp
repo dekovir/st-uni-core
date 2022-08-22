@@ -78,4 +78,16 @@ namespace unicore
 			builder.append(value);
 		return builder;
 	}
+
+	UNICODE_STRING_BUILDER_FORMAT(float)
+	{
+		// TODO: Implement precision
+		return builder << StringHelper::print_format("%.2f", value);
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(double)
+	{
+		// TODO: Implement precision
+		return builder << StringHelper::print_format("%.2lf", value);
+	}
 }

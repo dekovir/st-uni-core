@@ -114,18 +114,23 @@ namespace unicore
 		}
 	}
 
+	UNICODE_STRING_BUILDER_FORMAT(const MemoryChunk&)
+	{
+		return builder << "{" << value.data() << ", " << MemorySize{ value.size() } << "}";
+	}
+
 	// ===========================================================================
 	UNICODE_STRING_BUILDER_FORMAT(const MemorySize&)
 	{
 		constexpr auto KB = 1024;
 		constexpr auto MB = KB * 1024;
 
-		if (value.bytes > MB)
+		if (value.bytes >= MB)
 		{
 			const auto amount = static_cast<float>(value.bytes) / MB;
 			builder << amount << "Mb";
 		}
-		else if (value.bytes > KB)
+		else if (value.bytes >= KB)
 		{
 			const auto amount = static_cast<float>(value.bytes) / KB;
 			builder << amount << "Kb";
