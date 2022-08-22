@@ -7,7 +7,10 @@ namespace unicore
 		_modules.emplace(&module.type(), &module);
 
 		if (_context)
+		{
 			module.register_module(*_context);
+			_event_add(module);
+		}
 	}
 
 	Module* ModuleContainer::find(TypeConstRef type) const

@@ -1,5 +1,6 @@
 #pragma once
-#include "unicore/Context.hpp"
+#include "unicore/Object.hpp"
+#include "unicore/Event.hpp"
 
 namespace unicore
 {
@@ -7,6 +8,7 @@ namespace unicore
 
 	struct ModuleContext
 	{
+		Logger* logger;
 		ModuleContainer& modules;
 	};
 
@@ -20,6 +22,7 @@ namespace unicore
 
 	class ModuleContainer
 	{
+		UC_OBJECT_EVENT(add, Module&);
 	public:
 		void add(Module& module);
 

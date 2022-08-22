@@ -26,7 +26,7 @@ namespace unicore
 
 	void Core::init()
 	{
-		_modules.register_all({ _modules });
+		_modules.register_all({ &logger, _modules });
 
 		on_init();
 	}

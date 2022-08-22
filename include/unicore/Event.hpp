@@ -43,5 +43,5 @@ namespace unicore
 
 #define UC_OBJECT_EVENT(name, ...) \
 	public:  PublicEvent<__VA_ARGS__>& on_ ## name() { return _event_ ## name; } \
-	protected: Event<__VA_ARGS__> _event_ ## name;
+	protected: Event<__VA_ARGS__> _event_ ## name
 }
