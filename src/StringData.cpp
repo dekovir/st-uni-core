@@ -11,8 +11,9 @@ namespace unicore
 
 	Shared<Resource> StringDataLoader::load(const ResourceLoaderContext& context)
 	{
-		const auto size = context.stream.size();
 		context.stream.seek(0);
+		const auto size = context.stream.size();
+
 		String str;
 		str.resize(size);
 		if (context.stream.read(str.data(), size))

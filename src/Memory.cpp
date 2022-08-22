@@ -4,14 +4,15 @@
 
 namespace unicore
 {
+	// TODO: Debug leak detection
 	void* Memory::alloc(size_t size)
 	{
 		return new uint8_t[size];
 	}
 
-	void Memory::free(void* ptr)
+	void Memory::free(const void* ptr)
 	{
-		delete[] static_cast<uint8_t*>(ptr);
+		delete[] static_cast<const uint8_t*>(ptr);
 	}
 
 	void Memory::set(void* dest, int value, size_t size)
@@ -38,7 +39,7 @@ namespace unicore
 	MemoryChunk::MemoryChunk(size_t size)
 		: _size(size), _free_data(true)
 	{
-		_data = size > 0 ? static_cast<uint8_t*>(Memory::alloc(size)) : nullptr;
+		_data = size > 0 ? static_cast<uint8_t*>(UC_ALLOC(size)) : nullptr;
 	}
 
 	MemoryChunk::MemoryChunk(uint8_t* data, size_t size, bool free_data)
@@ -90,7 +91,7 @@ namespace unicore
 	{
 		if (new_size == _size) return;
 
-		const auto new_mem = static_cast<uint8_t*>(Memory::alloc(new_size));
+		const auto new_mem = static_cast<uint8_t*>(UC_ALLOC(new_size));
 		if (copy_data)
 		{
 			const auto copy_size = Math::min(new_size, _size);
@@ -106,7 +107,7 @@ namespace unicore
 		if (!empty())
 		{
 			if (_free_data)
-				Memory::free(_data);
+				UC_FREE(_data);
 
 			_data = nullptr;
 			_size = 0;

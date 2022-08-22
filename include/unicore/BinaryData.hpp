@@ -9,24 +9,17 @@ namespace unicore
 	{
 		UC_OBJECT(BinaryData, Resource)
 	public:
-		explicit BinaryData(size_t size);
-		explicit BinaryData(const Shared<MemoryChunk>& chunk);
+		BinaryData(const void* data, size_t size);
+		~BinaryData() override;
 
-		explicit BinaryData(const BinaryData& other);
-		BinaryData(BinaryData&& other) noexcept;
+		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(BinaryData) + _size; }
 
-		BinaryData& operator=(const BinaryData& other);
-		BinaryData& operator=(BinaryData&& other) noexcept;
-
-		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(BinaryData) + _chunk->size(); }
-
-		UC_NODISCARD void* data() { return _chunk->data(); }
-		UC_NODISCARD const void* data() const { return _chunk->data(); }
-
-		UC_NODISCARD size_t size() const { return _chunk->size(); }
+		UC_NODISCARD const void* data() const { return _data; }
+		UC_NODISCARD size_t size() const { return _size; }
 
 	protected:
-		Shared<MemoryChunk> _chunk;
+		const void* _data;
+		const size_t _size;
 	};
 
 	class BinaryDataLoader : public ResourceLoaderT<BinaryData>

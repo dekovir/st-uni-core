@@ -1,4 +1,6 @@
 #pragma once
+#include <utility>
+
 #include "unicore/Resource.hpp"
 #include "unicore/ResourceLoader.hpp"
 
@@ -12,7 +14,7 @@ namespace unicore
 		explicit BasicStringData(BasicStringView<Char> data)
 			: _data(data) {}
 
-		explicit BasicStringData(BasicString<Char>&& data)
+		explicit BasicStringData(BasicString<Char> data)
 			: _data(std::move(data)) {}
 
 		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(BasicStringData<Char>) + _data.size() * sizeof(Char); }
@@ -20,7 +22,7 @@ namespace unicore
 		UC_NODISCARD const BasicString<Char>& data() const { return _data; }
 
 	protected:
-		BasicString<Char> _data;
+		const BasicString<Char> _data;
 	};
 
 	class StringData : public BasicStringData<char>
@@ -32,8 +34,8 @@ namespace unicore
 		{
 		}
 
-		explicit StringData(String&& data)
-			: BasicStringData<char>(data)
+		explicit StringData(String data)
+			: BasicStringData<char>(std::move(data))
 		{
 		}
 	};
@@ -54,8 +56,8 @@ namespace unicore
 		{
 		}
 
-		explicit WStringData(WString&& data)
-			: BasicStringData<wchar_t>(data)
+		explicit WStringData(WString data)
+			: BasicStringData<wchar_t>(std::move(data))
 		{
 		}
 	};
