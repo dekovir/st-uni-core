@@ -110,7 +110,7 @@ namespace unicore
 		Vector2i _logical_size;
 		uint32_t _draw_calls = 0;
 		Color4b _color = ColorConst4b::White;
-		Shared<SDL2TargetTexture> _target;
+		Shared<TargetTexture> _target;
 
 		void update_size();
 		void update_scale();
