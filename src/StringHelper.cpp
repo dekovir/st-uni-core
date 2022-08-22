@@ -35,13 +35,13 @@ namespace unicore::StringHelper
 
 	String to_hex(intptr_t value)
 	{
-		String str;
+		String str(sizeof(value) * 2, ' ');
 
 		for (unsigned i = 0; i < sizeof(value); i++)
 		{
 			const uint8_t b = (value >> (i * 8)) & 0xFF;
-			str += s_hexmap[b & 0xF];
-			str += s_hexmap[b >> 4];
+			str[i * 2 + 0] = s_hexmap[b & 0xF];
+			str[i * 2 + 1] = s_hexmap[b >> 4];
 		}
 
 		std::reverse(str.begin(), str.end());
