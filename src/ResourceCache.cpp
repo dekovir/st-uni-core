@@ -260,7 +260,9 @@ namespace unicore
 	{
 		if (auto resource = loader.load({ path, *this, stream, logger }))
 		{
-			add_resource(resource, path, type);
+			if (resource->cache_policy() == ResourceCachePolicy::CanCache)
+				add_resource(resource, path, type);
+
 			return resource;
 		}
 

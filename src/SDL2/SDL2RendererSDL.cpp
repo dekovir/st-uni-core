@@ -51,9 +51,11 @@ namespace unicore
 		// TODO: Implement different formats
 #if 1
 
-		auto sdl_texture = create_texture(size, SDL_TEXTUREACCESS_STATIC);
-		SDL_UpdateTexture(sdl_texture, nullptr, surface.data(), size.x * 4);
-		return make_shared<SDL2Texture>(sdl_texture);
+		auto texture = create_texture(size, SDL_TEXTUREACCESS_STATIC);
+		if (SDL_UpdateTexture(texture, nullptr, surface.data(), size.x * 4) != 0)
+			UC_LOG_WARNING(_logger) << SDL_GetError();
+
+		return make_shared<SDL2Texture>(texture);
 #else
 		if (const auto sdl_surface = SDL_CreateRGBSurfaceWithFormatFrom(
 			surface.data(), size.x, size.y, 4 * 8, size.x * 4, SDL_PIXELFORMAT_RGBA32))
@@ -83,13 +85,33 @@ namespace unicore
 	{
 		if (const auto tex = dynamic_cast<SDL2DynamicTexture*>(&texture))
 		{
+#if 1
 			SDL_Rect r;
 			const auto prect = rect.has_value() ? &SDL2Utils::convert(rect.value(), r) : nullptr;
+
 			// TODO: Pass surface pitch from format
 			// The pixel data must be in the pixel format of the texture. Use SDL_QueryTexture() to query the pixel format of the texture.
-			return SDL_UpdateTexture(tex->handle(), prect, surface.data(), surface.size().x * 4) == 0;
+			if (SDL_UpdateTexture(tex->handle(), prect, surface.data(), surface.size().x * 4) == 0)
+				return true;
+
+			UC_LOG_ERROR(_logger) << SDL_GetError();
+			return false;
+#else
+			int pitch;
+			void* buffer;
+			if (SDL_LockTexture(tex->handle(), nullptr, &buffer, &pitch) == 0)
+			{
+				Memory::copy(buffer, surface.data(), surface.size().area() * 4);
+				SDL_UnlockTexture(tex->handle());
+				return true;
+			}
+
+			UC_LOG_ERROR(_logger) << SDL_GetError();
+			return false;
+#endif
 		}
 
+		UC_LOG_ERROR(_logger) << "Invalid texture type";
 		return false;
 	}
 
@@ -333,7 +355,7 @@ namespace unicore
 	void SDL2RendererSDL::draw_triangles(const VertexTexColor2* vertices,
 		unsigned num_vertices, const Texture* texture)
 	{
-		const auto tex = dynamic_cast<const SDL2Texture*>(texture);
+		const auto tex = dynamic_cast<const SDL2BaseTexture*>(texture);
 		const auto tex_handle = tex ? tex->handle() : nullptr;
 
 		s_vertices.resize(num_vertices);
@@ -364,7 +386,7 @@ namespace unicore
 	bool SDL2RendererSDL::copy(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Recti>& dst_rect)
 	{
-		if (const auto tex = std::dynamic_pointer_cast<SDL2Texture>(texture))
+		if (const auto tex = std::dynamic_pointer_cast<SDL2BaseTexture>(texture))
 		{
 			SDL_Rect src, dst;
 			const auto result = SDL_RenderCopy(_renderer, tex->handle(),
@@ -383,7 +405,7 @@ namespace unicore
 	bool SDL2RendererSDL::copy_f(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect)
 	{
-		if (const auto tex = std::dynamic_pointer_cast<SDL2Texture>(texture))
+		if (const auto tex = std::dynamic_pointer_cast<SDL2BaseTexture>(texture))
 		{
 			SDL_Rect src;
 			SDL_FRect dst;
@@ -404,7 +426,7 @@ namespace unicore
 		const Optional<Recti>& src_rect, const Optional<Recti>& dst_rect,
 		Degrees angle, const Optional<Vector2i>& center, SDLRenderFlipFlags flip)
 	{
-		if (const auto tex = std::dynamic_pointer_cast<SDL2Texture>(texture))
+		if (const auto tex = std::dynamic_pointer_cast<SDL2BaseTexture>(texture))
 		{
 			SDL_Point c;
 			SDL_Rect src, dst;
@@ -430,7 +452,7 @@ namespace unicore
 		const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect,
 		Degrees angle, const Optional<Vector2f>& center, SDLRenderFlipFlags flip)
 	{
-		if (const auto tex = std::dynamic_pointer_cast<SDL2Texture>(texture))
+		if (const auto tex = std::dynamic_pointer_cast<SDL2BaseTexture>(texture))
 		{
 			SDL_FPoint c;
 			SDL_Rect src;

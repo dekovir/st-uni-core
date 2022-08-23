@@ -16,11 +16,13 @@ namespace unicore
 	{
 		UC_OBJECT(DynamicTexture, Texture)
 	public:
+		UC_NODISCARD ResourceCachePolicy cache_policy() const override { return ResourceCachePolicy::NoCache; }
 	};
 
 	class TargetTexture : public Texture
 	{
 		UC_OBJECT(TargetTexture, Texture)
 	public:
+		UC_NODISCARD ResourceCachePolicy cache_policy() const override { return ResourceCachePolicy::NoCache; }
 	};
 }

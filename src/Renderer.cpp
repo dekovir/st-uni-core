@@ -23,6 +23,23 @@ namespace unicore
 		Renderer& _renderer;
 	};
 
+	class DynamicTextureConverter : public ResourceConverterT<DynamicTexture, Surface>
+	{
+	public:
+		explicit DynamicTextureConverter(Renderer& render)
+			: _renderer(render) {}
+
+		Shared<DynamicTexture> convert_typed(Surface& surface, const ResourceConverterContext& context) override
+		{
+			auto tex = _renderer.create_dynamic_texture(surface.size());
+			_renderer.update_texture(*tex, surface);
+			return tex;
+		}
+
+	protected:
+		Renderer& _renderer;
+	};
+
 	Renderer::Renderer(Logger& logger)
 		: _logger(logger)
 	{}
@@ -35,6 +52,7 @@ namespace unicore
 		{
 			cache->add_loader(std::make_shared<SurfaceLoader>());
 			cache->add_converter(std::make_shared<TextureConverter>(*this));
+			cache->add_converter(std::make_shared<DynamicTextureConverter>(*this));
 		}
 	}
 }
