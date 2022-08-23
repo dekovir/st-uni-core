@@ -15,7 +15,10 @@ namespace unicore
 	static std::vector<SDL_Vertex> s_vertices;
 
 	SDL2RendererSDL::SDL2RendererSDL(Logger& logger, SDL2Display& display)
-		: ParentType(logger), _display(display)
+		: ParentType(logger)
+		, _display(display)
+		, _scale(VectorConst2f::One)
+		, _logical_size(VectorConst2i::Zero)
 	{
 		SDL_Init(SDL_INIT_VIDEO);
 
@@ -47,9 +50,8 @@ namespace unicore
 		auto& size = surface.size();
 		// TODO: Implement different formats
 #if 1
-		auto sdl_texture = SDL_CreateTexture(_renderer,
-			SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STATIC, size.x, size.y);
-		SDL_SetTextureBlendMode(sdl_texture, SDL_BLENDMODE_BLEND);
+
+		auto sdl_texture = create_texture(size, SDL_TEXTUREACCESS_STATIC);
 		SDL_UpdateTexture(sdl_texture, nullptr, surface.data(), size.x * 4);
 		return make_shared<SDL2Texture>(sdl_texture);
 #else
@@ -67,11 +69,14 @@ namespace unicore
 
 	Shared<DynamicTexture> SDL2RendererSDL::create_dynamic_texture(const Vector2i& size)
 	{
-		auto sdl_texture = SDL_CreateTexture(_renderer,
-			SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_STREAMING, size.x, size.y);
-		SDL_SetTextureBlendMode(sdl_texture, SDL_BLENDMODE_BLEND);
-		
-		return make_shared<SDL2DynamicTexture>(sdl_texture);
+		auto tex = create_texture(size, SDL_TEXTUREACCESS_STREAMING);
+		if (!tex)
+		{
+			UC_LOG_ERROR(_logger) << "Failed to create dynamic texture";
+			return nullptr;
+		}
+
+		return make_shared<SDL2DynamicTexture>(tex);
 	}
 
 	bool SDL2RendererSDL::update_texture(DynamicTexture& texture, Surface& surface, Optional<Recti> rect)
@@ -90,19 +95,18 @@ namespace unicore
 
 	Shared<TargetTexture> SDL2RendererSDL::create_target_texture(const Vector2i& size)
 	{
-		auto sdl_texture = SDL_CreateTexture(_renderer,
-			SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, size.x, size.y);
-		SDL_SetTextureBlendMode(sdl_texture, SDL_BLENDMODE_BLEND);
+		auto tex = create_texture(size, SDL_TEXTUREACCESS_STREAMING);
+		if (!tex)
+		{
+			UC_LOG_ERROR(_logger) << "Failed to create target texture";
+			return nullptr;
+		}
 
-		return make_shared<SDL2TargetTexture>(sdl_texture);
+		return make_shared<SDL2TargetTexture>(tex);
 	}
 
 	bool SDL2RendererSDL::set_target(const Shared<TargetTexture>& texture)
 	{
-		if (_target == texture)
-			return true;
-
-		
 		if (const auto tex = std::dynamic_pointer_cast<SDL2TargetTexture>(texture))
 		{
 			if (SDL_SetRenderTarget(_renderer, tex->handle()) == 0)
@@ -159,9 +163,9 @@ namespace unicore
 		_viewport = rect;
 		if (_viewport.has_value())
 		{
-			SDL_Rect rect;
-			SDL2Utils::convert(_viewport.value(), rect);
-			SDL_RenderSetViewport(_renderer, &rect);
+			SDL_Rect sdl_rect;
+			SDL2Utils::convert(_viewport.value(), sdl_rect);
+			SDL_RenderSetViewport(_renderer, &sdl_rect);
 		}
 		else
 		{
@@ -225,13 +229,13 @@ namespace unicore
 	void SDL2RendererSDL::draw_points(const Vector2i* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points);
-		SDL_RenderDrawPoints(_renderer, s_points.data(), count);
+		SDL_RenderDrawPoints(_renderer, s_points.data(), static_cast<int>(count));
 	}
 
 	void SDL2RendererSDL::draw_points_f(const Vector2f* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points_f);
-		SDL_RenderDrawPointsF(_renderer, s_points_f.data(), count);
+		SDL_RenderDrawPointsF(_renderer, s_points_f.data(), static_cast<int>(count));
 	}
 
 	// DRAW LINES /////////////////////////////////////////////////////////////////
@@ -250,14 +254,14 @@ namespace unicore
 	void SDL2RendererSDL::draw_poly_line(const Vector2i* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points);
-		SDL_RenderDrawLines(_renderer, s_points.data(), count);
+		SDL_RenderDrawLines(_renderer, s_points.data(), static_cast<int>(count));
 		_draw_calls++;
 	}
 
 	void SDL2RendererSDL::draw_poly_line_f(const Vector2f* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points_f);
-		SDL_RenderDrawLinesF(_renderer, s_points_f.data(), count);
+		SDL_RenderDrawLinesF(_renderer, s_points_f.data(), static_cast<int>(count));
 		_draw_calls++;
 	}
 
@@ -284,9 +288,9 @@ namespace unicore
 	{
 		SDL2Utils::convert(rects, count, s_rects);
 		if (!filled)
-			SDL_RenderDrawRects(_renderer, s_rects.data(), count);
+			SDL_RenderDrawRects(_renderer, s_rects.data(), static_cast<int>(count));
 		else
-			SDL_RenderFillRects(_renderer, s_rects.data(), count);
+			SDL_RenderFillRects(_renderer, s_rects.data(), static_cast<int>(count));
 		_draw_calls++;
 	}
 
@@ -294,9 +298,9 @@ namespace unicore
 	{
 		SDL2Utils::convert(rects, count, s_rects_f);
 		if (!filled)
-			SDL_RenderDrawRectsF(_renderer, s_rects_f.data(), count);
+			SDL_RenderDrawRectsF(_renderer, s_rects_f.data(), static_cast<int>(count));
 		else
-			SDL_RenderFillRectsF(_renderer, s_rects_f.data(), count);
+			SDL_RenderFillRectsF(_renderer, s_rects_f.data(), static_cast<int>(count));
 		_draw_calls++;
 	}
 
@@ -408,7 +412,7 @@ namespace unicore
 			const auto result = SDL_RenderCopyEx(_renderer, tex->handle(),
 				src_rect.has_value() ? &SDL2Utils::convert(src_rect.value(), src) : nullptr,
 				dst_rect.has_value() ? &SDL2Utils::convert(dst_rect.value(), dst) : nullptr,
-				angle.value(),
+				(double)angle.value(),
 				center.has_value() ? &SDL2Utils::convert(center.value(), c) : nullptr,
 				convert_flip(flip)
 			);
@@ -435,7 +439,7 @@ namespace unicore
 			const auto result = SDL_RenderCopyExF(_renderer, tex->handle(),
 				src_rect.has_value() ? &SDL2Utils::convert(src_rect.value(), src) : nullptr,
 				dst_rect.has_value() ? &SDL2Utils::convert(dst_rect.value(), dst) : nullptr,
-				angle.value(),
+				(double)angle.value(),
 				center.has_value() ? &SDL2Utils::convert(center.value(), c) : nullptr,
 				convert_flip(flip)
 			);
@@ -489,6 +493,20 @@ namespace unicore
 	void SDL2RendererSDL::update_logical_size()
 	{
 		SDL_RenderGetLogicalSize(_renderer, &_logical_size.x, &_logical_size.y);
+	}
+
+	SDL_Texture* SDL2RendererSDL::create_texture(const Vector2i& size, SDL_TextureAccess access) const
+	{
+		const auto tex = SDL_CreateTexture(_renderer,
+			SDL_PIXELFORMAT_ABGR8888, access, size.x, size.y);
+		if (!tex)
+		{
+			UC_LOG_ERROR(_logger) << SDL_GetError();
+			return nullptr;
+		}
+
+		SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+		return tex;
 	}
 
 	SDL_RendererFlip SDL2RendererSDL::convert_flip(SDLRenderFlipFlags flags)

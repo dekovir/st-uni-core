@@ -117,6 +117,8 @@ namespace unicore
 		void update_viewport();
 		void update_logical_size();
 
+		UC_NODISCARD SDL_Texture* create_texture(const Vector2i& size, SDL_TextureAccess access) const;
+
 		static SDL_RendererFlip convert_flip(SDLRenderFlipFlags flags);
 	};
 }
