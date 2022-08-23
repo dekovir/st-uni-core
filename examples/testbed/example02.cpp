@@ -4,9 +4,46 @@
 #include "unicore/Font.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/Reflection.hpp"
+#include "unicore/Containers.hpp"
 
 namespace unicore
 {
+	template<typename ... Ts, typename Tuple>
+	constexpr auto tuple_extract(Tuple tuple)
+	{
+		auto get_element = [](auto el) {
+			if constexpr ((std::is_base_of_v<decltype(el), Ts> || ...)) {
+				return std::make_tuple(std::move(el));
+			}
+			else {
+				return std::make_tuple();
+			}
+		};
+		return std::apply([&](auto ... args)
+			{
+				return std::tuple_cat(get_element(std::move(args)) ...);
+			}
+			, std::move(tuple)
+				);
+	}
+
+
+
+	template<> struct Reflection::Type<Path> {
+		static constexpr auto name = make_const_string("Path");
+		static constexpr auto members = std::make_tuple(
+			Reflection::CommentAttribute("test"),
+			Reflection::PropertyInfo<Path, bool>("absolute"),
+			Reflection::PropertyInfo<Path, bool>("empty"),
+			Reflection::PropertyInfo<Path, size_t>("hash"),
+			Reflection::AttributeUsage(AttributeTargets::Class)
+		);
+		static constexpr auto members_count = std::tuple_size_v<decltype(members)>;
+		static constexpr auto attr = tuple_extract<Attribute>(members);
+		static constexpr auto attr_count = std::tuple_size_v<decltype(attr)>;
+	};
+
 	UC_EXAMPLE_REGISTER(Example02, "Stress test");
 
 	void Entity::update(const Vector2i& size, float delta)
@@ -32,6 +69,21 @@ namespace unicore
 	Example02::Example02(const ExampleContext& context)
 		: Example(context)
 	{
+		using Type = Reflection::Type<Path>;
+
+		constexpr auto r1 = TupleHelper::sub<2>(Type::members);
+		static_assert(std::get<0>(r1).text == "test");
+
+		using I1 = std::index_sequence<5, 1, 4>;
+
+		constexpr auto t2 = ArrayHelper::make(5, 1, 10) + Array<int, 0>() + ArrayHelper::make(3, 4);
+		//constexpr auto t3 = std::get<std::get<0>(t2)>(Type::members);
+		static_assert(t2[4] == 4);
+
+		static_assert(Type::name == "Path");
+		static_assert(Type::members_count == 5);
+		//constexpr auto t = std::get<0>(Type::attr).text;
+		//static_assert(t == "test");
 	}
 
 	bool Example02::load(ResourceCache& resources)
