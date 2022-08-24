@@ -1,4 +1,5 @@
 #pragma once
+#include "unicore/Logger.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Display.hpp"
 

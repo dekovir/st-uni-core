@@ -4,6 +4,7 @@
 #include "unicore/Font.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/Surface.hpp"
+#include "unicore/StringBuilder.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Metadata.hpp"
 #include "unicore/Containers.hpp"

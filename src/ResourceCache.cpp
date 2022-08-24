@@ -2,6 +2,7 @@
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
 #include "unicore/RendererResource.hpp"
+#include "unicore/ResourceLoader.hpp"
 
 namespace unicore
 {
