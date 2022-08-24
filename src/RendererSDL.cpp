@@ -1,5 +1,5 @@
 #include "unicore/RendererSDL.hpp"
-#include "SDL2/SDL2RendererSDL.hpp"
+#include "Platforms/SDL2/SDL2RendererSDL.hpp"
 
 namespace unicore
 {

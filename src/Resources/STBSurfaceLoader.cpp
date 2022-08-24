@@ -1,7 +1,7 @@
-#include "SurfaceLoader.hpp"
-#include <stb_image.h>
-
+#include "STBSurfaceLoader.hpp"
+#if defined(UNICORE_USE_STB)
 #include "unicore/ResourceCache.hpp"
+#include <stb_image.h>
 
 namespace unicore
 {
@@ -31,13 +31,13 @@ namespace unicore
 	static constexpr stbi_io_callbacks s_stream_callbacks{ stbi_stream_read, stbi_stream_skip, stbi_stream_eof };
 	static constexpr std::initializer_list<WStringView> s_ext = { L".png",L".tga",L".jpg",L".jpeg" };
 
-	// SurfaceLoader //////////////////////////////////////////////////////////////
-	SurfaceLoader::SurfaceLoader()
+	// STBSurfaceLoader ///////////////////////////////////////////////////////////
+	STBSurfaceLoader::STBSurfaceLoader()
 		: ResourceLoaderT(s_ext)
 	{
 	}
 
-	Shared<Resource> SurfaceLoader::load(const ResourceLoaderContext& context)
+	Shared<Resource> STBSurfaceLoader::load(const ResourceLoaderContext& context)
 	{
 		int w, h, n;
 		const auto data = stbi_load_from_callbacks(&s_stream_callbacks, &context.stream, &w, &h, &n, 4);
@@ -54,13 +54,13 @@ namespace unicore
 		return std::make_shared<Surface>(Vector2i(w, h), chunk);
 	}
 
-	// DynamicSurfaceLoader ///////////////////////////////////////////////////////
-	DynamicSurfaceLoader::DynamicSurfaceLoader()
+	// STBDynamicSurfaceLoader ////////////////////////////////////////////////////
+	STBDynamicSurfaceLoader::STBDynamicSurfaceLoader()
 		: ResourceLoaderT(s_ext)
 	{
 	}
 
-	Shared<Resource> DynamicSurfaceLoader::load(const ResourceLoaderContext& context)
+	Shared<Resource> STBDynamicSurfaceLoader::load(const ResourceLoaderContext& context)
 	{
 		// Use cached Surface
 		if (const auto cached = context.cache.find<Surface>(context.path))
@@ -86,3 +86,4 @@ namespace unicore
 		return surface;
 	}
 }
+#endif

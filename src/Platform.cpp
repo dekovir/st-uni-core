@@ -5,11 +5,11 @@
 #include "unicore/BinaryData.hpp"
 #include "unicore/StringData.hpp"
 #if defined(UNICORE_USE_SDL2)
-#	include "SDL2/SDL2Platform.hpp"
+#	include "Platforms/SDL2/SDL2Platform.hpp"
 #elif defined(UNICORE_PLATFORM_WINDOWS)
-#	include "Windows/WinPlatform.hpp"
+#	include "Platforms/Windows/WinPlatform.hpp"
 #elif defined(UNICORE_PLATFORM_LINUX)
-#	include "Linux/LinuxPlatform.hpp"
+#	include "Platforms/Linux/LinuxPlatform.hpp"
 #endif
 
 namespace unicore

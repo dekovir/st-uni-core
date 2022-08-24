@@ -109,6 +109,7 @@ endif()
 # stb
 target_include_directories(unicore PRIVATE "${LIBS_DIR}/stb")
 target_compile_definitions(unicore PRIVATE STB_IMAGE_IMPLEMENTATION)
+target_compile_definitions(unicore PUBLIC UNICORE_USE_STB)
 
 if (WIN32)
 	target_link_libraries(unicore PRIVATE Shlwapi)

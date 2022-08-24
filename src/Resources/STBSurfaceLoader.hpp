@@ -1,22 +1,24 @@
 #pragma once
 #include "unicore/Surface.hpp"
+#if defined(UNICORE_USE_STB)
 #include "unicore/ResourceLoader.hpp"
 
 namespace unicore
 {
-	class SurfaceLoader : public ResourceLoaderT<Surface>
+	class STBSurfaceLoader : public ResourceLoaderT<Surface>
 	{
 	public:
-		SurfaceLoader();
+		STBSurfaceLoader();
 
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
 	};
 
-	class DynamicSurfaceLoader : public ResourceLoaderT<DynamicSurface>
+	class STBDynamicSurfaceLoader : public ResourceLoaderT<DynamicSurface>
 	{
 	public:
-		DynamicSurfaceLoader();
+		STBDynamicSurfaceLoader();
 
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
 	};
 }
+#endif

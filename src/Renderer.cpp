@@ -4,7 +4,7 @@
 #include "unicore/Texture.hpp"
 #include "unicore/ResourceLoader.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "SurfaceLoader.hpp"
+#include "Resources/STBSurfaceLoader.hpp"
 
 namespace unicore
 {
@@ -50,8 +50,10 @@ namespace unicore
 
 		if (const auto cache = context.modules.find<ResourceCache>())
 		{
-			cache->add_loader(std::make_shared<SurfaceLoader>());
-			cache->add_loader(std::make_shared<DynamicSurfaceLoader>());
+#if defined(UNICORE_USE_STB)
+			cache->add_loader(std::make_shared<STBSurfaceLoader>());
+			cache->add_loader(std::make_shared<STBDynamicSurfaceLoader>());
+#endif
 
 			cache->add_converter(std::make_shared<TextureConverter>(*this));
 			cache->add_converter(std::make_shared<DynamicTextureConverter>(*this));
