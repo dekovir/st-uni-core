@@ -11,4 +11,12 @@ namespace unicore
 
 		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
 	};
+
+	class DynamicSurfaceLoader : public ResourceLoaderT<DynamicSurface>
+	{
+	public:
+		DynamicSurfaceLoader();
+
+		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
+	};
 }

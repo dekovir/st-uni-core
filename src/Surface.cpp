@@ -2,42 +2,37 @@
 
 namespace unicore
 {
-	Surface::Surface(int width, int height)
-		: _size(width, height), _chunk(_size.area() * 4)
+	Surface::Surface(const Vector2i& size, MemoryChunk chunk)
+		: _size(size), _chunk(std::move(chunk))
 	{
 	}
 
-	Surface::Surface(const Vector2i& size)
-		: _size(size), _chunk(_size.area() * 4)
+	bool Surface::get(int x, int y, Color4b& value) const
+	{
+		if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
+		{
+			const auto offset = calc_offset(x, y);
+			const auto data = static_cast<const uint8_t*>(_chunk.data());
+			const auto ptr = reinterpret_cast<const uint32_t*>(&data[offset]);
+			value = Color4b::from_format(pixel_format_abgr, ptr[0]);
+			return true;
+		}
+
+		return false;
+	}
+
+	// DynamicSurface /////////////////////////////////////////////////////////////
+	DynamicSurface::DynamicSurface(int width, int height)
+		: Surface({ width, height }, MemoryChunk(width* height * 4))
 	{
 	}
 
-	Surface::Surface(const Surface& other)
-		: _size(other.size()), _chunk(other._chunk)
+	DynamicSurface::DynamicSurface(const Vector2i& size)
+		: Surface(size, MemoryChunk(size.area() * 4))
 	{
 	}
 
-	Surface::Surface(Surface&& other) noexcept
-		: _size(std::exchange(other._size, VectorConst2i::Zero))
-		, _chunk(std::move(other._chunk))
-	{
-	}
-
-	Surface& Surface::operator=(const Surface& other)
-	{
-		_size = other._size;
-		_chunk = other._chunk;
-		return *this;
-	}
-
-	Surface& Surface::operator=(Surface&& other) noexcept
-	{
-		_size = std::exchange(other._size, VectorConst2i::Zero);
-		_chunk = std::move(other._chunk);
-		return *this;
-	}
-
-	void Surface::fill(const Color4b& color, const Optional<Recti>& rect)
+	void DynamicSurface::fill(const Color4b& color, const Optional<Recti>& rect)
 	{
 		const auto ptr = reinterpret_cast<uint32_t*>(_chunk.data());
 
@@ -60,7 +55,7 @@ namespace unicore
 		}
 	}
 
-	void Surface::fill(FillFunction func, const Optional<Recti>& rect)
+	void DynamicSurface::fill(FillFunction func, const Optional<Recti>& rect)
 	{
 		const auto ptr = reinterpret_cast<uint32_t*>(_chunk.data());
 
@@ -97,21 +92,7 @@ namespace unicore
 		}
 	}
 
-	bool Surface::get(int x, int y, Color4b& value) const
-	{
-		if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
-		{
-			const auto offset = calc_offset(x, y);
-			const auto data = static_cast<const uint8_t*>(_chunk.data());
-			const auto ptr = reinterpret_cast<const uint32_t*>(&data[offset]);
-			value = Color4b::from_format(pixel_format_abgr, ptr[0]);
-			return true;
-		}
-
-		return false;
-	}
-
-	bool Surface::set(int x, int y, Color4b value)
+	bool DynamicSurface::set(int x, int y, Color4b value)
 	{
 		if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
 		{

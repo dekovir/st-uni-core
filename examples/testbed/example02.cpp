@@ -88,12 +88,16 @@ namespace unicore
 	bool Example02::load(ResourceCache& resources)
 	{
 		_font = resources.load<Font>(L"font_004.fnt"_path);
-
-		// TODO: Make surface read only
-		//if (auto surface = resources.load<Surface>(L"zazaka.png"_path))
-		//	surface->set(16, 16, ColorConst4b::Magenta);
-
+#if 1
 		_tex = resources.load<Texture>(L"zazaka.png"_path);
+#else
+		if (const auto surface = resources.load<DynamicSurface>(L"zazaka.png"_path))
+		{
+			const auto size = surface->size();
+			surface->fill(ColorConst4b::Magenta, Recti(0, size.y / 2, size.x, 2));
+			_tex = renderer.create_texture(*surface);
+		}
+#endif
 
 		return _tex != nullptr;
 	}

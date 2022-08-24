@@ -20,7 +20,7 @@ namespace unicore
 		_map.fill(CellType::Solid, Recti(1, 1, 5, 5));
 		_map.set(10, 10, CellType::Solid);
 
-		Surface solid_sur(8, 8);
+		DynamicSurface solid_sur(8, 8);
 		solid_sur.fill(ColorConst4b::Green);
 
 		if (auto texture = renderer.create_texture(solid_sur))

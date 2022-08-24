@@ -44,7 +44,7 @@ namespace unicore
 		constexpr auto radius_inner = radius_outer / 6;
 		constexpr Vector2i center(radius_outer, radius_outer);
 
-		Surface circle(side, side);
+		DynamicSurface circle(side, side);
 
 		circle.fill([radius_outer, radius_inner, &center](int x, int y) -> Color4b
 			{

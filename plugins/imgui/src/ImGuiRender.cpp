@@ -19,7 +19,7 @@ namespace unicore
 		int width, height;
 		io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
 
-		Surface surface(width, height);
+		DynamicSurface surface(width, height);
 		Memory::copy(surface.data(), pixels, surface.size_bytes());
 
 		_font_texture = render.create_texture(surface);

@@ -51,6 +51,8 @@ namespace unicore
 		if (const auto cache = context.modules.find<ResourceCache>())
 		{
 			cache->add_loader(std::make_shared<SurfaceLoader>());
+			cache->add_loader(std::make_shared<DynamicSurfaceLoader>());
+
 			cache->add_converter(std::make_shared<TextureConverter>(*this));
 			cache->add_converter(std::make_shared<DynamicTextureConverter>(*this));
 		}
