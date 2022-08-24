@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/ConstString.hpp"
 
-namespace unicore::Reflection
+namespace unicore::Metadata
 {
 	template<typename ClassType>
 	struct Type
@@ -45,7 +45,7 @@ namespace unicore::Reflection
 		//bool inherited = false;
 
 		explicit constexpr AttributeUsage(
-			AttributeTargets targets_ = AttributeTargets::All, 
+			AttributeTargets targets_ = AttributeTargets::All,
 			bool allow_multiple_ = false) noexcept
 			: targets(targets_), allow_multiple(allow_multiple_)
 		{}
@@ -54,3 +54,10 @@ namespace unicore::Reflection
 	template<typename T>
 	constexpr bool is_attribute_v = std::is_base_of_v<Attribute, T>;
 }
+
+#define UNICORE_METADATA_REGISTER(TypeName, ...) \
+		template<> struct Metadata::Type<TypeName> { \
+		static constexpr auto name = make_const_string(#TypeName); \
+		static constexpr auto members = std::make_tuple( __VA_ARGS__ ); \
+		static constexpr auto members_count = std::tuple_size_v<decltype(members)>; \
+	}

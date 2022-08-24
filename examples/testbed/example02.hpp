@@ -39,7 +39,6 @@ namespace unicore
 		List<Entity> _entites;
 
 		TimeSpan _add_time = TimeSpanConst::Zero;
-		bool _add_active = false;
 
 		void spawn_entity(const Vector2f& position, const Vector2i& size);
 		void spawn_entities(unsigned count);

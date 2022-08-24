@@ -24,6 +24,7 @@ namespace unicore
 		size_t _size;
 	};
 
+	// ARRAY //////////////////////////////////////////////////////////////////////
 	namespace ArrayHelper
 	{
 		template<typename... Ts>
@@ -58,6 +59,7 @@ namespace unicore
 		return ArrayHelper::concat(a, b);
 	}
 
+	// TUPLE //////////////////////////////////////////////////////////////////////
 	namespace TupleHelper
 	{
 		namespace internal
