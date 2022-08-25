@@ -24,4 +24,7 @@ namespace unicore
 		Shared<Texture> _texture;
 		Recti _rect;
 	};
+
+	using SpriteList = ResourceList<Sprite>;
+	using SpriteAtlas = ResourceAtlas<Sprite>;
 }

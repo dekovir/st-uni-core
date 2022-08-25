@@ -12,6 +12,9 @@ namespace unicore
 		UC_NODISCARD virtual const Vector2i& size() const = 0;
 	};
 
+	using TextureList = ResourceList<Texture>;
+	using TextureAtlas = ResourceAtlas<Texture>;
+
 	class DynamicTexture : public Texture
 	{
 		UC_OBJECT(DynamicTexture, Texture)
