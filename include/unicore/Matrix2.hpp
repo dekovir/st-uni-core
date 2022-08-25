@@ -178,17 +178,20 @@ namespace unicore
 	}
 
 	// CONST /////////////////////////////////////////////////////////////////////
-	template<typename T>
-	struct MatrixConst2
+	namespace details
 	{
-		static constexpr Matrix2<T> Zero = Matrix2<T>(
-			0, 0,
-			0, 0);
+		template<typename T>
+		struct MatrixConst2
+		{
+			static constexpr Matrix2<T> Zero = Matrix2<T>(
+				0, 0,
+				0, 0);
 
-		static constexpr Matrix2<T> Identity = Matrix2<T>(
-			1, 0,
-			0, 1);
-	};
+			static constexpr Matrix2<T> Identity = Matrix2<T>(
+				1, 0,
+				0, 1);
+		};
+	}
 
-	using MatrixConst2f = MatrixConst2<float>;
+	using MatrixConst2f = details::MatrixConst2<float>;
 }

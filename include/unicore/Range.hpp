@@ -10,16 +10,16 @@ namespace unicore
 	public:
 		T min, max;
 
-		constexpr Range() = default;
-		constexpr Range(T a, T b)
+		constexpr Range() noexcept = default;
+		constexpr Range(T a, T b) noexcept
 			: min(Math::min(a, b)), max(Math::max(a, b)) {}
 
-		constexpr Range(const Range& other) = default;
+		constexpr Range(const Range& other) noexcept = default;
 		constexpr Range(Range&& other) noexcept = default;
 
-		~Range() = default;
+		~Range() noexcept = default;
 
-		Range& operator=(const Range& other) = default;
+		Range& operator=(const Range& other) noexcept = default;
 		Range& operator=(Range&& other) noexcept = default;
 
 		UC_NODISCARD constexpr T size() const { return max - min; }
@@ -38,4 +38,20 @@ namespace unicore
 	{
 		return !(a == b);
 	}
+
+	using Rangei = Range<int>;
+	using Rangef = Range<float>;
+
+	namespace details
+	{
+		template<typename T>
+		struct RangeConst
+		{
+			static constexpr Range<T> Zero = Range<T>(0, 0);
+			static constexpr Range<T> One = Range<T>(0, 1);
+		};
+	}
+
+	using RangeConsti = details::RangeConst<int>;
+	using RangeConstf = details::RangeConst<float>;
 }

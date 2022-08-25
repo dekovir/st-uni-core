@@ -194,12 +194,15 @@ namespace unicore
 	}
 
 	// CONST /////////////////////////////////////////////////////////////////////
-	template<typename T>
-	struct RectConst
+	namespace details
 	{
-		static constexpr Rect<T> Zero = Rect<T>(0, 0, 0, 0);
-	};
+		template<typename T>
+		struct RectConst
+		{
+			static constexpr Rect<T> Zero = Rect<T>(0, 0, 0, 0);
+		};
+	}
 
-	using RectConsti = RectConst<int>;
-	using RectConstf = RectConst<float>;
+	using RectConsti = details::RectConst<int>;
+	using RectConstf = details::RectConst<float>;
 }
