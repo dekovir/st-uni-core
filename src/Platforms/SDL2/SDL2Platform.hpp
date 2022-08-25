@@ -6,10 +6,10 @@
 #include "SDL2Display.hpp"
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
-#	include "../Windows/WinLogger.hpp"
-#	include "../Windows/WinStreamProvider.hpp"
+#	include "Platforms/Windows/WinLogger.hpp"
+#	include "Platforms/Windows/WinStreamProvider.hpp"
 #elif defined(UNICORE_PLATFORM_LINUX)
-#	include "../Linux/LinuxStreamProvider.hpp"
+#	include "Platforms/Linux/LinuxStreamProvider.hpp"
 #else
 UC_STATIC_ASSERT_ALWAYS("Unsupported platform")
 #endif

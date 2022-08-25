@@ -4,8 +4,8 @@
 #include "LinuxStreamProvider.hpp"
 
 #if defined(UNICORE_USE_SDL2)
-#include "../SDL2/SDL2Time.hpp"
-#include "../SDL2/SDL2Input.hpp"
+#include "Platforms/SDL2/SDL2Time.hpp"
+#include "Platforms/SDL2/SDL2Input.hpp"
 #endif
 
 namespace unicore

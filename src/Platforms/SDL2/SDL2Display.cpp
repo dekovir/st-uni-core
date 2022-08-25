@@ -1,5 +1,4 @@
 #include "SDL2Display.hpp"
-
 #include "SDL2Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include <SDL_syswm.h>
