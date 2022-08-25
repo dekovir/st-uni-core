@@ -9,6 +9,6 @@ namespace unicore
 	public:
 		XMLPlugin() = default;
 
-		void register_module(const ModuleContext& context) override;
+		void register_plugin(const ModuleContext& context) override;
 	};
 }

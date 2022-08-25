@@ -39,7 +39,9 @@ namespace unicore
 		void unregister_all();
 
 	protected:
-		Dictionary<TypeConstPtr, Module*> _modules;
+		Set<Module*> _modules;
+		Dictionary<TypeConstPtr, Module*> _types;
+
 		const ModuleContext* _context = nullptr;
 	};
 }

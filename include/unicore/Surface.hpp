@@ -6,6 +6,17 @@
 
 namespace unicore
 {
+	namespace CreateResource
+	{
+		struct SolidColor
+		{
+			Color4b color;
+			Vector2i size = Vector2i(8);
+		};
+
+		using Size = Vector2i;
+	}
+
 	// TODO: Is Resource?
 	// TODO: Rename to something else (Bitmap, PixelBuffer, ColorBuffer)
 	class Surface : public Resource, public IReadOnlyBuffer2<Color4b>

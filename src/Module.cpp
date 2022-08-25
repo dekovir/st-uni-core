@@ -2,9 +2,16 @@
 
 namespace unicore
 {
+	static const auto ModuleType = get_type<Module>();
+
 	void ModuleContainer::add(Module& module)
 	{
-		_modules.emplace(&module.type(), &module);
+		_modules.insert(&module);
+
+		for (auto type = &module.type(); type != nullptr && type != &ModuleType; type = type->parent)
+		{
+			_types.emplace(type, &module);
+		}
 
 		if (_context)
 		{
@@ -15,8 +22,8 @@ namespace unicore
 
 	Module* ModuleContainer::find(TypeConstRef type) const
 	{
-		const auto it = _modules.find(&type);
-		return it != _modules.end() ? it->second : nullptr;
+		const auto it = _types.find(&type);
+		return it != _types.end() ? it->second : nullptr;
 	}
 
 	void ModuleContainer::register_all(const ModuleContext& context)
@@ -24,7 +31,7 @@ namespace unicore
 		if (_context) return;
 
 		_context = &context;
-		for (const auto [type, mod] : _modules)
+		for (const auto mod : _modules)
 			mod->register_module(*_context);
 	}
 
@@ -32,7 +39,7 @@ namespace unicore
 	{
 		if (!_context) return;
 
-		for (const auto [type, mod] : _modules)
+		for (const auto mod : _modules)
 			mod->unregister_module(*_context);
 		_context = nullptr;
 	}

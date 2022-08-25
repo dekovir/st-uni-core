@@ -3,6 +3,7 @@
 #include "unicore/Input.hpp"
 #include "unicore/TimeSpan.hpp"
 #include "unicore/Plugin.hpp"
+#include "unicore/plugins/SurfacePlugin.hpp"
 
 namespace unicore
 {
@@ -17,6 +18,8 @@ namespace unicore
 		_modules.add(platform);
 		_modules.add(input);
 		_modules.add(resources);
+
+		create_plugin<SurfacePlugin>();
 	}
 
 	Core::~Core()
@@ -27,6 +30,9 @@ namespace unicore
 	void Core::init()
 	{
 		_modules.register_all({ &logger, _modules });
+
+		for (const auto& plugin : _plugins)
+			plugin->register_plugin({ &logger, _modules });
 
 		on_init();
 	}
@@ -41,7 +47,6 @@ namespace unicore
 
 	void Core::add_plugin(Unique<Plugin>&& plugin)
 	{
-		_modules.add(*plugin);
 		_plugins.push_back(std::move(plugin));
 	}
 }

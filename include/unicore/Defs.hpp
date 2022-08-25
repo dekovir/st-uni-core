@@ -78,11 +78,14 @@ namespace unicore
 	template<typename T>
 	using List = std::vector<T>;
 
-	template<typename T>
-	using Set = std::set<T>;
+	template<typename T, class Sort = std::less<T>>
+	using Set = std::set<T, Sort>;
 
-	template<typename TKey, typename TValue>
-	using Dictionary = std::map<TKey, TValue>;
+	template<typename TKey, typename TValue, class Sort = std::less<TKey>>
+	using Dictionary = std::map<TKey, TValue, Sort>;
+
+	template<typename TKey, typename TValue, class Sort = std::less<TKey>>
+	using DictionaryMulti = std::multimap<TKey, TValue, Sort>;
 
 	template<typename T>
 	using BasicString = std::basic_string<T>;
@@ -123,6 +126,9 @@ namespace unicore
 
 	template<typename T>
 	extern TypeIndex get_type_index(const T& value) { return TypeIndex(get_type_info(value)); }
+
+	template<typename T>
+	using Weak = std::weak_ptr<T>;
 
 	template<typename T>
 	using Shared = std::shared_ptr<T>;

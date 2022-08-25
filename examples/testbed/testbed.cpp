@@ -96,6 +96,7 @@ namespace unicore
 
 		_example_index = index;
 		resources.unload_unused();
+		//resources.dump_used();
 		_example = example;
 	}
 

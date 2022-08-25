@@ -9,6 +9,7 @@ namespace unicore
 	class Context;
 	class ResourceLoader;
 	class ResourceConverter;
+	class ResourceCreator;
 
 	enum class ResourceCacheFlag
 	{
@@ -41,6 +42,15 @@ namespace unicore
 			return std::dynamic_pointer_cast<T>(find(path, get_type<T>()));
 		}
 
+		Shared<Resource> create(TypeConstRef type, const std::any& value);
+
+		template<typename T,
+			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
+		Shared<T> create(const std::any& value)
+		{
+			return std::dynamic_pointer_cast<T>(create(get_type<T>(), value));
+		}
+
 		Shared<Resource> load(const Path& path, TypeConstRef type,
 			ResourceCacheFlags flags = ResourceCacheFlags::Zero);
 
@@ -55,34 +65,31 @@ namespace unicore
 		void calc_memory_use(size_t* system, size_t* video) const;
 
 		void add_loader(const Shared<ResourceLoader>& loader);
-
-		UC_NODISCARD const Set<Shared<ResourceLoader>>& get_loaders(TypeConstRef type) const;
-
-		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-		UC_NODISCARD const Set<Shared<ResourceLoader>>& get_loaders() const
-		{
-			return get_loaders(get_type<T>());
-		}
-
 		void add_converter(const Shared<ResourceConverter>& converter);
-		UC_NODISCARD const Set<Shared<ResourceConverter>>& get_converters(TypeConstRef type) const;
-
-		template<typename T, std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-		UC_NODISCARD const Set<Shared<ResourceConverter>>& get_converters() const
-		{
-			return get_converters(get_type<T>());
-		}
+		void add_creator(const Shared<ResourceCreator>& creator);
 
 		void register_module(const ModuleContext& context) override;
 		void unregister_module(const ModuleContext& context) override;
 
 	protected:
+		struct LoaderSort
+		{
+			bool operator()(const Shared<ResourceLoader>& lhs, const Shared<ResourceLoader>& rhs) const;
+		};
+
+		struct CreatorSort
+		{
+			bool operator()(const Shared<ResourceCreator>& lhs, const Shared<ResourceCreator>& rhs) const;
+		};
+
 		Logger& _logger;
 		List<StreamProvider*> _providers;
 
-		Dictionary<TypeConstPtr, Set<Shared<ResourceLoader>>> _loaders;
+		Dictionary<TypeConstPtr, Set<Shared<ResourceLoader>, LoaderSort>> _loaders;
 		Dictionary<TypeConstPtr, Set<Shared<ResourceConverter>>> _converters;
+		Dictionary<TypeConstPtr, Set<Shared<ResourceCreator>, CreatorSort>> _creators;
 
+		List<Weak<Resource>> _resources;
 		Dictionary<Path, Dictionary<TypeConstPtr, Shared<Resource>>> _cached;
 
 		Shared<Resource> load_resource(const Path& path, TypeConstRef type, Logger* logger);

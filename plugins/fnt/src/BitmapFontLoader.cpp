@@ -20,7 +20,7 @@ namespace unicore
 		}
 
 		Path texture_path(context.path);
-		texture_path.replace_extension(L".*");
+		texture_path.replace_extension(Path::WildcardExt);
 
 		const auto texture = context.cache.load<Texture>(texture_path);
 		if (!texture)

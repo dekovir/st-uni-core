@@ -3,12 +3,10 @@
 
 namespace unicore
 {
-	class FNTPlugin : public Plugin
+	class RendererPlugin : public Plugin
 	{
-		UC_OBJECT(FNTPlugin, Plugin)
+		UC_OBJECT(RendererPlugin, Plugin)
 	public:
-		FNTPlugin() = default;
-
 		void register_plugin(const ModuleContext& context) override;
 	};
 }

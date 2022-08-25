@@ -75,6 +75,9 @@ namespace unicore
 	extern UNICODE_STRING_BUILDER_FORMAT(float);
 	extern UNICODE_STRING_BUILDER_FORMAT(double);
 
+	extern UNICODE_STRING_BUILDER_FORMAT(const std::type_info&);
+	extern UNICODE_STRING_BUILDER_FORMAT(const std::type_index&);
+
 	template<typename TChar,
 		std::enable_if_t<std::is_same_v<TChar, char> || std::is_same_v<TChar, wchar_t>>* = nullptr>
 	extern StringBuilder& operator << (StringBuilder& builder, const BasicStringView<TChar> value)

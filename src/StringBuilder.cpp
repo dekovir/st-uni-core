@@ -90,4 +90,14 @@ namespace unicore
 		// TODO: Implement precision
 		return builder << StringHelper::print_format("%.2lf", value);
 	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const std::type_info&)
+	{
+		return builder << "<" << value.name() << ">";
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const std::type_index&)
+	{
+		return builder << "<" << value.name() << ">";
+	}
 }

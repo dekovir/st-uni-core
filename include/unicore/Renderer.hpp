@@ -35,8 +35,6 @@ namespace unicore
 		virtual bool begin_scene() = 0;
 		virtual void end_scene() = 0;
 
-		void register_module(const ModuleContext& context) override;
-
 	protected:
 		Logger& _logger;
 	};

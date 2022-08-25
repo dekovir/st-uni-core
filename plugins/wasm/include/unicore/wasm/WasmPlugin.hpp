@@ -7,7 +7,5 @@ namespace unicore
 	{
 	public:
 		WasmPlugin() = default;
-
-		void register_module(const ModuleContext& context) override;
 	};
 }

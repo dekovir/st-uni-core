@@ -3,6 +3,8 @@
 #include "unicore/Logger.hpp"
 #include "unicore/RendererResource.hpp"
 #include "unicore/ResourceLoader.hpp"
+#include "unicore/ResourceCreator.hpp"
+#include "unicore/ResourceConverter.hpp"
 
 namespace unicore
 {
@@ -16,6 +18,7 @@ namespace unicore
 	void ResourceCache::unload_all()
 	{
 		_cached.clear();
+		_resources.clear();
 	}
 
 	void ResourceCache::unload_unused()
@@ -31,6 +34,13 @@ namespace unicore
 				}
 				else ++it;
 			}
+		}
+
+		// Remove expired weak pointers
+		for (auto it = _resources.begin(); it != _resources.end();)
+		{
+			if (it->use_count() > 0) ++it;
+			else it = _resources.erase(it);
 		}
 	}
 
@@ -90,6 +100,39 @@ namespace unicore
 		return std::nullopt;
 	}
 
+	Shared<Resource> ResourceCache::create(TypeConstRef type, const std::any& value)
+	{
+		const auto it = _creators.find(&type);
+		if (it == _creators.end())
+		{
+			UC_LOG_WARNING(_logger) << "No creator added for " << type;
+			return nullptr;
+		}
+
+		const ResourceCreatorContext context{ *this, &_logger };
+
+		for (const auto& creator : it->second)
+		{
+			if (!creator->can_create(value))
+				continue;
+
+			if (auto resource = creator->create(context, value); resource != nullptr)
+			{
+				_resources.push_back(resource);
+				return resource;
+			}
+
+			UC_LOG_ERROR(_logger) << "Failed to load " << type
+				<< " with creator " << creator->type()
+				<< " with value" << value.type();
+		}
+
+		UC_LOG_WARNING(_logger) << "No " << type << " creator found for '"
+			<< value.type().name() << "' value type";
+
+		return nullptr;
+	}
+
 	Shared<Resource> ResourceCache::load(const Path& path, TypeConstRef type, ResourceCacheFlags flags)
 	{
 		if (auto resource_find = find(path, type))
@@ -100,9 +143,9 @@ namespace unicore
 		if (auto resource = load_resource(path, type, logger))
 			return resource;
 
-		if (const auto converters = get_converters(type); !converters.empty())
+		if (const auto it = _converters.find(&type); it != _converters.end())
 		{
-			for (const auto& converter : converters)
+			for (const auto& converter : it->second)
 			{
 				// TODO: Handle cyclic loading
 				if (auto raw = load(path, converter->raw_type(), flags))
@@ -111,6 +154,7 @@ namespace unicore
 					{
 						// TODO: Optimize (get path directly from load function)
 						const auto converted_path = find_path(*raw);
+						_resources.push_back(resource);
 						add_resource(resource, converted_path.value_or(path), type);
 						return resource;
 					}
@@ -129,13 +173,19 @@ namespace unicore
 
 		UC_LOG_INFO(_logger) << "Used resource dump";
 		UC_LOG_INFO(_logger) << "----------------------------------";
-		for (const auto& [path, map] : _cached)
+
+		for (const auto& weak : _resources)
 		{
-			for (const auto& [type, resource] : map)
+			if (const auto resource = weak.lock())
 			{
 				const auto memory_use = MemorySize{ resource->get_system_memory_use() };
 				sys_mem += memory_use;
-				UC_LOG_INFO(_logger) << index << ": " << path << " " << type
+
+				auto path = find_path(*resource);
+
+				UC_LOG_INFO(_logger) << index << ": "
+					<< (path.has_value() ? path.value() : Path::Empty)
+					<< " " << resource->type()
 					<< " [" << resource.use_count()
 					<< ", " << memory_use << "]";
 				index++;
@@ -179,23 +229,15 @@ namespace unicore
 		}
 	}
 
-	const Set<Shared<ResourceLoader>>& ResourceCache::get_loaders(TypeConstRef type) const
-	{
-		static Set<Shared<ResourceLoader>> s_empty;
-		const auto it = _loaders.find(&type);
-		return it != _loaders.end() ? it->second : s_empty;
-	}
-
 	void ResourceCache::add_converter(const Shared<ResourceConverter>& converter)
 	{
 		_converters[&converter->resource_type()].insert(converter);
 	}
 
-	const Set<Shared<ResourceConverter>>& ResourceCache::get_converters(TypeConstRef type) const
+	void ResourceCache::add_creator(const Shared<ResourceCreator>& creator)
 	{
-		static Set<Shared<ResourceConverter>> s_empty;
-		const auto it = _converters.find(&type);
-		return it != _converters.end() ? it->second : s_empty;
+		for (auto type = &creator->resource_type(); type != nullptr && type != &s_resource_type; type = type->parent)
+			_creators[type].insert(creator);
 	}
 
 	void ResourceCache::register_module(const ModuleContext& context)
@@ -209,20 +251,37 @@ namespace unicore
 
 		_loaders.clear();
 		_converters.clear();
+		_creators.clear();
 
 		unload_all();
 		clear();
 	}
 
+	// ============================================================================
+	bool ResourceCache::LoaderSort::operator()(const Shared<ResourceLoader>& lhs, const Shared<ResourceLoader>& rhs) const
+	{
+		if (lhs->priority() == rhs->priority())
+			return lhs < rhs;
+		return lhs->priority() < rhs->priority();
+	}
+
+	bool ResourceCache::CreatorSort::operator()(const Shared<ResourceCreator>& lhs, const Shared<ResourceCreator>& rhs) const
+	{
+		if (lhs->priority() == rhs->priority())
+			return lhs < rhs;
+		return lhs->priority() < rhs->priority();
+	}
+
 	Shared<Resource> ResourceCache::load_resource(const Path& path, TypeConstRef type, Logger* logger)
 	{
-		const auto& loaders = get_loaders(type);
-		if (loaders.empty()) return nullptr;
+		const auto it = _loaders.find(&type);
+		if (it == _loaders.end()) return nullptr;
 
+		const auto& loaders = it->second;
 		// TODO: Implement loading stack for prevent recursive loading
 		for (const auto& loader : loaders)
 		{
-			if (path.has_extension(L".*"))
+			if (path.has_extension(Path::WildcardExt))
 			{
 				for (const auto& extension : loader->extension())
 				{
@@ -261,8 +320,8 @@ namespace unicore
 	{
 		if (auto resource = loader.load({ path, *this, stream, logger }))
 		{
-			if (resource->cache_policy() == ResourceCachePolicy::CanCache)
-				add_resource(resource, path, type);
+			_resources.push_back(resource);
+			add_resource(resource, path, type);
 
 			return resource;
 		}
@@ -272,9 +331,14 @@ namespace unicore
 
 	bool ResourceCache::add_resource(const Shared<Resource>& resource, const Path& path, TypeConstRef type)
 	{
-		_cached[path].insert_or_assign(&type, resource);
-		UC_LOG_DEBUG(_logger) << "Loaded " << type << " from " << path
-			<< " " << MemorySize{ resource->get_system_memory_use() };
-		return true;
+		if (resource->cache_policy() == ResourceCachePolicy::CanCache)
+		{
+			_cached[path].insert_or_assign(&type, resource);
+			UC_LOG_DEBUG(_logger) << "Added " << type << " from " << path
+				<< " " << MemorySize{ resource->get_system_memory_use() };
+			return true;
+		}
+
+		return false;
 	}
 }

@@ -1,9 +1,10 @@
 #pragma once
+#include <any>
 #include "unicore/Object.hpp"
 
 namespace unicore
 {
-	enum class ResourceCachePolicy
+	enum class ResourceCachePolicy : uint8_t
 	{
 		CanCache,
 		NoCache,

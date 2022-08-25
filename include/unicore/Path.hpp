@@ -77,6 +77,8 @@ namespace unicore
 
 		static const Path Empty;
 
+		static constexpr WStringView WildcardExt = L".*";
+
 	protected:
 		WString _data;
 		size_t _hash;
