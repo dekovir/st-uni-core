@@ -203,18 +203,21 @@ namespace unicore
 	}
 
 	// CONST /////////////////////////////////////////////////////////////////////
-	template<typename T>
-	struct VectorConst2
+	namespace details
 	{
-		static constexpr Vector2<T> Zero = Vector2<T>(0, 0);
-		static constexpr Vector2<T> One = Vector2<T>(1, 1);
+		template<typename T>
+		struct VectorConst2
+		{
+			static constexpr Vector2<T> Zero = Vector2<T>(0, 0);
+			static constexpr Vector2<T> One = Vector2<T>(1, 1);
 
-		static constexpr Vector2<T> AxisX = Vector2<T>(1, 0);
-		static constexpr Vector2<T> AxisY = Vector2<T>(0, 1);
-	};
+			static constexpr Vector2<T> AxisX = Vector2<T>(1, 0);
+			static constexpr Vector2<T> AxisY = Vector2<T>(0, 1);
+		};
+	}
 
-	using VectorConst2i = VectorConst2<int>;
-	using VectorConst2f = VectorConst2<float>;
+	using VectorConst2i = details::VectorConst2<int>;
+	using VectorConst2f = details::VectorConst2<float>;
 
 	template<typename T>
 	extern UNICODE_STRING_BUILDER_FORMAT(const Vector2<T>&)

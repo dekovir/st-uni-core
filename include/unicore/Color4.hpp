@@ -175,27 +175,30 @@ namespace unicore
 	using Color4b = Color4<uint8_t>;
 	using Color4f = Color4<float>;
 
-	template<typename T>
-	struct ColorConst4
+	namespace details
 	{
-		static constexpr auto Clear = Color4<T>::from_argb(0);
+		template<typename T>
+		struct ColorConst4
+		{
+			static constexpr auto Clear = Color4<T>::from_argb(0);
 
-		static constexpr auto Black = Color4<T>::from_rgb(0x000000);
-		static constexpr auto White = Color4<T>::from_rgb(0xFFFFFF);
+			static constexpr auto Black = Color4<T>::from_rgb(0x000000);
+			static constexpr auto White = Color4<T>::from_rgb(0xFFFFFF);
 
-		static constexpr auto Red = Color4<T>::from_rgb(0xFF0000);
-		static constexpr auto Green = Color4<T>::from_rgb(0x00FF00);
-		static constexpr auto Blue = Color4<T>::from_rgb(0x0000FF);
+			static constexpr auto Red = Color4<T>::from_rgb(0xFF0000);
+			static constexpr auto Green = Color4<T>::from_rgb(0x00FF00);
+			static constexpr auto Blue = Color4<T>::from_rgb(0x0000FF);
 
-		static constexpr auto Magenta = Color4<T>::from_rgb(0xFF00FF);
-		static constexpr auto Yellow = Color4<T>::from_rgb(0xFFFF00);
-		static constexpr auto Cyan = Color4<T>::from_rgb(0x00FFFF);
+			static constexpr auto Magenta = Color4<T>::from_rgb(0xFF00FF);
+			static constexpr auto Yellow = Color4<T>::from_rgb(0xFFFF00);
+			static constexpr auto Cyan = Color4<T>::from_rgb(0x00FFFF);
 
-		ColorConst4() = delete;
-	};
+			ColorConst4() = delete;
+		};
+	}
 
-	using ColorConst4b = ColorConst4<uint8_t>;
-	using ColorConst4f = ColorConst4<float>;
+	using ColorConst4b = details::ColorConst4<uint8_t>;
+	using ColorConst4f = details::ColorConst4<float>;
 
 	//static constexpr Color4b operator"" _argb(unsigned long long value)
 	//{

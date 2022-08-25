@@ -153,25 +153,28 @@ namespace unicore
 	using Color3b = Color3<uint8_t>;
 	using Color3f = Color3<float>;
 
-	template<typename T>
-	struct ColorConst3
+	namespace details
 	{
-		static constexpr auto Clear = Color3<T>::from_argb(0);
+		template<typename T>
+		struct ColorConst3
+		{
+			static constexpr auto Clear = Color3<T>::from_argb(0);
 
-		static constexpr auto Black = Color3<T>::from_rgb(0x000000);
-		static constexpr auto White = Color3<T>::from_rgb(0xFFFFFF);
+			static constexpr auto Black = Color3<T>::from_rgb(0x000000);
+			static constexpr auto White = Color3<T>::from_rgb(0xFFFFFF);
 
-		static constexpr auto Red = Color3<T>::from_rgb(0xFF0000);
-		static constexpr auto Green = Color3<T>::from_rgb(0x00FF00);
-		static constexpr auto Blue = Color3<T>::from_rgb(0x0000FF);
+			static constexpr auto Red = Color3<T>::from_rgb(0xFF0000);
+			static constexpr auto Green = Color3<T>::from_rgb(0x00FF00);
+			static constexpr auto Blue = Color3<T>::from_rgb(0x0000FF);
 
-		static constexpr auto Magenta = Color3<T>::from_rgb(0xFF00FF);
-		static constexpr auto Yellow = Color3<T>::from_rgb(0xFFFF00);
-		static constexpr auto Cyan = Color3<T>::from_rgb(0x00FFFF);
+			static constexpr auto Magenta = Color3<T>::from_rgb(0xFF00FF);
+			static constexpr auto Yellow = Color3<T>::from_rgb(0xFFFF00);
+			static constexpr auto Cyan = Color3<T>::from_rgb(0x00FFFF);
 
-		ColorConst3() = delete;
-	};
+			ColorConst3() = delete;
+		};
+	}
 
-	using ColorConst3b = ColorConst3<uint8_t>;
-	using ColorConst3f = ColorConst3<float>;
+	using ColorConst3b = details::ColorConst3<uint8_t>;
+	using ColorConst3f = details::ColorConst3<float>;
 }

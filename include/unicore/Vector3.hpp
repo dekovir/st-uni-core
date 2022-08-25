@@ -144,17 +144,20 @@ namespace unicore
 	}
 
 	// CONST /////////////////////////////////////////////////////////////////////
-	template<typename T>
-	struct VectorConst3
+	namespace details
 	{
-		static constexpr Vector3<T> Zero = Vector2<T>(0, 0, 0);
-		static constexpr Vector3<T> One = Vector2<T>(1, 1, 1);
+		template<typename T>
+		struct VectorConst3
+		{
+			static constexpr Vector3<T> Zero = Vector2<T>(0, 0, 0);
+			static constexpr Vector3<T> One = Vector2<T>(1, 1, 1);
 
-		static constexpr Vector3<T> AxisX = Vector2<T>(1, 0, 0);
-		static constexpr Vector3<T> AxisY = Vector2<T>(0, 1, 0);
-		static constexpr Vector3<T> AxisZ = Vector2<T>(0, 0, 1);
-	};
+			static constexpr Vector3<T> AxisX = Vector2<T>(1, 0, 0);
+			static constexpr Vector3<T> AxisY = Vector2<T>(0, 1, 0);
+			static constexpr Vector3<T> AxisZ = Vector2<T>(0, 0, 1);
+		};
+	}
 
-	using VectorConst3i = VectorConst3<int>;
-	using VectorConst3f = VectorConst3<float>;
+	using VectorConst3i = details::VectorConst3<int>;
+	using VectorConst3f = details::VectorConst3<float>;
 }
