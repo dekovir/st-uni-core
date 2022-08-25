@@ -65,6 +65,7 @@ add_library(unicore STATIC ${UNICORE_SOURCE})
 unicore_init_target(unicore)
 unicore_group_sources_by_folder(unicore)
 target_include_directories(unicore PUBLIC "${UNICORE_INCLUDE}")
+target_include_directories(unicore PRIVATE "${UNICORE_DIR}")
 set_target_properties(unicore PROPERTIES FOLDER "UniCore")
 
 # SDL2

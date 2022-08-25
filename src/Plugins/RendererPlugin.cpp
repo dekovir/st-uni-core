@@ -1,7 +1,7 @@
 #include "unicore/plugins/RendererPlugin.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Renderer.hpp"
-#include "../Resources/TextureConverter.hpp"
+#include "Resources/TextureConverter.hpp"
 
 namespace unicore
 {

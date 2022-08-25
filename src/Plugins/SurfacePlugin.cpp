@@ -1,8 +1,8 @@
 #include "unicore/plugins/SurfacePlugin.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "../Resources/STBSurfaceLoader.hpp"
-#include "../Resources/SolidSurfaceCreator.hpp"
-#include "../Resources/SizeResourceCreator.hpp"
+#include "Resources/STBSurfaceLoader.hpp"
+#include "Resources/SolidSurfaceCreator.hpp"
+#include "Resources/SizeResourceCreator.hpp"
 
 namespace unicore
 {
