@@ -8,7 +8,7 @@ namespace unicore
 {
 	namespace CreateResource
 	{
-		struct SolidColor
+		struct SolidSize
 		{
 			Color4b color;
 			Vector2i size = Vector2i(8);

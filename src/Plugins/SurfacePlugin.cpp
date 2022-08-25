@@ -1,7 +1,7 @@
 #include "unicore/plugins/SurfacePlugin.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "Resources/STBSurfaceLoader.hpp"
-#include "Resources/SolidSurfaceCreator.hpp"
+#include "Resources/SolidSizeCreator.hpp"
 #include "Resources/SizeResourceCreator.hpp"
 
 namespace unicore
@@ -16,8 +16,8 @@ namespace unicore
 			cache->add_loader(std::make_shared<STBSurfaceLoader>());
 			cache->add_loader(std::make_shared<STBDynamicSurfaceLoader>());
 #endif
-			cache->add_creator(std::make_shared<SurfaceSolidSurfaceCreator>());
-			cache->add_creator(std::make_shared<DynamicSurfaceSolidSurfaceCreator>());
+			cache->add_creator(std::make_shared<SurfaceSizeSurfaceCreator>());
+			cache->add_creator(std::make_shared<DynamicSurfaceSolidSizeCreator>());
 
 			cache->add_creator(std::make_shared<DynamicSurfaceSizeCreator>());
 		}
