@@ -35,6 +35,13 @@ namespace unicore
 			return dynamic_cast<T*>(find(get_type<T>()));
 		}
 
+		template<typename ... T,
+			std::enable_if_t<(... && std::is_base_of_v<Module, T>)>* = nullptr>
+		auto finds()
+		{
+			return std::make_pair(find<T>()...);
+		}
+
 		void register_all(const ModuleContext& context);
 		void unregister_all();
 

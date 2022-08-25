@@ -11,10 +11,7 @@ namespace unicore
 	{
 		Plugin::register_plugin(context);
 
-		const auto cache = context.modules.find<ResourceCache>();
-		const auto renderer = context.modules.find<Renderer>();
-
-		if (cache && renderer)
+		if (auto [cache, renderer] = context.modules.finds<ResourceCache, Renderer>(); cache && renderer)
 		{
 			cache->add_converter(std::make_shared<TextureConverter>(*renderer));
 			cache->add_converter(std::make_shared<DynamicTextureConverter>(*renderer));
