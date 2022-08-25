@@ -37,6 +37,14 @@ namespace unicore
 		UC_NODISCARD const DataType& data() const { return _data; }
 		UC_NODISCARD size_t size() const { return _data.size(); }
 
+		
+		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(ResourceList); }
+		UC_NODISCARD size_t get_used_resources(Set<Shared<Resource>>& resources) override
+		{
+			resources.insert(_data.begin(), _data.end());
+			return _data.size();
+		}
+
 	protected:
 		const DataType _data;
 	};
