@@ -37,7 +37,7 @@ namespace unicore
 
 		template<typename ... T,
 			std::enable_if_t<(... && std::is_base_of_v<Module, T>)>* = nullptr>
-		auto finds()
+		auto finds() const
 		{
 			return std::make_pair(find<T>()...);
 		}
