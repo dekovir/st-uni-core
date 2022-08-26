@@ -357,7 +357,7 @@ namespace unicore
 			nullptr, 0
 		);
 		if (result != 0)
-			UC_LOG_WARNING(_logger) << SDL_GetError();
+			UC_LOG_ERROR(_logger) << SDL_GetError();
 
 		_draw_calls++;
 	}
@@ -390,7 +390,7 @@ namespace unicore
 			nullptr, 0
 		);
 		if (result != 0)
-			UC_LOG_WARNING(_logger) << SDL_GetError();
+			UC_LOG_ERROR(_logger) << SDL_GetError();
 
 		_draw_calls++;
 	}
