@@ -11,14 +11,14 @@ namespace unicore
 		GridTopology& topology;
 
 		GridMap(const Vector2i& size, GridTopology& topology)
-			: Buffer2<TCell>(size),
-			topology(topology)
+			: Buffer2<TCell>(size)
+			, topology(topology)
 		{
 		}
 
 		GridMap(int x, int y, GridTopology& topology)
-			: Buffer2<TCell>(x, y),
-			topology(topology)
+			: Buffer2<TCell>(x, y)
+			, topology(topology)
 		{
 		}
 	};

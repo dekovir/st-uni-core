@@ -11,6 +11,7 @@ namespace unicore
 		T z;
 
 		constexpr Vector3() noexcept = default;
+		constexpr Vector3(T x, T y) noexcept;
 		constexpr Vector3(T x, T y, T z) noexcept;
 		explicit constexpr Vector3(T value) noexcept;
 
@@ -90,6 +91,12 @@ namespace unicore
 	static_assert(sizeof(Vector3f) == sizeof(float) * 3);
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
+	template <typename T>
+	constexpr Vector3<T>::Vector3(T x_, T y_) noexcept
+	: x(x_), y(y_), z(0)
+	{
+	}
+
 	template <typename T>
 	constexpr Vector3<T>::Vector3(T _x, T _y, T _z) noexcept
 		: x(_x), y(_y), z(_z)
