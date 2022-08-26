@@ -102,6 +102,12 @@ namespace unicore
 
 	Shared<Resource> ResourceCache::create(TypeConstRef type, const std::any& value)
 	{
+		if (value.type() == typeid(Path))
+		{
+			const auto path = std::any_cast<Path>(value);
+			return load(path, type);
+		}
+
 		const auto it = _creators.find(&type);
 		if (it == _creators.end())
 		{
@@ -118,6 +124,8 @@ namespace unicore
 
 			if (auto resource = creator->create(context, value); resource != nullptr)
 			{
+				UC_LOG_DEBUG(_logger) << "Created " << type << " from " << value.type().name()
+					<< " " << MemorySize{ resource->get_system_memory_use() };
 				_resources.push_back(resource);
 				return resource;
 			}

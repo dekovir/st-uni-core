@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "unicore/BinaryData.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Stream.hpp"
@@ -5,14 +7,9 @@
 
 namespace unicore
 {
-	BinaryData::BinaryData(const void* data, size_t size)
-		: _data(data), _size(size)
+	BinaryData::BinaryData(MemoryChunk chunk)
+		: _chunk(std::move(chunk))
 	{
-	}
-
-	BinaryData::~BinaryData()
-	{
-		Memory::free(_data);
 	}
 
 	BinaryDataLoader::BinaryDataLoader()
@@ -25,11 +22,10 @@ namespace unicore
 		context.stream.seek(0);
 		const auto size = context.stream.size();
 
-		auto buffer = UC_ALLOC(size);
-		if (context.stream.read(buffer, size))
-			return std::make_shared<BinaryData>(buffer, size);
+		MemoryChunk chunk(size);
+		if (context.stream.read(chunk.data(), size))
+			return std::make_shared<BinaryData>(chunk);
 
-		UC_FREE(buffer);
 		UC_LOG_ERROR(context.logger) << "Read failed";
 		return nullptr;
 	}

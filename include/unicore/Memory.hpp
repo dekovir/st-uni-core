@@ -6,8 +6,11 @@ namespace unicore
 	class Memory
 	{
 	public:
+		typedef void*(*AllocFunc)(size_t);
+		typedef void(*FreeFunc)(void*);
+
 		static void* alloc(size_t size);
-		static void free(const void* ptr);
+		static void free(void* ptr);
 
 		static void set(void* dest, int value, size_t size);
 		static void copy(void* dest, const void* src, size_t size);
@@ -39,16 +42,16 @@ namespace unicore
 	public:
 		MemoryChunk();
 		explicit MemoryChunk(size_t size);
-		explicit MemoryChunk(void* data, size_t size, bool free_data = true);
+		explicit MemoryChunk(void* data, size_t size, Memory::FreeFunc free);
 
 		MemoryChunk(const MemoryChunk& other);
 
 		constexpr MemoryChunk(MemoryChunk&& other) noexcept
-			: _data(other._data), _size(other._size), _free_data(other._free_data)
+			: _data(other._data), _size(other._size), _free(other._free)
 		{
 			other._data = nullptr;
 			other._size = 0;
-			other._free_data = false;
+			other._free = nullptr;
 		}
 
 		~MemoryChunk();
@@ -62,7 +65,9 @@ namespace unicore
 		UC_NODISCARD constexpr void* data() { return _data; }
 		UC_NODISCARD constexpr const void* data() const { return _data; }
 
-		void clear();
+		UC_NODISCARD MemoryChunk clone() const;
+
+		void fill(uint8_t value = 0);
 
 		void resize(size_t new_size, bool copy_data = true);
 		void free();
@@ -70,7 +75,7 @@ namespace unicore
 	protected:
 		void* _data;
 		size_t _size;
-		bool _free_data;
+		Memory::FreeFunc _free;
 	};
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const MemoryChunk&);

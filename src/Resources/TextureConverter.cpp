@@ -3,6 +3,7 @@
 
 namespace unicore
 {
+	// TextureConverter ///////////////////////////////////////////////////////////
 	TextureConverter::TextureConverter(Renderer& render)
 		: _renderer(render)
 	{}
@@ -13,6 +14,7 @@ namespace unicore
 		return _renderer.create_texture(surface);
 	}
 
+	// DynamicTextureConverter ////////////////////////////////////////////////////
 	DynamicTextureConverter::DynamicTextureConverter(Renderer& render)
 		: _renderer(render)
 	{}

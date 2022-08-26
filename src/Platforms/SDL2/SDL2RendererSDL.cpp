@@ -52,10 +52,13 @@ namespace unicore
 #if 1
 
 		auto texture = create_texture(size, SDL_TEXTUREACCESS_STATIC);
-		if (SDL_UpdateTexture(texture, nullptr, surface.data(), size.x * 4) != 0)
-			UC_LOG_WARNING(_logger) << SDL_GetError();
+		if (SDL_UpdateTexture(texture, nullptr, surface.data(), size.x * 4) == 0)
+			return make_shared<SDL2Texture>(texture);
 
-		return make_shared<SDL2Texture>(texture);
+		UC_LOG_WARNING(_logger) << SDL_GetError();
+		SDL_DestroyTexture(texture);
+		return nullptr;
+
 #else
 		if (const auto sdl_surface = SDL_CreateRGBSurfaceWithFormatFrom(
 			surface.data(), size.x, size.y, 4 * 8, size.x * 4, SDL_PIXELFORMAT_RGBA32))
@@ -241,23 +244,27 @@ namespace unicore
 	void SDL2RendererSDL::draw_point(const Vector2i& p)
 	{
 		SDL_RenderDrawPoint(_renderer, p.x, p.y);
+		_draw_calls++;
 	}
 
 	void SDL2RendererSDL::draw_point_f(const Vector2f& p)
 	{
 		SDL_RenderDrawPointF(_renderer, p.x, p.y);
+		_draw_calls++;
 	}
 
 	void SDL2RendererSDL::draw_points(const Vector2i* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points);
 		SDL_RenderDrawPoints(_renderer, s_points.data(), static_cast<int>(count));
+		_draw_calls++;
 	}
 
 	void SDL2RendererSDL::draw_points_f(const Vector2f* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points_f);
 		SDL_RenderDrawPointsF(_renderer, s_points_f.data(), static_cast<int>(count));
+		_draw_calls++;
 	}
 
 	// DRAW LINES /////////////////////////////////////////////////////////////////
@@ -344,10 +351,13 @@ namespace unicore
 			color.a = vertex.col.a;
 		}
 
-		SDL_RenderGeometry(_renderer, nullptr,
+		const auto result = SDL_RenderGeometry(
+			_renderer, nullptr,
 			s_vertices.data(), static_cast<int>(num_vertices),
 			nullptr, 0
 		);
+		if (result != 0)
+			UC_LOG_WARNING(_logger) << SDL_GetError();
 
 		_draw_calls++;
 	}
@@ -374,10 +384,13 @@ namespace unicore
 			color.a = vertex.col.a;
 		}
 
-		SDL_RenderGeometry(_renderer, tex_handle,
+		const auto result = SDL_RenderGeometry(
+			_renderer, tex_handle,
 			s_vertices.data(), static_cast<int>(num_vertices),
 			nullptr, 0
 		);
+		if (result != 0)
+			UC_LOG_WARNING(_logger) << SDL_GetError();
 
 		_draw_calls++;
 	}
@@ -394,7 +407,10 @@ namespace unicore
 				dst_rect.has_value() ? &SDL2Utils::convert(dst_rect.value(), dst) : nullptr);
 
 			if (result == 0)
+			{
+				_draw_calls++;
 				return true;
+			}
 
 			UC_LOG_ERROR(_logger) << SDL_GetError();
 		}
@@ -414,7 +430,10 @@ namespace unicore
 				dst_rect.has_value() ? &SDL2Utils::convert(dst_rect.value(), dst) : nullptr);
 
 			if (result == 0)
+			{
+				_draw_calls++;
 				return true;
+			}
 
 			UC_LOG_ERROR(_logger) << SDL_GetError();
 		}
@@ -440,7 +459,10 @@ namespace unicore
 			);
 
 			if (result == 0)
+			{
+				_draw_calls++;
 				return true;
+			}
 
 			UC_LOG_ERROR(_logger) << SDL_GetError();
 		}
@@ -467,7 +489,10 @@ namespace unicore
 			);
 
 			if (result == 0)
+			{
+				_draw_calls++;
 				return true;
+			}
 
 			UC_LOG_ERROR(_logger) << SDL_GetError();
 		}

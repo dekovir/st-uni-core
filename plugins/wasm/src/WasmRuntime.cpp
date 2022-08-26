@@ -19,7 +19,7 @@ namespace unicore
 	{
 		uint32_t size;
 		auto data = m3_GetMemory(_handle, &size, 0);
-		if (data) return MemoryChunk(data, size, false);
+		if (data) return MemoryChunk(data, size, nullptr);
 
 		UC_LOG_ERROR(_logger) << "m3_GetMemory failed";
 		return {};

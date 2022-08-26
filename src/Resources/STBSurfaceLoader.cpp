@@ -40,18 +40,16 @@ namespace unicore
 	Shared<Resource> STBSurfaceLoader::load(const ResourceLoaderContext& context)
 	{
 		int w, h, n;
-		const auto data = stbi_load_from_callbacks(&s_stream_callbacks, &context.stream, &w, &h, &n, 4);
+		const auto data = stbi_load_from_callbacks(
+			&s_stream_callbacks, &context.stream, &w, &h, &n, 4);
 		if (!data)
 		{
 			UC_LOG_ERROR(context.logger) << stbi_failure_reason();
 			return nullptr;
 		}
 
-		MemoryChunk chunk(w * h * 4);
-		Memory::copy(chunk.data(), data, chunk.size());
-		stbi_image_free(data);
-
-		return std::make_shared<Surface>(Vector2i(w, h), chunk);
+		return std::make_shared<Surface>(
+			Vector2i(w, h), MemoryChunk(data, w * h * 4, &stbi_image_free));
 	}
 
 	// STBDynamicSurfaceLoader ////////////////////////////////////////////////////

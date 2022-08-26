@@ -10,7 +10,7 @@ namespace unicore
 		return new uint8_t[size];
 	}
 
-	void Memory::free(const void* ptr)
+	void Memory::free(void* ptr)
 	{
 		delete[] static_cast<const uint8_t*>(ptr);
 	}
@@ -32,18 +32,18 @@ namespace unicore
 
 	// ===========================================================================
 	MemoryChunk::MemoryChunk()
-		: _data(nullptr), _size(0), _free_data(false)
+		: _data(nullptr), _size(0), _free(nullptr)
 	{
 	}
 
 	MemoryChunk::MemoryChunk(size_t size)
-		: _size(size), _free_data(true)
+		: MemoryChunk(Memory::alloc(size), size, &Memory::free)
 	{
 		_data = size > 0 ? static_cast<uint8_t*>(UC_ALLOC(size)) : nullptr;
 	}
 
-	MemoryChunk::MemoryChunk(void* data, size_t size, bool free_data)
-		: _data(data), _size(size), _free_data(free_data)
+	MemoryChunk::MemoryChunk(void* data, size_t size, Memory::FreeFunc free)
+		: _data(data), _size(size), _free(free)
 	{
 	}
 
@@ -75,43 +75,54 @@ namespace unicore
 	{
 		if (this != &other)
 		{
+			free();
+
 			_data = std::exchange(other._data, nullptr);
 			_size = std::exchange(other._size, 0);
+			_free = std::exchange(other._free, nullptr);
 		}
 		return *this;
 	}
 
-	void MemoryChunk::clear()
+	MemoryChunk MemoryChunk::clone() const
+	{
+		MemoryChunk clone(_size);
+		Memory::copy(clone._data, _data, _size);
+		return clone;
+	}
+
+	void MemoryChunk::fill(uint8_t value)
 	{
 		if (!empty())
-			Memory::set(_data, 0, _size);
+			Memory::set(_data, value, _size);
 	}
 
 	void MemoryChunk::resize(size_t new_size, bool copy_data)
 	{
 		if (new_size == _size) return;
 
-		const auto new_mem = static_cast<uint8_t*>(UC_ALLOC(new_size));
+		const auto new_mem = Memory::alloc(new_size);
 		if (copy_data)
 		{
 			const auto copy_size = Math::min(new_size, _size);
 			Memory::copy(new_mem, _data, copy_size);
 		}
 
+		free();
+
 		_data = new_mem;
 		_size = new_size;
+		_free = &Memory::free;
 	}
 
 	void MemoryChunk::free()
 	{
-		if (!empty())
-		{
-			if (_free_data)
-				UC_FREE(_data);
+		if (_free && _data)
+			_free(_data);
 
-			_data = nullptr;
-			_size = 0;
-		}
+		_free = nullptr;
+		_data = nullptr;
+		_size = 0;
 	}
 
 	UNICODE_STRING_BUILDER_FORMAT(const MemoryChunk&)

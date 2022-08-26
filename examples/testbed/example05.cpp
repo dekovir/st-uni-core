@@ -2,9 +2,54 @@
 #include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/ResourceCreator.hpp"
+#include "unicore/Texture.hpp"
 
 namespace unicore
 {
+	namespace CreateResource
+	{
+		struct TileSet
+		{
+			Path path;
+			Vector2i tile;
+		};
+	}
+
+	class SpriteListTileSetCreator : public ResourceCreatorData<SpriteList, CreateResource::TileSet>
+	{
+		UC_OBJECT(SpriteListTileSetCreator, ResourceCreatorData)
+	public:
+
+	protected:
+		Shared<SpriteList> create_from_data(
+			const ResourceCreatorContext& context,
+			const CreateResource::TileSet& data) override
+		{
+			auto tex = context.cache.load<Texture>(data.path);
+			if (!tex) return nullptr;
+
+			const auto size = tex->size();
+			if (size.x < data.tile.x || size.y < data.tile.y)
+				return nullptr;
+
+			const auto count_x = std::div(size.x, data.tile.x).quot;
+			const auto count_y = std::div(size.y, data.tile.y).quot;
+
+			SpriteList::DataType list;
+			for (int i_y = 0; i_y < count_y; i_y++)
+				for (int i_x = 0; i_x < count_x; i_x++)
+				{
+					const Vector2i pos(i_x * data.tile.x, i_y * data.tile.y);
+					auto spr = std::make_shared<Sprite>(
+						tex, Recti(pos, data.tile));
+					list.push_back(spr);
+				}
+
+			return std::make_shared<SpriteList>(list);
+		}
+	};
+
 	UC_EXAMPLE_REGISTER(Example05, "GridMap");
 
 	Example05::Example05(const ExampleContext& context)
@@ -17,14 +62,14 @@ namespace unicore
 
 	bool Example05::load(ResourceCache& resources)
 	{
+		resources.add_creator(std::make_shared<SpriteListTileSetCreator>());
+
+		_tiles = resources.create<SpriteList>(
+			CreateResource::TileSet{ L"tiles.png"_path, Vector2i(16) });
+
+		_map.fill(CellType::Grass);
 		_map.fill(CellType::Solid, Recti(1, 1, 5, 5));
 		_map.set(10, 10, CellType::Solid);
-
-		DynamicSurface solid_sur(8, 8);
-		solid_sur.fill(ColorConst4b::Green);
-
-		if (auto texture = renderer.create_texture(solid_sur))
-			_tiles[static_cast<int>(CellType::Solid)] = std::make_shared<Sprite>(texture);
 
 		return true;
 	}
@@ -32,15 +77,15 @@ namespace unicore
 	void Example05::update()
 	{
 		static List<Vector2f> points;
-		auto& size = _map.size();
+		const auto map_size = _map.size();
 
 		// DRAW CELLS //////////////////////////////////////////////////////////////
 		_graphics.clear();
 		_graphics.set_transform(_tr);
 
 		_graphics.set_color(ColorConst4b::White);
-		for (auto y = 0; y < size.y; y++)
-			for (auto x = 0; x < size.x; x++)
+		for (auto y = 0; y < map_size.y; y++)
+			for (auto x = 0; x < map_size.x; x++)
 			{
 				const GridIndex index(x, y);
 
@@ -50,8 +95,8 @@ namespace unicore
 			}
 
 		_graphics.set_color(ColorConst4b::Magenta);
-		for (auto y = 0; y < size.y; y++)
-			for (auto x = 0; x < size.x; x++)
+		for (auto y = 0; y < map_size.y; y++)
+			for (auto x = 0; x < map_size.x; x++)
 			{
 				const GridIndex index(x, y);
 				const auto pos = _map.topology.cell_to_pos(index);
@@ -61,14 +106,23 @@ namespace unicore
 
 		// DRAW TILES //////////////////////////////////////////////////////////////
 		_sprite_batch.clear();
-		for (auto y = 0; y < size.y; y++)
-			for (auto x = 0; x < size.x; x++)
+
+		if (_tiles && _tiles->size() > 0)
+		{
+			const auto screen_size = renderer.screen_size();
+			const auto tex = (*_tiles)[0]->texture();
+			const auto size = tex->size();
+			_sprite_batch.draw(tex, Vector2f(screen_size.x - size.x / 2, size.y / 2));
+		}
+
+		for (auto y = 0; y < map_size.y; y++)
+			for (auto x = 0; x < map_size.x; x++)
 			{
 				CellType type;
-				if (!_map.get(x, y, type))
+				if (!_map.get(x, y, type) || type == CellType::Empty)
 					continue;
 
-				auto tile = _tiles[static_cast<int>(type)];
+				auto tile = (*_tiles)[static_cast<int>(type)];
 				if (!tile)
 					continue;
 
@@ -77,6 +131,7 @@ namespace unicore
 				auto center = _map.topology.cell_to_pos(index);
 				_sprite_batch.draw(tile, _tr * center, _graphics.transform.angle, scale);
 			}
+
 		_sprite_batch.flush();
 	}
 

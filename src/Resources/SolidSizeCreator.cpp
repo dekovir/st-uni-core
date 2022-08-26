@@ -1,5 +1,4 @@
 #include "SolidSizeCreator.hpp"
-
 #include "unicore/Renderer.hpp"
 
 namespace unicore

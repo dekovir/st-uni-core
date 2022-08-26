@@ -11,6 +11,9 @@ namespace unicore
 		WinLogger() = default;
 
 		void write(LogType type, const StringView text) override;
+
+	protected:
+		String _prev;
 	};
 }
 #endif

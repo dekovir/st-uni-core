@@ -110,7 +110,7 @@ endif()
 # stb
 target_include_directories(unicore PRIVATE "${LIBS_DIR}/stb")
 target_compile_definitions(unicore PRIVATE STB_IMAGE_IMPLEMENTATION)
-target_compile_definitions(unicore PUBLIC UNICORE_USE_STB)
+target_compile_definitions(unicore PUBLIC UNICORE_USE_STB STBI_NO_STDIO STBI_ONLY_JPEG STBI_ONLY_PNG STBI_ONLY_BMP)
 
 if (WIN32)
 	target_link_libraries(unicore PRIVATE Shlwapi)

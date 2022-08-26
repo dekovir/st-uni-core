@@ -5,13 +5,15 @@
 #include "unicore/SpriteBatch.hpp"
 #include "unicore/Graphics2D.hpp"
 #include "unicore/GridMap.hpp"
+#include "unicore/Sprite.hpp"
 
 namespace unicore
 {
-	enum class CellType
+	enum class CellType : uint16_t
 	{
-		Empty,
-		Solid,
+		Empty = 0,
+		Grass = 1,
+		Solid = 7,
 	};
 
 	class Example05 : public Example
@@ -24,8 +26,9 @@ namespace unicore
 		void draw() const override;
 
 	protected:
+		Shared<SpriteList> _tiles;
+
 		RectangleTopology _topology;
-		Array<Shared<Sprite>, 2> _tiles;
 		GridMap<CellType> _map;
 		Transform2 _tr;
 
