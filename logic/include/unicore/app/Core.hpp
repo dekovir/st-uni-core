@@ -1,6 +1,5 @@
 #pragma once
 #include "unicore/Platform.hpp"
-#include "unicore/Context.hpp"
 
 namespace unicore
 {
@@ -23,8 +22,6 @@ namespace unicore
 		Time& time;
 		Input& input;
 		ResourceCache& resources;
-
-		Context context;
 
 		virtual void init();
 		virtual void update();

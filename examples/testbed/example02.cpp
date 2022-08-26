@@ -6,39 +6,9 @@
 #include "unicore/Surface.hpp"
 #include "unicore/StringBuilder.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "unicore/Metadata.hpp"
-#include "unicore/Containers.hpp"
 
 namespace unicore
 {
-	/*template<> struct Metadata::Type<Path> {
-		static constexpr auto name = make_const_string("Path");
-		static constexpr auto members = std::make_tuple(
-			Metadata::CommentAttribute("test"),
-			Metadata::PropertyInfo<Path, bool>("absolute"),
-			Metadata::PropertyInfo<Path, bool>("empty"),
-			Metadata::PropertyInfo<Path, size_t>("hash"),
-			Metadata::AttributeUsage(AttributeTargets::Class)
-		);
-		static constexpr auto members_count = std::tuple_size_v<decltype(members)>;
-	};*/
-
-	UNICORE_METADATA_REGISTER(Path,
-		Metadata::CommentAttribute("test"),
-		Metadata::PropertyInfo<Path, bool>("absolute"),
-		Metadata::PropertyInfo<Path, bool>("empty"),
-		Metadata::PropertyInfo<Path, size_t>("hash"),
-		Metadata::AttributeUsage(AttributeTargets::Class)
-	);
-
-	template<typename ... T>
-	static auto extract(const std::tuple<T...>& members,
-		List<Metadata::Attribute>& attributes)
-	{
-		constexpr auto N = std::tuple_size_v<decltype(members)>;
-		using Ids = std::make_index_sequence<N>;
-	}
-
 	UC_EXAMPLE_REGISTER(Example02, "Stress test");
 
 	void Entity::update(const Vector2i& size, float delta)
@@ -64,26 +34,6 @@ namespace unicore
 	Example02::Example02(const ExampleContext& context)
 		: Example(context)
 	{
-		using Type = Metadata::Type<Path>;
-
-		constexpr auto r1 = TupleHelper::sub<2>(Type::members);
-		static_assert(std::get<0>(r1).text == "test");
-
-		using I1 = std::index_sequence<5, 1, 4>;
-		using I2 = std::make_index_sequence<5>;
-
-		constexpr auto t2 = ArrayHelper::make(5, 1, 10) + Array<int, 0>() + ArrayHelper::make(3, 4);
-		static_assert(t2[4] == 4);
-
-		//constexpr auto t3 = tuple_indices(Type::members);
-		//static_assert(t3[0] == 0);
-
-		//constexpr auto t4 = tuple_extract(Type::members, t3);
-
-		static_assert(Type::name == "Path");
-		static_assert(Type::members_count == 5);
-		//constexpr auto t = std::get<0>(Type::attr).text;
-		//static_assert(t == "test");
 	}
 
 	bool Example02::load(ResourceCache& resources)
