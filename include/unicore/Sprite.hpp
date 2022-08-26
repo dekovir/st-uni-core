@@ -1,10 +1,23 @@
 #pragma once
-#include "unicore/Rect.hpp"
 #include "unicore/Resource.hpp"
+#include "unicore/Rect.hpp"
+#include "unicore/Path.hpp"
 
 namespace unicore
 {
 	class Texture;
+
+	namespace CreateResource
+	{
+		template<typename T>
+		using PathOrValue = Variant<Path, T>;
+
+		struct TileSet
+		{
+			PathOrValue<Shared<Texture>> texture;
+			Vector2i tile;
+		};
+	}
 
 	// TODO: Do we need virtual methods?
 	class Sprite : public Resource

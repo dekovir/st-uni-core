@@ -37,7 +37,6 @@ namespace unicore
 	protected:
 		Vector2i _size = VectorConst2i::Zero;
 		MemoryChunk _chunk;
-		const void* _data;
 
 		UC_NODISCARD int calc_offset(int x, int y) const { return (y * _size.x + x) * 4; }
 	};

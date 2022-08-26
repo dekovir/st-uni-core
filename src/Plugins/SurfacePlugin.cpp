@@ -3,6 +3,7 @@
 #include "Resources/STBSurfaceLoader.hpp"
 #include "Resources/SolidSizeCreator.hpp"
 #include "Resources/SizeResourceCreator.hpp"
+#include "Resources/SpriteListTileSetCreator.hpp"
 
 namespace unicore
 {
@@ -20,6 +21,8 @@ namespace unicore
 			cache->add_creator(std::make_shared<DynamicSurfaceSolidSizeCreator>());
 
 			cache->add_creator(std::make_shared<DynamicSurfaceSizeCreator>());
+
+			cache->add_creator(std::make_shared<SpriteListTileSetCreator>());
 		}
 	}
 }

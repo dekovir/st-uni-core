@@ -2,54 +2,10 @@
 #include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "unicore/ResourceCreator.hpp"
 #include "unicore/Texture.hpp"
 
 namespace unicore
 {
-	namespace CreateResource
-	{
-		struct TileSet
-		{
-			Path path;
-			Vector2i tile;
-		};
-	}
-
-	class SpriteListTileSetCreator : public ResourceCreatorData<SpriteList, CreateResource::TileSet>
-	{
-		UC_OBJECT(SpriteListTileSetCreator, ResourceCreatorData)
-	public:
-
-	protected:
-		Shared<SpriteList> create_from_data(
-			const ResourceCreatorContext& context,
-			const CreateResource::TileSet& data) override
-		{
-			auto tex = context.cache.load<Texture>(data.path);
-			if (!tex) return nullptr;
-
-			const auto size = tex->size();
-			if (size.x < data.tile.x || size.y < data.tile.y)
-				return nullptr;
-
-			const auto count_x = std::div(size.x, data.tile.x).quot;
-			const auto count_y = std::div(size.y, data.tile.y).quot;
-
-			SpriteList::DataType list;
-			for (int i_y = 0; i_y < count_y; i_y++)
-				for (int i_x = 0; i_x < count_x; i_x++)
-				{
-					const Vector2i pos(i_x * data.tile.x, i_y * data.tile.y);
-					auto spr = std::make_shared<Sprite>(
-						tex, Recti(pos, data.tile));
-					list.push_back(spr);
-				}
-
-			return std::make_shared<SpriteList>(list);
-		}
-	};
-
 	UC_EXAMPLE_REGISTER(Example05, "GridMap");
 
 	Example05::Example05(const ExampleContext& context)
@@ -62,8 +18,6 @@ namespace unicore
 
 	bool Example05::load(ResourceCache& resources)
 	{
-		resources.add_creator(std::make_shared<SpriteListTileSetCreator>());
-
 		_tiles = resources.create<SpriteList>(
 			CreateResource::TileSet{ L"tiles.png"_path, Vector2i(16) });
 
