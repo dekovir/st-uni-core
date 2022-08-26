@@ -17,9 +17,9 @@ namespace unicore
 	{
 		StringView classname;
 		TypeConstPtr parent;
-		const std::type_info& info;
+		const TypeInfo& info;
 
-		Type(StringView classname, TypeConstPtr parent, const std::type_info& info) noexcept;
+		Type(StringView classname, TypeConstPtr parent, const TypeInfo& info) noexcept;
 
 		UC_NODISCARD bool is_derived_from(TypeConstRef parent) const;
 
@@ -27,14 +27,14 @@ namespace unicore
 		UC_NODISCARD bool is_derived_from() const { return is_derived_from(get_type<T>()); }
 	};
 
-	static bool operator==(const Type& a, const Type& b);
-	static bool operator!=(const Type& a, const Type& b);
+	static constexpr bool operator==(const Type& a, const Type& b);
+	static constexpr bool operator!=(const Type& a, const Type& b);
 
-	static bool operator<=(const Type& a, const Type& b);
-	static bool operator>=(const Type& a, const Type& b);
+	static constexpr bool operator<=(const Type& a, const Type& b);
+	static constexpr bool operator>=(const Type& a, const Type& b);
 
-	static bool operator<(const Type& a, const Type& b);
-	static bool operator>(const Type& a, const Type& b);
+	static constexpr bool operator<(const Type& a, const Type& b);
+	static constexpr bool operator>(const Type& a, const Type& b);
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const Type&);
 }

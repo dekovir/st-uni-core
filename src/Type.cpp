@@ -3,7 +3,7 @@
 
 namespace unicore
 {
-	Type::Type(StringView classname_, TypeConstPtr parent_, const std::type_info& info_) noexcept
+	Type::Type(StringView classname_, TypeConstPtr parent_, const TypeInfo& info_) noexcept
 		: classname(classname_)
 		, parent(parent_)
 		, info(info_)
@@ -20,32 +20,32 @@ namespace unicore
 		return false;
 	}
 
-	bool operator==(const Type& a, const Type& b)
+	constexpr bool operator==(const Type& a, const Type& b)
 	{
 		return &a.info == &b.info;
 	}
 
-	bool operator!=(const Type& a, const Type& b)
+	constexpr bool operator!=(const Type& a, const Type& b)
 	{
 		return &a.info != &b.info;
 	}
 
-	bool operator<=(const Type& a, const Type& b)
+	constexpr bool operator<=(const Type& a, const Type& b)
 	{
 		return &a.info <= &b.info;
 	}
 
-	bool operator>=(const Type& a, const Type& b)
+	constexpr bool operator>=(const Type& a, const Type& b)
 	{
 		return &a.info >= &b.info;
 	}
 
-	bool operator<(const Type& a, const Type& b)
+	constexpr bool operator<(const Type& a, const Type& b)
 	{
 		return &a.info < &b.info;
 	}
 
-	bool operator>(const Type& a, const Type& b)
+	constexpr bool operator>(const Type& a, const Type& b)
 	{
 		return &a.info > &b.info;
 	}
