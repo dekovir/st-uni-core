@@ -12,4 +12,17 @@ namespace unicore
 	{
 		return write(chunk.data(), chunk.size(), bytes_written);
 	}
+
+	// StreamWriter ///////////////////////////////////////////////////////////////
+	StreamWriter& StreamWriter::write(StringView str)
+	{
+		stream.write(str.data(), sizeof(char) * str.size());
+		return *this;
+	}
+
+	StreamWriter& StreamWriter::write(WStringView str)
+	{
+		stream.write(str.data(), sizeof(wchar_t) * str.size());
+		return *this;
+	}
 }

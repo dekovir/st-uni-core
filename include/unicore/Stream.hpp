@@ -90,23 +90,14 @@ namespace unicore
 		{
 		}
 
+		StreamWriter& write(StringView str);
+		StreamWriter& write(WStringView str);
+
 		template<typename T,
 			std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 		StreamWriter& write(T value)
 		{
 			stream.write(&value, sizeof(value));
-			return *this;
-		}
-
-		StreamWriter& write(StringView str)
-		{
-			stream.write(str.data(), sizeof(char) * str.size());
-			return *this;
-		}
-
-		StreamWriter& write(WStringView str)
-		{
-			stream.write(str.data(), sizeof(wchar_t) * str.size());
 			return *this;
 		}
 
