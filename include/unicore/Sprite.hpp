@@ -39,5 +39,5 @@ namespace unicore
 	};
 
 	using SpriteList = ResourceList<Sprite>;
-	using SpriteAtlas = ResourceAtlas<Sprite>;
+	using SpriteDictionary = ResourceDictionary<Sprite>;
 }

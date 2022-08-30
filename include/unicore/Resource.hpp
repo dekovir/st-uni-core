@@ -51,21 +51,21 @@ namespace unicore
 
 	template<typename T,
 		std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-	class ResourceAtlas : public Resource
+	class ResourceDictionary : public Resource
 	{
-		UC_OBJECT(ResourceAtlas, Resource)
+		UC_OBJECT(ResourceDictionary, Resource)
 	public:
 		using ResourceList = List<Shared<T>>;
 		using NamesDictionary = Dictionary<String, uint16_t>;
 
-		ResourceAtlas(ResourceList list, NamesDictionary names)
+		ResourceDictionary(ResourceList list, NamesDictionary names)
 			:_list(std::move(list)), _names(std::move(names))
 		{}
 
 		UC_NODISCARD const ResourceList& list() const { return _list; }
 		UC_NODISCARD const NamesDictionary& names() const { return _names; }
 
-		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(ResourceAtlas); }
+		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(ResourceDictionary); }
 		UC_NODISCARD size_t get_used_resources(Set<Shared<Resource>>& resources) override
 		{
 			resources.insert(_list.begin(), _list.end());

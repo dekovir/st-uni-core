@@ -13,7 +13,7 @@ namespace unicore
 	};
 
 	using TextureList = ResourceList<Texture>;
-	using TextureAtlas = ResourceAtlas<Texture>;
+	using TextureDictionary = ResourceDictionary<Texture>;
 
 	class DynamicTexture : public Texture
 	{
