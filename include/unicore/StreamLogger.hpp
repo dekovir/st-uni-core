@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/Logger.hpp"
-#include "unicore/StreamWriter.hpp"
+#include "unicore/Stream.hpp"
 
 namespace unicore
 {
