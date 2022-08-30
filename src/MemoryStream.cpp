@@ -11,7 +11,7 @@ namespace unicore
 
 	int64_t ReadMemoryStream::size() const
 	{
-		return _chunk->size();
+		return static_cast<int64_t>(_chunk->size());
 	}
 
 	int64_t ReadMemoryStream::seek(int64_t offset, SeekMethod method)
@@ -27,11 +27,11 @@ namespace unicore
 			break;
 
 		case SeekMethod::End:
-			_position = _chunk->size() - offset;
+			_position = size() - offset;
 			break;
 		}
 
-		_position = Math::clamp<int64_t>(_position, 0, _chunk->size());
+		_position = Math::clamp<int64_t>(_position, 0, size());
 		return _position;
 	}
 
@@ -61,29 +61,22 @@ namespace unicore
 
 	int64_t WriteMemoryStream::seek(int64_t offset, SeekMethod method)
 	{
-		const auto s = size();
-
 		switch (method)
 		{
 		case SeekMethod::Begin:
-			if (offset >= 0)
-				_position = Math::min(offset, s);
+			_position = offset;
 			break;
 
 		case SeekMethod::Current:
-			_position = Math::clamp(_position + offset, static_cast<int64_t>(0), s);
+			_position += offset;
 			break;
 
 		case SeekMethod::End:
-			if (offset >= 0)
-			{
-				if (_position < s)
-					_position = s - _position;
-				else _position = 0;
-			}
+			_position = size() - offset;
 			break;
 		}
 
+		_position = Math::clamp<int64_t>(_position, 0, size());
 		return _position;
 	}
 
