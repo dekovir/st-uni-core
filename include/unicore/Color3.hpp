@@ -173,8 +173,14 @@ namespace unicore
 
 			ColorConst3() = delete;
 		};
+
+		template<typename T>
+		using ColorPalette3 = List<Color3<T>>;
 	}
 
 	using ColorConst3b = details::ColorConst3<uint8_t>;
 	using ColorConst3f = details::ColorConst3<float>;
+
+	using ColorPalette3b = details::ColorPalette3<uint8_t>;
+	using ColorPalette3f = details::ColorPalette3<float>;
 }

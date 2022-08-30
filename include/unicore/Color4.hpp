@@ -195,10 +195,16 @@ namespace unicore
 
 			ColorConst4() = delete;
 		};
+
+		template<typename T>
+		using ColorPalette4 = List<Color4<T>>;
 	}
 
 	using ColorConst4b = details::ColorConst4<uint8_t>;
 	using ColorConst4f = details::ColorConst4<float>;
+
+	using ColorPalette4b = details::ColorPalette4<uint8_t>;
+	using ColorPalette4f = details::ColorPalette4<float>;
 
 	//static constexpr Color4b operator"" _argb(unsigned long long value)
 	//{

@@ -69,6 +69,9 @@ static_assert(false, "Unknown platform");
 
 namespace unicore
 {
+	using namespace std::string_literals;
+	using namespace std::string_view_literals;
+
 	template<size_t N>
 	using Bitset = std::bitset<N>;
 
