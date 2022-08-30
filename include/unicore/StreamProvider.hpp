@@ -70,6 +70,7 @@ namespace unicore
 
 	class PathStreamProvider : public WriteStreamProvider
 	{
+		UC_OBJECT(PathStreamProvider, WriteStreamProvider)
 	public:
 		explicit PathStreamProvider(WriteStreamProvider& provider, const Path& base)
 			: _provider(provider), _base(base) {}
@@ -98,6 +99,7 @@ namespace unicore
 
 	class ArchiveStreamProvider : public ReadStreamProvider, protected CachedPathData<intptr_t>
 	{
+		UC_OBJECT(ArchiveStreamProvider, ReadStreamProvider)
 	public:
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<StreamStats> stats(const Path& path) const override;
