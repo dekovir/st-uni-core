@@ -2,6 +2,7 @@
 #include "unicore/EnumFlag.hpp"
 #include "unicore/Object.hpp"
 #include "unicore/Path.hpp"
+#include "unicore/Containers.hpp"
 
 namespace unicore
 {
@@ -93,5 +94,23 @@ namespace unicore
 		Path _base;
 
 		UC_NODISCARD Path make_path(const Path& path) const { return _base / path; }
+	};
+
+	class ArchiveStreamProvider : public ReadStreamProvider, protected CachedPathData<intptr_t>
+	{
+	public:
+		UC_NODISCARD bool exists(const Path& path) const override;
+		UC_NODISCARD Optional<StreamStats> stats(const Path& path) const override;
+
+		uint16_t enumerate(const Path& path,
+			WStringView search_pattern, List<Path>& name_list,
+			FileFlags flags = StreamFlag::File | StreamFlag::Directory) const override;
+
+		Shared<ReadStream> open_read(const Path& path) override;
+
+	protected:
+		virtual Optional<StreamStats> stats_index(intptr_t index) const = 0;
+		virtual Shared<ReadStream> open_read_index(intptr_t index) = 0;
+		virtual bool enumerate_index(intptr_t index, FileFlags flags) const =0;
 	};
 }

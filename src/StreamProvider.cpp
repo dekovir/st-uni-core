@@ -1,6 +1,7 @@
 #include "unicore/StreamProvider.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Stream.hpp"
+#include "unicore/StringHelper.hpp"
 
 namespace unicore
 {
@@ -80,5 +81,46 @@ namespace unicore
 	bool PathStreamProvider::delete_file(const Path& path)
 	{
 		return _provider.delete_file(make_path(path));
+	}
+
+	// ArchiveStreamProvider //////////////////////////////////////////////////////
+	bool ArchiveStreamProvider::exists(const Path& path) const
+	{
+		return find_data(path) != nullptr;
+	}
+
+	Optional<StreamStats> ArchiveStreamProvider::stats(const Path& path) const
+	{
+		const auto data = find_data(path);
+		return data != nullptr ? stats_index(*data) : std::nullopt;
+	}
+
+	uint16_t ArchiveStreamProvider::enumerate(
+		const Path& path, WStringView search_pattern,
+		List<Path>& name_list, FileFlags flags) const
+	{
+		uint16_t count = 0;
+		if (const auto entry = find_entry(path); entry != nullptr)
+		{
+			for (const auto & it : entry->files)
+			{
+				if (StringHelper::compare_to_mask(WStringView(it.first), search_pattern))
+				{
+					if (!enumerate_index(it.second, flags))
+						continue;
+
+					name_list.push_back(path / it.first);
+					count++;
+				}
+			}
+		}
+
+		return count;
+	}
+
+	Shared<ReadStream> ArchiveStreamProvider::open_read(const Path& path)
+	{
+		const auto data = find_data(path);
+		return data != nullptr ? open_read_index(*data) : nullptr;
 	}
 }

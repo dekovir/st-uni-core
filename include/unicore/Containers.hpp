@@ -99,37 +99,30 @@ namespace unicore
 	}
 
 	//
-	template<typename TData>
+	template<typename DataType>
 	class CachedPathData
 	{
 	public:
+		//using DataType = intptr_t;
 		//virtual ~CachedPathData() = default;
 
 		struct EntryData
 		{
-			Dictionary<WString, TData> files;
+			Dictionary<WString, DataType> files;
 			Dictionary<WString, EntryData> subfolders;
 		};
 
 		EntryData root;
 
-		EntryData* find_entry(const Path& path) const
+		UC_NODISCARD const EntryData* find_entry(const Path& path) const
 		{
 			_elements.clear();
 			path.explode(_elements);
 
-			EntryData* data = &root;
-			for (size_t i = 0; i < _elements.size(); i++)
+			auto data = &root;
+			for (const auto& _element : _elements)
 			{
-				if (i + 1 == _elements.size())
-				{
-					auto it = data->files.find(_elements[i]);
-					if (it != data->files.end())
-						return &it->second;
-					return nullptr;
-				}
-
-				auto it = data->subfolders.find(_elements[i]);
+				const auto it = data->subfolders.find(_element);
 				if (it != data->subfolders.end())
 					data = &it->second;
 
@@ -139,15 +132,15 @@ namespace unicore
 			return nullptr;
 		}
 
-		TData* find_data(const Path& path) const
+		UC_NODISCARD const DataType* find_data(const Path& path) const
 		{
 			path.explode(_parent, _file);
 
-			auto entry = find_entry(_parent);
+			const auto entry = find_entry(_parent);
 			if (entry != nullptr)
 			{
-				auto it = entry->subfolders.find(_file);
-				if (it != entry->subfolders.end())
+				const auto it = entry->files.find(_file);
+				if (it != entry->files.end())
 					return &it->second;
 			}
 
@@ -160,24 +153,23 @@ namespace unicore
 			path.explode(_elements);
 
 			EntryData* data = &root;
-			for (size_t i = 0; i < _elements.size(); i++)
+			for (auto& _element : _elements)
 			{
-				auto it = data->subfolders.find(_elements[i]);
+				auto it = data->subfolders.find(_element);
 				if (it != data->subfolders.end())
 					data = &it->second;
 
-				auto jt = data->subfolders.emplace(_elements[i], {}).first;
-				data = &jt->second;
+				data = &data->subfolders[_element];
 			}
 
 			return data;
 		}
 
-		void add_entry(const Path& path, const TData& data)
+		void add_entry(const Path& path, const DataType& data)
 		{
 			path.explode(_parent, _file);
 
-			auto entry = make_entry(_parent);
+			const auto entry = make_entry(_parent);
 			entry->files.emplace(_file, data);
 		}
 
@@ -186,4 +178,13 @@ namespace unicore
 		static Path _parent;
 		static WString _file;
 	};
+
+	template<typename DataType>
+	List<WString> CachedPathData<DataType>::_elements;
+
+	template<typename DataType>
+	Path CachedPathData<DataType>::_parent;
+
+	template<typename DataType>
+	WString CachedPathData<DataType>::_file;
 }
