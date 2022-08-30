@@ -5,7 +5,7 @@
 namespace unicore
 {
 	// TODO: Remove multiple inheritance
-	class LinuxStream : public ReadStream, public WriteStream
+	class LinuxStream : public WriteStream
 	{
 		UC_OBJECT(LinuxStream, ReadStream)
 	public:

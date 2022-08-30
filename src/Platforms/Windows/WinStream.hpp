@@ -6,7 +6,7 @@
 namespace unicore
 {
 	// TODO: Remove multiple inheritance
-	class WinStream : public ReadStream, public WriteStream
+	class WinStream : public WriteStream
 	{
 		UC_OBJECT(WinStream, ReadStream)
 	public:

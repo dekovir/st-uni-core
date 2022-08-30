@@ -4,12 +4,13 @@
 
 namespace unicore
 {
-	bool StreamProvider::exists(const Path& path) const
+	// BasicStreamProvider ////////////////////////////////////////////////////////
+	bool BasicStreamProvider::exists(const Path& path) const
 	{
 		return stats(path).has_value();
 	}
 
-	List<Path> StreamProvider::get_enumerate(const Path& path,
+	List<Path> BasicStreamProvider::get_enumerate(const Path& path,
 		WStringView search_pattern, FileFlags flags) const
 	{
 		List<Path> name_list;
@@ -17,27 +18,29 @@ namespace unicore
 		return name_list;
 	}
 
-	Shared<MemoryChunk> StreamProvider::read_chunk(const Path& path)
+	// ReadStreamProvider /////////////////////////////////////////////////////////
+	Shared<MemoryChunk> ReadStreamProvider::read_chunk(const Path& path)
 	{
 		if (const auto stream = open_read(path))
 		{
 			auto size = stream->size();
-			auto chunk = std::make_shared<MemoryChunk>(size);
-			if (stream->read(chunk->data(), size))
+			if (auto chunk = std::make_shared<MemoryChunk>(size); stream->read(*chunk))
 				return chunk;
 		}
 
 		return nullptr;
 	}
 
-	bool StreamProvider::write_chunk(const Path& path, const MemoryChunk& chunk)
+	// WriteStreamProvider ////////////////////////////////////////////////////////
+	bool WriteStreamProvider::write_chunk(const Path& path, const MemoryChunk& chunk)
 	{
 		if (const auto stream = create_new(path))
-			return stream->write(chunk.data(), chunk.size());
+			return stream->write(chunk);
 
 		return false;
 	}
 
+	// PathStreamProvider /////////////////////////////////////////////////////////
 	Optional<StreamStats> PathStreamProvider::stats(const Path& path) const
 	{
 		return _provider.stats(make_path(path));

@@ -29,9 +29,9 @@ namespace unicore
 		StreamFlag flag = StreamFlag::None;
 	};
 
-	class StreamProvider : public Object
+	class BasicStreamProvider : public Object
 	{
-		UC_OBJECT(StreamProvider, Object)
+		UC_OBJECT(BasicStreamProvider, Object)
 	public:
 		UC_NODISCARD virtual Optional<StreamStats> stats(const Path& path) const = 0;
 		UC_NODISCARD virtual bool exists(const Path& path) const;
@@ -43,23 +43,34 @@ namespace unicore
 		UC_NODISCARD virtual List<Path> get_enumerate(
 			const Path& path, WStringView search_pattern,
 			FileFlags flags = StreamFlag::File | StreamFlag::Directory) const;
+	};
 
+	class ReadStreamProvider : public BasicStreamProvider
+	{
+		UC_OBJECT(ReadStreamProvider, BasicStreamProvider)
+	public:
+		virtual Shared<ReadStream> open_read(const Path& path) = 0;
+		virtual Shared<MemoryChunk> read_chunk(const Path& path);
+	};
+
+	class WriteStreamProvider : public ReadStreamProvider
+	{
+		UC_OBJECT(WriteStreamProvider, ReadStreamProvider)
+	public:
 		virtual bool create_directory(const Path& path) = 0;
 		virtual bool delete_directory(const Path& path, bool recursive = false) = 0;
 
-		virtual Shared<ReadStream> open_read(const Path& path) = 0;
 		virtual Shared<WriteStream> create_new(const Path& path) = 0;
 
 		virtual bool delete_file(const Path& path) = 0;
 
-		virtual Shared<MemoryChunk> read_chunk(const Path& path);
 		virtual bool write_chunk(const Path& path, const MemoryChunk& chunk);
 	};
 
-	class PathStreamProvider : public StreamProvider
+	class PathStreamProvider : public WriteStreamProvider
 	{
 	public:
-		explicit PathStreamProvider(StreamProvider& provider, const Path& base)
+		explicit PathStreamProvider(WriteStreamProvider& provider, const Path& base)
 			: _provider(provider), _base(base) {}
 
 		UC_NODISCARD Optional<StreamStats> stats(const Path& path) const override;
@@ -78,7 +89,7 @@ namespace unicore
 		bool delete_file(const Path& path) override;
 
 	protected:
-		StreamProvider& _provider;
+		WriteStreamProvider& _provider;
 		Path _base;
 
 		UC_NODISCARD Path make_path(const Path& path) const { return _base / path; }

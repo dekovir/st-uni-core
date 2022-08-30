@@ -1,6 +1,7 @@
 #pragma once
 #include "unicore/Module.hpp"
-#include "unicore/StreamProvider.hpp"
+#include "unicore/EnumFlag.hpp"
+#include "unicore/Path.hpp"
 #include "unicore/Resource.hpp"
 
 namespace unicore
@@ -10,6 +11,9 @@ namespace unicore
 	class ResourceLoader;
 	class ResourceConverter;
 	class ResourceCreator;
+
+	class ReadStream;
+	class ReadStreamProvider;
 
 	enum class ResourceCacheFlag
 	{
@@ -28,7 +32,7 @@ namespace unicore
 
 		void clear();
 
-		void add_provider(StreamProvider& provider);
+		void add_provider(ReadStreamProvider& provider);
 
 		UC_NODISCARD Shared<ReadStream> open_read(const Path& path) const;
 
@@ -83,7 +87,7 @@ namespace unicore
 		};
 
 		Logger& _logger;
-		List<StreamProvider*> _providers;
+		List<ReadStreamProvider*> _providers;
 
 		Dictionary<TypeConstPtr, Set<Shared<ResourceLoader>, LoaderSort>> _loaders;
 		Dictionary<TypeConstPtr, Set<Shared<ResourceConverter>>> _converters;

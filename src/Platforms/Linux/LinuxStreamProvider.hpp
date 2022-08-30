@@ -5,9 +5,9 @@
 
 namespace unicore
 {
-	class LinuxStreamProvider : public StreamProvider
+	class LinuxStreamProvider : public WriteStreamProvider
 	{
-		UC_OBJECT(LinuxStreamProvider, StreamProvider)
+		UC_OBJECT(LinuxStreamProvider, WriteStreamProvider)
 	public:
 		explicit LinuxStreamProvider(Logger& logger);
 

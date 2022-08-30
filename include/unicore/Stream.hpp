@@ -3,6 +3,8 @@
 
 namespace unicore
 {
+	class MemoryChunk;
+
 	enum class SeekMethod
 	{
 		Begin,
@@ -18,19 +20,23 @@ namespace unicore
 		virtual int64_t seek(int64_t offset, SeekMethod method = SeekMethod::Begin) = 0;
 	};
 
-	class ReadStream : virtual public BasicStream
+	class ReadStream : public BasicStream
 	{
-		UC_OBJECT(ReadStream, Object)
+		UC_OBJECT(ReadStream, BasicStream)
 	public:
 		UC_NODISCARD virtual bool eof() const = 0;
 		virtual bool read(void* buffer, size_t size, size_t* bytes_read = nullptr) = 0;
+
+		bool read(MemoryChunk& chunk, size_t* bytes_read = nullptr);
 	};
 
-	class WriteStream : virtual public BasicStream
+	class WriteStream : public ReadStream
 	{
-		UC_OBJECT(WriteStream, Object)
+		UC_OBJECT(WriteStream, ReadStream)
 	public:
 		virtual bool flush() = 0;
 		virtual bool write(const void* buffer, size_t size, size_t* bytes_written = nullptr) = 0;
+
+		bool write(const MemoryChunk& chunk, size_t* bytes_written = nullptr);
 	};
 }

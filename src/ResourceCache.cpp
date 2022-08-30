@@ -1,6 +1,7 @@
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
+#include "unicore/StreamProvider.hpp"
 #include "unicore/RendererResource.hpp"
 #include "unicore/ResourceLoader.hpp"
 #include "unicore/ResourceCreator.hpp"
@@ -49,7 +50,7 @@ namespace unicore
 		_providers.clear();
 	}
 
-	void ResourceCache::add_provider(StreamProvider& provider)
+	void ResourceCache::add_provider(ReadStreamProvider& provider)
 	{
 		_providers.push_back(&provider);
 	}

@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Utility.hpp"
+#include "unicore/Path.hpp"
 
 namespace unicore
 {
@@ -96,4 +97,93 @@ namespace unicore
 				return std::tuple_cat(get_element(std::move(args)) ...); }, std::move(tuple));
 		}
 	}
+
+	//
+	template<typename TData>
+	class CachedPathData
+	{
+	public:
+		//virtual ~CachedPathData() = default;
+
+		struct EntryData
+		{
+			Dictionary<WString, TData> files;
+			Dictionary<WString, EntryData> subfolders;
+		};
+
+		EntryData root;
+
+		EntryData* find_entry(const Path& path) const
+		{
+			_elements.clear();
+			path.explode(_elements);
+
+			EntryData* data = &root;
+			for (size_t i = 0; i < _elements.size(); i++)
+			{
+				if (i + 1 == _elements.size())
+				{
+					auto it = data->files.find(_elements[i]);
+					if (it != data->files.end())
+						return &it->second;
+					return nullptr;
+				}
+
+				auto it = data->subfolders.find(_elements[i]);
+				if (it != data->subfolders.end())
+					data = &it->second;
+
+				return nullptr;
+			}
+
+			return nullptr;
+		}
+
+		TData* find_data(const Path& path) const
+		{
+			path.explode(_parent, _file);
+
+			auto entry = find_entry(_parent);
+			if (entry != nullptr)
+			{
+				auto it = entry->subfolders.find(_file);
+				if (it != entry->subfolders.end())
+					return &it->second;
+			}
+
+			return nullptr;
+		}
+
+		EntryData* make_entry(const Path& path)
+		{
+			_elements.clear();
+			path.explode(_elements);
+
+			EntryData* data = &root;
+			for (size_t i = 0; i < _elements.size(); i++)
+			{
+				auto it = data->subfolders.find(_elements[i]);
+				if (it != data->subfolders.end())
+					data = &it->second;
+
+				auto jt = data->subfolders.emplace(_elements[i], {}).first;
+				data = &jt->second;
+			}
+
+			return data;
+		}
+
+		void add_entry(const Path& path, const TData& data)
+		{
+			path.explode(_parent, _file);
+
+			auto entry = make_entry(_parent);
+			entry->files.emplace(_file, data);
+		}
+
+	protected:
+		static List<WString> _elements;
+		static Path _parent;
+		static WString _file;
+	};
 }
