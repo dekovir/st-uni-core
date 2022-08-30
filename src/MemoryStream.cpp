@@ -3,17 +3,18 @@
 
 namespace unicore
 {
-	MemoryStream::MemoryStream(const Shared<MemoryChunk>& chunk)
+	// ReadMemoryStream ///////////////////////////////////////////////////////////
+	ReadMemoryStream::ReadMemoryStream(const Shared<MemoryChunk>& chunk)
 		: _chunk(chunk)
 	{
 	}
 
-	int64_t MemoryStream::size() const
+	int64_t ReadMemoryStream::size() const
 	{
 		return _chunk->size();
 	}
 
-	int64_t MemoryStream::seek(int64_t offset, SeekMethod method)
+	int64_t ReadMemoryStream::seek(int64_t offset, SeekMethod method)
 	{
 		switch (method)
 		{
@@ -34,12 +35,12 @@ namespace unicore
 		return _position;
 	}
 
-	bool MemoryStream::eof() const
+	bool ReadMemoryStream::eof() const
 	{
 		return _position >= static_cast<int64_t>(_chunk->size());
 	}
 
-	bool MemoryStream::read(void* buffer, size_t size, size_t* bytes_read)
+	bool ReadMemoryStream::read(void* buffer, size_t size, size_t* bytes_read)
 	{
 		const auto count = Math::min<size_t>(size, _chunk->size() - _position);
 		if (bytes_read) *bytes_read = count;
@@ -50,5 +51,65 @@ namespace unicore
 		}
 
 		return false;
+	}
+
+	// WriteMemoryStream //////////////////////////////////////////////////////////
+	int64_t WriteMemoryStream::size() const
+	{
+		return static_cast<int64_t>(_bytes.size());
+	}
+
+	int64_t WriteMemoryStream::seek(int64_t offset, SeekMethod method)
+	{
+		const auto s = size();
+
+		switch (method)
+		{
+		case SeekMethod::Begin:
+			if (offset >= 0)
+				_position = Math::min(offset, s);
+			break;
+
+		case SeekMethod::Current:
+			_position = Math::clamp(_position + offset, static_cast<int64_t>(0), s);
+			break;
+
+		case SeekMethod::End:
+			if (offset >= 0)
+			{
+				if (_position < s)
+					_position = s - _position;
+				else _position = 0;
+			}
+			break;
+		}
+
+		return _position;
+	}
+
+	bool WriteMemoryStream::eof() const
+	{
+		return _position >= size();
+	}
+
+	bool WriteMemoryStream::read(void* buffer, size_t size, size_t* bytes_read)
+	{
+		const auto count = Math::min(static_cast<int64_t>(size), this->size() - _position);
+		Memory::copy(buffer, _bytes.data() + _position, count);
+		if (bytes_read) *bytes_read = count;
+		return true;
+	}
+
+	bool WriteMemoryStream::flush()
+	{
+		return true;
+	}
+
+	bool WriteMemoryStream::write(const void* buffer, size_t size, size_t* bytes_written)
+	{
+		_bytes.resize(_position + size);
+		Memory::copy(_bytes.data() + _position, buffer, size);
+		if (bytes_written) *bytes_written = size;
+		return true;
 	}
 }
