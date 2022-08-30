@@ -1,5 +1,5 @@
 #include "XMLLoader.hpp"
-#include "unicore/StringData.hpp"
+#include "unicore/TextData.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore
@@ -11,7 +11,7 @@ namespace unicore
 
 	Shared<Resource> XMLDataLoader::load(const ResourceLoaderContext& context)
 	{
-		const auto data = context.cache.load<StringData>(context.path);
+		const auto data = context.cache.load<TextData>(context.path);
 		if (!data)
 		{
 			UC_LOG_ERROR(context.logger) << "Failed to load BinaryData";

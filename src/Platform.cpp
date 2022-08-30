@@ -3,7 +3,7 @@
 #include "unicore/Input.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/BinaryData.hpp"
-#include "unicore/StringData.hpp"
+#include "unicore/TextData.hpp"
 #if defined(UNICORE_USE_SDL2)
 #	include "Platforms/SDL2/SDL2Platform.hpp"
 #elif defined(UNICORE_PLATFORM_WINDOWS)
@@ -30,7 +30,8 @@ namespace unicore
 		if (const auto cache = context.modules.find<ResourceCache>())
 		{
 			cache->add_loader(std::make_shared<BinaryDataLoader>());
-			cache->add_loader(std::make_shared<StringDataLoader>());
+			cache->add_loader(std::make_shared<TextDataLoader>());
+			cache->add_loader(std::make_shared<WTextDataLoader>());
 		}
 	}
 
