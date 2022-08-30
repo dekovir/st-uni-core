@@ -9,17 +9,20 @@ namespace unicore
 		explicit BinaryReader(ReadStream& stream)
 			: _stream(stream) {}
 
-		UC_NODISCARD bool eof() const { return _stream.eof();}
+		UC_NODISCARD bool eof() const { return _stream.eof(); }
 
-		template<typename T>
-		std::enable_if_t<std::is_integral_v<T> || std::is_pod_v<T>, bool> read(T& value)
+		template<typename T,
+			std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+		bool read(T& value)
 		{
-			return _stream.read(&value, sizeof(T)) == 1;
+			return _stream.read(&value, sizeof(T));
 		}
 
 		template<typename Char>
-		size_t read_string_nt(BasicString<Char>& str)
+		bool read_string_nt(BasicString<Char>& str)
 		{
+			if (eof()) return false;
+
 			size_t count = 0;
 			Char c;
 
@@ -32,7 +35,7 @@ namespace unicore
 				count++;
 			}
 
-			return count;
+			return count > 0;
 		}
 
 	protected:
