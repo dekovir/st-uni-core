@@ -37,8 +37,6 @@ namespace unicore
 
 		virtual void poll_events() = 0;
 
-		void register_module(const ModuleContext& context) override;
-
 		static Unique<Platform> create();
 	};
 }

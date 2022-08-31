@@ -1,8 +1,5 @@
 #pragma once
-#include <utility>
-
 #include "unicore/Resource.hpp"
-#include "unicore/ResourceLoader.hpp"
 
 namespace unicore
 {
@@ -52,21 +49,5 @@ namespace unicore
 			: BasicTextData<wchar_t>(std::move(data))
 		{
 		}
-	};
-
-	class TextDataLoader : public ResourceLoaderT<TextData>
-	{
-		UC_OBJECT(TextDataLoader, ResourceLoaderT)
-	public:
-		TextDataLoader();
-		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
-	};
-
-	class WTextDataLoader : public ResourceLoaderT<WTextData>
-	{
-		UC_OBJECT(TextDataLoader, ResourceLoaderT)
-	public:
-		WTextDataLoader();
-		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
 	};
 }

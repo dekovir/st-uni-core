@@ -3,6 +3,7 @@
 #include "unicore/Input.hpp"
 #include "unicore/TimeSpan.hpp"
 #include "unicore/Plugin.hpp"
+#include "unicore/plugins/PlatformPlugin.hpp"
 #include "unicore/plugins/SurfacePlugin.hpp"
 
 namespace unicore
@@ -19,6 +20,7 @@ namespace unicore
 		_modules.add(input);
 		_modules.add(resources);
 
+		create_plugin<PlatformPlugin>();
 		create_plugin<SurfacePlugin>();
 	}
 

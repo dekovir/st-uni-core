@@ -1,9 +1,7 @@
 #include "unicore/Platform.hpp"
 #include "unicore/Logger.hpp"
-#include "unicore/Input.hpp"
 #include "unicore/Time.hpp"
-#include "unicore/BinaryData.hpp"
-#include "unicore/TextData.hpp"
+
 #if defined(UNICORE_USE_SDL2)
 #	include "Platforms/SDL2/SDL2Platform.hpp"
 #elif defined(UNICORE_PLATFORM_WINDOWS)
@@ -21,18 +19,6 @@ namespace unicore
 		, resources_logger("[Cache] ", logger)
 		, resources(resources_logger)
 	{
-	}
-
-	void Platform::register_module(const ModuleContext& context)
-	{
-		Module::register_module(context);
-
-		if (const auto cache = context.modules.find<ResourceCache>())
-		{
-			cache->add_loader(std::make_shared<BinaryDataLoader>());
-			cache->add_loader(std::make_shared<TextDataLoader>());
-			cache->add_loader(std::make_shared<WTextDataLoader>());
-		}
 	}
 
 	Unique<Platform> Platform::create()

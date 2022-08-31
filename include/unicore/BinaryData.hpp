@@ -1,6 +1,5 @@
 #pragma once
 #include "unicore/Resource.hpp"
-#include "unicore/ResourceLoader.hpp"
 #include "unicore/Memory.hpp"
 
 namespace unicore
@@ -18,13 +17,5 @@ namespace unicore
 
 	protected:
 		MemoryChunk _chunk;
-	};
-
-	class BinaryDataLoader : public ResourceLoaderT<BinaryData>
-	{
-		UC_OBJECT(BinaryDataLoader, ResourceLoaderT)
-	public:
-		BinaryDataLoader();
-		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
 	};
 }
