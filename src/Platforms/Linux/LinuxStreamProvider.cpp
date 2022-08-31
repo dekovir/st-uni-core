@@ -29,9 +29,9 @@ namespace unicore
 		{
 			StreamStats stats;
 			stats.size = data.st_size;
-			stats.accestime = data.st_atime;
-			stats.modtime = data.st_mtime;
-			stats.createtime = data.st_ctime;
+			stats.accestime = DateTime(data.st_atime);
+			stats.modtime = DateTime(data.st_mtime);
+			stats.createtime = DateTime(data.st_ctime);
 			stats.flag = (data.st_mode & S_IFMT) == S_IFDIR
 				? StreamFlag::Directory
 				: StreamFlag::File;

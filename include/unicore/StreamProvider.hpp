@@ -3,6 +3,7 @@
 #include "unicore/Object.hpp"
 #include "unicore/Path.hpp"
 #include "unicore/Containers.hpp"
+#include "unicore/DateTime.hpp"
 
 namespace unicore
 {
@@ -21,12 +22,9 @@ namespace unicore
 	struct StreamStats
 	{
 		int64_t size = 0;
-		// TODO: Replace with DateTime
-		time_t modtime = 0;
-		// TODO: Replace with DateTime
-		time_t createtime = 0;
-		// TODO: Replace with DateTime
-		time_t accestime = 0;
+		DateTime modtime;
+		DateTime createtime;
+		DateTime accestime;
 		StreamFlag flag = StreamFlag::None;
 	};
 

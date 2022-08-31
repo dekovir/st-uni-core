@@ -146,12 +146,12 @@ namespace unicore
 		return false;
 	}
 
-	time_t WinStreamProvider::filetime_to_timet(FILETIME const& ft)
+	DateTime WinStreamProvider::filetime_to_timet(FILETIME const& ft)
 	{
 		ULARGE_INTEGER ull;
 		ull.LowPart = ft.dwLowDateTime;
 		ull.HighPart = ft.dwHighDateTime;
-		return ull.QuadPart / 10000000ULL - 11644473600ULL;
+		return DateTime(ull.QuadPart / 10000000ULL - 11644473600ULL);
 	}
 }
 #endif

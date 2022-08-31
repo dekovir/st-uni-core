@@ -30,7 +30,7 @@ namespace unicore
 	protected:
 		Logger& _logger;
 
-		static time_t filetime_to_timet(FILETIME const& ft);
+		static DateTime filetime_to_timet(FILETIME const& ft);
 	};
 }
 #endif
