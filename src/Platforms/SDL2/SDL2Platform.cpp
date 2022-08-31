@@ -1,6 +1,12 @@
 #include "SDL2Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
 
+#if defined(UNICORE_PLATFORM_WINDOWS)
+#	include "Platforms/Windows/WinStreamProvider.hpp"
+#elif defined(UNICORE_PLATFORM_LINUX)
+#	include "Platforms/Linux/LinuxStreamProvider.hpp"
+#endif
+
 namespace unicore
 {
 	SDL2Platform::SDL2Platform()
@@ -8,7 +14,6 @@ namespace unicore
 		, _input_logger("[Input] ", _logger)
 		, _input(_input_logger)
 		, _provider_logger("[FS] ", _logger)
-		, _provider(_provider_logger)
 	{
 		SDL_SetMainReady();
 		SDL_Init(SDL_INIT_EVENTS | SDL_INIT_VIDEO);
@@ -53,7 +58,12 @@ namespace unicore
 			}
 		}
 
-		resources.add_provider(_provider);
+#if defined(UNICORE_PLATFORM_WINDOWS)
+		resources.mount(std::make_shared<WinStreamProvider>(_provider_logger));
+#elif defined(UNICORE_PLATFORM_LINUX)
+		resources.mount(std::make_shared<LinuxStreamProvider>(_provider_logger));
+#endif
+
 	}
 
 	Unique<Display> SDL2Platform::create_display(const DisplaySettings& settings)

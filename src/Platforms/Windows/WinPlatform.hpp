@@ -2,7 +2,6 @@
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #include "WinLogger.hpp"
-#include "WinStreamProvider.hpp"
 
 #if defined(UNICORE_USE_SDL2)
 #include "Platforms/SDL2/SDL2Time.hpp"
@@ -33,7 +32,6 @@ namespace unicore
 #endif
 
 		ProxyLogger _provider_logger;
-		WinStreamProvider _provider;
 	};
 }
 #endif

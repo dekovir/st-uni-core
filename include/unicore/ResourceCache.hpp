@@ -14,6 +14,7 @@ namespace unicore
 
 	class ReadStream;
 	class ReadStreamProvider;
+	class StreamProviderCreator;
 
 	enum class ResourceCacheFlag
 	{
@@ -32,7 +33,8 @@ namespace unicore
 
 		void clear();
 
-		void add_provider(ReadStreamProvider& provider);
+		void mount(const Shared<ReadStreamProvider>& provider);
+		bool mount(const Path& path);
 
 		UC_NODISCARD Shared<ReadStream> open_read(const Path& path) const;
 
@@ -87,7 +89,9 @@ namespace unicore
 		};
 
 		Logger& _logger;
-		List<ReadStreamProvider*> _providers;
+		List<Shared<ReadStreamProvider>> _providers;
+
+		Set<Shared<StreamProviderCreator>> _provider_creators;
 
 		Dictionary<TypeConstPtr, Set<Shared<ResourceLoader>, LoaderSort>> _loaders;
 		Dictionary<TypeConstPtr, Set<Shared<ResourceConverter>>> _converters;

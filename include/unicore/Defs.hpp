@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <any>
 #include <bitset>
 #include <string>
 #include <string_view>
@@ -102,6 +103,8 @@ namespace unicore
 
 	template<typename T>
 	using Optional = std::optional<T>;
+
+	using Any = std::any;
 
 	template <class... Types>
 	using Variant = std::variant<Types...>;

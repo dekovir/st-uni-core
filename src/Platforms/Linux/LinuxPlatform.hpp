@@ -1,7 +1,6 @@
 #pragma once
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_PLATFORM_LINUX)
-#include "LinuxStreamProvider.hpp"
 
 #if defined(UNICORE_USE_SDL2)
 #include "Platforms/SDL2/SDL2Time.hpp"
@@ -32,7 +31,6 @@ namespace unicore
 #endif
 
 		ProxyLogger _provider_logger;
-		LinuxStreamProvider _provider;
 	};
 }
 #endif

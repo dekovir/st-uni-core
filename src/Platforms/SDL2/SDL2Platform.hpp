@@ -7,11 +7,6 @@
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #	include "Platforms/Windows/WinLogger.hpp"
-#	include "Platforms/Windows/WinStreamProvider.hpp"
-#elif defined(UNICORE_PLATFORM_LINUX)
-#	include "Platforms/Linux/LinuxStreamProvider.hpp"
-#else
-UC_STATIC_ASSERT_ALWAYS("Unsupported platform")
 #endif
 
 namespace unicore
@@ -47,12 +42,6 @@ namespace unicore
 		SDL2Input _input;
 		bool _running = true;
 		ProxyLogger _provider_logger;
-
-#if defined(UNICORE_PLATFORM_WINDOWS)
-		WinStreamProvider _provider;
-#elif defined(UNICORE_PLATFORM_LINUX)
-		LinuxStreamProvider _provider;
-#endif
 
 		Vector2i _native_size = VectorConst2i::Zero;
 

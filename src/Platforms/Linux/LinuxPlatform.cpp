@@ -1,5 +1,7 @@
 #include "LinuxPlatform.hpp"
 #if defined(UNICORE_PLATFORM_LINUX)
+#include "LinuxStreamProvider.hpp"
+
 namespace unicore
 {
 	LinuxPlatform::LinuxPlatform()
@@ -7,9 +9,8 @@ namespace unicore
 		, _input_logger("[Input] ", _logger)
 		, _input(_input_logger)
 		, _provider_logger("[FS] ", _logger)
-		, _provider(_provider_logger)
 	{
-		resources.add_provider(_provider);
+		resources.mount(std::make_shared<LinuxStreamProvider>(_provider_logger));
 	}
 
 	bool LinuxPlatform::running() const

@@ -1,5 +1,6 @@
 #include "WinPlatform.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
+#include "WinStreamProvider.hpp"
 
 namespace unicore
 {
@@ -8,9 +9,8 @@ namespace unicore
 		, _input_logger("[Input] ", _logger)
 		, _input(_input_logger)
 		, _provider_logger("[FS] ", _logger)
-		, _provider(_provider_logger)
 	{
-		resources.add_provider(_provider);
+		resources.mount(std::make_shared<WinStreamProvider>(_provider_logger));
 	}
 
 	bool WinPlatform::running() const

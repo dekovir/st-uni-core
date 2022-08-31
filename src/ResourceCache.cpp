@@ -6,6 +6,7 @@
 #include "unicore/ResourceLoader.hpp"
 #include "unicore/ResourceCreator.hpp"
 #include "unicore/ResourceConverter.hpp"
+#include "unicore/StreamProviderCreator.hpp"
 
 namespace unicore
 {
@@ -50,17 +51,51 @@ namespace unicore
 		_providers.clear();
 	}
 
-	void ResourceCache::add_provider(ReadStreamProvider& provider)
+	void ResourceCache::mount(const Shared<ReadStreamProvider>& provider)
 	{
-		_providers.push_back(&provider);
+		_providers.push_back(provider);
+	}
+
+	bool ResourceCache::mount(const Path& path)
+	{
+		if (_providers.empty())
+		{
+			UC_LOG_ERROR(_logger) << "Failed to mount. No providers";
+			return true;
+		}
+
+		for (auto it = _providers.rbegin(); it != _providers.rend(); ++it)
+		{
+			const auto provider = *it;
+			const StreamProviderCreator::Options options{ path, *provider, &_logger };
+
+			for (const auto& creator : _provider_creators)
+			{
+				if (!creator->can_create(options))
+					continue;
+
+				if (const auto result = creator->create(options); result)
+				{
+					mount(result);
+					return true;
+				}
+
+				UC_LOG_ERROR(_logger) << "Failed to create provider from "
+					<< creator->type() << " with " << path;
+			}
+		}
+
+		UC_LOG_WARNING(_logger) << "Failed to mount " << path;
+		return false;
 	}
 
 	Shared<ReadStream> ResourceCache::open_read(const Path& path) const
 	{
 		if (!_providers.empty())
 		{
-			for (const auto& provider : _providers)
+			for (auto it = _providers.rbegin(); it != _providers.rend(); ++it)
 			{
+				const auto provider = *it;
 				if (auto stream = provider->open_read(path))
 					return stream;
 			}
