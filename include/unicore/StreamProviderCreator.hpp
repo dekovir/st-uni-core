@@ -7,14 +7,7 @@ namespace unicore
 	{
 		UC_OBJECT(StreamProviderCreator, Object)
 	public:
-		struct Options
-		{
-			Any value;
-			ReadStreamProvider& provider;
-			Logger* logger = nullptr;
-		};
-
-		UC_NODISCARD virtual bool can_create(const Options& options) const = 0;
-		virtual Shared<ReadStreamProvider> create(const Options& options) = 0;
+		UC_NODISCARD virtual bool can_create(const Path& path) const = 0;
+		virtual Shared<ReadStreamProvider> create(const Shared<ReadStream>& stream) = 0;
 	};
 }

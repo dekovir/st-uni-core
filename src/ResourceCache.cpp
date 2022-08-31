@@ -67,14 +67,25 @@ namespace unicore
 		for (auto it = _providers.rbegin(); it != _providers.rend(); ++it)
 		{
 			const auto provider = *it;
-			const StreamProviderCreator::Options options{ path, *provider, &_logger };
+
+			auto stats = provider->stats(path);
+			if (!stats.has_value()) continue;
+
+			if (stats.value().flag == StreamFlag::Directory)
+			{
+				mount(std::make_shared<DirectoryStreamProvider>(*provider, path));
+				return true;
+			}
 
 			for (const auto& creator : _provider_creators)
 			{
-				if (!creator->can_create(options))
+				if (!creator->can_create(path))
 					continue;
 
-				if (const auto result = creator->create(options); result)
+				auto stream = provider->open_read(path);
+				if (!stream) continue;
+
+				if (const auto result = creator->create(stream); result)
 				{
 					mount(result);
 					return true;
@@ -263,6 +274,11 @@ namespace unicore
 				}
 			}
 		}
+	}
+
+	void ResourceCache::add_creator(const Shared<StreamProviderCreator>& creator)
+	{
+		_provider_creators.insert(creator);
 	}
 
 	void ResourceCache::add_loader(const Shared<ResourceLoader>& loader)

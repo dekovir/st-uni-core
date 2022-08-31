@@ -70,6 +70,8 @@ namespace unicore
 		void dump_used();
 		void calc_memory_use(size_t* system, size_t* video) const;
 
+		void add_creator(const Shared<StreamProviderCreator>& creator);
+
 		void add_loader(const Shared<ResourceLoader>& loader);
 		void add_converter(const Shared<ResourceConverter>& converter);
 		void add_creator(const Shared<ResourceCreator>& creator);
