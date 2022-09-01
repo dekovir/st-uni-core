@@ -14,7 +14,6 @@ namespace unicore
 
 	class ReadFile;
 	class ReadFileProvider;
-	class FileSystem;
 
 	enum class ResourceCacheFlag
 	{
@@ -26,7 +25,7 @@ namespace unicore
 	{
 		UC_OBJECT(ResourceCache, Module)
 	public:
-		explicit ResourceCache(Logger& logger);
+		ResourceCache(Logger& logger, ReadFileProvider& provider);
 
 		void unload_all();
 		void unload_unused();
@@ -67,7 +66,6 @@ namespace unicore
 		void add_converter(const Shared<ResourceConverter>& converter);
 		void add_creator(const Shared<ResourceCreator>& creator);
 
-		void register_module(const ModuleContext& context) override;
 		void unregister_module(const ModuleContext& context) override;
 
 	protected:
@@ -82,7 +80,7 @@ namespace unicore
 		};
 
 		Logger& _logger;
-		FileSystem* _fs = nullptr;
+		ReadFileProvider& _provider;
 
 		Dictionary<TypeConstPtr, Set<Shared<ResourceLoader>, LoaderSort>> _loaders;
 		Dictionary<TypeConstPtr, Set<Shared<ResourceConverter>>> _converters;

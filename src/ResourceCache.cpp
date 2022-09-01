@@ -1,7 +1,6 @@
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
-#include "unicore/FileSystem.hpp"
 #include "unicore/FileProvider.hpp"
 #include "unicore/RendererResource.hpp"
 #include "unicore/ResourceLoader.hpp"
@@ -12,8 +11,8 @@ namespace unicore
 {
 	static auto& s_resource_type = get_type<Resource>();
 
-	ResourceCache::ResourceCache(Logger& logger)
-		: _logger(logger)
+	ResourceCache::ResourceCache(Logger& logger, ReadFileProvider& provider)
+		: _logger(logger), _provider(provider)
 	{
 	}
 
@@ -222,13 +221,6 @@ namespace unicore
 			_creators[type].insert(creator);
 	}
 
-	void ResourceCache::register_module(const ModuleContext& context)
-	{
-		Module::register_module(context);
-
-		_fs = context.modules.find<FileSystem>();
-	}
-
 	void ResourceCache::unregister_module(const ModuleContext& context)
 	{
 		Module::unregister_module(context);
@@ -257,12 +249,6 @@ namespace unicore
 
 	Shared<Resource> ResourceCache::load_resource(const Path& path, TypeConstRef type, Logger* logger)
 	{
-		if (!_fs) 
-		{
-			UC_LOG_WARNING(_logger) << "Failed to load resource. No FileSystem";
-			return nullptr;
-		}
-
 		const auto it = _loaders.find(&type);
 		if (it == _loaders.end()) return nullptr;
 
@@ -277,7 +263,7 @@ namespace unicore
 					Path new_path(path);
 					new_path.replace_extension(extension);
 
-					const auto stream = _fs->open_read(new_path);
+					const auto stream = _provider.open_read(new_path);
 					if (!stream)
 						continue;
 
@@ -289,7 +275,7 @@ namespace unicore
 			{
 				const auto extension = path.extension();
 
-				const auto stream = _fs->open_read(path);
+				const auto stream = _provider.open_read(path);
 				if (!stream)
 				{
 					UC_LOG_WARNING(logger) << "Failed to open " << path;
