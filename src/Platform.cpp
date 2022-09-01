@@ -1,6 +1,5 @@
 #include "unicore/Platform.hpp"
 #include "unicore/Logger.hpp"
-#include "unicore/Time.hpp"
 
 #if defined(UNICORE_USE_SDL2)
 #	include "Platforms/SDL2/SDL2Platform.hpp"
@@ -16,8 +15,7 @@ namespace unicore
 		: logger(settings.logger)
 		, time(settings.time)
 		, input(settings.input)
-		, file_system_logger("[FS] ", logger)
-		, file_system(file_system_logger)
+		, file_system(settings.file_system)
 		, resources_logger("[Cache] ", logger)
 		, resources(resources_logger, file_system)
 	{

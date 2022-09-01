@@ -2,7 +2,7 @@
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/TimeSpan.hpp"
-#include "unicore/Plugin.hpp"
+#include "unicore/FileSystem.hpp"
 #include "unicore/plugins/PlatformPlugin.hpp"
 #include "unicore/plugins/SurfacePlugin.hpp"
 

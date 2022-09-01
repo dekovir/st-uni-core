@@ -59,8 +59,8 @@ namespace unicore
 					return true;
 				}
 
-				UC_LOG_ERROR(_logger) << "Failed to create provider from "
-					<< creator->type() << " with " << path;
+				UC_LOG_ERROR(_logger) << "Failed to create FileProvider from "
+					<< creator->type() << " at " << path;
 			}
 		}
 

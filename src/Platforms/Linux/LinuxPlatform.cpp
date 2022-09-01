@@ -5,12 +5,13 @@
 namespace unicore
 {
 	LinuxPlatform::LinuxPlatform()
-	: Platform({ _logger, _time, _input })
+		: Platform({ _logger, _time, _input, _file_system })
 		, _input_logger("[Input] ", _logger)
 		, _input(_input_logger)
-		, _provider_logger("[FS] ", _logger)
+		, _file_system_logger("[FS] ", _logger)
+		, _file_system(_file_system_logger)
 	{
-		file_system.add_read(std::make_shared<LinuxFileProvider>(_provider_logger));
+		file_system.add_read(std::make_shared<LinuxFileProvider>(_file_system_logger));
 	}
 
 	bool LinuxPlatform::running() const

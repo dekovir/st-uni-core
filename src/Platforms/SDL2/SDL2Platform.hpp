@@ -1,6 +1,7 @@
 #pragma once
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
+#include "unicore/FileSystem.hpp"
 #include "SDL2Time.hpp"
 #include "SDL2Input.hpp"
 #include "SDL2Display.hpp"
@@ -40,8 +41,11 @@ namespace unicore
 
 		SDL2Time _time;
 		SDL2Input _input;
+
+		ProxyLogger _file_system_logger;
+		FileSystem _file_system;
+
 		bool _running = true;
-		ProxyLogger _provider_logger;
 
 		Vector2i _native_size = VectorConst2i::Zero;
 

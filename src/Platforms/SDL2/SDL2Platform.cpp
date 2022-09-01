@@ -10,10 +10,11 @@
 namespace unicore
 {
 	SDL2Platform::SDL2Platform()
-		: Platform({ _logger, _time, _input })
+		: Platform({ _logger, _time, _input, _file_system })
 		, _input_logger("[Input] ", _logger)
 		, _input(_input_logger)
-		, _provider_logger("[FS] ", _logger)
+		, _file_system_logger("[FS] ", _logger)
+		, _file_system(_file_system_logger)
 	{
 		SDL_SetMainReady();
 		SDL_Init(SDL_INIT_EVENTS | SDL_INIT_VIDEO);
@@ -59,11 +60,10 @@ namespace unicore
 		}
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
-		file_system.add_read(std::make_shared<WinFileProvider>(_provider_logger));
+		file_system.add_read(std::make_shared<WinFileProvider>(_file_system_logger));
 #elif defined(UNICORE_PLATFORM_LINUX)
-		file_system.add_read(std::make_shared<LinuxFileProvider>(_provider_logger));
+		file_system.add_read(std::make_shared<LinuxFileProvider>(_file_system_logger));
 #endif
-
 	}
 
 	Unique<Display> SDL2Platform::create_display(const DisplaySettings& settings)

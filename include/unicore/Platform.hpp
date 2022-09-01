@@ -2,12 +2,12 @@
 #include "unicore/Logger.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Display.hpp"
-#include "unicore/FileSystem.hpp"
 
 namespace unicore
 {
 	class Time;
 	class Input;
+	class FileSystem;
 
 	class Platform : public Module
 	{
@@ -18,6 +18,7 @@ namespace unicore
 			Logger& logger;
 			Time& time;
 			Input& input;
+			FileSystem& file_system;
 		};
 
 		explicit Platform(const Settings& settings);
@@ -25,9 +26,7 @@ namespace unicore
 		Logger& logger;
 		Time& time;
 		Input& input;
-
-		ProxyLogger file_system_logger;
-		FileSystem file_system;
+		FileSystem& file_system;
 
 		ProxyLogger resources_logger;
 		ResourceCache resources;
