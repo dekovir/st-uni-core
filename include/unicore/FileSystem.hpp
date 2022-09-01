@@ -37,6 +37,6 @@ namespace unicore
 		List<Shared<ReadFileProvider>> _providers;
 		Shared<WriteFileProvider> _write;
 
-		Set<Shared<FileProviderLoader>> _provider_creators;
+		Set<Shared<FileProviderLoader>> _provider_loaders;
 	};
 }

@@ -11,17 +11,25 @@ namespace unicore
 
 	void FileSystem::add_read(const Shared<ReadFileProvider>& provider)
 	{
-		_providers.insert(_providers.begin(), provider);
+		// TODO: Test this
+		_providers.insert(_providers.begin() + (_write ? 1 : 0), provider);
 	}
 
 	void FileSystem::set_write(const Shared<WriteFileProvider>& provider)
 	{
+		if (_write)
+		{
+			UC_LOG_ERROR(_logger) << "WriteFileProvider is already set";
+			return;
+		}
+
 		_write = provider;
+		_providers.insert(_providers.begin(), _write);
 	}
 
 	void FileSystem::add_loader(const Shared<FileProviderLoader>& creator)
 	{
-		_provider_creators.insert(creator);
+		_provider_loaders.insert(creator);
 	}
 
 	bool FileSystem::mount(const Path& path)
@@ -31,6 +39,8 @@ namespace unicore
 			UC_LOG_ERROR(_logger) << "Failed to mount. No providers";
 			return true;
 		}
+
+		const FileProviderLoader::Options options{ &_logger };
 
 		for (auto it = _providers.rbegin(); it != _providers.rend(); ++it)
 		{
@@ -45,22 +55,22 @@ namespace unicore
 				return true;
 			}
 
-			for (const auto& creator : _provider_creators)
+			for (const auto& loader : _provider_loaders)
 			{
-				if (!creator->can_load(path))
+				if (!loader->can_load(path))
 					continue;
 
 				auto stream = provider->open_read(path);
 				if (!stream) continue;
 
-				if (const auto result = creator->load(stream); result)
+				if (const auto result = loader->load(stream, options); result)
 				{
 					add_read(result);
 					return true;
 				}
 
 				UC_LOG_ERROR(_logger) << "Failed to create FileProvider from "
-					<< creator->type() << " at " << path;
+					<< loader->type() << " at " << path;
 			}
 		}
 
