@@ -16,6 +16,8 @@ namespace unicore
 		: logger(settings.logger)
 		, time(settings.time)
 		, input(settings.input)
+		, file_system_logger("[FS] ", logger)
+		, file_system(file_system_logger)
 		, resources_logger("[Cache] ", logger)
 		, resources(resources_logger)
 	{

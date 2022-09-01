@@ -1,12 +1,12 @@
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
+#include "unicore/FileSystem.hpp"
 #include "unicore/FileProvider.hpp"
 #include "unicore/RendererResource.hpp"
 #include "unicore/ResourceLoader.hpp"
 #include "unicore/ResourceCreator.hpp"
 #include "unicore/ResourceConverter.hpp"
-#include "unicore/FileProviderLoader.hpp"
 
 namespace unicore
 {
@@ -44,79 +44,6 @@ namespace unicore
 			if (it->use_count() > 0) ++it;
 			else it = _resources.erase(it);
 		}
-	}
-
-	void ResourceCache::clear()
-	{
-		_providers.clear();
-	}
-
-	void ResourceCache::mount(const Shared<ReadFileProvider>& provider)
-	{
-		_providers.push_back(provider);
-	}
-
-	bool ResourceCache::mount(const Path& path)
-	{
-		if (_providers.empty())
-		{
-			UC_LOG_ERROR(_logger) << "Failed to mount. No providers";
-			return true;
-		}
-
-		for (auto it = _providers.rbegin(); it != _providers.rend(); ++it)
-		{
-			const auto provider = *it;
-
-			auto stats = provider->stats(path);
-			if (!stats.has_value()) continue;
-
-			if (stats.value().flag == FileFlag::Directory)
-			{
-				mount(std::make_shared<DirectoryFileProvider>(*provider, path));
-				return true;
-			}
-
-			for (const auto& creator : _provider_creators)
-			{
-				if (!creator->can_load(path))
-					continue;
-
-				auto stream = provider->open_read(path);
-				if (!stream) continue;
-
-				if (const auto result = creator->load(stream); result)
-				{
-					mount(result);
-					return true;
-				}
-
-				UC_LOG_ERROR(_logger) << "Failed to create provider from "
-					<< creator->type() << " with " << path;
-			}
-		}
-
-		UC_LOG_WARNING(_logger) << "Failed to mount " << path;
-		return false;
-	}
-
-	Shared<ReadFile> ResourceCache::open_read(const Path& path) const
-	{
-		if (!_providers.empty())
-		{
-			for (auto it = _providers.rbegin(); it != _providers.rend(); ++it)
-			{
-				const auto provider = *it;
-				if (auto stream = provider->open_read(path))
-					return stream;
-			}
-		}
-		else
-		{
-			UC_LOG_WARNING(_logger) << "No providers";
-		}
-
-		return nullptr;
 	}
 
 	Shared<Resource> ResourceCache::find(const Path& path, TypeConstRef type) const
@@ -276,11 +203,6 @@ namespace unicore
 		}
 	}
 
-	void ResourceCache::add_creator(const Shared<FileProviderLoader>& creator)
-	{
-		_provider_creators.insert(creator);
-	}
-
 	void ResourceCache::add_loader(const Shared<ResourceLoader>& loader)
 	{
 		for (auto type = &loader->resource_type(); type != nullptr && type != &s_resource_type; type = type->parent)
@@ -303,6 +225,8 @@ namespace unicore
 	void ResourceCache::register_module(const ModuleContext& context)
 	{
 		Module::register_module(context);
+
+		_fs = context.modules.find<FileSystem>();
 	}
 
 	void ResourceCache::unregister_module(const ModuleContext& context)
@@ -314,7 +238,6 @@ namespace unicore
 		_creators.clear();
 
 		unload_all();
-		clear();
 	}
 
 	// ============================================================================
@@ -334,6 +257,12 @@ namespace unicore
 
 	Shared<Resource> ResourceCache::load_resource(const Path& path, TypeConstRef type, Logger* logger)
 	{
+		if (!_fs) 
+		{
+			UC_LOG_WARNING(_logger) << "Failed to load resource. No FileSystem";
+			return nullptr;
+		}
+
 		const auto it = _loaders.find(&type);
 		if (it == _loaders.end()) return nullptr;
 
@@ -348,7 +277,7 @@ namespace unicore
 					Path new_path(path);
 					new_path.replace_extension(extension);
 
-					const auto stream = open_read(new_path);
+					const auto stream = _fs->open_read(new_path);
 					if (!stream)
 						continue;
 
@@ -360,7 +289,7 @@ namespace unicore
 			{
 				const auto extension = path.extension();
 
-				const auto stream = open_read(path);
+				const auto stream = _fs->open_read(path);
 				if (!stream)
 				{
 					UC_LOG_WARNING(logger) << "Failed to open " << path;

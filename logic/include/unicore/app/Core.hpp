@@ -21,6 +21,7 @@ namespace unicore
 		Logger& logger;
 		Time& time;
 		Input& input;
+		FileSystem& file_system;
 		ResourceCache& resources;
 
 		virtual void init();

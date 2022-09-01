@@ -14,7 +14,7 @@ namespace unicore
 
 	class ReadFile;
 	class ReadFileProvider;
-	class FileProviderLoader;
+	class FileSystem;
 
 	enum class ResourceCacheFlag
 	{
@@ -30,13 +30,6 @@ namespace unicore
 
 		void unload_all();
 		void unload_unused();
-
-		void clear();
-
-		void mount(const Shared<ReadFileProvider>& provider);
-		bool mount(const Path& path);
-
-		UC_NODISCARD Shared<ReadFile> open_read(const Path& path) const;
 
 		UC_NODISCARD Shared<Resource> find(const Path& path, TypeConstRef type) const;
 		UC_NODISCARD Optional<Path> find_path(const Resource& resource) const;
@@ -70,8 +63,6 @@ namespace unicore
 		void dump_used();
 		void calc_memory_use(size_t* system, size_t* video) const;
 
-		void add_creator(const Shared<FileProviderLoader>& creator);
-
 		void add_loader(const Shared<ResourceLoader>& loader);
 		void add_converter(const Shared<ResourceConverter>& converter);
 		void add_creator(const Shared<ResourceCreator>& creator);
@@ -91,9 +82,7 @@ namespace unicore
 		};
 
 		Logger& _logger;
-		List<Shared<ReadFileProvider>> _providers;
-
-		Set<Shared<FileProviderLoader>> _provider_creators;
+		FileSystem* _fs = nullptr;
 
 		Dictionary<TypeConstPtr, Set<Shared<ResourceLoader>, LoaderSort>> _loaders;
 		Dictionary<TypeConstPtr, Set<Shared<ResourceConverter>>> _converters;

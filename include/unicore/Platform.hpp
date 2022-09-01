@@ -2,6 +2,7 @@
 #include "unicore/Logger.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Display.hpp"
+#include "unicore/FileSystem.hpp"
 
 namespace unicore
 {
@@ -24,6 +25,9 @@ namespace unicore
 		Logger& logger;
 		Time& time;
 		Input& input;
+
+		ProxyLogger file_system_logger;
+		FileSystem file_system;
 
 		ProxyLogger resources_logger;
 		ResourceCache resources;

@@ -59,9 +59,9 @@ namespace unicore
 		}
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
-		resources.mount(std::make_shared<WinFileProvider>(_provider_logger));
+		file_system.add_read(std::make_shared<WinFileProvider>(_provider_logger));
 #elif defined(UNICORE_PLATFORM_LINUX)
-		resources.mount(std::make_shared<LinuxFileProvider>(_provider_logger));
+		file_system.add_read(std::make_shared<LinuxFileProvider>(_provider_logger));
 #endif
 
 	}

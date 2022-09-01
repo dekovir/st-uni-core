@@ -14,10 +14,12 @@ namespace unicore
 		, logger(_logger)
 		, time(platform.time)
 		, input(platform.input)
+		, file_system(platform.file_system)
 		, resources(platform.resources)
 	{
 		_modules.add(platform);
 		_modules.add(input);
+		_modules.add(file_system);
 		_modules.add(resources);
 
 		create_plugin<PlatformPlugin>();

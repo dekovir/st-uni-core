@@ -10,7 +10,7 @@ namespace unicore
 		, _input(_input_logger)
 		, _provider_logger("[FS] ", _logger)
 	{
-		resources.mount(std::make_shared<WinFileProvider>(_provider_logger));
+		file_system.add_read(std::make_shared<WinFileProvider>(_provider_logger));
 	}
 
 	bool WinPlatform::running() const
