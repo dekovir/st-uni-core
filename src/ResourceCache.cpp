@@ -136,7 +136,7 @@ namespace unicore
 						// TODO: Optimize (get path directly from load function)
 						const auto converted_path = find_path(*raw);
 						_resources.push_back(resource);
-						add_resource(resource, converted_path.value_or(path), type);
+						add_resource(resource, converted_path.value_or(path));
 						return resource;
 					}
 				}
@@ -267,7 +267,7 @@ namespace unicore
 					if (!stream)
 						continue;
 
-					if (auto resource = load_resource(*loader, new_path, *stream, type, logger))
+					if (auto resource = load_resource(*loader, new_path, *stream, logger))
 						return resource;
 				}
 			}
@@ -282,7 +282,7 @@ namespace unicore
 					return nullptr;
 				}
 
-				if (auto resource = load_resource(*loader, path, *stream, type, logger))
+				if (auto resource = load_resource(*loader, path, *stream, logger))
 					return resource;
 			}
 		}
@@ -291,12 +291,12 @@ namespace unicore
 	}
 
 	Shared<Resource> ResourceCache::load_resource(ResourceLoader& loader,
-		const Path& path, ReadFile& file, TypeConstRef type, Logger* logger)
+		const Path& path, ReadFile& file, Logger* logger)
 	{
 		if (auto resource = loader.load({ path, *this, file, logger }))
 		{
 			_resources.push_back(resource);
-			add_resource(resource, path, type);
+			add_resource(resource, path);
 
 			return resource;
 		}
@@ -304,10 +304,11 @@ namespace unicore
 		return nullptr;
 	}
 
-	bool ResourceCache::add_resource(const Shared<Resource>& resource, const Path& path, TypeConstRef type)
+	bool ResourceCache::add_resource(const Shared<Resource>& resource, const Path& path)
 	{
 		if (resource->cache_policy() == ResourceCachePolicy::CanCache)
 		{
+			const auto& type = resource->type();
 			_cached[path].insert_or_assign(&type, resource);
 			UC_LOG_DEBUG(_logger) << "Added " << type << " from " << path
 				<< " " << MemorySize{ resource->get_system_memory_use() };

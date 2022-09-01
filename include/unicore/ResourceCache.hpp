@@ -8,6 +8,7 @@ namespace unicore
 {
 	class Logger;
 	class Context;
+
 	class ResourceLoader;
 	class ResourceConverter;
 	class ResourceCreator;
@@ -92,8 +93,8 @@ namespace unicore
 		Shared<Resource> load_resource(const Path& path, TypeConstRef type, Logger* logger);
 
 		Shared<Resource> load_resource(ResourceLoader& loader,
-			const Path& path, ReadFile& file, TypeConstRef type, Logger* logger);
+			const Path& path, ReadFile& file, Logger* logger);
 
-		bool add_resource(const Shared<Resource>& resource, const Path& path, TypeConstRef type);
+		bool add_resource(const Shared<Resource>& resource, const Path& path);
 	};
 }
