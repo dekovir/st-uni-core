@@ -11,6 +11,18 @@ namespace unicore
 		return stats(path).has_value();
 	}
 
+	bool FileProvider::is_file(const Path& path) const
+	{
+		const auto info = stats(path);
+		return info.has_value() && info.value().flag == FileFlag::File;
+	}
+
+	bool FileProvider::is_directory(const Path& path) const
+	{
+		const auto info = stats(path);
+		return info.has_value() && info.value().flag == FileFlag::Directory;
+	}
+
 	uint16_t FileProvider::enumerate_files(const Path& path,
 		WStringView search_pattern, List<WString>& name_list) const
 	{
@@ -100,7 +112,7 @@ namespace unicore
 		uint16_t count = 0;
 		if (const auto entry = find_entry(path); entry != nullptr)
 		{
-			for (const auto & [name, index] : entry->files)
+			for (const auto& [name, index] : entry->files)
 			{
 				if (StringHelper::compare_to_mask(WStringView(name), search_pattern))
 				{

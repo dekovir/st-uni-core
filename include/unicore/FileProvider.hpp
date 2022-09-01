@@ -36,6 +36,9 @@ namespace unicore
 		UC_NODISCARD virtual Optional<FileStats> stats(const Path& path) const = 0;
 		UC_NODISCARD virtual bool exists(const Path& path) const;
 
+		UC_NODISCARD bool is_file(const Path& path) const;
+		UC_NODISCARD bool is_directory(const Path& path) const;
+
 		virtual uint16_t enumerate_entries(const Path& path,
 			WStringView search_pattern, List<WString>& name_list,
 			FileFlags flags = FileFlag::File | FileFlag::Directory) const = 0;
@@ -118,6 +121,6 @@ namespace unicore
 	protected:
 		UC_NODISCARD virtual Optional<FileStats> stats_index(intptr_t index) const = 0;
 		UC_NODISCARD virtual Shared<ReadFile> open_read_index(intptr_t index) = 0;
-		UC_NODISCARD virtual bool enumerate_index(intptr_t index, FileFlags flags) const =0;
+		UC_NODISCARD virtual bool enumerate_index(intptr_t index, FileFlags flags) const = 0;
 	};
 }
