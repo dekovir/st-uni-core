@@ -14,13 +14,13 @@ namespace unicore
 	bool FileProvider::is_file(const Path& path) const
 	{
 		const auto info = stats(path);
-		return info.has_value() && info.value().flag == FileFlag::File;
+		return info.has_value() && info.value().flags.has(FileFlag::File);
 	}
 
 	bool FileProvider::is_directory(const Path& path) const
 	{
 		const auto info = stats(path);
-		return info.has_value() && info.value().flag == FileFlag::Directory;
+		return info.has_value() && info.value().flags.has(FileFlag::Directory);
 	}
 
 	uint16_t FileProvider::enumerate_files(const Path& path,
@@ -29,10 +29,20 @@ namespace unicore
 		return enumerate_entries(path, search_pattern, name_list, FileFlag::File);
 	}
 
+	uint16_t FileProvider::enumerate_files(const Path& path, List<WString>& name_list) const
+	{
+		return enumerate_files(path, L"", name_list);
+	}
+
 	uint16_t FileProvider::enumerate_dirs(const Path& path,
 		WStringView search_pattern, List<WString>& name_list) const
 	{
 		return enumerate_entries(path, search_pattern, name_list, FileFlag::Directory);
+	}
+
+	uint16_t FileProvider::enumerate_dirs(const Path& path, List<WString>& name_list) const
+	{
+		return enumerate_dirs(path, L"", name_list);
 	}
 
 	List<WString> FileProvider::get_files(const Path& path, WStringView search_pattern) const

@@ -39,7 +39,7 @@ namespace unicore
 			auto stats = provider->stats(path);
 			if (!stats.has_value()) continue;
 
-			if (stats.value().flag == FileFlag::Directory)
+			if (stats.value().flags.has(FileFlag::Directory))
 			{
 				add_read(std::make_shared<DirectoryFileProvider>(*provider, path));
 				return true;

@@ -15,9 +15,8 @@ namespace unicore
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
-		uint16_t enumerate_entries(const Path& path,
-			WStringView search_pattern, List<WString>& name_list,
-			FileFlags flags = FileFlag::File | FileFlag::Directory) const override;
+		uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
+			List<WString>& name_list, FileFlags flags) const override;
 
 		bool create_directory(const Path& path) override;
 		bool delete_directory(const Path& path, bool recursive) override;

@@ -29,12 +29,11 @@ namespace unicore
 		{
 			FileStats stats;
 			stats.size = data.st_size;
-			stats.accestime = DateTime(data.st_atime);
-			stats.modtime = DateTime(data.st_mtime);
-			stats.createtime = DateTime(data.st_ctime);
-			stats.flag = (data.st_mode & S_IFMT) == S_IFDIR
-				? FileFlag::Directory
-				: FileFlag::File;
+			stats.access_time = DateTime(data.st_atime);
+			stats.mod_time = DateTime(data.st_mtime);
+			stats.create_time = DateTime(data.st_ctime);
+			stats.flags |= (data.st_mode & S_IFMT) == S_IFDIR
+				? FileFlag::Directory : FileFlag::File;
 			return stats;
 		}
 
@@ -46,7 +45,7 @@ namespace unicore
 	}
 
 	uint16_t LinuxFileProvider::enumerate_entries(const Path& path,
-			WStringView search_pattern, List<WString>& name_list, FileFlags flags) const
+		WStringView search_pattern, List<WString>& name_list, FileFlags flags) const
 	{
 		UC_ASSERT_ALWAYS_MSG("Unimplemented");
 		return 0;

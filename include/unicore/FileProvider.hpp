@@ -13,19 +13,18 @@ namespace unicore
 
 	enum class FileFlag : uint8_t
 	{
-		None = 0,
-		Directory = 1,
-		File = 2,
+		File = 1 << 0,
+		Directory = 1 << 1,
 	};
 	UNICORE_ENUMFLAGS(FileFlag, FileFlags);
 
 	struct FileStats
 	{
 		int64_t size = 0;
-		DateTime modtime;
-		DateTime createtime;
-		DateTime accestime;
-		FileFlag flag = FileFlag::None;
+		DateTime mod_time;
+		DateTime create_time;
+		DateTime access_time;
+		FileFlags flags = FileFlags::Zero;
 	};
 
 	// FileProvider ///////////////////////////////////////////////////////////////
@@ -39,15 +38,16 @@ namespace unicore
 		UC_NODISCARD bool is_file(const Path& path) const;
 		UC_NODISCARD bool is_directory(const Path& path) const;
 
-		virtual uint16_t enumerate_entries(const Path& path,
-			WStringView search_pattern, List<WString>& name_list,
-			FileFlags flags = FileFlag::File | FileFlag::Directory) const = 0;
+		virtual uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
+			List<WString>& name_list, FileFlags flags) const = 0;
 
 		uint16_t enumerate_files(const Path& path,
 			WStringView search_pattern, List<WString>& name_list) const;
+		uint16_t enumerate_files(const Path& path, List<WString>& name_list) const;
 
 		uint16_t enumerate_dirs(const Path& path,
 			WStringView search_pattern, List<WString>& name_list) const;
+		uint16_t enumerate_dirs(const Path& path, List<WString>& name_list) const;
 
 		UC_NODISCARD virtual List<WString> get_files(
 			const Path& path, WStringView search_pattern) const;
@@ -91,9 +91,8 @@ namespace unicore
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 		UC_NODISCARD bool exists(const Path& path) const override;
 
-		uint16_t enumerate_entries(const Path& path,
-			WStringView search_pattern, List<WString>& name_list,
-			FileFlags flags = FileFlag::File | FileFlag::Directory) const override;
+		uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
+			List<WString>& name_list, FileFlags flags) const override;
 
 		Shared<ReadFile> open_read(const Path& path) override;
 
@@ -112,9 +111,8 @@ namespace unicore
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
-		uint16_t enumerate_entries(const Path& path,
-			WStringView search_pattern, List<WString>& name_list,
-			FileFlags flags = FileFlag::File | FileFlag::Directory) const override;
+		uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
+			List<WString>& name_list, FileFlags flags) const override;
 
 		Shared<ReadFile> open_read(const Path& path) override;
 

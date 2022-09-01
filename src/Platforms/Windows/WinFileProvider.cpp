@@ -31,13 +31,11 @@ namespace unicore
 			FileTimeToSystemTime(&fileAttr.ftCreationTime, &st);
 
 			FileStats stats;
-			stats.accestime = to_datetime(fileAttr.ftLastAccessTime);
-			stats.createtime = to_datetime(fileAttr.ftCreationTime);
-			stats.modtime = to_datetime(fileAttr.ftLastWriteTime);
-			if (fileAttr.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-				stats.flag = FileFlag::Directory;
-			else
-				stats.flag = FileFlag::File;
+			stats.access_time = to_datetime(fileAttr.ftLastAccessTime);
+			stats.create_time = to_datetime(fileAttr.ftCreationTime);
+			stats.mod_time = to_datetime(fileAttr.ftLastWriteTime);
+			stats.flags |= fileAttr.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY
+				? FileFlag::Directory : FileFlag::File;
 
 			return stats;
 		}
