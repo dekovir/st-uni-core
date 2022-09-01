@@ -54,6 +54,11 @@ namespace unicore
 	}
 
 	// WriteMemoryFile ////////////////////////////////////////////////////////////
+	WriteMemoryFile::WriteMemoryFile(size_t size)
+		: _bytes(size, 0)
+	{
+	}
+
 	int64_t WriteMemoryFile::size() const
 	{
 		return static_cast<int64_t>(_bytes.size());

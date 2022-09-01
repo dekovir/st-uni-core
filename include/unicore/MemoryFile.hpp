@@ -25,7 +25,7 @@ namespace unicore
 	{
 		UC_OBJECT(WriteMemoryFile, WriteFile)
 	public:
-		WriteMemoryFile() = default;
+		explicit WriteMemoryFile(size_t size = 0);
 
 		UC_NODISCARD int64_t size() const override;
 
