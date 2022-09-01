@@ -1,14 +1,14 @@
-#include "WinStream.hpp"
+#include "WinFile.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
 
 namespace unicore
 {
-	WinStream::WinStream(HANDLE handle)
+	WinFile::WinFile(HANDLE handle)
 		: _handle(handle)
 	{
 	}
 
-	WinStream::~WinStream()
+	WinFile::~WinFile()
 	{
 		if (_handle != nullptr)
 		{
@@ -17,18 +17,18 @@ namespace unicore
 		}
 	}
 
-	WinStream::WinStream(WinStream&& other) noexcept
+	WinFile::WinFile(WinFile&& other) noexcept
 		: _handle(std::exchange(other._handle, nullptr))
 	{
 	}
 
-	WinStream& WinStream::operator=(WinStream&& other) noexcept
+	WinFile& WinFile::operator=(WinFile&& other) noexcept
 	{
 		_handle = std::exchange(other._handle, nullptr);
 		return *this;
 	}
 
-	int64_t WinStream::size() const
+	int64_t WinFile::size() const
 	{
 		LARGE_INTEGER size;
 		if (GetFileSizeEx(_handle, &size) != 0)
@@ -37,7 +37,7 @@ namespace unicore
 		return 0;
 	}
 
-	int64_t WinStream::seek(int64_t offset, SeekMethod method)
+	int64_t WinFile::seek(int64_t offset, SeekMethod method)
 	{
 		LARGE_INTEGER li_offset, li_position;
 		li_offset.QuadPart = offset;
@@ -47,7 +47,7 @@ namespace unicore
 		return 0;
 	}
 
-	bool WinStream::eof() const
+	bool WinFile::eof() const
 	{
 		LARGE_INTEGER pos, size;
 		if (SetFilePointerEx(_handle, {}, &pos, FILE_CURRENT) && GetFileSizeEx(_handle, &size))
@@ -56,30 +56,30 @@ namespace unicore
 		return false;
 	}
 
-	bool WinStream::read(void* buffer, size_t size, size_t* bytes_read)
+	bool WinFile::read(void* buffer, size_t size, size_t* bytes_read)
 	{
 		DWORD count;
-		const auto result = ReadFile(_handle, buffer, size, &count, nullptr);
+		const auto result = ::ReadFile(_handle, buffer, size, &count, nullptr);
 		if (bytes_read)
 			*bytes_read = count;
 		return result;
 	}
 
-	bool WinStream::write(const void* buffer, size_t size, size_t* bytes_written)
+	bool WinFile::write(const void* buffer, size_t size, size_t* bytes_written)
 	{
 		DWORD count;
-		const auto result = WriteFile(_handle, buffer, size, &count, nullptr);
+		const auto result = ::WriteFile(_handle, buffer, size, &count, nullptr);
 		if (bytes_written)
 			*bytes_written = count;
 		return result;
 	}
 
-	bool WinStream::flush()
+	bool WinFile::flush()
 	{
 		return FlushFileBuffers(_handle);
 	}
 
-	DWORD WinStream::convert_method(SeekMethod method)
+	DWORD WinFile::convert_method(SeekMethod method)
 	{
 		switch (method)
 		{

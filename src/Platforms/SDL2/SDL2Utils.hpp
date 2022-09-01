@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/Rect.hpp"
-#include "unicore/Stream.hpp"
+#include "unicore/File.hpp"
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include <SDL.h>
@@ -28,10 +28,10 @@ namespace unicore
 
 	namespace SDL2Utils
 	{
-		extern SDL_RWops* from_stream(ReadStream& stream);
-		extern SDL_RWops* from_stream(const Shared<ReadStream>& stream);
+		extern SDL_RWops* from_stream(ReadFile& stream);
+		extern SDL_RWops* from_stream(const Shared<ReadFile>& stream);
 
-		extern SDL_RWops* from_stream(const Shared<WriteStream>& stream);
+		extern SDL_RWops* from_stream(const Shared<WriteFile>& stream);
 
 		static SDL_Rect& convert(const Recti& src, SDL_Rect& dst)
 		{

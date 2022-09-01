@@ -1,20 +1,20 @@
-#include "unicore/MemoryStream.hpp"
+#include "unicore/MemoryFile.hpp"
 #include "unicore/Math.hpp"
 
 namespace unicore
 {
-	// ReadMemoryStream ///////////////////////////////////////////////////////////
-	ReadMemoryStream::ReadMemoryStream(const Shared<MemoryChunk>& chunk)
+	// ReadMemoryFile /////////////////////////////////////////////////////////////
+	ReadMemoryFile::ReadMemoryFile(const Shared<MemoryChunk>& chunk)
 		: _chunk(chunk)
 	{
 	}
 
-	int64_t ReadMemoryStream::size() const
+	int64_t ReadMemoryFile::size() const
 	{
 		return static_cast<int64_t>(_chunk->size());
 	}
 
-	int64_t ReadMemoryStream::seek(int64_t offset, SeekMethod method)
+	int64_t ReadMemoryFile::seek(int64_t offset, SeekMethod method)
 	{
 		switch (method)
 		{
@@ -35,12 +35,12 @@ namespace unicore
 		return _position;
 	}
 
-	bool ReadMemoryStream::eof() const
+	bool ReadMemoryFile::eof() const
 	{
 		return _position >= static_cast<int64_t>(_chunk->size());
 	}
 
-	bool ReadMemoryStream::read(void* buffer, size_t size, size_t* bytes_read)
+	bool ReadMemoryFile::read(void* buffer, size_t size, size_t* bytes_read)
 	{
 		const auto count = Math::min<size_t>(size, _chunk->size() - _position);
 		if (bytes_read) *bytes_read = count;
@@ -53,13 +53,13 @@ namespace unicore
 		return false;
 	}
 
-	// WriteMemoryStream //////////////////////////////////////////////////////////
-	int64_t WriteMemoryStream::size() const
+	// WriteMemoryFile ////////////////////////////////////////////////////////////
+	int64_t WriteMemoryFile::size() const
 	{
 		return static_cast<int64_t>(_bytes.size());
 	}
 
-	int64_t WriteMemoryStream::seek(int64_t offset, SeekMethod method)
+	int64_t WriteMemoryFile::seek(int64_t offset, SeekMethod method)
 	{
 		switch (method)
 		{
@@ -80,12 +80,12 @@ namespace unicore
 		return _position;
 	}
 
-	bool WriteMemoryStream::eof() const
+	bool WriteMemoryFile::eof() const
 	{
 		return _position >= size();
 	}
 
-	bool WriteMemoryStream::read(void* buffer, size_t size, size_t* bytes_read)
+	bool WriteMemoryFile::read(void* buffer, size_t size, size_t* bytes_read)
 	{
 		const auto count = Math::min(static_cast<int64_t>(size), this->size() - _position);
 		Memory::copy(buffer, _bytes.data() + _position, count);
@@ -93,12 +93,12 @@ namespace unicore
 		return true;
 	}
 
-	bool WriteMemoryStream::flush()
+	bool WriteMemoryFile::flush()
 	{
 		return true;
 	}
 
-	bool WriteMemoryStream::write(const void* buffer, size_t size, size_t* bytes_written)
+	bool WriteMemoryFile::write(const void* buffer, size_t size, size_t* bytes_written)
 	{
 		_bytes.resize(_position + size);
 		Memory::copy(_bytes.data() + _position, buffer, size);

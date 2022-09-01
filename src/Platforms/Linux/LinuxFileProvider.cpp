@@ -1,40 +1,40 @@
-#include "LinuxStreamProvider.hpp"
+#include "LinuxFileProvider.hpp"
 #if defined(UNICORE_PLATFORM_LINUX)
 #include <sys/stat.h>
 #include "unicore/Unicode.hpp"
 #include "unicore/Logger.hpp"
 #include "LinuxError.hpp"
-#include "LinuxStream.hpp"
+#include "LinuxFile.hpp"
 
 namespace unicore
 {
-	LinuxStreamProvider::LinuxStreamProvider(Logger& logger)
+	LinuxFileProvider::LinuxFileProvider(Logger& logger)
 		: _logger(logger)
 	{
 	}
 
-	bool LinuxStreamProvider::exists(const Path& path) const
+	bool LinuxFileProvider::exists(const Path& path) const
 	{
 		const auto native_path = to_native(path);
 		struct stat data;
 		return stat(native_path.c_str(), &data) == 0;
 	}
 
-	Optional<StreamStats> LinuxStreamProvider::stats(const Path& path) const
+	Optional<FileStats> LinuxFileProvider::stats(const Path& path) const
 	{
 		const auto native_path = to_native(path);
 
 		struct stat data;
 		if (stat(native_path.c_str(), &data) == 0)
 		{
-			StreamStats stats;
+			FileStats stats;
 			stats.size = data.st_size;
 			stats.accestime = DateTime(data.st_atime);
 			stats.modtime = DateTime(data.st_mtime);
 			stats.createtime = DateTime(data.st_ctime);
 			stats.flag = (data.st_mode & S_IFMT) == S_IFDIR
-				? StreamFlag::Directory
-				: StreamFlag::File;
+				? FileFlag::Directory
+				: FileFlag::File;
 			return stats;
 		}
 
@@ -45,46 +45,46 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	uint16_t LinuxStreamProvider::enumerate(const Path& path,
+	uint16_t LinuxFileProvider::enumerate(const Path& path,
 			WStringView search_pattern, List<Path>& name_list, FileFlags flags) const
 	{
 		UC_ASSERT_ALWAYS_MSG("Unimplemented");
 		return 0;
 	}
 
-	bool LinuxStreamProvider::create_directory(const Path& path)
+	bool LinuxFileProvider::create_directory(const Path& path)
 	{
 		UC_ASSERT_ALWAYS_MSG("Unimplemented");
 		return false;
 	}
 
-	bool LinuxStreamProvider::delete_directory(const Path& path, bool recursive)
+	bool LinuxFileProvider::delete_directory(const Path& path, bool recursive)
 	{
 		UC_ASSERT_ALWAYS_MSG("Unimplemented");
 		return false;
 	}
 
-	Shared<ReadStream> LinuxStreamProvider::open_read(const Path& path)
+	Shared<ReadFile> LinuxFileProvider::open_read(const Path& path)
 	{
 		const auto native_path = to_native(path);
 		auto handle = fopen(native_path.c_str(), "rb");
-		return handle ? make_shared<LinuxStream>(handle) : nullptr;
+		return handle ? make_shared<LinuxFile>(handle) : nullptr;
 	}
 
-	Shared<WriteStream> LinuxStreamProvider::create_new(const Path& path)
+	Shared<WriteFile> LinuxFileProvider::create_new(const Path& path)
 	{
 		const auto native_path = to_native(path);
 		auto handle = fopen(native_path.c_str(), "wb");
-		return handle ? make_shared<LinuxStream>(handle) : nullptr;
+		return handle ? make_shared<LinuxFile>(handle) : nullptr;
 	}
 
-	bool LinuxStreamProvider::delete_file(const Path& path)
+	bool LinuxFileProvider::delete_file(const Path& path)
 	{
 		UC_ASSERT_ALWAYS_MSG("Unimplemented");
 		return false;
 	}
 
-	String LinuxStreamProvider::to_native(const Path& path)
+	String LinuxFileProvider::to_native(const Path& path)
 	{
 		return Unicode::to_utf8(path.native_path());
 	}

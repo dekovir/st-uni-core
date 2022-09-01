@@ -1,17 +1,17 @@
-#include "unicore/StreamProvider.hpp"
+#include "unicore/FileProvider.hpp"
 #include "unicore/Memory.hpp"
-#include "unicore/Stream.hpp"
+#include "unicore/File.hpp"
 #include "unicore/StringHelper.hpp"
 
 namespace unicore
 {
-	// BasicStreamProvider ////////////////////////////////////////////////////////
-	bool BasicStreamProvider::exists(const Path& path) const
+	// FileProvider ///////////////////////////////////////////////////////////////
+	bool FileProvider::exists(const Path& path) const
 	{
 		return stats(path).has_value();
 	}
 
-	List<Path> BasicStreamProvider::enumerate(const Path& path,
+	List<Path> FileProvider::enumerate(const Path& path,
 		WStringView search_pattern, FileFlags flags) const
 	{
 		List<Path> name_list;
@@ -19,8 +19,8 @@ namespace unicore
 		return name_list;
 	}
 
-	// ReadStreamProvider /////////////////////////////////////////////////////////
-	Shared<MemoryChunk> ReadStreamProvider::read_chunk(const Path& path)
+	// ReadFileProvider ///////////////////////////////////////////////////////////
+	Shared<MemoryChunk> ReadFileProvider::read_chunk(const Path& path)
 	{
 		if (const auto stream = open_read(path))
 		{
@@ -32,8 +32,8 @@ namespace unicore
 		return nullptr;
 	}
 
-	// WriteStreamProvider ////////////////////////////////////////////////////////
-	bool WriteStreamProvider::write_chunk(const Path& path, const MemoryChunk& chunk)
+	// WriteFileProvider //////////////////////////////////////////////////////////
+	bool WriteFileProvider::write_chunk(const Path& path, const MemoryChunk& chunk)
 	{
 		if (const auto stream = create_new(path))
 			return stream->write(chunk);
@@ -41,41 +41,41 @@ namespace unicore
 		return false;
 	}
 
-	// DirectoryStreamProvider ////////////////////////////////////////////////////
-	Optional<StreamStats> DirectoryStreamProvider::stats(const Path& path) const
+	// DirectoryFileProvider //////////////////////////////////////////////////////
+	Optional<FileStats> DirectoryFileProvider::stats(const Path& path) const
 	{
 		return _provider.stats(make_path(path));
 	}
 
-	bool DirectoryStreamProvider::exists(const Path& path) const
+	bool DirectoryFileProvider::exists(const Path& path) const
 	{
 		return _provider.exists(make_path(path));
 	}
 
-	uint16_t DirectoryStreamProvider::enumerate(const Path& path,
+	uint16_t DirectoryFileProvider::enumerate(const Path& path,
 		WStringView search_pattern, List<Path>& name_list, FileFlags flags) const
 	{
 		return _provider.enumerate(make_path(path), search_pattern, name_list, flags);
 	}
 
-	Shared<ReadStream> DirectoryStreamProvider::open_read(const Path& path)
+	Shared<ReadFile> DirectoryFileProvider::open_read(const Path& path)
 	{
 		return _provider.open_read(make_path(path));
 	}
 
-	// ArchiveStreamProvider //////////////////////////////////////////////////////
-	bool ArchiveStreamProvider::exists(const Path& path) const
+	// ArchiveFileProvider ////////////////////////////////////////////////////////
+	bool ArchiveFileProvider::exists(const Path& path) const
 	{
 		return find_data(path) != nullptr;
 	}
 
-	Optional<StreamStats> ArchiveStreamProvider::stats(const Path& path) const
+	Optional<FileStats> ArchiveFileProvider::stats(const Path& path) const
 	{
 		const auto data = find_data(path);
 		return data != nullptr ? stats_index(*data) : std::nullopt;
 	}
 
-	uint16_t ArchiveStreamProvider::enumerate(
+	uint16_t ArchiveFileProvider::enumerate(
 		const Path& path, WStringView search_pattern,
 		List<Path>& name_list, FileFlags flags) const
 	{
@@ -98,7 +98,7 @@ namespace unicore
 		return count;
 	}
 
-	Shared<ReadStream> ArchiveStreamProvider::open_read(const Path& path)
+	Shared<ReadFile> ArchiveFileProvider::open_read(const Path& path)
 	{
 		const auto data = find_data(path);
 		return data != nullptr ? open_read_index(*data) : nullptr;

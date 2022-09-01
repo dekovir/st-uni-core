@@ -2,9 +2,9 @@
 #if defined(UNICORE_USE_SDL2)
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
-#	include "Platforms/Windows/WinStreamProvider.hpp"
+#	include "Platforms/Windows/WinFileProvider.hpp"
 #elif defined(UNICORE_PLATFORM_LINUX)
-#	include "Platforms/Linux/LinuxStreamProvider.hpp"
+#	include "Platforms/Linux/LinuxFileProvider.hpp"
 #endif
 
 namespace unicore
@@ -59,9 +59,9 @@ namespace unicore
 		}
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
-		resources.mount(std::make_shared<WinStreamProvider>(_provider_logger));
+		resources.mount(std::make_shared<WinFileProvider>(_provider_logger));
 #elif defined(UNICORE_PLATFORM_LINUX)
-		resources.mount(std::make_shared<LinuxStreamProvider>(_provider_logger));
+		resources.mount(std::make_shared<LinuxFileProvider>(_provider_logger));
 #endif
 
 	}

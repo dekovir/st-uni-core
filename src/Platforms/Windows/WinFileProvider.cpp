@@ -1,24 +1,24 @@
-#include "WinStreamProvider.hpp"
+#include "WinFileProvider.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #include <Shlwapi.h>
 #include "WinError.hpp"
-#include "WinStream.hpp"
+#include "WinFile.hpp"
 
 namespace unicore
 {
-	WinStreamProvider::WinStreamProvider(Logger& logger)
+	WinFileProvider::WinFileProvider(Logger& logger)
 		: _logger(logger)
 	{
 	}
 
-	bool WinStreamProvider::exists(const Path& path) const
+	bool WinFileProvider::exists(const Path& path) const
 	{
 		const auto native_path = path.native_path();
 		const auto flags = GetFileAttributesW(native_path.c_str());
 		return flags != INVALID_FILE_ATTRIBUTES ? true : false;
 	}
 
-	Optional<StreamStats> WinStreamProvider::stats(const Path& path) const
+	Optional<FileStats> WinFileProvider::stats(const Path& path) const
 	{
 		const auto native_path = path.native_path();
 
@@ -30,14 +30,14 @@ namespace unicore
 			SYSTEMTIME st;
 			FileTimeToSystemTime(&fileAttr.ftCreationTime, &st);
 
-			StreamStats stats;
-			stats.accestime = filetime_to_timet(fileAttr.ftLastAccessTime);
-			stats.createtime = filetime_to_timet(fileAttr.ftCreationTime);
-			stats.modtime = filetime_to_timet(fileAttr.ftLastWriteTime);
+			FileStats stats;
+			stats.accestime = to_datetime(fileAttr.ftLastAccessTime);
+			stats.createtime = to_datetime(fileAttr.ftCreationTime);
+			stats.modtime = to_datetime(fileAttr.ftLastWriteTime);
 			if (fileAttr.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-				stats.flag = StreamFlag::Directory;
+				stats.flag = FileFlag::Directory;
 			else
-				stats.flag = StreamFlag::File;
+				stats.flag = FileFlag::File;
 
 			return stats;
 		}
@@ -48,7 +48,7 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	uint16_t WinStreamProvider::enumerate(const Path& path,
+	uint16_t WinFileProvider::enumerate(const Path& path,
 		WStringView search_pattern, List<Path>& name_list, FileFlags flags) const
 	{
 		const auto native_path = (path / search_pattern).native_path();
@@ -66,8 +66,8 @@ namespace unicore
 				if (fileName == L"." || fileName == L"..")
 					continue;
 
-				const StreamFlag fileType = (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0
-					? StreamFlag::Directory : StreamFlag::File;
+				const FileFlag fileType = (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0
+					? FileFlag::Directory : FileFlag::File;
 				if (!flags.has(fileType))
 					continue;
 
@@ -81,7 +81,7 @@ namespace unicore
 		return count;
 	}
 
-	bool WinStreamProvider::create_directory(const Path& path)
+	bool WinFileProvider::create_directory(const Path& path)
 	{
 		const auto native_path = path.native_path();
 		if (CreateDirectoryW(native_path.data(), nullptr) != 0)
@@ -92,7 +92,7 @@ namespace unicore
 		return false;
 	}
 
-	bool WinStreamProvider::delete_directory(const Path& path, bool recursive)
+	bool WinFileProvider::delete_directory(const Path& path, bool recursive)
 	{
 		const auto native_path = path.native_path();
 		if (RemoveDirectoryW(native_path.data()) != 0)
@@ -103,7 +103,7 @@ namespace unicore
 		return false;
 	}
 
-	Shared<ReadStream> WinStreamProvider::open_read(const Path& path)
+	Shared<ReadFile> WinFileProvider::open_read(const Path& path)
 	{
 		const auto native_path = path.native_path();
 
@@ -111,7 +111,7 @@ namespace unicore
 			GENERIC_READ, FILE_SHARE_READ, nullptr,
 			OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 		if (handle != INVALID_HANDLE_VALUE)
-			return std::make_shared<WinStream>(handle);
+			return std::make_shared<WinFile>(handle);
 
 		if (const auto error = WinError::get_last(); !error.is_not_found())
 			UC_LOG_ERROR(_logger) << error << L" for '" << path << L"'";
@@ -119,7 +119,7 @@ namespace unicore
 		return nullptr;
 	}
 
-	Shared<WriteStream> WinStreamProvider::create_new(const Path& path)
+	Shared<WriteFile> WinFileProvider::create_new(const Path& path)
 	{
 		const auto native_path = path.native_path();
 
@@ -127,7 +127,7 @@ namespace unicore
 			GENERIC_WRITE, 0, nullptr,
 			CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 		if (handle != INVALID_HANDLE_VALUE)
-			return std::make_shared<WinStream>(handle);
+			return std::make_shared<WinFile>(handle);
 
 		if (const auto error = WinError::get_last(); !error.is_not_found())
 			UC_LOG_ERROR(_logger) << error << L" for '" << path << L"'";
@@ -135,7 +135,7 @@ namespace unicore
 		return nullptr;
 	}
 
-	bool WinStreamProvider::delete_file(const Path& path)
+	bool WinFileProvider::delete_file(const Path& path)
 	{
 		const auto native_path = path.native_path();
 		if (DeleteFileW(native_path.data()) != 0)
@@ -146,7 +146,7 @@ namespace unicore
 		return false;
 	}
 
-	DateTime WinStreamProvider::filetime_to_timet(FILETIME const& ft)
+	DateTime WinFileProvider::to_datetime(FILETIME const& ft)
 	{
 		ULARGE_INTEGER ull;
 		ull.LowPart = ft.dwLowDateTime;

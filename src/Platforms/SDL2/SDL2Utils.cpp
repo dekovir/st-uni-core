@@ -5,10 +5,10 @@ namespace unicore
 {
 	struct StreamHandle
 	{
-		Shared<BasicStream> shared_link;
-		BasicStream* basic = nullptr;
-		ReadStream* read = nullptr;
-		WriteStream* write = nullptr;
+		Shared<File> shared_link;
+		File* basic = nullptr;
+		ReadFile* read = nullptr;
+		WriteFile* write = nullptr;
 
 		static StreamHandle* from_context(SDL_RWops* context)
 		{
@@ -70,7 +70,7 @@ namespace unicore
 		context->hidden.unknown.data1 = handle;
 	}
 
-	SDL_RWops* SDL2Utils::from_stream(ReadStream& stream)
+	SDL_RWops* SDL2Utils::from_stream(ReadFile& stream)
 	{
 		SDL_RWops* c = SDL_AllocRW();
 		if (c != nullptr)
@@ -84,7 +84,7 @@ namespace unicore
 		return c;
 	}
 
-	SDL_RWops* SDL2Utils::from_stream(const Shared<ReadStream>& stream)
+	SDL_RWops* SDL2Utils::from_stream(const Shared<ReadFile>& stream)
 	{
 		SDL_RWops* c = SDL_AllocRW();
 		if (c != nullptr)
@@ -99,7 +99,7 @@ namespace unicore
 		return c;
 	}
 
-	SDL_RWops* SDL2Utils::from_stream(const Shared<WriteStream>& stream)
+	SDL_RWops* SDL2Utils::from_stream(const Shared<WriteFile>& stream)
 	{
 		SDL_RWops* c = SDL_AllocRW();
 		if (c != nullptr)

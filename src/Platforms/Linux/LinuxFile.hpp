@@ -1,16 +1,16 @@
 #pragma once
-#include "unicore/Stream.hpp"
+#include "unicore/File.hpp"
 #if defined(UNICORE_PLATFORM_LINUX)
 
 namespace unicore
 {
 	// TODO: Remove multiple inheritance
-	class LinuxStream : public WriteStream
+	class LinuxFile : public WriteFile
 	{
-		UC_OBJECT(LinuxStream, ReadStream)
+		UC_OBJECT(LinuxFile, ReadFile)
 	public:
-		explicit LinuxStream(FILE* handle);
-		~LinuxStream() override;
+		explicit LinuxFile(FILE* handle);
+		~LinuxFile() override;
 
 		UC_NODISCARD int64_t size() const override;
 		int64_t seek(int64_t offset, SeekMethod method) override;

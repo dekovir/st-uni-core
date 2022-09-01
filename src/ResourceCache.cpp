@@ -1,12 +1,12 @@
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
-#include "unicore/StreamProvider.hpp"
+#include "unicore/FileProvider.hpp"
 #include "unicore/RendererResource.hpp"
 #include "unicore/ResourceLoader.hpp"
 #include "unicore/ResourceCreator.hpp"
 #include "unicore/ResourceConverter.hpp"
-#include "unicore/StreamProviderCreator.hpp"
+#include "unicore/FileProviderLoader.hpp"
 
 namespace unicore
 {
@@ -51,7 +51,7 @@ namespace unicore
 		_providers.clear();
 	}
 
-	void ResourceCache::mount(const Shared<ReadStreamProvider>& provider)
+	void ResourceCache::mount(const Shared<ReadFileProvider>& provider)
 	{
 		_providers.push_back(provider);
 	}
@@ -71,21 +71,21 @@ namespace unicore
 			auto stats = provider->stats(path);
 			if (!stats.has_value()) continue;
 
-			if (stats.value().flag == StreamFlag::Directory)
+			if (stats.value().flag == FileFlag::Directory)
 			{
-				mount(std::make_shared<DirectoryStreamProvider>(*provider, path));
+				mount(std::make_shared<DirectoryFileProvider>(*provider, path));
 				return true;
 			}
 
 			for (const auto& creator : _provider_creators)
 			{
-				if (!creator->can_create(path))
+				if (!creator->can_load(path))
 					continue;
 
 				auto stream = provider->open_read(path);
 				if (!stream) continue;
 
-				if (const auto result = creator->create(stream); result)
+				if (const auto result = creator->load(stream); result)
 				{
 					mount(result);
 					return true;
@@ -100,7 +100,7 @@ namespace unicore
 		return false;
 	}
 
-	Shared<ReadStream> ResourceCache::open_read(const Path& path) const
+	Shared<ReadFile> ResourceCache::open_read(const Path& path) const
 	{
 		if (!_providers.empty())
 		{
@@ -276,7 +276,7 @@ namespace unicore
 		}
 	}
 
-	void ResourceCache::add_creator(const Shared<StreamProviderCreator>& creator)
+	void ResourceCache::add_creator(const Shared<FileProviderLoader>& creator)
 	{
 		_provider_creators.insert(creator);
 	}
@@ -376,9 +376,9 @@ namespace unicore
 	}
 
 	Shared<Resource> ResourceCache::load_resource(ResourceLoader& loader,
-		const Path& path, ReadStream& stream, TypeConstRef type, Logger* logger)
+		const Path& path, ReadFile& file, TypeConstRef type, Logger* logger)
 	{
-		if (auto resource = loader.load({ path, *this, stream, logger }))
+		if (auto resource = loader.load({ path, *this, file, logger }))
 		{
 			_resources.push_back(resource);
 			add_resource(resource, path, type);

@@ -12,17 +12,17 @@ namespace unicore
 		End,
 	};
 
-	class BasicStream : public Object
+	class File : public Object
 	{
-		UC_OBJECT(BasicStream, Object)
+		UC_OBJECT(File, Object)
 	public:
 		UC_NODISCARD virtual int64_t size() const = 0;
 		virtual int64_t seek(int64_t offset, SeekMethod method = SeekMethod::Begin) = 0;
 	};
 
-	class ReadStream : public BasicStream
+	class ReadFile : public File
 	{
-		UC_OBJECT(ReadStream, BasicStream)
+		UC_OBJECT(ReadFile, File)
 	public:
 		UC_NODISCARD virtual bool eof() const = 0;
 		virtual bool read(void* buffer, size_t size, size_t* bytes_read = nullptr) = 0;
@@ -30,9 +30,9 @@ namespace unicore
 		bool read(MemoryChunk& chunk, size_t* bytes_read = nullptr);
 	};
 
-	class WriteStream : public ReadStream
+	class WriteFile : public ReadFile
 	{
-		UC_OBJECT(WriteStream, ReadStream)
+		UC_OBJECT(WriteFile, ReadFile)
 	public:
 		virtual bool flush() = 0;
 		virtual bool write(const void* buffer, size_t size, size_t* bytes_written = nullptr) = 0;
@@ -40,13 +40,13 @@ namespace unicore
 		bool write(const MemoryChunk& chunk, size_t* bytes_written = nullptr);
 	};
 
-	// StreamReader ///////////////////////////////////////////////////////////////
-	class StreamReader
+	// FileReader /////////////////////////////////////////////////////////////////
+	class FileReader
 	{
 	public:
-		ReadStream& stream;
+		ReadFile& stream;
 
-		explicit StreamReader(ReadStream& stream_)
+		explicit FileReader(ReadFile& stream_)
 			: stream(stream_) {}
 
 		UC_NODISCARD bool eof() const { return stream.eof(); }
@@ -79,30 +79,30 @@ namespace unicore
 		}
 	};
 
-	// StreamWriter ///////////////////////////////////////////////////////////////
-	class StreamWriter
+	// FileWriter /////////////////////////////////////////////////////////////////
+	class FileWriter
 	{
 	public:
-		WriteStream& stream;
+		WriteFile& stream;
 
-		explicit StreamWriter(WriteStream& stream_)
+		explicit FileWriter(WriteFile& stream_)
 			: stream(stream_)
 		{
 		}
 
-		StreamWriter& write(StringView str);
-		StreamWriter& write(WStringView str);
+		FileWriter& write(StringView str);
+		FileWriter& write(WStringView str);
 
 		template<typename T,
 			std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-		StreamWriter& write(T value)
+		FileWriter& write(T value)
 		{
 			stream.write(&value, sizeof(value));
 			return *this;
 		}
 
 		template<typename Char>
-		StreamWriter& write_string_nt(BasicStringView<Char> str)
+		FileWriter& write_string_nt(BasicStringView<Char> str)
 		{
 			stream.write(str.data(), sizeof(Char) * (str.size() + 1));
 			return *this;

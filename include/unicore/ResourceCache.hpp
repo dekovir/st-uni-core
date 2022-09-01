@@ -12,9 +12,9 @@ namespace unicore
 	class ResourceConverter;
 	class ResourceCreator;
 
-	class ReadStream;
-	class ReadStreamProvider;
-	class StreamProviderCreator;
+	class ReadFile;
+	class ReadFileProvider;
+	class FileProviderLoader;
 
 	enum class ResourceCacheFlag
 	{
@@ -33,10 +33,10 @@ namespace unicore
 
 		void clear();
 
-		void mount(const Shared<ReadStreamProvider>& provider);
+		void mount(const Shared<ReadFileProvider>& provider);
 		bool mount(const Path& path);
 
-		UC_NODISCARD Shared<ReadStream> open_read(const Path& path) const;
+		UC_NODISCARD Shared<ReadFile> open_read(const Path& path) const;
 
 		UC_NODISCARD Shared<Resource> find(const Path& path, TypeConstRef type) const;
 		UC_NODISCARD Optional<Path> find_path(const Resource& resource) const;
@@ -70,7 +70,7 @@ namespace unicore
 		void dump_used();
 		void calc_memory_use(size_t* system, size_t* video) const;
 
-		void add_creator(const Shared<StreamProviderCreator>& creator);
+		void add_creator(const Shared<FileProviderLoader>& creator);
 
 		void add_loader(const Shared<ResourceLoader>& loader);
 		void add_converter(const Shared<ResourceConverter>& converter);
@@ -91,9 +91,9 @@ namespace unicore
 		};
 
 		Logger& _logger;
-		List<Shared<ReadStreamProvider>> _providers;
+		List<Shared<ReadFileProvider>> _providers;
 
-		Set<Shared<StreamProviderCreator>> _provider_creators;
+		Set<Shared<FileProviderLoader>> _provider_creators;
 
 		Dictionary<TypeConstPtr, Set<Shared<ResourceLoader>, LoaderSort>> _loaders;
 		Dictionary<TypeConstPtr, Set<Shared<ResourceConverter>>> _converters;
@@ -105,7 +105,7 @@ namespace unicore
 		Shared<Resource> load_resource(const Path& path, TypeConstRef type, Logger* logger);
 
 		Shared<Resource> load_resource(ResourceLoader& loader,
-			const Path& path, ReadStream& stream, TypeConstRef type, Logger* logger);
+			const Path& path, ReadFile& file, TypeConstRef type, Logger* logger);
 
 		bool add_resource(const Shared<Resource>& resource, const Path& path, TypeConstRef type);
 	};

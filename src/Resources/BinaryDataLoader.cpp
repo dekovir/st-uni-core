@@ -9,11 +9,11 @@ namespace unicore
 
 	Shared<Resource> BinaryDataLoader::load(const ResourceLoaderContext& context)
 	{
-		context.stream.seek(0);
-		const auto size = context.stream.size();
+		context.file.seek(0);
+		const auto size = context.file.size();
 
 		MemoryChunk chunk(size);
-		if (context.stream.read(chunk.data(), size))
+		if (context.file.read(chunk.data(), size))
 			return std::make_shared<BinaryData>(chunk);
 
 		UC_LOG_ERROR(context.logger) << "Read failed";

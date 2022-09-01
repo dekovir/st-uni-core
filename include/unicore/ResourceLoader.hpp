@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/Path.hpp"
 #include "unicore/Resource.hpp"
-#include "unicore/Stream.hpp"
+#include "unicore/File.hpp"
 #include "unicore/Logger.hpp"
 
 namespace unicore
@@ -12,7 +12,7 @@ namespace unicore
 	{
 		Path path;
 		ResourceCache& cache;
-		ReadStream& stream;
+		ReadFile& file;
 		Logger* logger = nullptr;
 	};
 

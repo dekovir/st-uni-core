@@ -1,5 +1,5 @@
 #include "TextDataLoader.hpp"
-#include "unicore/Stream.hpp"
+#include "unicore/File.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore
@@ -11,12 +11,12 @@ namespace unicore
 
 	Shared<Resource> TextDataLoader::load(const ResourceLoaderContext& context)
 	{
-		context.stream.seek(0);
-		const auto size = context.stream.size();
+		context.file.seek(0);
+		const auto size = context.file.size();
 
 		String str;
 		str.resize(size);
-		if (context.stream.read(str.data(), size))
+		if (context.file.read(str.data(), size))
 			return std::make_shared<TextData>(str);
 
 		return nullptr;
@@ -29,12 +29,12 @@ namespace unicore
 
 	Shared<Resource> WTextDataLoader::load(const ResourceLoaderContext& context)
 	{
-		context.stream.seek(0);
-		const auto size = context.stream.size();
+		context.file.seek(0);
+		const auto size = context.file.size();
 
 		String str;
 		str.resize(size);
-		if (context.stream.read(str.data(), size))
+		if (context.file.read(str.data(), size))
 			return std::make_shared<TextData>(str);
 
 		return nullptr;

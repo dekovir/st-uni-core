@@ -1,14 +1,14 @@
 #pragma once
-#include "unicore/Stream.hpp"
+#include "unicore/File.hpp"
 #include "unicore/Memory.hpp"
 
 namespace unicore
 {
-	class ReadMemoryStream : public ReadStream
+	class ReadMemoryFile : public ReadFile
 	{
-		UC_OBJECT(ReadMemoryStream, ReadStream)
+		UC_OBJECT(ReadMemoryFile, ReadFile)
 	public:
-		explicit ReadMemoryStream(const Shared<MemoryChunk>& chunk);
+		explicit ReadMemoryFile(const Shared<MemoryChunk>& chunk);
 
 		UC_NODISCARD int64_t size() const override;
 		int64_t seek(int64_t offset, SeekMethod method) override;
@@ -21,11 +21,11 @@ namespace unicore
 		int64_t _position = 0;
 	};
 
-	class WriteMemoryStream : public WriteStream
+	class WriteMemoryFile : public WriteFile
 	{
-		UC_OBJECT(WriteMemoryStream, WriteStream)
+		UC_OBJECT(WriteMemoryFile, WriteFile)
 	public:
-		WriteMemoryStream() = default;
+		WriteMemoryFile() = default;
 
 		UC_NODISCARD int64_t size() const override;
 

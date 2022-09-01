@@ -1,23 +1,23 @@
 #pragma once
-#include "unicore/Stream.hpp"
+#include "unicore/File.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #include "WinDefs.hpp"
 
 namespace unicore
 {
 	// TODO: Remove multiple inheritance
-	class WinStream : public WriteStream
+	class WinFile : public WriteFile
 	{
-		UC_OBJECT(WinStream, ReadStream)
+		UC_OBJECT(WinFile, ReadFile)
 	public:
-		explicit WinStream(HANDLE handle);
-		~WinStream() override;
+		explicit WinFile(HANDLE handle);
+		~WinFile() override;
 
-		WinStream(const WinStream& other) = delete;
-		WinStream(WinStream&& other) noexcept;
+		WinFile(const WinFile& other) = delete;
+		WinFile(WinFile&& other) noexcept;
 
-		WinStream& operator=(const WinStream& other) = delete;
-		WinStream& operator=(WinStream&& other) noexcept;
+		WinFile& operator=(const WinFile& other) = delete;
+		WinFile& operator=(WinFile&& other) noexcept;
 
 		UC_NODISCARD int64_t size() const override;
 		int64_t seek(int64_t offset, SeekMethod method) override;
