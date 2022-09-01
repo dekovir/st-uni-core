@@ -11,11 +11,29 @@ namespace unicore
 		return stats(path).has_value();
 	}
 
-	List<Path> FileProvider::enumerate(const Path& path,
-		WStringView search_pattern, FileFlags flags) const
+	uint16_t FileProvider::enumerate_files(const Path& path,
+		WStringView search_pattern, List<WString>& name_list) const
 	{
-		List<Path> name_list;
-		enumerate(path, search_pattern, name_list, flags);
+		return enumerate_entries(path, search_pattern, name_list, FileFlag::File);
+	}
+
+	uint16_t FileProvider::enumerate_dirs(const Path& path,
+		WStringView search_pattern, List<WString>& name_list) const
+	{
+		return enumerate_entries(path, search_pattern, name_list, FileFlag::Directory);
+	}
+
+	List<WString> FileProvider::get_files(const Path& path, WStringView search_pattern) const
+	{
+		List<WString> name_list;
+		enumerate_files(path, search_pattern, name_list);
+		return name_list;
+	}
+
+	List<WString> FileProvider::get_dirs(const Path& path, WStringView search_pattern) const
+	{
+		List<WString> name_list;
+		enumerate_dirs(path, search_pattern, name_list);
 		return name_list;
 	}
 
@@ -52,10 +70,10 @@ namespace unicore
 		return _provider.exists(make_path(path));
 	}
 
-	uint16_t DirectoryFileProvider::enumerate(const Path& path,
-		WStringView search_pattern, List<Path>& name_list, FileFlags flags) const
+	uint16_t DirectoryFileProvider::enumerate_entries(const Path& path,
+		WStringView search_pattern, List<WString>& name_list, FileFlags flags) const
 	{
-		return _provider.enumerate(make_path(path), search_pattern, name_list, flags);
+		return _provider.enumerate_entries(make_path(path), search_pattern, name_list, flags);
 	}
 
 	Shared<ReadFile> DirectoryFileProvider::open_read(const Path& path)
@@ -75,21 +93,21 @@ namespace unicore
 		return data != nullptr ? stats_index(*data) : std::nullopt;
 	}
 
-	uint16_t ArchiveFileProvider::enumerate(
+	uint16_t ArchiveFileProvider::enumerate_entries(
 		const Path& path, WStringView search_pattern,
-		List<Path>& name_list, FileFlags flags) const
+		List<WString>& name_list, FileFlags flags) const
 	{
 		uint16_t count = 0;
 		if (const auto entry = find_entry(path); entry != nullptr)
 		{
-			for (const auto & it : entry->files)
+			for (const auto & [name, index] : entry->files)
 			{
-				if (StringHelper::compare_to_mask(WStringView(it.first), search_pattern))
+				if (StringHelper::compare_to_mask(WStringView(name), search_pattern))
 				{
-					if (!enumerate_index(it.second, flags))
+					if (!enumerate_index(index, flags))
 						continue;
 
-					name_list.push_back(path / it.first);
+					name_list.push_back(name);
 					count++;
 				}
 			}

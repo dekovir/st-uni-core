@@ -45,8 +45,8 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	uint16_t LinuxFileProvider::enumerate(const Path& path,
-			WStringView search_pattern, List<Path>& name_list, FileFlags flags) const
+	uint16_t LinuxFileProvider::enumerate_entries(const Path& path,
+			WStringView search_pattern, List<WString>& name_list, FileFlags flags) const
 	{
 		UC_ASSERT_ALWAYS_MSG("Unimplemented");
 		return 0;

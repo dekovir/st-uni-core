@@ -36,13 +36,21 @@ namespace unicore
 		UC_NODISCARD virtual Optional<FileStats> stats(const Path& path) const = 0;
 		UC_NODISCARD virtual bool exists(const Path& path) const;
 
-		virtual uint16_t enumerate(const Path& path,
-			WStringView search_pattern, List<Path>& name_list,
+		virtual uint16_t enumerate_entries(const Path& path,
+			WStringView search_pattern, List<WString>& name_list,
 			FileFlags flags = FileFlag::File | FileFlag::Directory) const = 0;
 
-		UC_NODISCARD virtual List<Path> enumerate(
-			const Path& path, WStringView search_pattern,
-			FileFlags flags = FileFlag::File | FileFlag::Directory) const;
+		uint16_t enumerate_files(const Path& path,
+			WStringView search_pattern, List<WString>& name_list) const;
+
+		uint16_t enumerate_dirs(const Path& path,
+			WStringView search_pattern, List<WString>& name_list) const;
+
+		UC_NODISCARD virtual List<WString> get_files(
+			const Path& path, WStringView search_pattern) const;
+
+		UC_NODISCARD virtual List<WString> get_dirs(
+			const Path& path, WStringView search_pattern) const;
 	};
 
 	// ReadFileProvider ///////////////////////////////////////////////////////////
@@ -80,8 +88,8 @@ namespace unicore
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 		UC_NODISCARD bool exists(const Path& path) const override;
 
-		uint16_t enumerate(const Path& path,
-			WStringView search_pattern, List<Path>& name_list,
+		uint16_t enumerate_entries(const Path& path,
+			WStringView search_pattern, List<WString>& name_list,
 			FileFlags flags = FileFlag::File | FileFlag::Directory) const override;
 
 		Shared<ReadFile> open_read(const Path& path) override;
@@ -101,8 +109,8 @@ namespace unicore
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
-		uint16_t enumerate(const Path& path,
-			WStringView search_pattern, List<Path>& name_list,
+		uint16_t enumerate_entries(const Path& path,
+			WStringView search_pattern, List<WString>& name_list,
 			FileFlags flags = FileFlag::File | FileFlag::Directory) const override;
 
 		Shared<ReadFile> open_read(const Path& path) override;

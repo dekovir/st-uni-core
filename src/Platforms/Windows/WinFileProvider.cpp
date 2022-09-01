@@ -48,8 +48,8 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	uint16_t WinFileProvider::enumerate(const Path& path,
-		WStringView search_pattern, List<Path>& name_list, FileFlags flags) const
+	uint16_t WinFileProvider::enumerate_entries(const Path& path,
+		WStringView search_pattern, List<WString>& name_list, FileFlags flags) const
 	{
 		const auto native_path = (path / search_pattern).native_path();
 
@@ -71,7 +71,7 @@ namespace unicore
 				if (!flags.has(fileType))
 					continue;
 
-				name_list.push_back(path / fileName);
+				name_list.push_back(fileName);
 				count++;
 			} while (FindNextFileW(find, &data));
 
