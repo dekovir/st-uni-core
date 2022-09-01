@@ -9,12 +9,12 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> XMLDataLoader::load(const ResourceLoaderContext& context)
+	Shared<Resource> XMLDataLoader::load(const Options& options)
 	{
-		const auto data = context.cache.load<TextData>(context.path);
+		const auto data = options.cache.load<TextData>(options.path);
 		if (!data)
 		{
-			UC_LOG_ERROR(context.logger) << "Failed to load BinaryData";
+			UC_LOG_ERROR(options.logger) << "Failed to load BinaryData";
 			return nullptr;
 		}
 

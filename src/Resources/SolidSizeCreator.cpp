@@ -14,7 +14,7 @@ namespace unicore
 	}
 
 	Shared<Surface> SurfaceSizeSurfaceCreator::create_from_data(
-		const ResourceCreatorContext& context,
+		const Options& context,
 		const CreateResource::SolidSize& data)
 	{
 		MemoryChunk chunk(data.size.area() * 4);
@@ -23,7 +23,7 @@ namespace unicore
 	}
 
 	Shared<DynamicSurface> DynamicSurfaceSolidSizeCreator::create_from_data(
-		const ResourceCreatorContext& context,
+		const Options& context,
 		const CreateResource::SolidSize& data)
 	{
 		auto surface = std::make_shared<DynamicSurface>(data.size);
@@ -37,7 +37,7 @@ namespace unicore
 	}
 
 	Shared<Texture> TextureSolidSizeCreator::create_from_data(
-		const ResourceCreatorContext& context,
+		const Options& context,
 		const CreateResource::SolidSize& data)
 	{
 		DynamicSurface surface(data.size);

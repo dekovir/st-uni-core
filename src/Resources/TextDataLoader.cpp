@@ -9,14 +9,14 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> TextDataLoader::load(const ResourceLoaderContext& context)
+	Shared<Resource> TextDataLoader::load(const Options& options)
 	{
-		context.file.seek(0);
-		const auto size = context.file.size();
+		options.file.seek(0);
+		const auto size = options.file.size();
 
 		String str;
 		str.resize(size);
-		if (context.file.read(str.data(), size))
+		if (options.file.read(str.data(), size))
 			return std::make_shared<TextData>(str);
 
 		return nullptr;
@@ -27,14 +27,14 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> WTextDataLoader::load(const ResourceLoaderContext& context)
+	Shared<Resource> WTextDataLoader::load(const Options& options)
 	{
-		context.file.seek(0);
-		const auto size = context.file.size();
+		options.file.seek(0);
+		const auto size = options.file.size();
 
 		String str;
 		str.resize(size);
-		if (context.file.read(str.data(), size))
+		if (options.file.read(str.data(), size))
 			return std::make_shared<TextData>(str);
 
 		return nullptr;

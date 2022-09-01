@@ -10,7 +10,7 @@ namespace unicore
 	{
 	public:
 		Shared<Surface> create_from_data(
-			const ResourceCreatorContext& context,
+			const Options& context,
 			const CreateResource::SolidSize& data) override;
 	};
 
@@ -19,7 +19,7 @@ namespace unicore
 	{
 	public:
 		Shared<DynamicSurface> create_from_data(
-			const ResourceCreatorContext& context,
+			const Options& context,
 			const CreateResource::SolidSize& data) override;
 	};
 
@@ -30,7 +30,7 @@ namespace unicore
 		explicit TextureSolidSizeCreator(Renderer& renderer);
 
 		Shared<Texture> create_from_data(
-			const ResourceCreatorContext& context,
+			const Options& context,
 			const CreateResource::SolidSize& data) override;
 
 	protected:

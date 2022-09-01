@@ -10,7 +10,7 @@ namespace unicore
 	public:
 		STBSurfaceLoader();
 
-		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
+		UC_NODISCARD Shared<Resource> load(const Options& options) override;
 	};
 
 	class STBDynamicSurfaceLoader : public ResourceLoaderT<DynamicSurface>
@@ -18,7 +18,7 @@ namespace unicore
 	public:
 		STBDynamicSurfaceLoader();
 
-		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
+		UC_NODISCARD Shared<Resource> load(const Options& options) override;
 	};
 }
 #endif

@@ -10,8 +10,7 @@ namespace unicore
 	public:
 
 	protected:
-		Shared<SpriteList> create_from_data(
-			const ResourceCreatorContext& context,
+		Shared<SpriteList> create_from_data(const Options& options,
 			const CreateResource::TileSet& data) override;
 	};
 }

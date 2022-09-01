@@ -9,30 +9,30 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> BitmapFontLoader::load(const ResourceLoaderContext& context)
+	Shared<Resource> BitmapFontLoader::load(const Options& options)
 	{
 		// TODO: Finish loading
-		const auto xml = context.cache.load<XMLData>(context.path);
+		const auto xml = options.cache.load<XMLData>(options.path);
 		if (!xml)
 		{
-			UC_LOG_ERROR(context.logger) << "Failed to load xml";
+			UC_LOG_ERROR(options.logger) << "Failed to load xml";
 			return nullptr;
 		}
 
-		Path texture_path(context.path);
+		Path texture_path(options.path);
 		texture_path.replace_extension(Path::WildcardExt);
 
-		const auto texture = context.cache.load<Texture>(texture_path);
+		const auto texture = options.cache.load<Texture>(texture_path);
 		if (!texture)
 		{
-			UC_LOG_ERROR(context.logger) << "Failed to load texture";
+			UC_LOG_ERROR(options.logger) << "Failed to load texture";
 			return nullptr;
 		}
 
 		const auto root = xml->doc.FirstChildElement("font");
 		if (!root)
 		{
-			UC_LOG_ERROR(context.logger) << "Invalid Font format";
+			UC_LOG_ERROR(options.logger) << "Invalid Font format";
 			return nullptr;
 		}
 

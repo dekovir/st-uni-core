@@ -8,6 +8,6 @@ namespace unicore
 	{
 	public:
 		BitmapFontLoader();
-		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
+		UC_NODISCARD Shared<Resource> load(const Options& options) override;
 	};
 }

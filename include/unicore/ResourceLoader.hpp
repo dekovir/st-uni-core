@@ -8,24 +8,24 @@ namespace unicore
 {
 	class ResourceCache;
 
-	struct ResourceLoaderContext
-	{
-		Path path;
-		ResourceCache& cache;
-		ReadFile& file;
-		Logger* logger = nullptr;
-	};
-
 	class ResourceLoader : public virtual Object
 	{
 		UC_OBJECT(ResourceLoader, Object)
 	public:
+		struct Options
+		{
+			Path path;
+			ResourceCache& cache;
+			ReadFile& file;
+			Logger* logger = nullptr;
+		};
+
 		UC_NODISCARD virtual int priority() const { return 0; }
 
 		UC_NODISCARD virtual TypeConstRef resource_type() const = 0;
 		UC_NODISCARD virtual const List<WStringView>& extension() const = 0;
 
-		UC_NODISCARD virtual Shared<Resource> load(const ResourceLoaderContext& context) = 0;
+		UC_NODISCARD virtual Shared<Resource> load(const Options& options) = 0;
 	};
 
 	template<typename T,

@@ -37,14 +37,14 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> STBSurfaceLoader::load(const ResourceLoaderContext& context)
+	Shared<Resource> STBSurfaceLoader::load(const Options& options)
 	{
 		int w, h, n;
 		const auto data = stbi_load_from_callbacks(
-			&s_stream_callbacks, &context.file, &w, &h, &n, 4);
+			&s_stream_callbacks, &options.file, &w, &h, &n, 4);
 		if (!data)
 		{
-			UC_LOG_ERROR(context.logger) << stbi_failure_reason();
+			UC_LOG_ERROR(options.logger) << stbi_failure_reason();
 			return nullptr;
 		}
 
@@ -58,10 +58,10 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> STBDynamicSurfaceLoader::load(const ResourceLoaderContext& context)
+	Shared<Resource> STBDynamicSurfaceLoader::load(const Options& options)
 	{
 		// Use cached Surface
-		if (const auto cached = context.cache.find<Surface>(context.path))
+		if (const auto cached = options.cache.find<Surface>(options.path))
 		{
 			auto surface = std::make_shared<DynamicSurface>(cached->size());
 			Memory::copy(surface->data(), cached->data(), cached->size_bytes());
@@ -70,10 +70,10 @@ namespace unicore
 
 		// Direct load to surface to prevent double memory consumption (Surface + DynamicSurface)
 		int w, h, n;
-		const auto data = stbi_load_from_callbacks(&s_stream_callbacks, &context.file, &w, &h, &n, 4);
+		const auto data = stbi_load_from_callbacks(&s_stream_callbacks, &options.file, &w, &h, &n, 4);
 		if (!data)
 		{
-			UC_LOG_ERROR(context.logger) << stbi_failure_reason();
+			UC_LOG_ERROR(options.logger) << stbi_failure_reason();
 			return nullptr;
 		}
 

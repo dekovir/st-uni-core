@@ -9,7 +9,7 @@ namespace unicore
 		UC_OBJECT(TextDataLoader, ResourceLoaderT)
 	public:
 		TextDataLoader();
-		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
+		UC_NODISCARD Shared<Resource> load(const Options& options) override;
 	};
 
 	class WTextDataLoader : public ResourceLoaderT<WTextData>
@@ -17,6 +17,6 @@ namespace unicore
 		UC_OBJECT(TextDataLoader, ResourceLoaderT)
 	public:
 		WTextDataLoader();
-		UC_NODISCARD Shared<Resource> load(const ResourceLoaderContext& context) override;
+		UC_NODISCARD Shared<Resource> load(const Options& options) override;
 	};
 }

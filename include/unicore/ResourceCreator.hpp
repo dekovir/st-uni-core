@@ -5,21 +5,21 @@ namespace unicore
 {
 	class ResourceCache;
 
-	struct ResourceCreatorContext
-	{
-		ResourceCache& cache;
-		Logger* logger = nullptr;
-	};
-
 	class ResourceCreator : public virtual Object
 	{
 		UC_OBJECT(ResourceCreator, Object)
 	public:
+		struct Options
+		{
+			ResourceCache& cache;
+			Logger* logger = nullptr;
+		};
+
 		UC_NODISCARD virtual TypeConstRef resource_type() const = 0;
 		UC_NODISCARD virtual int priority() const { return 0; }
 
 		UC_NODISCARD virtual bool can_create(const std::any& value) const = 0;
-		virtual Shared<Resource> create(const ResourceCreatorContext& context, const std::any& value) = 0;
+		virtual Shared<Resource> create(const Options& options, const std::any& value) = 0;
 	};
 
 	// ResourceCreatorT ///////////////////////////////////////////////////////////
@@ -31,13 +31,13 @@ namespace unicore
 	public:
 		UC_NODISCARD TypeConstRef resource_type() const override { return get_type<T>(); }
 
-		Shared<Resource> create(const ResourceCreatorContext& context, const std::any& value) override
+		Shared<Resource> create(const Options& options, const std::any& value) override
 		{
-			return create_typed(context, value);
+			return create_typed(options, value);
 		}
 
 	protected:
-		virtual Shared<T> create_typed(const ResourceCreatorContext& context, const std::any& value) = 0;
+		virtual Shared<T> create_typed(const Options& context, const std::any& value) = 0;
 	};
 
 	// ResourceCreatorData ////////////////////////////////////////////////////////
@@ -65,14 +65,14 @@ namespace unicore
 			return nullptr;
 		}
 
-		Shared<T> create_typed(const ResourceCreatorContext& context, const std::any& value) override
+		Shared<T> create_typed(const typename ResourceCreatorT<T>::Options& options, const std::any& value) override
 		{
 			if (auto data = convert_data(value))
-				return create_from_data(context, *data);
+				return create_from_data(options, *data);
 
 			return nullptr;
 		}
 
-		virtual Shared<T> create_from_data(const ResourceCreatorContext& context, const TData& data) = 0;
+		virtual Shared<T> create_from_data(const typename ResourceCreatorT<T>::Options& context, const TData& data) = 0;
 	};
 }

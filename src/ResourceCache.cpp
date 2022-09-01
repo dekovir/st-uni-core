@@ -88,7 +88,7 @@ namespace unicore
 			return nullptr;
 		}
 
-		const ResourceCreatorContext context{ *this, &_logger };
+		const ResourceCreator::Options context{ *this, &_logger };
 
 		for (const auto& creator : it->second)
 		{

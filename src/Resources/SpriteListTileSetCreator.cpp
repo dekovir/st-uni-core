@@ -6,12 +6,11 @@ namespace unicore
 {
 	template<typename T,
 		std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-	static Shared<T> load_resource(
-		const ResourceCreatorContext& context,
+	static Shared<T> load_resource(const ResourceCreator::Options& options,
 		const CreateResource::PathOrValue<Shared<T>>& value)
 	{
 		if (auto path = std::get_if<Path>(&value))
-			return context.cache.load<T>(*path);
+			return options.cache.load<T>(*path);
 
 		if (auto ptr = std::get_if<Shared<T>>(&value))
 			return *ptr;
@@ -19,10 +18,10 @@ namespace unicore
 		return nullptr;
 	}
 
-	Shared<SpriteList> SpriteListTileSetCreator::create_from_data(const ResourceCreatorContext& context,
+	Shared<SpriteList> SpriteListTileSetCreator::create_from_data(const Options& options,
 		const CreateResource::TileSet& data)
 	{
-		auto tex = load_resource(context, data.texture);
+		auto tex = load_resource(options, data.texture);
 		//auto tex = context.cache.load<Texture>(data.path);
 		if (!tex) return nullptr;
 

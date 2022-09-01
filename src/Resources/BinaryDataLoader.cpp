@@ -7,16 +7,16 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> BinaryDataLoader::load(const ResourceLoaderContext& context)
+	Shared<Resource> BinaryDataLoader::load(const Options& options)
 	{
-		context.file.seek(0);
-		const auto size = context.file.size();
+		options.file.seek(0);
+		const auto size = options.file.size();
 
 		MemoryChunk chunk(size);
-		if (context.file.read(chunk.data(), size))
+		if (options.file.read(chunk.data(), size))
 			return std::make_shared<BinaryData>(chunk);
 
-		UC_LOG_ERROR(context.logger) << "Read failed";
+		UC_LOG_ERROR(options.logger) << "Read failed";
 		return nullptr;
 	}
 }
