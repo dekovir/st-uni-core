@@ -133,6 +133,14 @@ namespace unicore
 		{
 			return Radians(Math::acos(dot(a, b) / (a.length() * b.length())));
 		}
+
+		static constexpr Vector2<T> lerp(const Vector2<T>& a, const Vector2<T>& b, float t)
+		{
+			return Vector2<T>(
+				Math::lerp(a.x, b.x, t),
+				Math::lerp(a.y, b.y, t)
+				);
+		}
 	};
 
 	typedef Vector2<float> Vector2f;

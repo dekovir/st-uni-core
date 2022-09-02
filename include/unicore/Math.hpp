@@ -111,16 +111,16 @@ namespace unicore
 		}
 
 		// LERP //////////////////////////////////////////////////////////////////////
-		template<typename T, std::enable_if_t<!sfinae::has_lerp_static_method_t<T>>* = nullptr>
-		static constexpr T lerp(T a, T b, float t)
-		{
-			return static_cast<T>((b - a) * t + a);
-		}
-
 		template<typename T, std::enable_if_t<sfinae::has_lerp_static_method_t<T>>* = nullptr>
 		static constexpr T lerp(T a, T b, float t)
 		{
 			return T::lerp(a, b, t);
+		}
+
+		template<typename T, std::enable_if_t<!sfinae::has_lerp_static_method_t<T>>* = nullptr>
+		static constexpr T lerp(T a, T b, float t)
+		{
+			return static_cast<T>((b - a) * t + a);
 		}
 	}
 }

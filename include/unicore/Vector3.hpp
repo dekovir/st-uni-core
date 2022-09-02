@@ -83,6 +83,15 @@ namespace unicore
 				static_cast<U>(y),
 				static_cast<U>(z));
 		}
+
+		static constexpr Vector3<T> lerp(const Vector3<T>& a, const Vector3<T>& b, float t)
+		{
+			return Vector3<T>(
+				Math::lerp(a.x, b.x, t),
+				Math::lerp(a.y, b.y, t),
+				Math::lerp(a.z, b.z, t)
+				);
+		}
 	};
 
 	typedef Vector3<float> Vector3f;
@@ -93,7 +102,7 @@ namespace unicore
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
 	template <typename T>
 	constexpr Vector3<T>::Vector3(T x_, T y_) noexcept
-	: x(x_), y(y_), z(0)
+		: x(x_), y(y_), z(0)
 	{
 	}
 
