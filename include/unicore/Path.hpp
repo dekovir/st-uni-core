@@ -85,7 +85,6 @@ namespace unicore
 
 		Path(WStringView path, size_t hash);
 
-		static WString::size_type find_drive_pos(WStringView str);
 		static WString::size_type find_filename_pos(WStringView str);
 		static WString::size_type find_extension_pos(WStringView str);
 

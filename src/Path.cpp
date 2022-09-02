@@ -21,7 +21,6 @@ namespace unicore
 #endif
 
 	constexpr wchar_t WrongDirSeparator = L'\\';
-	constexpr wchar_t DriveSeparator = L':';
 
 	Path::Path()
 		: _hash(0)
@@ -54,7 +53,12 @@ namespace unicore
 
 	bool Path::absolute() const
 	{
-		return find_drive_pos(_data) != WString::npos;
+		// TODO: Test
+#if defined (UNICORE_PLATFORM_WINDOWS)
+		return _data.size() > 2 && _data[1] == L':' && _data[2] == DirSeparator;
+#else
+		return !_data.empty() && _data[0] == DirSeparator;
+#endif
 	}
 
 	void Path::clear()
@@ -317,11 +321,6 @@ namespace unicore
 	}
 
 	// =========================================================================
-	WString::size_type Path::find_drive_pos(WStringView str)
-	{
-		return str.find_last_of(DriveSeparator);
-	}
-
 	WString::size_type Path::find_filename_pos(WStringView str)
 	{
 		return str.find_last_of(DirSeparator);

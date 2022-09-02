@@ -11,17 +11,26 @@ namespace unicore
 		constexpr DataView()
 			: _data(nullptr), _size(0) {}
 
-		constexpr DataView(T* data, size_t size) noexcept
+		constexpr DataView(const T* data, size_t size) noexcept
 			: _data(data), _size(size) {}
 
+		template<size_t N>
+		DataView(const Array<T, N>& arr) noexcept
+			: _data(arr.data()), _size(N)
+		{}
+
+		DataView(std::initializer_list<T> list) noexcept
+			: _data(data(list)), _size(list.size())
+		{}
+
 		UC_NODISCARD constexpr size_t size() const { return _size; }
-		UC_NODISCARD constexpr size_t size_bytes() const { return _size * sizeof(T); }
 		UC_NODISCARD constexpr bool empty() const { return _size == 0; }
 
-		UC_NODISCARD constexpr T* data() const { return _data; }
+		UC_NODISCARD constexpr size_t size_bytes() const { return _size * sizeof(T); }
+		UC_NODISCARD constexpr const T* data() const { return _data; }
 
 	protected:
-		T* _data;
+		const T* _data;
 		size_t _size;
 	};
 
