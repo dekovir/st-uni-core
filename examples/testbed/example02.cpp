@@ -36,7 +36,7 @@ namespace unicore
 	{
 	}
 
-	bool Example02::load(ResourceCache& resources)
+	void Example02::load(ResourceCache& resources)
 	{
 		_font = resources.load<Font>(L"font_004.fnt"_path);
 #if 1
@@ -49,8 +49,6 @@ namespace unicore
 			_tex = renderer.create_texture(*surface);
 		}
 #endif
-
-		return _tex != nullptr;
 	}
 
 	void Example02::update()

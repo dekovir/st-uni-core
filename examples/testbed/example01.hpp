@@ -13,7 +13,7 @@ namespace unicore
 		{
 		}
 
-		bool load(ResourceCache& resources) override;
+		void load(ResourceCache& resources) override;
 		void update() override;
 		void draw() const override;
 

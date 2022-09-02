@@ -13,11 +13,6 @@ namespace unicore
 		_imgui_render.init(renderer);
 	}
 
-	bool Example03::load(ResourceCache& resources)
-	{
-		return true;
-	}
-
 	void Example03::update()
 	{
 		_imgui.frame_begin();

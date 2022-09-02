@@ -10,8 +10,6 @@ namespace unicore
 	public:
 		explicit Example03(const ExampleContext& context);
 
-		bool load(ResourceCache& resources) override;
-
 		void update() override;
 		void draw() const override;
 

@@ -91,13 +91,18 @@ namespace unicore
 		auto& info = ExampleCatalog::get_all()[index];
 
 		const auto example = info.factory({ logger, _random, time, input, renderer, platform });
-		if (!example->load(resources))
+		if (!example)
+		{
+			UC_LOG_ERROR(logger) << "Failed to create example " << info.title << ":" << index;
 			return;
+		}
 
 		_example_index = index;
-		resources.unload_unused();
-		//resources.dump_used();
 		_example = example;
+		UC_LOG_INFO(logger) << "Set example " << index << ": " << info.title;
+
+		example->load(resources);
+		resources.unload_unused();
 	}
 
 	UNICORE_MAIN_CORE(MyCore);

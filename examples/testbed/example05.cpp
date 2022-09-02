@@ -16,7 +16,7 @@ namespace unicore
 	{
 	}
 
-	bool Example05::load(ResourceCache& resources)
+	void Example05::load(ResourceCache& resources)
 	{
 		_tiles = resources.create<SpriteList>(
 			CreateResource::TileSet{ L"tiles.png"_path, Vector2i(16) });
@@ -24,8 +24,6 @@ namespace unicore
 		_map.fill(CellType::Grass);
 		_map.fill(CellType::Solid, Recti(1, 1, 5, 5));
 		_map.set(10, 10, CellType::Solid);
-
-		return true;
 	}
 
 	void Example05::update()

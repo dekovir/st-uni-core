@@ -9,15 +9,6 @@ namespace unicore
 	{
 	}
 
-	Example04::~Example04()
-	{
-	}
-
-	bool Example04::load(ResourceCache& resources)
-	{
-		return true;
-	}
-
 	void Example04::update()
 	{
 		_sprite_batch

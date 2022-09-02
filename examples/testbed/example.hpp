@@ -34,8 +34,7 @@ namespace unicore
 
 		explicit Example(const ExampleContext& context);
 
-		virtual bool load(ResourceCache& resources) = 0;
-
+		virtual void load(ResourceCache& resources) {}
 		virtual void update() = 0;
 		virtual void draw() const = 0;
 	};
