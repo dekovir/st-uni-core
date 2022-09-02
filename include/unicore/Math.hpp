@@ -4,6 +4,18 @@
 
 namespace unicore
 {
+	namespace sfinae
+	{
+		template <class T, class = void>
+		struct has_lerp_static_method : public std::false_type {};
+
+		template <class T>
+		struct has_lerp_static_method<T, std::void_t<decltype(T::lerp)>> : public std::true_type {};
+
+		template <class T>
+		inline constexpr bool has_lerp_static_method_t = has_lerp_static_method<T>::value;
+	}
+
 	namespace Math
 	{
 		constexpr float Pi = 3.14159265358979323846f;
@@ -97,10 +109,16 @@ namespace unicore
 			return value;
 		}
 
-		template<typename T>
+		template<typename T, std::enable_if_t<!sfinae::has_lerp_static_method_t<T>>* = nullptr>
 		static constexpr T lerp(T a, T b, float t)
 		{
 			return static_cast<T>((b - a) * t + a);
+		}
+
+		template<typename T, std::enable_if_t<sfinae::has_lerp_static_method_t<T>>* = nullptr>
+		static constexpr T lerp(T a, T b, float t)
+		{
+			return T::lerp(a, b, t);
 		}
 	}
 
