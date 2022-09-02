@@ -127,7 +127,7 @@ namespace unicore
 	};
 
 	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-	static bool operator==(const Color3<T>& a, const Color3<T>& b)
+	static constexpr bool operator==(const Color3<T>& a, const Color3<T>& b)
 	{
 		return
 			a.r == b.r &&
@@ -136,13 +136,13 @@ namespace unicore
 	}
 
 	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-	static bool operator!=(const Color3<T>& a, const Color3<T>& b)
+	static constexpr bool operator!=(const Color3<T>& a, const Color3<T>& b)
 	{
 		return !(a == b);
 	}
 
 	template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-	static Color3<T> operator*(const Color3<T>& color, T value)
+	static constexpr Color3<T> operator*(const Color3<T>& color, T value)
 	{
 		return Color3<T>(
 			color.r * value,
