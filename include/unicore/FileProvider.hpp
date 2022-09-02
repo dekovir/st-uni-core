@@ -8,6 +8,7 @@
 namespace unicore
 {
 	class MemoryChunk;
+
 	class ReadFile;
 	class WriteFile;
 
@@ -51,7 +52,10 @@ namespace unicore
 		UC_NODISCARD bool is_directory(const Path& path) const;
 
 		virtual uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
-			List<WString>& name_list, const EnumerateOptions& options) const = 0;
+			List<WString>& name_list, const EnumerateOptions& options = {}) const = 0;
+
+		uint16_t enumerate_entries(const Path& path, List<WString>& name_list,
+			const EnumerateOptions& options = {}) const;
 
 		uint16_t enumerate_files(const Path& path,
 			WStringView search_pattern, List<WString>& name_list) const;
@@ -77,7 +81,7 @@ namespace unicore
 		UC_NODISCARD virtual Shared<MemoryChunk> read_chunk(const Path& path);
 
 	protected:
-		static bool compare_flags(FileType type, EnumerateFlags flags);
+		static bool enumerate_test_flags(FileType type, EnumerateFlags flags);
 	};
 
 	// WriteFileProvider /////////////////////////////////////////////////////////

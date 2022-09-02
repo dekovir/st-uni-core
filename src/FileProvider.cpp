@@ -23,6 +23,12 @@ namespace unicore
 		return info.has_value() && info.value().type == FileType::Directory;
 	}
 
+	uint16_t FileProvider::enumerate_entries(const Path& path,
+		List<WString>& name_list, const EnumerateOptions& options) const
+	{
+		return enumerate_entries(path, L"", name_list, options);
+	}
+
 	uint16_t FileProvider::enumerate_files(const Path& path,
 		WStringView search_pattern, List<WString>& name_list) const
 	{
@@ -72,7 +78,7 @@ namespace unicore
 		return nullptr;
 	}
 
-	bool ReadFileProvider::compare_flags(FileType type, EnumerateFlags flags)
+	bool ReadFileProvider::enumerate_test_flags(FileType type, EnumerateFlags flags)
 	{
 		switch (type)
 		{
