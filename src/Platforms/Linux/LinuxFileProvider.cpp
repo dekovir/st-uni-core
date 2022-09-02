@@ -32,8 +32,8 @@ namespace unicore
 			stats.access_time = DateTime(data.st_atime);
 			stats.mod_time = DateTime(data.st_mtime);
 			stats.create_time = DateTime(data.st_ctime);
-			stats.flags |= (data.st_mode & S_IFMT) == S_IFDIR
-				? FileFlag::Directory : FileFlag::File;
+			stats.type = (data.st_mode & S_IFMT) == S_IFDIR
+				? FileType::Directory : FileType::File;
 			return stats;
 		}
 
@@ -44,8 +44,9 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	uint16_t LinuxFileProvider::enumerate_entries(const Path& path,
-		WStringView search_pattern, List<WString>& name_list, FileFlags flags) const
+	uint16_t LinuxFileProvider::enumerate_entries(
+		const Path& path, WStringView search_pattern,
+		List<WString>& name_list, const EnumerateOptions& options) const
 	{
 		UC_ASSERT_ALWAYS_MSG("Unimplemented");
 		return 0;

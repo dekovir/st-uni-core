@@ -16,7 +16,7 @@ namespace unicore
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
 		uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
-			List<WString>& name_list, FileFlags flags) const override;
+			List<WString>& name_list, const EnumerateOptions& options) const override;
 
 		bool create_directory(const Path& path) override;
 		bool delete_directory(const Path& path, bool recursive) override;
@@ -30,6 +30,7 @@ namespace unicore
 		Logger& _logger;
 
 		static DateTime to_datetime(FILETIME const& ft);
+		static FileType get_file_type(DWORD attributes);
 	};
 }
 #endif

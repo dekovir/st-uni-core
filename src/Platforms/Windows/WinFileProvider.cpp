@@ -34,8 +34,7 @@ namespace unicore
 			stats.access_time = to_datetime(fileAttr.ftLastAccessTime);
 			stats.create_time = to_datetime(fileAttr.ftCreationTime);
 			stats.mod_time = to_datetime(fileAttr.ftLastWriteTime);
-			stats.flags |= fileAttr.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY
-				? FileFlag::Directory : FileFlag::File;
+			stats.type = get_file_type(fileAttr.dwFileAttributes);
 
 			return stats;
 		}
@@ -46,8 +45,9 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	uint16_t WinFileProvider::enumerate_entries(const Path& path,
-		WStringView search_pattern, List<WString>& name_list, FileFlags flags) const
+	uint16_t WinFileProvider::enumerate_entries(
+		const Path& path, WStringView search_pattern,
+		List<WString>& name_list, const EnumerateOptions& options) const
 	{
 		const auto native_path = (path / search_pattern).native_path();
 
@@ -64,9 +64,8 @@ namespace unicore
 				if (fileName == L"." || fileName == L"..")
 					continue;
 
-				const FileFlag fileType = (data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0
-					? FileFlag::Directory : FileFlag::File;
-				if (!flags.has(fileType))
+				const auto type = get_file_type(data.dwFileAttributes);
+				if (!compare_flags(type, options.flags))
 					continue;
 
 				name_list.push_back(fileName);
@@ -150,6 +149,12 @@ namespace unicore
 		ull.LowPart = ft.dwLowDateTime;
 		ull.HighPart = ft.dwHighDateTime;
 		return DateTime(ull.QuadPart / 10000000ULL - 11644473600ULL);
+	}
+
+	FileType WinFileProvider::get_file_type(DWORD attributes)
+	{
+		return attributes & FILE_ATTRIBUTE_DIRECTORY
+			? FileType::Directory : FileType::File;
 	}
 }
 #endif

@@ -14,19 +14,19 @@ namespace unicore
 	bool FileProvider::is_file(const Path& path) const
 	{
 		const auto info = stats(path);
-		return info.has_value() && info.value().flags.has(FileFlag::File);
+		return info.has_value() && info.value().type == FileType::File;
 	}
 
 	bool FileProvider::is_directory(const Path& path) const
 	{
 		const auto info = stats(path);
-		return info.has_value() && info.value().flags.has(FileFlag::Directory);
+		return info.has_value() && info.value().type == FileType::Directory;
 	}
 
 	uint16_t FileProvider::enumerate_files(const Path& path,
 		WStringView search_pattern, List<WString>& name_list) const
 	{
-		return enumerate_entries(path, search_pattern, name_list, FileFlag::File);
+		return enumerate_entries(path, search_pattern, name_list, { EnumerateFlag::AllFiles });
 	}
 
 	uint16_t FileProvider::enumerate_files(const Path& path, List<WString>& name_list) const
@@ -37,7 +37,7 @@ namespace unicore
 	uint16_t FileProvider::enumerate_dirs(const Path& path,
 		WStringView search_pattern, List<WString>& name_list) const
 	{
-		return enumerate_entries(path, search_pattern, name_list, FileFlag::Directory);
+		return enumerate_entries(path, search_pattern, name_list, { EnumerateFlag::AllDirectories });
 	}
 
 	uint16_t FileProvider::enumerate_dirs(const Path& path, List<WString>& name_list) const
@@ -72,6 +72,18 @@ namespace unicore
 		return nullptr;
 	}
 
+	bool ReadFileProvider::compare_flags(FileType type, EnumerateFlags flags)
+	{
+		switch (type)
+		{
+		case FileType::File: return flags.has(EnumerateFlag::AllFiles);
+		case FileType::Directory: return flags.has(EnumerateFlag::AllDirectories);
+		}
+
+		UC_ASSERT_ALWAYS_MSG("Invalid type");
+		return false;
+	}
+
 	// WriteFileProvider //////////////////////////////////////////////////////////
 	bool WriteFileProvider::write_chunk(const Path& path, const MemoryChunk& chunk)
 	{
@@ -92,10 +104,11 @@ namespace unicore
 		return _provider.exists(make_path(path));
 	}
 
-	uint16_t DirectoryFileProvider::enumerate_entries(const Path& path,
-		WStringView search_pattern, List<WString>& name_list, FileFlags flags) const
+	uint16_t DirectoryFileProvider::enumerate_entries(
+		const Path& path, WStringView search_pattern,
+		List<WString>& name_list, const EnumerateOptions& options) const
 	{
-		return _provider.enumerate_entries(make_path(path), search_pattern, name_list, flags);
+		return _provider.enumerate_entries(make_path(path), search_pattern, name_list, options);
 	}
 
 	Shared<ReadFile> DirectoryFileProvider::open_read(const Path& path)
@@ -117,7 +130,7 @@ namespace unicore
 
 	uint16_t ArchiveFileProvider::enumerate_entries(
 		const Path& path, WStringView search_pattern,
-		List<WString>& name_list, FileFlags flags) const
+		List<WString>& name_list, const EnumerateOptions& options) const
 	{
 		uint16_t count = 0;
 		if (const auto entry = find_entry(path); entry != nullptr)
@@ -126,7 +139,7 @@ namespace unicore
 			{
 				if (StringHelper::compare_to_mask(WStringView(name), search_pattern))
 				{
-					if (!enumerate_index(index, flags))
+					if (!enumerate_index(index, options))
 						continue;
 
 					name_list.push_back(name);

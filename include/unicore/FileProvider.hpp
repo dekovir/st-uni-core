@@ -11,12 +11,11 @@ namespace unicore
 	class ReadFile;
 	class WriteFile;
 
-	enum class FileFlag : uint8_t
+	enum class FileType
 	{
-		File = 1 << 0,
-		Directory = 1 << 1,
+		File,
+		Directory
 	};
-	UNICORE_ENUMFLAGS(FileFlag, FileFlags);
 
 	struct FileStats
 	{
@@ -24,7 +23,20 @@ namespace unicore
 		DateTime mod_time;
 		DateTime create_time;
 		DateTime access_time;
-		FileFlags flags = FileFlags::Zero;
+		FileType type;
+	};
+
+	enum class EnumerateFlag
+	{
+		AllFiles = 1 << 0,
+		AllDirectories = 1 << 1,
+		All = AllFiles | AllDirectories
+	};
+	UNICORE_ENUMFLAGS(EnumerateFlag, EnumerateFlags)
+
+	struct EnumerateOptions
+	{
+		EnumerateFlags flags = EnumerateFlag::All;
 	};
 
 	// FileProvider ///////////////////////////////////////////////////////////////
@@ -39,7 +51,7 @@ namespace unicore
 		UC_NODISCARD bool is_directory(const Path& path) const;
 
 		virtual uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
-			List<WString>& name_list, FileFlags flags) const = 0;
+			List<WString>& name_list, const EnumerateOptions& options) const = 0;
 
 		uint16_t enumerate_files(const Path& path,
 			WStringView search_pattern, List<WString>& name_list) const;
@@ -63,6 +75,9 @@ namespace unicore
 	public:
 		UC_NODISCARD virtual Shared<ReadFile> open_read(const Path& path) = 0;
 		UC_NODISCARD virtual Shared<MemoryChunk> read_chunk(const Path& path);
+
+	protected:
+		static bool compare_flags(FileType type, EnumerateFlags flags);
 	};
 
 	// WriteFileProvider /////////////////////////////////////////////////////////
@@ -92,7 +107,7 @@ namespace unicore
 		UC_NODISCARD bool exists(const Path& path) const override;
 
 		uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
-			List<WString>& name_list, FileFlags flags) const override;
+			List<WString>& name_list, const EnumerateOptions& options) const override;
 
 		Shared<ReadFile> open_read(const Path& path) override;
 
@@ -112,13 +127,13 @@ namespace unicore
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
 		uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
-			List<WString>& name_list, FileFlags flags) const override;
+			List<WString>& name_list, const EnumerateOptions& options) const override;
 
 		Shared<ReadFile> open_read(const Path& path) override;
 
 	protected:
 		UC_NODISCARD virtual Optional<FileStats> stats_index(intptr_t index) const = 0;
 		UC_NODISCARD virtual Shared<ReadFile> open_read_index(intptr_t index) = 0;
-		UC_NODISCARD virtual bool enumerate_index(intptr_t index, FileFlags flags) const = 0;
+		UC_NODISCARD virtual bool enumerate_index(intptr_t index, const EnumerateOptions& options) const = 0;
 	};
 }

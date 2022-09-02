@@ -49,7 +49,7 @@ namespace unicore
 			auto stats = provider->stats(path);
 			if (!stats.has_value()) continue;
 
-			if (stats.value().flags.has(FileFlag::Directory))
+			if (stats.value().type == FileType::Directory)
 			{
 				add_read(std::make_shared<DirectoryFileProvider>(*provider, path));
 				return true;
@@ -89,8 +89,9 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	uint16_t FileSystem::enumerate_entries(const Path& path,
-		WStringView search_pattern, List<WString>& name_list, FileFlags flags) const
+	uint16_t FileSystem::enumerate_entries(
+		const Path& path, WStringView search_pattern,
+		List<WString>& name_list, const EnumerateOptions& options) const
 	{
 		// TODO: Test this with multiple providers
 		const auto size = name_list.size();
@@ -98,7 +99,7 @@ namespace unicore
 		Set<WString> names;
 		for (const auto& provider : _providers)
 		{
-			provider->enumerate_entries(path, search_pattern, name_list, flags);
+			provider->enumerate_entries(path, search_pattern, name_list, options);
 			names.insert(name_list.begin() + size, name_list.end());
 			name_list.resize(size);
 		}

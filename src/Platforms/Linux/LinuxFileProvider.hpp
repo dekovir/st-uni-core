@@ -16,7 +16,7 @@ namespace unicore
 
 		uint16_t enumerate_entries(const Path& path,
 			WStringView search_pattern, List<WString>& name_list,
-			FileFlags flags = FileFlag::File | FileFlag::Directory) const override;
+			const EnumerateOptions& options) const override;
 
 		bool create_directory(const Path& path) override;
 		bool delete_directory(const Path& path, bool recursive) override;
