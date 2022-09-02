@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Renderer.hpp"
+#include "unicore/RendererResource.hpp"
 
 namespace unicore
 {
