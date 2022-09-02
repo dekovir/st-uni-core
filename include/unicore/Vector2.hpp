@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Math.hpp"
+#include "unicore/Angle.hpp"
 
 namespace unicore
 {

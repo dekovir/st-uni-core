@@ -1,8 +1,6 @@
 #pragma once
 #include "unicore/Module.hpp"
-#include "unicore/Memory.hpp"
 #include "unicore/Rect.hpp"
-#include "unicore/RendererResource.hpp"
 
 namespace unicore
 {
