@@ -1,6 +1,6 @@
 #include "LinuxPlatform.hpp"
 #if defined(UNICORE_PLATFORM_LINUX)
-#include "LinuxFileProvider.hpp"
+#include "Platforms/Posix/PosixFileProvider.hpp"
 
 namespace unicore
 {
@@ -11,7 +11,7 @@ namespace unicore
 		, _file_system_logger("[FS] ", _logger)
 		, _file_system(_file_system_logger)
 	{
-		file_system.add_read(std::make_shared<LinuxFileProvider>(_file_system_logger));
+		file_system.add_read(std::make_shared<PosixFileProvider>(_file_system_logger));
 	}
 
 	bool LinuxPlatform::running() const

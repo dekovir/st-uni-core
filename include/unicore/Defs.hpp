@@ -49,12 +49,14 @@
 #	define UNICORE_PLATFORM_EMSCRIPTEN
 #	define UNICORE_PLATFORM_WEB
 #	define UNICORE_PLATFORM_LINUX
+#	define UNICORE_PLATFORM_POSIX
 
 #	include <emscripten/emscripten.h>
 
 #elif defined(__linux__) || defined(__unix__)
 
 #	define UNICORE_PLATFORM_LINUX
+#	define UNICORE_PLATFORM_POSIX
 
 #else
 

@@ -5,6 +5,8 @@
 
 namespace unicore
 {
+	constexpr WStringView Wildcard = L"*";
+
 	// FileProvider ///////////////////////////////////////////////////////////////
 	bool FileProvider::exists(const Path& path) const
 	{
@@ -26,7 +28,7 @@ namespace unicore
 	uint16_t FileProvider::enumerate_entries(const Path& path,
 		List<WString>& name_list, const EnumerateOptions& options) const
 	{
-		return enumerate_entries(path, L"", name_list, options);
+		return enumerate_entries(path, Wildcard, name_list, options);
 	}
 
 	uint16_t FileProvider::enumerate_files(const Path& path,
@@ -37,7 +39,7 @@ namespace unicore
 
 	uint16_t FileProvider::enumerate_files(const Path& path, List<WString>& name_list) const
 	{
-		return enumerate_files(path, L"", name_list);
+		return enumerate_files(path, Wildcard, name_list);
 	}
 
 	uint16_t FileProvider::enumerate_dirs(const Path& path,
@@ -48,7 +50,7 @@ namespace unicore
 
 	uint16_t FileProvider::enumerate_dirs(const Path& path, List<WString>& name_list) const
 	{
-		return enumerate_dirs(path, L"", name_list);
+		return enumerate_dirs(path, Wildcard, name_list);
 	}
 
 	List<WString> FileProvider::get_files(const Path& path, WStringView search_pattern) const
@@ -58,10 +60,24 @@ namespace unicore
 		return name_list;
 	}
 
+	List<WString> FileProvider::get_files(const Path& path) const
+	{
+		List<WString> name_list;
+		enumerate_files(path, Wildcard, name_list);
+		return name_list;
+	}
+
 	List<WString> FileProvider::get_dirs(const Path& path, WStringView search_pattern) const
 	{
 		List<WString> name_list;
 		enumerate_dirs(path, search_pattern, name_list);
+		return name_list;
+	}
+
+	List<WString> FileProvider::get_dirs(const Path& path) const
+	{
+		List<WString> name_list;
+		enumerate_dirs(path, Wildcard, name_list);
 		return name_list;
 	}
 
@@ -84,6 +100,7 @@ namespace unicore
 		{
 		case FileType::File: return flags.has(EnumerateFlag::AllFiles);
 		case FileType::Directory: return flags.has(EnumerateFlag::AllDirectories);
+		case FileType::Unknown: return false;
 		}
 
 		UC_ASSERT_ALWAYS_MSG("Invalid type");

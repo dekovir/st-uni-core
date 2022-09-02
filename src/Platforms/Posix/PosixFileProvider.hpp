@@ -1,15 +1,16 @@
 #pragma once
 #include "unicore/FileProvider.hpp"
-#if defined(UNICORE_PLATFORM_LINUX)
+#if defined(UNICORE_PLATFORM_POSIX)
 #include "unicore/Logger.hpp"
 
 namespace unicore
 {
-	class LinuxFileProvider : public WriteFileProvider
+	class PosixFileProvider : public WriteFileProvider
 	{
-		UC_OBJECT(LinuxFileProvider, WriteFileProvider)
+		UC_OBJECT(PosixFileProvider, WriteFileProvider)
 	public:
-		explicit LinuxFileProvider(Logger& logger);
+		explicit PosixFileProvider(Logger& logger);
+		PosixFileProvider(Logger& logger, const Path& current_dir);
 
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
@@ -28,8 +29,10 @@ namespace unicore
 
 	protected:
 		Logger& _logger;
+		Path _current_dir;
 
-		static String to_native(const Path& path);
+		UC_NODISCARD Path get_current_dir() const;
+		UC_NODISCARD String to_native(const Path& path) const;
 	};
 }
 

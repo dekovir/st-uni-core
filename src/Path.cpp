@@ -287,6 +287,15 @@ namespace unicore
 
 	Path Path::combine(WStringView a, WStringView b)
 	{
+		if (a.empty() && b.empty())
+			return Empty;
+
+		if (a.empty())
+			return Path(b);
+
+		if (b.empty())
+			return Path(a);
+
 		WString builder;
 		builder.reserve(a.size() + b.size() + 1);
 		builder += a;

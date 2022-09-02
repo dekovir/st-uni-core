@@ -11,6 +11,7 @@ namespace unicore
 		UC_OBJECT(WinFileProvider, WriteFileProvider)
 	public:
 		explicit WinFileProvider(Logger& logger);
+		WinFileProvider(Logger& logger, const Path& current_dir);
 
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
@@ -28,6 +29,10 @@ namespace unicore
 
 	protected:
 		Logger& _logger;
+		Path _current_dir;
+
+		UC_NODISCARD Path get_current_dir() const;
+		UC_NODISCARD WString to_native_path(const Path& path) const;
 
 		static DateTime to_datetime(FILETIME const& ft);
 		static FileType get_file_type(DWORD attributes);

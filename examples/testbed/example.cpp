@@ -10,5 +10,6 @@ namespace unicore
 		, time(context.time)
 		, input(context.input)
 		, renderer(context.renderer)
+		, platform(context.platform)
 	{}
 }

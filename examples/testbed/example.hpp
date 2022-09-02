@@ -4,6 +4,7 @@
 
 namespace unicore
 {
+	class Platform;
 	class Logger;
 	class Random;
 	class Time;
@@ -18,6 +19,7 @@ namespace unicore
 		Time& time;
 		Input& input;
 		RendererSDL& renderer;
+		Platform& platform;
 	};
 
 	class Example : public Object
@@ -28,6 +30,7 @@ namespace unicore
 		Time& time;
 		Input& input;
 		RendererSDL& renderer;
+		Platform& platform;
 
 		explicit Example(const ExampleContext& context);
 

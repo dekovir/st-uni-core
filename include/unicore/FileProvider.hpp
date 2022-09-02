@@ -15,7 +15,8 @@ namespace unicore
 	enum class FileType
 	{
 		File,
-		Directory
+		Directory,
+		Unknown,
 	};
 
 	struct FileStats
@@ -67,9 +68,11 @@ namespace unicore
 
 		UC_NODISCARD virtual List<WString> get_files(
 			const Path& path, WStringView search_pattern) const;
+		UC_NODISCARD virtual List<WString> get_files(const Path& path) const;
 
 		UC_NODISCARD virtual List<WString> get_dirs(
 			const Path& path, WStringView search_pattern) const;
+		UC_NODISCARD virtual List<WString> get_dirs(const Path& path) const;
 	};
 
 	// ReadFileProvider ///////////////////////////////////////////////////////////

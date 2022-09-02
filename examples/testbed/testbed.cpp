@@ -90,7 +90,7 @@ namespace unicore
 
 		auto& info = ExampleCatalog::get_all()[index];
 
-		const auto example = info.factory({ logger, _random, time, input, renderer });
+		const auto example = info.factory({ logger, _random, time, input, renderer, platform });
 		if (!example->load(resources))
 			return;
 

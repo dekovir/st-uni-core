@@ -1,16 +1,16 @@
 #pragma once
 #include "unicore/File.hpp"
-#if defined(UNICORE_PLATFORM_LINUX)
+#if defined(UNICORE_PLATFORM_POSIX)
 
 namespace unicore
 {
 	// TODO: Remove multiple inheritance
-	class LinuxFile : public WriteFile
+	class PosixFile : public WriteFile
 	{
-		UC_OBJECT(LinuxFile, ReadFile)
+		UC_OBJECT(PosixFile, ReadFile)
 	public:
-		explicit LinuxFile(FILE* handle);
-		~LinuxFile() override;
+		explicit PosixFile(FILE* handle);
+		~PosixFile() override;
 
 		UC_NODISCARD int64_t size() const override;
 		int64_t seek(int64_t offset, SeekMethod method) override;

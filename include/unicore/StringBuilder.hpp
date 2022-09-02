@@ -119,7 +119,21 @@ namespace unicore
 	extern StringBuilder& operator<<(StringBuilder& builder, std::initializer_list<T> list)
 	{
 		int index = 0;
-		for (const auto* value : list)
+		for (const auto& value : list)
+		{
+			if (index > 0)
+				builder << ',';
+			builder << value;
+			index++;
+		}
+		return builder;
+	}
+
+	template<typename T>
+	extern StringBuilder& operator<<(StringBuilder& builder, const List<T> list)
+	{
+		int index = 0;
+		for (const auto & value : list) 
 		{
 			if (index > 0)
 				builder << ',';

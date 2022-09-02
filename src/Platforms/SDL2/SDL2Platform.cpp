@@ -3,8 +3,8 @@
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #	include "Platforms/Windows/WinFileProvider.hpp"
-#elif defined(UNICORE_PLATFORM_LINUX)
-#	include "Platforms/Linux/LinuxFileProvider.hpp"
+#elif defined(UNICORE_PLATFORM_POSIX)
+#	include "Platforms/Posix/PosixFileProvider.hpp"
 #endif
 
 namespace unicore
@@ -61,8 +61,8 @@ namespace unicore
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
 		file_system.add_read(std::make_shared<WinFileProvider>(_file_system_logger));
-#elif defined(UNICORE_PLATFORM_LINUX)
-		file_system.add_read(std::make_shared<LinuxFileProvider>(_file_system_logger));
+#elif defined(UNICORE_PLATFORM_POSIX)
+		file_system.add_read(std::make_shared<PosixFileProvider>(_file_system_logger));
 #endif
 	}
 

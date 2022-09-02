@@ -4,14 +4,19 @@
 namespace unicore::StringHelper
 {
 	template<typename TChar, typename Tag>
-	struct Buffer
+	struct Data
 	{
 		static BasicString<TChar> string;
 	};
 
 	template<typename TChar, typename Tag>
-	BasicString<TChar> Buffer<TChar, Tag>::string;
+	BasicString<TChar> Data<TChar, Tag>::string;
 
+	struct DefaultTag {};
+	using DefaultString = Data<char, DefaultTag>;
+	using DefaultWString = Data<wchar_t, DefaultTag>;
+
+	// METHODS ////////////////////////////////////////////////////////////////////
 	extern int compare(const StringView a, const StringView b, bool case_sensitive);
 	extern int compare(const WStringView a, const WStringView b, bool case_sensitive);
 

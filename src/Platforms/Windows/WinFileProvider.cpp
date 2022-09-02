@@ -6,21 +6,28 @@
 
 namespace unicore
 {
+	static wchar_t s_buffer[MAX_PATH];
+
 	WinFileProvider::WinFileProvider(Logger& logger)
-		: _logger(logger)
+		: _logger(logger), _current_dir(get_current_dir())
+	{
+	}
+
+	WinFileProvider::WinFileProvider(Logger& logger, const Path& current_dir)
+		: _logger(logger), _current_dir(current_dir)
 	{
 	}
 
 	bool WinFileProvider::exists(const Path& path) const
 	{
-		const auto native_path = path.native_path();
+		const auto native_path = to_native_path(path);
 		const auto flags = GetFileAttributesW(native_path.c_str());
 		return flags != INVALID_FILE_ATTRIBUTES ? true : false;
 	}
 
 	Optional<FileStats> WinFileProvider::stats(const Path& path) const
 	{
-		const auto native_path = path.native_path();
+		const auto native_path = to_native_path(path);
 
 		// TODO: Test for directory
 		WIN32_FILE_ATTRIBUTE_DATA fileAttr;
@@ -49,7 +56,7 @@ namespace unicore
 		const Path& path, WStringView search_pattern,
 		List<WString>& name_list, const EnumerateOptions& options) const
 	{
-		const auto native_path = (path / search_pattern).native_path();
+		const auto native_path = to_native_path(path / search_pattern);
 
 		uint16_t count = 0;
 
@@ -60,15 +67,15 @@ namespace unicore
 		{
 			do
 			{
-				const auto fileName = std::wstring(data.cFileName);
-				if (fileName == L"." || fileName == L"..")
+				const auto file_name = std::wstring(data.cFileName);
+				if (file_name == L"." || file_name == L"..")
 					continue;
 
 				const auto type = get_file_type(data.dwFileAttributes);
 				if (!enumerate_test_flags(type, options.flags))
 					continue;
 
-				name_list.push_back(fileName);
+				name_list.push_back(file_name);
 				count++;
 			} while (FindNextFileW(find, &data));
 
@@ -80,7 +87,7 @@ namespace unicore
 
 	bool WinFileProvider::create_directory(const Path& path)
 	{
-		const auto native_path = path.native_path();
+		const auto native_path = to_native_path(path);
 		if (CreateDirectoryW(native_path.data(), nullptr) != 0)
 			return true;
 
@@ -91,7 +98,7 @@ namespace unicore
 
 	bool WinFileProvider::delete_directory(const Path& path, bool recursive)
 	{
-		const auto native_path = path.native_path();
+		const auto native_path = to_native_path(path);
 		if (RemoveDirectoryW(native_path.data()) != 0)
 			return true;
 
@@ -102,7 +109,7 @@ namespace unicore
 
 	Shared<ReadFile> WinFileProvider::open_read(const Path& path)
 	{
-		const auto native_path = path.native_path();
+		const auto native_path = to_native_path(path);
 
 		auto handle = CreateFileW(native_path.c_str(),
 			GENERIC_READ, FILE_SHARE_READ, nullptr,
@@ -118,7 +125,7 @@ namespace unicore
 
 	Shared<WriteFile> WinFileProvider::create_new(const Path& path)
 	{
-		const auto native_path = path.native_path();
+		const auto native_path = to_native_path(path);
 
 		auto handle = CreateFileW(native_path.c_str(),
 			GENERIC_WRITE, 0, nullptr,
@@ -134,13 +141,27 @@ namespace unicore
 
 	bool WinFileProvider::delete_file(const Path& path)
 	{
-		const auto native_path = path.native_path();
+		const auto native_path = to_native_path(path);
 		if (DeleteFileW(native_path.data()) != 0)
 			return true;
 
 		if (const auto error = WinError::get_last(); error.is_error())
 			UC_LOG_ERROR(_logger) << error << L" for '" << path << L"'";
 		return false;
+	}
+
+	Path WinFileProvider::get_current_dir() const
+	{
+		if (GetCurrentDirectoryW(MAX_PATH, s_buffer) > 0)
+			return Path(s_buffer);
+
+		UC_LOG_ERROR(_logger) << "get_current_dir failed with error - " << WinError::get_last();
+		return Path::Empty;
+	}
+
+	WString WinFileProvider::to_native_path(const Path& path) const
+	{
+		return (_current_dir / path).native_path();
 	}
 
 	DateTime WinFileProvider::to_datetime(FILETIME const& ft)
