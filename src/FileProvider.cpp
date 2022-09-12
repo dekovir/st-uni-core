@@ -139,19 +139,19 @@ namespace unicore
 		return _provider.open_read(make_path(path));
 	}
 
-	// ArchiveFileProvider ////////////////////////////////////////////////////////
-	bool ArchiveFileProvider::exists(const Path& path) const
+	// CachedFileProvider /////////////////////////////////////////////////////////
+	bool CachedFileProvider::exists(const Path& path) const
 	{
 		return find_data(path) != nullptr;
 	}
 
-	Optional<FileStats> ArchiveFileProvider::stats(const Path& path) const
+	Optional<FileStats> CachedFileProvider::stats(const Path& path) const
 	{
 		const auto data = find_data(path);
 		return data != nullptr ? stats_index(*data) : std::nullopt;
 	}
 
-	uint16_t ArchiveFileProvider::enumerate_entries(
+	uint16_t CachedFileProvider::enumerate_entries(
 		const Path& path, WStringView search_pattern,
 		List<WString>& name_list, const EnumerateOptions& options) const
 	{
@@ -174,7 +174,7 @@ namespace unicore
 		return count;
 	}
 
-	Shared<ReadFile> ArchiveFileProvider::open_read(const Path& path)
+	Shared<ReadFile> CachedFileProvider::open_read(const Path& path)
 	{
 		const auto data = find_data(path);
 		return data != nullptr ? open_read_index(*data) : nullptr;

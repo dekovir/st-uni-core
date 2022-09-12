@@ -125,10 +125,10 @@ namespace unicore
 		UC_NODISCARD Path make_path(const Path& path) const { return _base / path; }
 	};
 
-	// ArchiveFileProvider ////////////////////////////////////////////////////////
-	class ArchiveFileProvider : public ReadFileProvider, protected CachedPathData<intptr_t>
+	// CachedFileProvider /////////////////////////////////////////////////////////
+	class CachedFileProvider : public ReadFileProvider, protected CachedPathData<intptr_t>
 	{
-		UC_OBJECT(ArchiveFileProvider, ReadFileProvider)
+		UC_OBJECT(CachedFileProvider, ReadFileProvider)
 	public:
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
