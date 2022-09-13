@@ -5,11 +5,6 @@
 
 namespace unicore
 {
-	WinError::WinError(DWORD code)
-		: _code(code)
-	{
-	}
-
 	String WinError::get_text() const
 	{
 		LPVOID lpMsgBuf;

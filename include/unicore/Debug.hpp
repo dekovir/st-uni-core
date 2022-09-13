@@ -3,6 +3,18 @@
 
 namespace unicore
 {
+	template<typename T>
+	struct Error
+	{
+		constexpr explicit Error(T code)
+			: _code(code) {}
+
+		UC_NODISCARD constexpr T code() const { return _code; }
+
+	protected:
+		const T _code;
+	};
+
 	struct DebugSource
 	{
 		constexpr DebugSource(const StringView file_, const int line_)
