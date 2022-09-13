@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Module.hpp"
+#include "unicore/Debug.hpp"
 #include "unicore/StringBuilder.hpp"
 
 namespace unicore
@@ -88,26 +89,7 @@ namespace unicore
 		const LogType _type;
 	};
 
-	struct DebugSource
-	{
-		constexpr DebugSource(StringView _file, int _line)
-			: file(_file), line(_line)
-		{
-		}
-
-		const StringView file;
-		const int line;
-	};
-
-	struct DebugFunction
-	{
-		explicit constexpr DebugFunction(StringView func) : _func(func) {}
-
-		StringView _func;
-	};
-
-	extern UNICODE_STRING_BUILDER_FORMAT(const DebugSource&);
-	extern UNICODE_STRING_BUILDER_FORMAT(const DebugFunction&);
+	
 }
 
 #define UC_LOG_TYPE(logger, type) \
@@ -117,10 +99,10 @@ namespace unicore
 		UC_LOG_TYPE(logger, LogType::Info)
 
 #define UC_LOG_DEBUG(logger) \
-	UC_LOG_TYPE(logger, LogType::Debug) << DebugSource(__FILE__, __LINE__) << ' '
+	UC_LOG_TYPE(logger, LogType::Debug) << UC_DEBUG_SOURCE() << ' '
 
 #define UC_LOG_WARNING(logger) \
-		UC_LOG_TYPE(logger, LogType::Warning) << DebugSource(__FILE__, __LINE__) << ' '
+		UC_LOG_TYPE(logger, LogType::Warning) << UC_DEBUG_SOURCE() << ' '
 
 #define UC_LOG_ERROR(logger) \
-		UC_LOG_TYPE(logger, LogType::Error) << DebugSource(__FILE__, __LINE__) << ' '
+		UC_LOG_TYPE(logger, LogType::Error) << UC_DEBUG_SOURCE() << ' '
