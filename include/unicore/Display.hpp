@@ -12,14 +12,14 @@ namespace unicore
 	//	Visible = 1 << 0,
 	//	Focused = 1 << 1,
 	//};
-	//UNICORE_ENUMFLAGS(DisplayState, DisplayStateFlags);
+	//UNICORE_ENUM_FLAGS(DisplayState, DisplayStateFlags);
 
 	enum class DisplayWindowFlag : uint8_t
 	{
 		Resizable = 1 << 0,
 		Borderless = 1 << 1,
 	};
-	UNICORE_ENUMFLAGS(DisplayWindowFlag, DisplayWindowFlags);
+	UNICORE_ENUM_FLAGS(DisplayWindowFlag, DisplayWindowFlags);
 
 	struct DisplayMode
 	{

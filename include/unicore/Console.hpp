@@ -28,7 +28,7 @@ namespace unicore
 		BackgroundCyan = BackgroundGreen | BackgroundBlue,
 		BackgroundWhite = BackgroundRed | BackgroundGreen | BackgroundBlue,
 	};
-	UNICORE_ENUMFLAGS(ConsoleColor8, ConsoleColor8Value);
+	UNICORE_ENUM_FLAGS(ConsoleColor8, ConsoleColor8Value);
 
 	static_assert(sizeof(ConsoleColor8) == 1);
 	static_assert(sizeof(ConsoleColor8Value) == 1);

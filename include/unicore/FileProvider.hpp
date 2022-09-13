@@ -34,7 +34,7 @@ namespace unicore
 		Directories = 1 << 1,
 		All = Files | Directories
 	};
-	UNICORE_ENUMFLAGS(EnumerateFlag, EnumerateFlags);
+	UNICORE_ENUM_FLAGS(EnumerateFlag, EnumerateFlags);
 
 	struct EnumerateOptions
 	{

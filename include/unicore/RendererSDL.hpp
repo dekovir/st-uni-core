@@ -13,7 +13,7 @@ namespace unicore
 		Horizontal = 1 << 0,
 		Vertical = 1 << 1,
 	};
-	UNICORE_ENUMFLAGS(SDLRenderFlip, SDLRenderFlipFlags);
+	UNICORE_ENUM_FLAGS(SDLRenderFlip, SDLRenderFlipFlags);
 
 	class RendererSDL : public Renderer
 	{

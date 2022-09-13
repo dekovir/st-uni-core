@@ -20,7 +20,7 @@ namespace unicore
 	{
 		Quiet = 1,
 	};
-	UNICORE_ENUMFLAGS(ResourceCacheFlag, ResourceCacheFlags);
+	UNICORE_ENUM_FLAGS(ResourceCacheFlag, ResourceCacheFlags);
 
 	class ResourceCache : public Module
 	{

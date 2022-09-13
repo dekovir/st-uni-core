@@ -151,7 +151,7 @@ namespace unicore
 		AltLeft = 1 << 6,
 		AltRight = 1 << 7,
 	};
-	UNICORE_ENUMFLAGS(KeyMod, KeyModFlags);
+	UNICORE_ENUM_FLAGS(KeyMod, KeyModFlags);
 
 	enum class KeyModCombine
 	{
