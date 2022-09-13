@@ -88,8 +88,6 @@ namespace unicore
 		Logger& _logger;
 		const LogType _type;
 	};
-
-	
 }
 
 #define UC_LOG_TYPE(logger, type) \

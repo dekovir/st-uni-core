@@ -30,11 +30,11 @@ namespace unicore
 
 	enum class EnumerateFlag
 	{
-		AllFiles = 1 << 0,
-		AllDirectories = 1 << 1,
-		All = AllFiles | AllDirectories
+		Files = 1 << 0,
+		Directories = 1 << 1,
+		All = Files | Directories
 	};
-	UNICORE_ENUMFLAGS(EnumerateFlag, EnumerateFlags)
+	UNICORE_ENUMFLAGS(EnumerateFlag, EnumerateFlags);
 
 	struct EnumerateOptions
 	{

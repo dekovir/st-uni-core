@@ -34,7 +34,7 @@ namespace unicore
 	uint16_t FileProvider::enumerate_files(const Path& path,
 		WStringView search_pattern, List<WString>& name_list) const
 	{
-		return enumerate_entries(path, search_pattern, name_list, { EnumerateFlag::AllFiles });
+		return enumerate_entries(path, search_pattern, name_list, { EnumerateFlag::Files });
 	}
 
 	uint16_t FileProvider::enumerate_files(const Path& path, List<WString>& name_list) const
@@ -45,7 +45,7 @@ namespace unicore
 	uint16_t FileProvider::enumerate_dirs(const Path& path,
 		WStringView search_pattern, List<WString>& name_list) const
 	{
-		return enumerate_entries(path, search_pattern, name_list, { EnumerateFlag::AllDirectories });
+		return enumerate_entries(path, search_pattern, name_list, { EnumerateFlag::Directories });
 	}
 
 	uint16_t FileProvider::enumerate_dirs(const Path& path, List<WString>& name_list) const
@@ -98,8 +98,8 @@ namespace unicore
 	{
 		switch (type)
 		{
-		case FileType::File: return flags.has(EnumerateFlag::AllFiles);
-		case FileType::Directory: return flags.has(EnumerateFlag::AllDirectories);
+		case FileType::File: return flags.has(EnumerateFlag::Files);
+		case FileType::Directory: return flags.has(EnumerateFlag::Directories);
 		case FileType::Unknown: return false;
 		}
 
