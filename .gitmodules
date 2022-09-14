@@ -4,12 +4,12 @@
 [submodule "libs/wasm3"]
 	path = libs/wasm3
 	url = https://github.com/wasm3/wasm3.git
-[submodule "libs/imgui"]
-	path = libs/imgui
-	url = https://github.com/ocornut/imgui.git
 [submodule "plugins/stb/libs/stb"]
 	path = plugins/stb/libs/stb
 	url = https://github.com/nothings/stb.git
 [submodule "plugins/xml/libs/tinyxml2"]
 	path = plugins/xml/libs/tinyxml2
 	url = https://github.com/leethomason/tinyxml2.git
+[submodule "plugins/imgui/libs/imgui"]
+	path = plugins/imgui/libs/imgui
+	url = https://github.com/ocornut/imgui.git

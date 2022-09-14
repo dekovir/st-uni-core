@@ -1,5 +1,5 @@
 # imgui ########################################################################
-set(IMGUI_DIR "${LIBS_DIR}/imgui")
+set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/imgui")
 file(GLOB IMGUI_SRC "${IMGUI_DIR}/*.h" "${IMGUI_DIR}/*.cpp")
 add_library(imgui STATIC ${IMGUI_SRC})
 target_include_directories(imgui PUBLIC ${IMGUI_DIR})
