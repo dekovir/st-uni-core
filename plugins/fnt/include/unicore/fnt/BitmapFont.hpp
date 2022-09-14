@@ -34,6 +34,7 @@ namespace unicore
 		size_t get_used_resources(Set<Shared<Resource>>& resources) override;
 
 		UC_NODISCARD float get_height() const override;
+		UC_NODISCARD Vector2f calc_size(StringView text) const override;
 
 		Shared<Texture> get_char_print_info(uint32_t code,
 			Vector2f& pos, Rectf* rect, Rectf* uv_rect) const override;

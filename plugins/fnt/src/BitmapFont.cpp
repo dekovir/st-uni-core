@@ -32,6 +32,23 @@ namespace unicore
 		return _height;
 	}
 
+	Vector2f BitmapFont::calc_size(StringView text) const
+	{
+		Vector2f cur = { 0, _height };
+		Rectf r;
+		for (size_t i = 0; i < text.size(); i++)
+		{
+			const auto c = text[i];
+			get_char_print_info(c, cur, &r, nullptr);
+
+			if (i + 1 < text.size())
+				cur.x += static_cast<float>(find_kerning(c, text[i + 1]));
+			else cur.x += r.w;
+		}
+
+		return cur;
+	}
+
 	Shared<Texture> BitmapFont::get_char_print_info(uint32_t code,
 		Vector2f& pos, Rectf* rect, Rectf* uv_rect) const
 	{

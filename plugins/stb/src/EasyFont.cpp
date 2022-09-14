@@ -17,13 +17,20 @@ namespace unicore
 	static Vertex s_quads[BUFFER_SIZE];
 
 	EasyFont::EasyFont()
-		: _height(static_cast<float>(stb_easy_font_height("W")))
+		: _height(static_cast<float>(stb_easy_font_height((char*)"W")))
 	{
 	}
 
 	size_t EasyFont::get_system_memory_use() const
 	{
 		return sizeof(EasyFont);
+	}
+
+	Vector2f EasyFont::calc_size(StringView text) const
+	{
+		const auto w = stb_easy_font_width(const_cast<char*>(text.data()));
+		const auto h = stb_easy_font_height(const_cast<char*>(text.data()));
+		return { static_cast<float>(w), static_cast<float>(h) };
 	}
 
 	size_t EasyFont::print_quads(const Vector2f& position, StringView text, List<VertexColor2>& quads) const
