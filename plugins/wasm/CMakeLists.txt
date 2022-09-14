@@ -1,3 +1,9 @@
+#wasm3
+set(BUILD_WASI none CACHE STRING "" FORCE)
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/libs/wasm3/source")
+set_target_properties(m3 PROPERTIES FOLDER "Libs")
+
+#unicore-wasm
 set(UNICORE_WASM_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(UNICORE_WASM_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 

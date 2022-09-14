@@ -104,9 +104,6 @@ if (UNICORE_PLUGIN_FNT)
 endif()
 
 if (UNICORE_PLUGIN_WASM)
-	set(BUILD_WASI none CACHE STRING "" FORCE)
-	add_subdirectory("${LIBS_DIR}/wasm3/source")
-	set_target_properties(m3 PROPERTIES FOLDER "Libs")
 	add_subdirectory("${PLUGINS_DIR}/wasm")
 endif()
 
