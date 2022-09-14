@@ -1,4 +1,5 @@
 #include "STBSurfaceLoader.hpp"
+#if defined(UNICORE_USE_STB_IMAGE)
 #include "unicore/ResourceCache.hpp"
 #include <stb_image.h>
 
@@ -83,3 +84,4 @@ namespace unicore
 		return surface;
 	}
 }
+#endif
