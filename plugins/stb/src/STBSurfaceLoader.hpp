@@ -1,6 +1,5 @@
 #pragma once
 #include "unicore/Surface.hpp"
-#if defined(UNICORE_USE_STB)
 #include "unicore/ResourceLoader.hpp"
 
 namespace unicore
@@ -21,4 +20,3 @@ namespace unicore
 		UC_NODISCARD Shared<Resource> load(const Options& options) override;
 	};
 }
-#endif

@@ -9,10 +9,10 @@ set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 #list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # OPTIONS ######################################################################
-option(UNICORE_STB "Use stb library" ON)
 
 # PLUGINS
 option(UNICORE_PLUGINS_ALL "Add all unciore plugins" ON)
+option(UNICORE_PLUGIN_STB "Add unicore-stb plugin (stb)" ${UNICORE_PLUGINS_ALL})
 option(UNICORE_PLUGIN_XML "Add unicore-xml plugin (tinyxml2)" ${UNICORE_PLUGINS_ALL})
 option(UNICORE_PLUGIN_FNT "Add unicore-fnt plugin" ${UNICORE_PLUGINS_ALL})
 option(UNICORE_PLUGIN_WASM "Add unicore-wasm plugin" ${UNICORE_PLUGINS_ALL})
@@ -90,13 +90,11 @@ else()
 endif()
 target_compile_definitions(unicore PUBLIC UNICORE_USE_SDL2)
 
-if (UNICORE_STB)
-	target_include_directories(unicore PRIVATE "${LIBS_DIR}/stb")
-	target_compile_definitions(unicore PRIVATE STB_IMAGE_IMPLEMENTATION STBI_NO_STDIO STBI_ONLY_JPEG STBI_ONLY_PNG STBI_ONLY_BMP)
-	target_compile_definitions(unicore PRIVATE UNICORE_USE_STB)
+# PLUGINS
+if (UNICORE_PLUGIN_STB)
+	add_subdirectory("${PLUGINS_DIR}/stb")
 endif()
 
-# PLUGINS
 if (UNICORE_PLUGIN_XML)
 	add_subdirectory("${PLUGINS_DIR}/xml")
 endif()

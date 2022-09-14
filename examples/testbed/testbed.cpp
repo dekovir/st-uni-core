@@ -3,6 +3,7 @@
 #include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Font.hpp"
+#include "unicore/stb/StbPlugin.hpp"
 #include "unicore/xml/XMLPlugin.hpp"
 #include "unicore/fnt/FNTPlugin.hpp"
 #include "unicore/imgui/ImGuiPlugin.hpp"
@@ -16,6 +17,7 @@ namespace unicore
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
+		create_plugin<StbPlugin>();
 		create_plugin<XMLPlugin>();
 		create_plugin<FNTPlugin>();
 		create_plugin<ImGuiPlugin>();

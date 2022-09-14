@@ -8,6 +8,7 @@
 #include "unicore/BinaryData.hpp"
 #include "unicore/RendererSDL.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/stb/StbPlugin.hpp"
 #include "unicore/xml/XMLPlugin.hpp"
 #include "unicore/fnt/FNTPlugin.hpp"
 #include "unicore/wasm/WasmEnvironment.hpp"
@@ -130,6 +131,7 @@ namespace unicore
 
 		s_example = this;
 
+		create_plugin<StbPlugin>();
 		create_plugin<XMLPlugin>();
 		create_plugin<FNTPlugin>();
 		create_plugin<WasmPlugin>();

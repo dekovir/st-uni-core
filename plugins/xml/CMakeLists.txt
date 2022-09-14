@@ -1,4 +1,5 @@
 #tinyxml2
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(tinyxml2_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory("${LIBS_DIR}/tinyxml2" tinyxml2)
 set_target_properties(tinyxml2 PROPERTIES FOLDER "Libs")
