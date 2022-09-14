@@ -2,12 +2,11 @@
 
 namespace unicore
 {
-	BitmapFont::BitmapFont(
-		PagesList pages, GlyphsDictionary glyphs,
-		KerningDictionary kerning, uint8_t space_width)
-		: TexturedFont(std::move(kerning), space_width),
-		_pages(std::move(pages)),
-		_glyphs(std::move(glyphs))
+	BitmapFont::BitmapFont(const ConstructionParams& params)
+		: TexturedFont(params.kerning, params.space_width)
+		, _pages(params.pages)
+		, _glyphs(params.glyphs)
+		, _height(static_cast<float>(params.height))
 	{
 	}
 
@@ -26,6 +25,11 @@ namespace unicore
 		}
 
 		return 0;
+	}
+
+	float BitmapFont::get_height() const
+	{
+		return _height;
 	}
 
 	Shared<Texture> BitmapFont::get_char_print_info(uint32_t code,

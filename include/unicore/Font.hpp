@@ -10,6 +10,7 @@ namespace unicore
 	{
 		UC_OBJECT(Font, Resource)
 	public:
+		UC_NODISCARD virtual float get_height() const = 0;
 	};
 
 	class GeometryFont : public Font

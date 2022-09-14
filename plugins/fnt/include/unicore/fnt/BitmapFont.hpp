@@ -19,12 +19,21 @@ namespace unicore
 		using PagesList = List<Shared<Texture>>;
 		using GlyphsDictionary = Dictionary<uint32_t, BitmapFontGlyph>;
 
-		BitmapFont(PagesList pages, GlyphsDictionary glyphs,
-			KerningDictionary kerning, uint8_t space_width
-		);
+		struct ConstructionParams
+		{
+			PagesList pages;
+			GlyphsDictionary glyphs;
+			KerningDictionary kerning;
+			uint8_t space_width = 0;
+			int height = 8;
+		};
+
+		explicit BitmapFont(const ConstructionParams& params);
 
 		UC_NODISCARD size_t get_system_memory_use() const override;
 		size_t get_used_resources(Set<Shared<Resource>>& resources) override;
+
+		UC_NODISCARD float get_height() const override;
 
 		Shared<Texture> get_char_print_info(uint32_t code,
 			Vector2f& pos, Rectf* rect, Rectf* uv_rect) const override;
@@ -32,5 +41,6 @@ namespace unicore
 	protected:
 		const List<Shared<Texture>> _pages;
 		const GlyphsDictionary _glyphs;
+		float _height;
 	};
 }

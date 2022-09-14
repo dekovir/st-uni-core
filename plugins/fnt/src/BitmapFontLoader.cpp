@@ -36,17 +36,15 @@ namespace unicore
 			return nullptr;
 		}
 
-		BitmapFont::PagesList pages;
-		BitmapFont::GlyphsDictionary glyphs;
-		BitmapFont::KerningDictionary kerning;
+		BitmapFont::ConstructionParams params;
 
-		pages.push_back(texture);
-
-		auto space_width = static_cast<uint8_t>(root->IntAttribute("spaceWidth"));
+		params.pages.push_back(texture);
+		params.space_width = static_cast<uint8_t>(root->IntAttribute("spaceWidth"));
+		params.height = root->IntAttribute("fontHeight");
 
 		for (auto element = root->FirstChildElement("char"); element != nullptr; element = element->NextSiblingElement())
 		{
-			const auto code = (wchar_t)element->Int64Attribute("code");
+			const auto code = static_cast<wchar_t>(element->Int64Attribute("code"));
 			BitmapFontGlyph glyph{};
 
 			glyph.rect.x = element->IntAttribute("x");
@@ -57,7 +55,7 @@ namespace unicore
 			glyph.yoffset = element->IntAttribute("dy");
 			glyph.xadvance = element->IntAttribute("advx");
 
-			glyphs.insert_or_assign(code, glyph);
+			params.glyphs.insert_or_assign(code, glyph);
 		}
 
 		for (auto element = root->FirstChildElement("kerning"); element != nullptr; element = element->NextSiblingElement())
@@ -66,9 +64,9 @@ namespace unicore
 			const auto c2 = element->IntAttribute("c2");
 			const auto offset = element->IntAttribute("offset");
 
-			kerning[c1][c2] = offset;
+			params.kerning[c1][c2] = offset;
 		}
 
-		return std::make_shared<BitmapFont>(pages, glyphs, kerning, space_width);
+		return std::make_shared<BitmapFont>(params);
 	}
 }

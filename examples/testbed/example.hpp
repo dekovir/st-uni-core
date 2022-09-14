@@ -12,6 +12,8 @@ namespace unicore
 	class RendererSDL;
 	class ResourceCache;
 
+	class Font;
+
 	struct ExampleContext
 	{
 		Logger& logger;
@@ -20,6 +22,7 @@ namespace unicore
 		Input& input;
 		RendererSDL& renderer;
 		Platform& platform;
+		Shared<Font> font;
 	};
 
 	class Example : public Object

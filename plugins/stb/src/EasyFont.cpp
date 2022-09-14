@@ -7,13 +7,19 @@ namespace unicore
 {
 	struct Vertex
 	{
-		float x, y, z;
+		Vector2f pos;
+		float z;
 		uint32_t color;
 	};
 
 	// TODO: Optimize
 	constexpr auto BUFFER_SIZE = 1024 * 2;
 	static Vertex s_quads[BUFFER_SIZE];
+
+	EasyFont::EasyFont()
+		: _height(static_cast<float>(stb_easy_font_height("W")))
+	{
+	}
 
 	size_t EasyFont::get_system_memory_use() const
 	{
@@ -30,15 +36,10 @@ namespace unicore
 
 		for (auto i = 0; i < num_quads; i++)
 		{
-			const auto& v0 = s_quads[i * 4 + 0];
-			const auto& v1 = s_quads[i * 4 + 1];
-			const auto& v2 = s_quads[i * 4 + 2];
-			const auto& v3 = s_quads[i * 4 + 3];
-
-			quads.emplace_back(Vector2f(v0.x, v0.y), color);
-			quads.emplace_back(Vector2f(v1.x, v1.y), color);
-			quads.emplace_back(Vector2f(v2.x, v2.y), color);
-			quads.emplace_back(Vector2f(v3.x, v3.y), color);
+			quads.emplace_back(s_quads[i * 4 + 0].pos, color);
+			quads.emplace_back(s_quads[i * 4 + 1].pos, color);
+			quads.emplace_back(s_quads[i * 4 + 2].pos, color);
+			quads.emplace_back(s_quads[i * 4 + 3].pos, color);
 		}
 
 		return num_quads;

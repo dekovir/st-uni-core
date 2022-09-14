@@ -33,12 +33,12 @@ namespace unicore
 
 	Example02::Example02(const ExampleContext& context)
 		: Example(context)
+		, _font(context.font)
 	{
 	}
 
 	void Example02::load(ResourceCache& resources)
 	{
-		_font = resources.load<Font>(L"font_004.fnt"_path);
 #if 1
 		_tex = resources.load<Texture>(L"zazaka.png"_path);
 #else
@@ -82,7 +82,8 @@ namespace unicore
 			_sprite_batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
 		_sprite_batch.draw(_tex, { static_cast<float>(size.x) - 32, 32 });
 
-		_sprite_batch.print(_font, { 200, 20 }, count_str);
+		if (_font)
+			_sprite_batch.print(_font, { 200, _font->get_height() }, count_str);
 
 		_sprite_batch.flush();
 	}

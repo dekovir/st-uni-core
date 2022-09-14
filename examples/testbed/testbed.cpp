@@ -66,13 +66,16 @@ namespace unicore
 		const auto draw_str = StringBuilder::format("Draw: {}", _draw_calls);
 		const auto screen_str = StringBuilder::format("Screen: {}", screen_size);
 
-		_sprite_batch
-			.clear()
-			.print(_font, { 0, 0 }, fps_str)
-			.print(_font, { 200, 0 }, title_str)
-			.print(_font, { 0, 20 }, draw_str)
-			.print(_font, { 0, 40 }, screen_str)
-			.flush();
+		if (_font)
+		{
+			_sprite_batch
+				.clear()
+				.print(_font, { 0, 0 }, fps_str)
+				.print(_font, { 200, 0 }, title_str)
+				.print(_font, { 0, _font->get_height() * 1 }, draw_str)
+				.print(_font, { 0, _font->get_height() * 2 }, screen_str)
+				.flush();
+		}
 	}
 
 	void MyCore::on_draw()
@@ -93,7 +96,7 @@ namespace unicore
 
 		auto& info = ExampleCatalog::get_all()[index];
 
-		const auto example = info.factory({ logger, _random, time, input, renderer, platform });
+		const auto example = info.factory({ logger, _random, time, input, renderer, platform, _font });
 		if (!example)
 		{
 			UC_LOG_ERROR(logger) << "Failed to create example " << info.title << ":" << index;
