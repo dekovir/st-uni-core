@@ -8,6 +8,12 @@ namespace unicore
 {
 	static VertexTexColor2 s_quad[4];
 
+	static void convert(const VertexColor2& from, VertexTexColor2& to)
+	{
+		to.pos = from.pos;
+		to.col = from.col;
+	}
+
 	void SpriteBatch::render(RendererSDL& renderer) const
 	{
 		for (const auto& batch : _batches)
@@ -40,7 +46,7 @@ namespace unicore
 	}
 
 	// DRAW TRIANGLE /////////////////////////////////////////////////////////////
-	SpriteBatch& SpriteBatch::draw(
+	SpriteBatch& SpriteBatch::draw_tri(
 		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2,
 		const Shared<Texture>& texture)
 	{
@@ -54,8 +60,21 @@ namespace unicore
 		return *this;
 	}
 
+	SpriteBatch& SpriteBatch::draw_tri(const VertexTexColor2* arr,
+		const Shared<Texture>& texture)
+	{
+		set_texture(texture);
+
+		_vertices.push_back(arr[0]);
+		_vertices.push_back(arr[1]);
+		_vertices.push_back(arr[2]);
+		_current.vcount += 3;
+
+		return *this;
+	}
+
 	// DRAW QUAD /////////////////////////////////////////////////////////////////
-	SpriteBatch& SpriteBatch::draw(
+	SpriteBatch& SpriteBatch::draw_quad(
 		const VertexTexColor2& v0, const VertexTexColor2& v1,
 		const VertexTexColor2& v2, const VertexTexColor2& v3,
 		const Shared<Texture>& texture)
@@ -69,6 +88,23 @@ namespace unicore
 		_vertices.push_back(v3);
 		_vertices.push_back(v1);
 		_vertices.push_back(v2);
+		_current.vcount += 6;
+
+		return *this;
+	}
+
+	SpriteBatch& SpriteBatch::draw_quad(const VertexTexColor2* arr,
+		const Shared<Texture>& texture)
+	{
+		set_texture(texture);
+
+		_vertices.push_back(arr[0]);
+		_vertices.push_back(arr[1]);
+		_vertices.push_back(arr[3]);
+
+		_vertices.push_back(arr[3]);
+		_vertices.push_back(arr[1]);
+		_vertices.push_back(arr[2]);
 		_current.vcount += 6;
 
 		return *this;
@@ -106,7 +142,7 @@ namespace unicore
 		s_quad[2].col = color;
 		s_quad[3].col = color;
 
-		return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
+		return draw_quad(s_quad, texture);
 	}
 
 	// DRAW TEXTURE ///////////////////////////////////////////////////////////////
@@ -128,7 +164,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
+			return draw_quad(s_quad, texture);
 		}
 
 		return *this;
@@ -149,7 +185,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
+			return draw_quad(s_quad, texture);
 		}
 
 		return *this;
@@ -174,7 +210,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
+			return draw_quad(s_quad, texture);
 		}
 
 		return *this;
@@ -197,7 +233,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
+			return draw_quad(s_quad, texture);
 		}
 
 		return *this;
@@ -222,7 +258,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
+			return draw_quad(s_quad, texture);
 		}
 
 		return *this;
@@ -247,7 +283,7 @@ namespace unicore
 			s_quad[2].col = color;
 			s_quad[3].col = color;
 
-			return draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], texture);
+			return draw_quad(s_quad, texture);
 		}
 
 		return *this;
@@ -257,20 +293,38 @@ namespace unicore
 	SpriteBatch& SpriteBatch::print(const Shared<Font>& font,
 		const Vector2f& pos, StringView text, const Color4b& color)
 	{
-		if (font)
+		if (const auto textured = std::dynamic_pointer_cast<TexturedFont>(font))
 		{
 			Vector2f cur(pos);
 
 			for (size_t i = 0; i < text.size(); i++)
 			{
 				const auto c = text[i];
-				if (auto tex = font->print_char(c, cur, s_quad[0], s_quad[1], s_quad[2], s_quad[3], color))
+				if (auto tex = textured->print_char(c, cur, s_quad[0], s_quad[1], s_quad[2], s_quad[3], color))
 				{
-					draw(s_quad[0], s_quad[1], s_quad[2], s_quad[3], tex);
+					draw_quad(s_quad, tex);
 
 					if (i + 1 < text.size())
-						cur.x += static_cast<float>(font->find_kerning(c, text[i + 1]));
+						cur.x += static_cast<float>(textured->find_kerning(c, text[i + 1]));
 				}
+			}
+		}
+
+		if (const auto geometry = std::dynamic_pointer_cast<GeometryFont>(font))
+		{
+			static List<VertexColor2> quads;
+
+			quads.clear();
+			const auto num_quads = geometry->print_quads(pos, text, quads);
+
+			for (size_t i = 0; i < num_quads; i++)
+			{
+				convert(quads[i*4 + 0], s_quad[0]);
+				convert(quads[i*4 + 1], s_quad[1]);
+				convert(quads[i*4 + 2], s_quad[2]);
+				convert(quads[i*4 + 3], s_quad[3]);
+
+				draw_quad(s_quad);
 			}
 		}
 

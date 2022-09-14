@@ -25,6 +25,7 @@ namespace unicore
 
 	void MyCore::on_init()
 	{
+		//_font = resources.create<Font>(42);
 		_font = resources.load<Font>(L"font_004.fnt"_path);
 
 		set_example(0);

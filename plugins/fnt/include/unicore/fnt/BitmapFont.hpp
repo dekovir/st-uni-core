@@ -12,9 +12,9 @@ namespace unicore
 		int xadvance;
 	};
 
-	class BitmapFont : public Font
+	class BitmapFont : public TexturedFont
 	{
-		UC_OBJECT(BitmapFont, Font)
+		UC_OBJECT(BitmapFont, TexturedFont)
 	public:
 		using PagesList = List<Shared<Texture>>;
 		using GlyphsDictionary = Dictionary<uint32_t, BitmapFontGlyph>;

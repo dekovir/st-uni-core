@@ -2,18 +2,12 @@
 
 namespace unicore
 {
-	Font::Font(KerningDictionary kerning, uint8_t space_width)
+	TexturedFont::TexturedFont(KerningDictionary kerning, uint8_t space_width)
 		: _kerning(std::move(kerning)), _space_width(space_width)
 	{
 	}
 
-	size_t Font::get_system_memory_use() const
-	{
-		// TODO: Add kerning dictionary size;
-		return sizeof(Font);
-	}
-
-	int Font::find_kerning(uint32_t a, uint32_t b) const
+	int TexturedFont::find_kerning(uint32_t a, uint32_t b) const
 	{
 		if (const auto it = _kerning.find(a); it != _kerning.end())
 		{
@@ -24,7 +18,7 @@ namespace unicore
 		return 0;
 	}
 
-	Shared<Texture> Font::print_char(uint32_t code, Vector2f& pos,
+	Shared<Texture> TexturedFont::print_char(uint32_t code, Vector2f& pos,
 		VertexTexColor2& v0, VertexTexColor2& v1,
 		VertexTexColor2& v2, VertexTexColor2& v3, const Color4b& color) const
 	{

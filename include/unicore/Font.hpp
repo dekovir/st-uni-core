@@ -10,9 +10,20 @@ namespace unicore
 	{
 		UC_OBJECT(Font, Resource)
 	public:
-		using KerningDictionary = Dictionary<uint32_t, Dictionary<uint32_t, int>>;
+	};
 
-		UC_NODISCARD size_t get_system_memory_use() const override;
+	class GeometryFont : public Font
+	{
+		UC_OBJECT(GeometryFont, Font)
+	public:
+		virtual size_t print_quads(const Vector2f& position, StringView text, List<VertexColor2>& quads) const = 0;
+	};
+
+	class TexturedFont : public Font
+	{
+		UC_OBJECT(TexturedFont, Font)
+	public:
+		using KerningDictionary = Dictionary<uint32_t, Dictionary<uint32_t, int>>;
 
 		UC_NODISCARD int find_kerning(uint32_t a, uint32_t b) const;
 
@@ -28,6 +39,6 @@ namespace unicore
 		const KerningDictionary _kerning;
 		const uint8_t _space_width = 0;
 
-		explicit Font(KerningDictionary kerning, uint8_t space_width = 0);
+		explicit TexturedFont(KerningDictionary kerning, uint8_t space_width = 0);
 	};
 }

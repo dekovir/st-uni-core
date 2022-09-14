@@ -5,7 +5,7 @@ namespace unicore
 	BitmapFont::BitmapFont(
 		PagesList pages, GlyphsDictionary glyphs,
 		KerningDictionary kerning, uint8_t space_width)
-		: Font(std::move(kerning), space_width),
+		: TexturedFont(std::move(kerning), space_width),
 		_pages(std::move(pages)),
 		_glyphs(std::move(glyphs))
 	{
@@ -13,8 +13,7 @@ namespace unicore
 
 	size_t BitmapFont::get_system_memory_use() const
 	{
-		return Font::get_system_memory_use() +
-			(sizeof(BitmapFontGlyph) + sizeof(uint32_t)) * _glyphs.size();
+		return sizeof(BitmapFont) + (sizeof(BitmapFontGlyph) + sizeof(uint32_t)) * _glyphs.size();
 	}
 
 	size_t BitmapFont::get_used_resources(Set<Shared<Resource>>& resources)

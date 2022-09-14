@@ -21,14 +21,20 @@ namespace unicore
 		SpriteBatch& flush();
 
 		// TRIANGLE
-		SpriteBatch& draw(
+		SpriteBatch& draw_tri(
 			const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2,
 			const Shared<Texture>& texture = nullptr);
 
+		SpriteBatch& draw_tri(const VertexTexColor2* arr,
+			const Shared<Texture>& texture = nullptr);
+
 		// QUAD
-		SpriteBatch& draw(
+		SpriteBatch& draw_quad(
 			const VertexTexColor2& v0, const VertexTexColor2& v1,
 			const VertexTexColor2& v2, const VertexTexColor2& v3,
+			const Shared<Texture>& texture = nullptr);
+
+		SpriteBatch& draw_quad(const VertexTexColor2* arr,
 			const Shared<Texture>& texture = nullptr);
 
 		// RECT
