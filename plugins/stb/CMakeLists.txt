@@ -52,8 +52,8 @@ if (UNICORE_STB_EASY_FONT)
 endif()
 
 if(UNICORE_STB_IMAGE)
-	target_compile_definitions(unicore-stb PUBLIC UNICORE_USE_STB_IMAGE)
-	target_compile_definitions(unicore-stb PRIVATE STB_IMAGE_IMPLEMENTATION STBI_NO_STDIO STBI_ONLY_JPEG STBI_ONLY_PNG STBI_ONLY_BMP)
+	target_compile_definitions(unicore-stb PUBLIC UNICORE_USE_STB_IMAGE STBI_NO_STDIO)
+	target_compile_definitions(unicore-stb PRIVATE STB_IMAGE_IMPLEMENTATION STBI_ONLY_JPEG STBI_ONLY_PNG STBI_ONLY_BMP)
 endif()
 
 if(UNICORE_STB_IMAGE_RESIZE)
@@ -62,8 +62,8 @@ if(UNICORE_STB_IMAGE_RESIZE)
 endif()
 
 if(UNICORE_STB_IMAGE_WRITE)
-	target_compile_definitions(unicore-stb PUBLIC UNICORE_USE_STB_IMAGE_WRITE)
-	target_compile_definitions(unicore-stb PRIVATE STB_IMAGE_WRITE_IMPLEMENTATION STBI_WRITE_NO_STDIO)
+	target_compile_definitions(unicore-stb PUBLIC UNICORE_USE_STB_IMAGE_WRITE STBI_WRITE_NO_STDIO)
+	target_compile_definitions(unicore-stb PRIVATE STB_IMAGE_WRITE_IMPLEMENTATION)
 endif()
 
 if (UNICORE_STB_PERLIN)

@@ -1,4 +1,4 @@
-#include "STBSurfaceLoader.hpp"
+#include "SurfaceLoader.hpp"
 #if defined(UNICORE_USE_STB_IMAGE)
 #include "unicore/ResourceCache.hpp"
 #include <stb_image.h>
@@ -31,13 +31,13 @@ namespace unicore
 	static constexpr stbi_io_callbacks s_stream_callbacks{ stbi_stream_read, stbi_stream_skip, stbi_stream_eof };
 	static constexpr std::initializer_list<WStringView> s_ext = { L".png",L".tga",L".jpg",L".jpeg" };
 
-	// STBSurfaceLoader ///////////////////////////////////////////////////////////
-	STBSurfaceLoader::STBSurfaceLoader()
+	// StbSurfaceLoader ///////////////////////////////////////////////////////////
+	StbSurfaceLoader::StbSurfaceLoader()
 		: ResourceLoaderT(s_ext)
 	{
 	}
 
-	Shared<Resource> STBSurfaceLoader::load(const Options& options)
+	Shared<Resource> StbSurfaceLoader::load(const Options& options)
 	{
 		int w, h, n;
 		const auto data = stbi_load_from_callbacks(

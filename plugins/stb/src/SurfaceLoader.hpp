@@ -5,16 +5,18 @@
 
 namespace unicore
 {
-	class STBSurfaceLoader : public ResourceLoaderT<Surface>
+	class StbSurfaceLoader : public ResourceLoaderT<Surface>
 	{
+		UC_OBJECT(StbSurfaceLoader, ResourceLoader)
 	public:
-		STBSurfaceLoader();
+		StbSurfaceLoader();
 
 		UC_NODISCARD Shared<Resource> load(const Options& options) override;
 	};
 
 	class STBDynamicSurfaceLoader : public ResourceLoaderT<DynamicSurface>
 	{
+		UC_OBJECT(STBDynamicSurfaceLoader, ResourceLoader)
 	public:
 		STBDynamicSurfaceLoader();
 

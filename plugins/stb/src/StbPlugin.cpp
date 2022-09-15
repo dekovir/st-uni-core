@@ -1,7 +1,7 @@
 #include "unicore/stb/StbPlugin.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "EasyFontCreator.hpp"
-#include "STBSurfaceLoader.hpp"
+#include "SurfaceLoader.hpp"
 
 namespace unicore
 {
@@ -16,7 +16,7 @@ namespace unicore
 #endif
 
 #if defined(UNICORE_USE_STB_IMAGE)
-			cache->add_loader(std::make_shared<STBSurfaceLoader>());
+			cache->add_loader(std::make_shared<StbSurfaceLoader>());
 			cache->add_loader(std::make_shared<STBDynamicSurfaceLoader>());
 #endif
 		}

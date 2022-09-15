@@ -136,6 +136,9 @@ namespace unicore
 	extern TypeIndex get_type_index(const T& value) { return TypeIndex(get_type_info(value)); }
 
 	template<typename T>
+	using Ref = std::reference_wrapper<T>;
+
+	template<typename T>
 	using Weak = std::weak_ptr<T>;
 
 	template<typename T>
