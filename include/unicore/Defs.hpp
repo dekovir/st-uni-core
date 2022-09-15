@@ -75,6 +75,63 @@ namespace unicore
 	using namespace std::string_literals;
 	using namespace std::string_view_literals;
 
+	using Char = char;
+	using WChar = wchar_t;
+
+	using Int = int;
+	using UInt = unsigned int;
+
+	using Int8 = int8_t;
+	using Int16 = int16_t;
+	using Int32 = int32_t;
+	using Int64 = int64_t;
+
+	using UInt8 = uint8_t;
+	using UInt16 = uint16_t;
+	using UInt32 = uint32_t;
+	using UInt64 = uint64_t;
+
+	using Float = float;
+	using Double = double;
+
+	using Byte = UInt8;
+
+	namespace arithmetic
+	{
+		template<typename T>
+		using Plus = std::plus<T>;
+
+		template<typename T>
+		using Minus = std::minus<T>;
+
+		template<typename T>
+		using Multiply = std::multiplies<T>;
+
+		template<typename T>
+		using Divide = std::divides<T>;
+	}
+
+	namespace comparison
+	{
+		template<typename T>
+		using Equal = std::equal_to<T>;
+
+		template<typename T>
+		using NotEqual = std::not_equal_to<T>;
+
+		template<typename T>
+		using Greater = std::greater<T>;
+
+		template<typename T>
+		using Less = std::less<T>;
+
+		template<typename T>
+		using GreaterEqual = std::greater_equal<T>;
+
+		template<typename T>
+		using LessEqual = std::less_equal<T>;
+	}
+
 	template<size_t N>
 	using Bitset = std::bitset<N>;
 
@@ -84,13 +141,13 @@ namespace unicore
 	template<typename T>
 	using List = std::vector<T>;
 
-	template<typename T, class Sort = std::less<T>>
+	template<typename T, class Sort = comparison::Less<T>>
 	using Set = std::set<T, Sort>;
 
-	template<typename TKey, typename TValue, class Sort = std::less<TKey>>
+	template<typename TKey, typename TValue, class Sort = comparison::Less<TKey>>
 	using Dictionary = std::map<TKey, TValue, Sort>;
 
-	template<typename TKey, typename TValue, class Sort = std::less<TKey>>
+	template<typename TKey, typename TValue, class Sort = comparison::Less<TKey>>
 	using DictionaryMulti = std::multimap<TKey, TValue, Sort>;
 
 	template<typename T>
@@ -108,13 +165,13 @@ namespace unicore
 
 	using Any = std::any;
 
-	template <class... Types>
-	using Variant = std::variant<Types...>;
+	template <typename This, typename... Rest>
+	using Variant = std::variant<This, Rest...>;
 
 	template<typename T>
 	using HashFunc = std::hash<T>;
 
-	template <class This, class... Rest>
+	template <typename This, typename... Rest>
 	using Tuple = std::tuple<This, Rest...>;
 
 	using TypeInfo = std::type_info;
@@ -147,13 +204,13 @@ namespace unicore
 	template<typename T>
 	using Unique = std::unique_ptr<T>;
 
-	template<typename T, class... Types>
+	template<typename T, typename... Types>
 	static inline Shared<T> make_shared(Types&&... args)
 	{
 		return std::make_shared<T>(std::forward<Types>(args)...);
 	}
 
-	template<typename T, class... Types>
+	template<typename T, typename... Types>
 	static inline Unique<T> make_unique(Types&&... args)
 	{
 		return std::make_unique<T>(std::forward<Types>(args)...);

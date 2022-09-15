@@ -25,7 +25,7 @@ namespace unicore::Shapes
 		if (segments == 0)
 		{
 			const float lng = 2 * Math::Pi * radius;
-			segments = Math::max(3, Math::floor(lng / 10));
+			segments = Math::max(3, Math::floor_to_int(lng / 10));
 		}
 
 		points.reserve(segments);
@@ -51,7 +51,7 @@ namespace unicore::Shapes
 		{
 			const float a = Math::Pi * radius.x * radius.y + Math::pow(radius.x + radius.y);
 			const float lng = 4 * (a / (radius.x - radius.y));
-			segments = Math::max(3, Math::floor(lng / 100));
+			segments = Math::max(3, Math::floor_to_int(lng / 100));
 		}
 
 		points.reserve(segments);
