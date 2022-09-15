@@ -45,6 +45,15 @@ namespace unicore
 		template<typename T>
 		static constexpr T sign(T value) { return value >= 0 ? +1 : -1; }
 
+		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+		static constexpr T mod(T value, T length) { return value % length; }
+
+		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static constexpr T mod(T a, T b)
+		{
+			return a - b * static_cast<typename internal::floating_to_integral<T>::Type>(a / b);
+		}
+
 		// ROUND, CEIL, FLOOR ////////////////////////////////////////////////////////
 		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T round(T value) { return std::round(value); }
@@ -158,7 +167,7 @@ namespace unicore
 
 		// LERP //////////////////////////////////////////////////////////////////////
 		template<typename T, std::enable_if_t<sfinae::has_lerp_static_method_t<T>>* = nullptr>
-		static constexpr T lerp(T a, T b, float t)
+		static constexpr T lerp(const T& a, const T& b, float t)
 		{
 			return T::lerp(a, b, t);
 		}
