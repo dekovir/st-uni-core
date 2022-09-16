@@ -1,6 +1,7 @@
 #pragma once
 #include "unicore/Range.hpp"
 #include "unicore/Vector2.hpp"
+#include "unicore/StringBuilder.hpp"
 
 namespace unicore
 {
@@ -38,6 +39,11 @@ namespace unicore
 			return *this;
 		}
 
+		void set(T x_, T y_, T w_, T h_)
+		{
+			x = x_; y = y_; w = w_; h = h_;
+		}
+
 		UC_NODISCARD constexpr T min_x() const { return x; }
 		UC_NODISCARD constexpr T max_x() const { return x + w; }
 
@@ -62,9 +68,27 @@ namespace unicore
 		UC_NODISCARD constexpr Vector2<T> bottom_left() const { return Vector2<T>(x, y); }
 		UC_NODISCARD constexpr Vector2<T> bottom_right() const { return Vector2<T>(x + w, y); }
 
+		UC_NODISCARD constexpr bool contains(T x_, T y_) const
+		{
+			return
+				(x_ >= min_x()) && (x_ < max_x()) &&
+				(y_ >= min_y()) && (y_ < max_y());
+		}
+
 		UC_NODISCARD constexpr bool contains(const Vector2<T>& point) const
 		{
-			return (point.x >= min_x()) && (point.x < max_x()) && (point.y >= min_y()) && (point.y < max_y());
+			return
+				(point.x >= min_x()) && (point.x < max_x()) &&
+				(point.y >= min_y()) && (point.y < max_y());
+		}
+
+		UC_NODISCARD constexpr bool overlaps(const Rect& other) const
+		{
+			return
+				other.max_x() > min_x() &&
+				other.min_x() < max_x() &&
+				other.max_y() > min_y() &&
+				other.min_y() < max_y();
 		}
 
 		UC_NODISCARD constexpr Optional<Rect> intersection(const Rect& rectangle) const
@@ -120,6 +144,22 @@ namespace unicore
 			return *this;
 		}
 
+		static Vector2<T> normalized_to_point(const Rect& rect, const Vector2<T>& normalized)
+		{
+			return Vector2<T>(
+				Math::lerp(rect.min_x(), rect.max_x(), normalized.x),
+				Math::lerp(rect.min_y(), rect.max_y(), normalized.y)
+				);
+		}
+
+		static Vector2<T> point_to_normalized(const Rect& rect, const Vector2<T>& point)
+		{
+			return Vector2<T>(
+				Math::inverse_lerp(rect.min_x(), rect.max_x(), point.x),
+				Math::inverse_lerp(rect.min_y(), rect.max_y(), point.y)
+				);
+		}
+
 		static constexpr Rect<T> from_min_max(const Vector2<T>& min, const Vector2<T>& max);
 		static constexpr Rect<T> from_center(const Vector2<T>& center, const Vector2<T>& size);
 	};
@@ -166,29 +206,27 @@ namespace unicore
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>
-	static typename std::enable_if<std::is_integral<T>::value, bool>::type
-		operator == (const Rect<T>& a, const Rect<T>& b)
+	static constexpr bool operator == (const Rect<T>& a, const Rect<T>& b)
 	{
-		return a.x == b.x && a.y == b.y &&
-			a.w == b.w && a.h == b.h;
+		return
+			Math::equals(a.x, b.x) && Math::equals(a.y, b.y) &&
+			Math::equals(a.w, b.w) && Math::equals(a.h, b.h);
 	}
 
 	template<typename T>
-	static typename std::enable_if<std::is_integral<T>::value, bool>::type
-		operator != (const Rect<T>& a, const Rect<T>& b)
+	static constexpr bool operator != (const Rect<T>& a, const Rect<T>& b)
 	{
-		return a.x != b.x || a.y != b.y ||
-			a.w != b.w || a.h != b.h;
+		return !(a == b);
 	}
 
 	template<typename T>
-	Rect<T> operator+ (const Rect<T>& rect, const Vector2<T>& vec)
+	static constexpr Rect<T> operator+ (const Rect<T>& rect, const Vector2<T>& vec)
 	{
 		return Rect<T>(rect.x + vec.x, rect.y + vec.y, rect.w, rect.h);
 	}
 
 	template<typename T>
-	Rect<T> operator- (const Rect<T>& rect, const Vector2<T>& vec)
+	static constexpr Rect<T> operator- (const Rect<T>& rect, const Vector2<T>& vec)
 	{
 		return Rect<T>(rect.x - vec.x, rect.y - vec.y, rect.w, rect.h);
 	}
@@ -205,4 +243,25 @@ namespace unicore
 
 	using RectConsti = details::RectConst<int>;
 	using RectConstf = details::RectConst<float>;
+
+	template<typename T>
+	extern UNICODE_STRING_BUILDER_FORMAT(const Rect<T>&)
+	{
+		return builder
+			<< '(' << value.x << ',' << value.y << ','
+			<< value.w << ',' << value.h << ')';
+	}
 }
+
+template<typename T>
+struct std::hash<unicore::Rect<T>>
+{
+	std::size_t operator()(const unicore::Rect<T>& value) const noexcept
+	{
+		return
+			std::hash<T>{}(value.x) ^
+			std::hash<T>{}(value.w << 2) ^
+			std::hash<T>{}(value.y >> 2) ^
+			std::hash<T>{}(value.h >> 1);
+	}
+};

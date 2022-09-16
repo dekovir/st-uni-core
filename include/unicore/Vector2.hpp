@@ -81,7 +81,8 @@ namespace unicore
 
 		UC_NODISCARD constexpr Vector2<T> perpendicular() const
 		{
-			return Vector2(y, -x);
+			//return Vector2(y, -x);
+			return Vector2(-y, x);
 		}
 
 		template<typename U>
@@ -134,6 +135,12 @@ namespace unicore
 			return Radians(Math::acos(dot(a, b) / (a.length() * b.length())));
 		}
 
+		static Vector2<T> reflect(const Vector2<T>& direction, const Vector2<T>& normal)
+		{
+			const auto factor = -2.f * dot(normal, direction);
+			return Vector2<T>(factor * normal.x + direction.x, factor * normal.y + direction.y);
+		}
+
 		static constexpr Vector2<T> lerp(const Vector2<T>& a, const Vector2<T>& b, float t)
 		{
 			return Vector2<T>(
@@ -150,8 +157,8 @@ namespace unicore
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
 	template <typename T>
-	constexpr Vector2<T>::Vector2(T _x, T _y) noexcept
-		: x(_x), y(_y)
+	constexpr Vector2<T>::Vector2(T x_, T y_) noexcept
+		: x(x_), y(y_)
 	{}
 
 	template <typename T>
@@ -161,17 +168,15 @@ namespace unicore
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>
-	static constexpr std::enable_if_t<std::is_integral_v<T>, bool>
-		operator == (const Vector2<T>& a, const Vector2<T>& b)
+	static constexpr bool operator == (const Vector2<T>& a, const Vector2<T>& b)
 	{
-		return a.x == b.x && a.y == b.y;
+		return Math::equals(a.x, b.x) && Math::equals(a.y, b.y);
 	}
 
 	template<typename T>
-	static constexpr std::enable_if_t<std::is_integral_v<T>, bool>
-		operator != (const Vector2<T>& a, const Vector2<T>& b)
+	static constexpr bool operator != (const Vector2<T>& a, const Vector2<T>& b)
 	{
-		return a.x != b.x || a.y != b.y;
+		return !(a == b);
 	}
 
 	template<typename T>
@@ -193,8 +198,7 @@ namespace unicore
 	}
 
 	template<typename T>
-	static constexpr std::enable_if_t<std::is_floating_point_v<T>, Vector2<T>>
-		operator / (const Vector2<T>& a, const Vector2<T>& b)
+	static constexpr Vector2<T> operator / (const Vector2<T>& a, const Vector2<T>& b)
 	{
 		return Vector2<T>(a.x / b.x, a.y / b.y);
 	}
@@ -234,3 +238,12 @@ namespace unicore
 		return builder << value.x << "x" << value.y;
 	}
 }
+
+template<typename T>
+struct std::hash<unicore::Vector2<T>>
+{
+	std::size_t operator()(const unicore::Vector2<T>& value) const noexcept
+	{
+		return std::hash<T>{}(value.x) ^ std::hash<T>{}(value.y << 2);
+	}
+};

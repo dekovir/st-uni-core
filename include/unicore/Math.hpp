@@ -35,15 +35,24 @@ namespace unicore
 			template<> struct floating_to_integral<double> { using Type = Int64; };
 		}
 
-		// EVENT, ODD, SIGN //////////////////////////////////////////////////////////
+		// EVENT, ODD, ABS, SIGN, MOD ////////////////////////////////////////////////
 		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 		static constexpr bool even(T value) { return (value % 2) == 0; }
 
 		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 		static constexpr bool odd(T value) { return (value % 2) == 1; }
 
+		template<typename T, std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
+		static constexpr T abs(T value)
+		{
+			return value < 0 ? -value : value;
+		}
+
 		template<typename T>
-		static constexpr T sign(T value) { return value >= 0 ? +1 : -1; }
+		static constexpr T sign(T value)
+		{
+			return value >= 0 ? static_cast<T>(+1) : static_cast<T>(-1);
+		}
 
 		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 		static constexpr T mod(T value, T length) { return value % length; }
@@ -109,12 +118,6 @@ namespace unicore
 		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T sqrt(T value) { return std::sqrt(value); }
 
-		template<typename T, std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-		static constexpr T abs(T value)
-		{
-			return value < 0 ? -value : value;
-		}
-
 		// EQUALS, COMPARE ///////////////////////////////////////////////////////////
 		template<typename T>
 		static constexpr bool equals(T a, T b)
@@ -176,6 +179,20 @@ namespace unicore
 		static constexpr T lerp(T a, T b, float t)
 		{
 			return static_cast<T>((b - a) * t + a);
+		}
+
+		template<typename T>
+		static constexpr Float inverse_lerp(const T a, const T b, T t)
+		{
+			return static_cast<Float>(t - a) / static_cast<Float>(b - a);
+		}
+
+		// HASH //////////////////////////////////////////////////////////////////////
+		template<typename T>
+		static auto hash(const T& value)
+		{
+			static std::hash<T> func;
+			return func(value);
 		}
 	}
 }
