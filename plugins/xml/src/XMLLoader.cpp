@@ -11,7 +11,8 @@ namespace unicore
 
 	Shared<Resource> XMLDataLoader::load(const Options& options)
 	{
-		const auto data = options.cache.load<TextData>(options.path);
+		const auto data = options.cache.load<TextData>(
+			options.path, ResourceCacheFlag::IgnoreExtension);
 		if (!data)
 		{
 			UC_LOG_ERROR(options.logger) << "Failed to load BinaryData";

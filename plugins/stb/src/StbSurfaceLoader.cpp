@@ -1,6 +1,7 @@
-#include "SurfaceLoader.hpp"
+#include "StbSurfaceLoader.hpp"
 #if defined(UNICORE_USE_STB_IMAGE)
 #include "unicore/ResourceCache.hpp"
+#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
 namespace unicore
@@ -52,13 +53,13 @@ namespace unicore
 			Vector2i(w, h), MemoryChunk(data, w * h * 4, &stbi_image_free));
 	}
 
-	// STBDynamicSurfaceLoader ////////////////////////////////////////////////////
-	STBDynamicSurfaceLoader::STBDynamicSurfaceLoader()
+	// StbDynamicSurfaceLoader ////////////////////////////////////////////////////
+	StbDynamicSurfaceLoader::StbDynamicSurfaceLoader()
 		: ResourceLoaderT(s_ext)
 	{
 	}
 
-	Shared<Resource> STBDynamicSurfaceLoader::load(const Options& options)
+	Shared<Resource> StbDynamicSurfaceLoader::load(const Options& options)
 	{
 		// Use cached Surface
 		if (const auto cached = options.cache.find<Surface>(options.path))

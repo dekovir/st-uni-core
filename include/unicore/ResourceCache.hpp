@@ -18,7 +18,8 @@ namespace unicore
 
 	enum class ResourceCacheFlag
 	{
-		Quiet = 1,
+		Quiet = 1 << 0,
+		IgnoreExtension = 1 << 1,
 	};
 	UNICORE_ENUM_FLAGS(ResourceCacheFlag, ResourceCacheFlags);
 
@@ -90,7 +91,8 @@ namespace unicore
 		List<Weak<Resource>> _resources;
 		Dictionary<Path, Dictionary<TypeConstPtr, Shared<Resource>>> _cached;
 
-		Shared<Resource> load_resource(const Path& path, TypeConstRef type, Logger* logger);
+		Shared<Resource> load_resource(const Path& path,
+			TypeConstRef type, ResourceCacheFlags flags, Logger* logger);
 
 		Shared<Resource> load_resource(ResourceLoader& loader,
 			const Path& path, ReadFile& file, Logger* logger);

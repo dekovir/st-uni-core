@@ -14,11 +14,11 @@ namespace unicore
 		UC_NODISCARD Shared<Resource> load(const Options& options) override;
 	};
 
-	class STBDynamicSurfaceLoader : public ResourceLoaderT<DynamicSurface>
+	class StbDynamicSurfaceLoader : public ResourceLoaderT<DynamicSurface>
 	{
-		UC_OBJECT(STBDynamicSurfaceLoader, ResourceLoader)
+		UC_OBJECT(StbDynamicSurfaceLoader, ResourceLoader)
 	public:
-		STBDynamicSurfaceLoader();
+		StbDynamicSurfaceLoader();
 
 		UC_NODISCARD Shared<Resource> load(const Options& options) override;
 	};

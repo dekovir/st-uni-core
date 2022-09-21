@@ -11,6 +11,53 @@ namespace unicore
 {
 	static auto& s_resource_type = get_type<Resource>();
 
+	namespace linq
+	{
+		template<typename T, typename TIterator>
+		class IteratorRange
+		{
+		public:
+			constexpr IteratorRange(TIterator begin, TIterator end)
+				: _begin(begin), _end(end)
+			{}
+
+			UC_NODISCARD bool any(const Predicate<T>& predicate) const
+			{
+				return std::any_of(_begin, _end, predicate);
+			}
+
+			UC_NODISCARD bool all(const Predicate<T>& predicate) const
+			{
+				return std::all_of(_begin, _end, predicate);
+			}
+
+			UC_NODISCARD bool none(const Predicate<T>& predicate) const
+			{
+				return std::none_of(_begin, _end, predicate);
+			}
+
+			UC_NODISCARD TIterator find(const Predicate<T>& predicate) const
+			{
+				return std::find_if(_begin, _end, predicate);
+			}
+
+		protected:
+			TIterator _begin, _end;
+		};
+
+		template<typename T>
+		static auto from(const List<T>& list)
+		{
+			return IteratorRange<T, typename List<T>::const_iterator>(list.begin(), list.end());
+		}
+
+		template<typename T>
+		static auto from_reverse(const List<T>& list)
+		{
+			return IteratorRange<T, typename List<T>::const_iterator>(list.rbegin(), list.rend());
+		}
+	}
+
 	ResourceCache::ResourceCache(Logger& logger, ReadFileProvider& provider)
 		: _logger(logger), _provider(provider)
 	{
@@ -121,7 +168,7 @@ namespace unicore
 
 		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;
 
-		if (auto resource = load_resource(path, type, logger))
+		if (auto resource = load_resource(path, type, flags, logger))
 			return resource;
 
 		if (const auto it = _converters.find(&type); it != _converters.end())
@@ -204,9 +251,11 @@ namespace unicore
 
 	void ResourceCache::add_loader(const Shared<ResourceLoader>& loader)
 	{
-		for (auto type = &loader->resource_type(); type != nullptr && type != &s_resource_type; type = type->parent)
+		for (auto type = &loader->resource_type(); type != nullptr; type = type->parent)
 		{
 			_loaders[type].insert(loader);
+			if (type == &s_resource_type)
+				break;
 		}
 	}
 
@@ -247,16 +296,17 @@ namespace unicore
 		return lhs->priority() < rhs->priority();
 	}
 
-	Shared<Resource> ResourceCache::load_resource(const Path& path, TypeConstRef type, Logger* logger)
+	Shared<Resource> ResourceCache::load_resource(const Path& path,
+		TypeConstRef type, ResourceCacheFlags flags, Logger* logger)
 	{
 		const auto it = _loaders.find(&type);
 		if (it == _loaders.end()) return nullptr;
 
 		const auto& loaders = it->second;
 		// TODO: Implement loading stack for prevent recursive loading
-		for (const auto& loader : loaders)
+		if (path.has_extension(Path::WildcardExt))
 		{
-			if (path.has_extension(Path::WildcardExt))
+			for (const auto& loader : loaders)
 			{
 				for (const auto& extension : loader->extension())
 				{
@@ -271,16 +321,22 @@ namespace unicore
 						return resource;
 				}
 			}
-			else
+		}
+		else
+		{
+			const auto stream = _provider.open_read(path);
+			if (!stream)
 			{
-				const auto extension = path.extension();
+				UC_LOG_WARNING(logger) << "Failed to open " << path;
+				return nullptr;
+			}
 
-				const auto stream = _provider.open_read(path);
-				if (!stream)
-				{
-					UC_LOG_WARNING(logger) << "Failed to open " << path;
-					return nullptr;
-				}
+			const auto extension = path.extension();
+			for (const auto& loader : loaders)
+			{
+				if (!flags.has(ResourceCacheFlag::IgnoreExtension) && !linq::from(loader->extension())
+					.any([&extension](const WStringView ext) -> bool { return extension == ext; }))
+					continue;
 
 				if (auto resource = load_resource(*loader, path, *stream, logger))
 					return resource;

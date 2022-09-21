@@ -12,7 +12,8 @@ namespace unicore
 	Shared<Resource> BitmapFontLoader::load(const Options& options)
 	{
 		// TODO: Finish loading
-		const auto xml = options.cache.load<XMLData>(options.path);
+		const auto xml = options.cache.load<XMLData>(
+			options.path, ResourceCacheFlag::IgnoreExtension);
 		if (!xml)
 		{
 			UC_LOG_ERROR(options.logger) << "Failed to load xml";

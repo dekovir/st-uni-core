@@ -1,5 +1,6 @@
 #include "example05.hpp"
 #include "unicore/Input.hpp"
+#include "unicore/Font.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Texture.hpp"
@@ -24,6 +25,8 @@ namespace unicore
 		_map.fill(CellType::Grass);
 		_map.fill(CellType::Solid, Recti(1, 1, 5, 5));
 		_map.set(10, 10, CellType::Solid);
+
+		_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
 	}
 
 	void Example05::update()
@@ -83,6 +86,8 @@ namespace unicore
 				auto center = _map.topology.cell_to_pos(index);
 				_sprite_batch.draw(tile, _tr * center, _graphics.transform.angle, scale);
 			}
+
+		_sprite_batch.print(_font, { 400, 400 }, "Hello world!", ColorConst4b::Black);
 
 		_sprite_batch.flush();
 	}

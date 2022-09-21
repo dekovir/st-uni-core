@@ -1,7 +1,7 @@
-#include "EasyFont.hpp"
+#include "unicore/stb/StbEasyFont.hpp"
 #if defined(UNICORE_USE_STB_EASY_FONT)
-#include "unicore/Vector3.hpp"
 #include <stb_easy_font.h>
+#include "unicore/Vector3.hpp"
 
 namespace unicore
 {
@@ -16,24 +16,24 @@ namespace unicore
 	constexpr auto BUFFER_SIZE = 1024 * 2;
 	static Vertex s_quads[BUFFER_SIZE];
 
-	EasyFont::EasyFont()
+	StbEasyFont::StbEasyFont()
 		: _height(static_cast<float>(stb_easy_font_height((char*)"W")))
 	{
 	}
 
-	size_t EasyFont::get_system_memory_use() const
+	size_t StbEasyFont::get_system_memory_use() const
 	{
-		return sizeof(EasyFont);
+		return sizeof(StbEasyFont);
 	}
 
-	Vector2f EasyFont::calc_size(StringView text) const
+	Vector2f StbEasyFont::calc_size(StringView text) const
 	{
 		const auto w = stb_easy_font_width(const_cast<char*>(text.data()));
 		const auto h = stb_easy_font_height(const_cast<char*>(text.data()));
 		return { static_cast<float>(w), static_cast<float>(h) };
 	}
 
-	size_t EasyFont::print_quads(const Vector2f& position, StringView text, List<VertexColor2>& quads) const
+	size_t StbEasyFont::print_quads(const Vector2f& position, StringView text, List<VertexColor2>& quads) const
 	{
 		const auto num_quads = stb_easy_font_print(
 			position.x, position.y, (char*)text.data(),

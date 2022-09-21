@@ -39,6 +39,7 @@ namespace unicore
 
 	class WTextData : public BasicTextData<wchar_t>
 	{
+		UC_OBJECT(WTextData, BasicTextData)
 	public:
 		explicit WTextData(WStringView data)
 			: BasicTextData<wchar_t>(data)

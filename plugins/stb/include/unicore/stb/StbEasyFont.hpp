@@ -4,11 +4,11 @@
 
 namespace unicore
 {
-	class EasyFont : public GeometryFont
+	class StbEasyFont : public GeometryFont
 	{
-		UC_OBJECT(EasyFont, GeometryFont)
+		UC_OBJECT(StbEasyFont, GeometryFont)
 	public:
-		EasyFont();
+		StbEasyFont();
 
 		UC_NODISCARD size_t get_system_memory_use() const override;
 

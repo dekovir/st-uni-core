@@ -27,6 +27,7 @@ namespace unicore
 
 	protected:
 		Shared<SpriteList> _tiles;
+		Shared<Font> _font;
 
 		RectangleTopology _topology;
 		GridMap<CellType> _map;

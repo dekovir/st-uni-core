@@ -17,9 +17,18 @@ namespace unicore
 		using Size = Vector2i;
 	}
 
+	using SurfaceFormat = PixelFormat<uint32_t, uint8_t>;
+
+	class BaseSurface : public Resource
+	{
+		UC_OBJECT(BaseSurface, Resource)
+	public:
+		UC_NODISCARD virtual SurfaceFormat format() const { return pixel_format_abgr; }
+	};
+
 	// TODO: Is Resource?
 	// TODO: Rename to something else (Bitmap, PixelBuffer, ColorBuffer)
-	class Surface : public Resource, public IReadOnlyBuffer2<Color4b>
+	class Surface : public BaseSurface, public IReadOnlyBuffer2<Color4b>
 	{
 		UC_OBJECT(Surface, Resource)
 	public:
