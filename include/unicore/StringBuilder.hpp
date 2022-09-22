@@ -34,6 +34,7 @@ namespace unicore
 		template<typename ... Args>
 		static WString format(WStringView format, const Args& ... args)
 		{
+			// TODO: Optimize (Rewrite without Unicode methods)
 			StringBuilder builder;
 			internal_format(builder, Unicode::to_utf8(format), args...);
 			return Unicode::to_wcs(builder.data);

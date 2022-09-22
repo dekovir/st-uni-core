@@ -30,10 +30,10 @@ namespace unicore
 
 		int ascent, descent, line_gap;
 		stbtt_GetFontVMetrics(&font, &ascent, &descent, &line_gap);
-		const auto baseline =
-			Math::round_to_int(scale * static_cast<float>(ascent));
-		const auto line_height = scale * (ascent - descent + line_gap);
+		//const auto baseline = Math::round_to_int(scale * static_cast<float>(ascent));
+		params.height = scale * static_cast<float>(ascent - descent + line_gap);
 
+		// GENERATE CHAR BITMAPS
 		const size_t char_count = data.chars.size();
 		List<unsigned char*> item_bm(char_count);
 		List<Vector2i> item_size(char_count);
@@ -46,6 +46,7 @@ namespace unicore
 				&item_size[i].x, &item_size[i].y, &item_off[i].x, &item_off[i].y);
 		}
 
+		// PACK CHARS
 		List<Recti> item_rect(char_count);
 
 		StbRectPack packer;
@@ -56,11 +57,12 @@ namespace unicore
 			return nullptr;
 		}
 
+		// COPY TO SURFACE
 		DynamicSurface surface(surface_size);
 		for (unsigned i = 0; i < char_count; i++)
 		{
-			const auto& rect = item_rect[i];
-			DynamicSurface char_surface(rect.size());
+			const auto rect = item_rect[i].cast<unsigned short>();
+			DynamicSurface char_surface(rect.w, rect.h);
 			char_surface.clear();
 
 			for (auto y = 0; y < rect.w; y++)
@@ -69,12 +71,14 @@ namespace unicore
 					const auto a = item_bm[i][x + y * rect.w];
 					char_surface.set(x, y, Color4b(255, 255, 255, a));
 				}
+			stbtt_FreeBitmap(item_bm[i], nullptr);
 
+			// TODO: Fix!!!!!!!!
 			//char_surface.copy(surface, rect.position());
 
 			stbtt_bakedchar info;
-			info.xoff = item_off[i].x;
-			info.yoff = item_off[i].y;
+			info.xoff = static_cast<float>(item_off[i].x);
+			info.yoff = static_cast<float>(item_off[i].y);
 			info.xadvance = 0;
 			info.x0 = rect.min_x();
 			info.y0 = rect.min_y();

@@ -1,6 +1,6 @@
 #include "unicore/fnt/FNTPlugin.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "BitmapFontLoader.hpp"
+#include "DekovirFontLoader.hpp"
 
 namespace unicore
 {
@@ -8,6 +8,6 @@ namespace unicore
 	{
 		Plugin::register_plugin(context);
 		if (const auto cache = context.modules.find<ResourceCache>())
-			cache->add_loader(std::make_shared<BitmapFontLoader>());
+			cache->add_loader(std::make_shared<DekovirFontLoader>());
 	}
 }

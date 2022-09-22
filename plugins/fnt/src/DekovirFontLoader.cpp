@@ -1,17 +1,16 @@
-#include "BitmapFontLoader.hpp"
+#include "DekovirFontLoader.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/xml/XMLData.hpp"
 
 namespace unicore
 {
-	BitmapFontLoader::BitmapFontLoader()
+	DekovirFontLoader::DekovirFontLoader()
 		: ResourceLoaderT({ L".fnt" })
 	{
 	}
 
-	Shared<Resource> BitmapFontLoader::load(const Options& options)
+	Shared<Resource> DekovirFontLoader::load(const Options& options)
 	{
-		// TODO: Finish loading
 		const auto xml = options.cache.load<XMLData>(
 			options.path, ResourceCacheFlag::IgnoreExtension);
 		if (!xml)
@@ -43,6 +42,7 @@ namespace unicore
 		params.space_width = static_cast<uint8_t>(root->IntAttribute("spaceWidth"));
 		params.height = root->IntAttribute("fontHeight");
 
+		// TODO: Finish loading values
 		for (auto element = root->FirstChildElement("char"); element != nullptr; element = element->NextSiblingElement())
 		{
 			const auto code = static_cast<wchar_t>(element->Int64Attribute("code"));

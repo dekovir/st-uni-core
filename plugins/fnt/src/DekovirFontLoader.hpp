@@ -4,10 +4,10 @@
 
 namespace unicore
 {
-	class BitmapFontLoader : public ResourceLoaderT<BitmapFont>
+	class DekovirFontLoader : public ResourceLoaderT<BitmapFont>
 	{
 	public:
-		BitmapFontLoader();
+		DekovirFontLoader();
 		UC_NODISCARD Shared<Resource> load(const Options& options) override;
 	};
 }
