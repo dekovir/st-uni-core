@@ -4,10 +4,113 @@
 #include "unicore/Surface.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Texture.hpp"
+#include "unicore/experimental/ResourcePath.hpp"
 
 namespace unicore
 {
 	UC_EXAMPLE_REGISTER(Example05, "GridMap");
+
+	namespace foobar
+	{
+		enum class ValueType { Int, Float };
+
+		struct Value
+		{
+			ValueType type;
+		};
+
+		struct IntValue : Value
+		{
+			Int value;
+		};
+
+		struct FloatValue : Value
+		{
+			Float value;
+		};
+
+		namespace internal
+		{
+			template<typename T>
+			struct convert {};
+
+			template<>
+			struct convert<Int>
+			{
+				constexpr IntValue operator()(Int value) const noexcept
+				{
+					return { {ValueType::Int}, value };
+				}
+			};
+
+			template<>
+			struct convert<float>
+			{
+				constexpr FloatValue operator()(Float value) const noexcept
+				{
+					return { {ValueType::Float}, value };
+				}
+			};
+		}
+
+		template<typename T>
+		static constexpr auto to_value(T value) noexcept
+		{
+			internal::convert<T> convert;
+			return convert(value);
+		}
+
+		//template<typename ... Args>
+		//static constexpr auto make(Args... args) noexcept
+		//{
+		//	return std::make_pair(to_value<Args>(args)...);
+		//}
+	}
+
+	namespace parser
+	{
+		struct Result
+		{
+			StringView name;
+			StringView value;
+		};
+
+		template<size_t N>
+		struct Table
+		{
+			Result value[N];
+
+			constexpr Result operator[](int index) const { return value[index]; }
+		};
+
+		static constexpr Table<2> operator+(const Result& a, const Result& b)
+		{
+			return { a, b };
+		}
+
+		template<size_t N1, size_t N2>
+		static constexpr Table<N1 + N2> operator+(const Table<N1>& a, const Table<N2>& b)
+		{
+			Table<N1 + N2> data{};
+			for (size_t i = 0; i < N1; i++)
+				data.value[i] = a.value[i];
+			for (size_t i = 0; i < N2; i++)
+				data.value[N1 + i] = b.value[i];
+			return data;
+		}
+
+		namespace internal
+		{
+			static constexpr Result parse_one(StringView text)
+			{
+				const auto pos = text.find_first_of('=');
+				if (pos != StringView::npos)
+					return { text.substr(0, pos), text.substr(pos + 1) };
+
+				return { text, StringView() };
+			}
+		}
+	}
 
 	Example05::Example05(const ExampleContext& context)
 		: Example(context)
@@ -15,6 +118,20 @@ namespace unicore
 		, _map(30, 30, _topology)
 		, _tr({ 100, 100 }, 10_deg)
 	{
+		constexpr auto a = parser::internal::parse_one("name=value");
+		constexpr auto b = parser::internal::parse_one("height=32");
+		constexpr auto table = a + b;
+
+		static_assert(table.value[0].name == "name");
+		static_assert(table.value[1].value == "32");
+
+		constexpr auto v = foobar::to_value(12);
+		//constexpr auto t = foobar::make(12);
+
+		constexpr auto p = ResourcePath::make("create:font?height=32");
+		static_assert(p.base() == "create");
+		static_assert(p.data() == "font");
+		static_assert(p.args() == "height=32");
 	}
 
 	void Example05::load(ResourceCache& resources)

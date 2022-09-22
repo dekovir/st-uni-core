@@ -15,7 +15,8 @@ namespace unicore
 		UC_NODISCARD float get_height() const override { return _height; }
 		UC_NODISCARD Vector2f calc_size(StringView text) const override;
 
-		size_t print_quads(const Vector2f& position, StringView text, List<VertexColor2>& quads) const override;
+		size_t generate(const Vector2f& position, StringView text,
+			List<VertexColorQuad2>& quad_list) const override;
 
 	protected:
 		const float _height;

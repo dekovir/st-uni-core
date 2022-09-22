@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "unicore/Defs.hpp"
 
 namespace unicore
@@ -185,5 +185,22 @@ namespace unicore
 	constexpr bool operator!=(const TChar(&a)[N], const ConstString<TChar, M>& b) noexcept
 	{
 		return make_const_string(a) != b;
+	}
+
+	namespace CharTable
+	{
+		static constexpr auto Punctuation = make_const_string(L"!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
+		static constexpr auto Digits = make_const_string(L"0123456789");
+		static constexpr auto HexDigits = Digits + make_const_string(L"abcdefABCDEF");
+		static constexpr auto Alpha = make_const_string(L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+		static constexpr auto Alnum = Alpha + Digits;
+		static constexpr auto Space = make_const_string(L" \f\n\r\t\v");
+
+		static constexpr auto Ascii = Alpha + Punctuation + Digits;
+		static constexpr auto Printable = Ascii + make_const_string(L" ");
+
+		static constexpr auto English = Alpha;
+		static constexpr auto Russian =
+			make_const_string(L"АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя");
 	}
 }

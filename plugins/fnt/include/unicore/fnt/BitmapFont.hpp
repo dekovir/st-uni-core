@@ -16,6 +16,7 @@ namespace unicore
 	{
 		UC_OBJECT(BitmapFont, TexturedFont)
 	public:
+		using KerningDictionary = Dictionary<uint32_t, Dictionary<uint32_t, int>>;
 		using PagesList = List<Shared<Texture>>;
 		using GlyphsDictionary = Dictionary<uint32_t, BitmapFontGlyph>;
 
@@ -36,12 +37,22 @@ namespace unicore
 		UC_NODISCARD float get_height() const override;
 		UC_NODISCARD Vector2f calc_size(StringView text) const override;
 
+		int find_kerning(uint32_t a, uint32_t b) const;
+
 		Shared<Texture> get_char_print_info(uint32_t code,
-			Vector2f& pos, Rectf* rect, Rectf* uv_rect) const override;
+			Vector2f& pos, Rectf* rect, Rectf* uv_rect) const;
+
+		void generate(const Vector2f& position, StringView text,
+			Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict) override;
 
 	protected:
 		const List<Shared<Texture>> _pages;
 		const GlyphsDictionary _glyphs;
+		const KerningDictionary _kerning;
 		float _height;
+		const uint8_t _space_width = 0;
+
+		Shared<Texture> print_char(uint32_t code,
+			Vector2f& pos, VertexTexColorQuad2& quad) const;
 	};
 }

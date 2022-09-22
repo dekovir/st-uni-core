@@ -33,7 +33,8 @@ namespace unicore
 		return { static_cast<float>(w), static_cast<float>(h) };
 	}
 
-	size_t StbEasyFont::print_quads(const Vector2f& position, StringView text, List<VertexColor2>& quads) const
+	size_t StbEasyFont::generate(const Vector2f& position,
+		StringView text, List<VertexColorQuad2>& quad_list) const
 	{
 		const auto num_quads = stb_easy_font_print(
 			position.x, position.y, (char*)text.data(),
@@ -43,10 +44,12 @@ namespace unicore
 
 		for (auto i = 0; i < num_quads; i++)
 		{
-			quads.emplace_back(s_quads[i * 4 + 0].pos, color);
-			quads.emplace_back(s_quads[i * 4 + 1].pos, color);
-			quads.emplace_back(s_quads[i * 4 + 2].pos, color);
-			quads.emplace_back(s_quads[i * 4 + 3].pos, color);
+			VertexColorQuad2 quad;
+			quad.v[0] = { s_quads[i * 4 + 0].pos, color };
+			quad.v[1] = { s_quads[i * 4 + 1].pos, color };
+			quad.v[2] = { s_quads[i * 4 + 2].pos, color };
+			quad.v[3] = { s_quads[i * 4 + 3].pos, color };
+			quad_list.emplace_back(quad);
 		}
 
 		return num_quads;

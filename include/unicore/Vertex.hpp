@@ -4,6 +4,12 @@
 
 namespace unicore
 {
+	template<typename TVertex>
+	struct Quad
+	{
+		TVertex v[4];
+	};
+
 	template<typename TPos, typename TColor>
 	struct VertexColor
 	{
@@ -18,6 +24,7 @@ namespace unicore
 	};
 
 	using VertexColor2 = VertexColor<Vector2f, Color4b>;
+	using VertexColorQuad2 = Quad<VertexColor2>;
 
 	template<typename TPos, typename TTexCoords, typename TColor>
 	struct VertexTexColor
@@ -38,4 +45,5 @@ namespace unicore
 	};
 
 	using VertexTexColor2 = VertexTexColor<Vector2f, Vector2f, Color4b>;
+	using VertexTexColorQuad2 = Quad<VertexTexColor2>;
 }

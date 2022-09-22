@@ -7,6 +7,8 @@
 namespace unicore
 {
 	static VertexTexColor2 s_quad[4];
+	static List<VertexColorQuad2> s_quad_list;
+	static Dictionary<Shared<Texture>, List<VertexTexColorQuad2>> s_quad_dict;
 
 	static void convert(const VertexColor2& from, VertexTexColor2& to)
 	{
@@ -295,34 +297,27 @@ namespace unicore
 	{
 		if (const auto textured = std::dynamic_pointer_cast<TexturedFont>(font))
 		{
-			Vector2f cur(pos);
+			s_quad_dict.clear();
+			textured->generate(pos, text, s_quad_dict);
 
-			for (size_t i = 0; i < text.size(); i++)
+			for (const auto& [tex, quad_list] : s_quad_dict)
 			{
-				const auto c = text[i];
-				if (auto tex = textured->print_char(c, cur, s_quad[0], s_quad[1], s_quad[2], s_quad[3], color))
-				{
-					draw_quad(s_quad, tex);
-
-					if (i + 1 < text.size())
-						cur.x += static_cast<float>(textured->find_kerning(c, text[i + 1]));
-				}
+				for (const auto& quad : quad_list)
+					draw_quad(quad.v, tex);
 			}
 		}
 
 		if (const auto geometry = std::dynamic_pointer_cast<GeometryFont>(font))
 		{
-			static List<VertexColor2> quads;
+			s_quad_list.clear();
+			geometry->generate(pos, text, s_quad_list);
 
-			quads.clear();
-			const auto num_quads = geometry->print_quads(pos, text, quads);
-
-			for (size_t i = 0; i < num_quads; i++)
+			for (const auto& quad : s_quad_list)
 			{
-				convert(quads[i*4 + 0], s_quad[0]);
-				convert(quads[i*4 + 1], s_quad[1]);
-				convert(quads[i*4 + 2], s_quad[2]);
-				convert(quads[i*4 + 3], s_quad[3]);
+				convert(quad.v[0], s_quad[0]);
+				convert(quad.v[1], s_quad[1]);
+				convert(quad.v[2], s_quad[2]);
+				convert(quad.v[3], s_quad[3]);
 
 				draw_quad(s_quad);
 			}

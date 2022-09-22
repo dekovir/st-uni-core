@@ -66,7 +66,7 @@ namespace unicore
 			size_t count = 0;
 			Char c;
 
-			while (stream.read(&c, sizeof(Char)) == 1)
+			while (stream.read(&c, sizeof(Char)))
 			{
 				if (c == 0)
 					break;

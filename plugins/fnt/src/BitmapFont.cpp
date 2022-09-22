@@ -3,10 +3,11 @@
 namespace unicore
 {
 	BitmapFont::BitmapFont(const ConstructionParams& params)
-		: TexturedFont(params.kerning, params.space_width)
-		, _pages(params.pages)
+		: _pages(params.pages)
 		, _glyphs(params.glyphs)
+		, _kerning(params.kerning)
 		, _height(static_cast<float>(params.height))
+		, _space_width(params.space_width)
 	{
 	}
 
@@ -49,6 +50,17 @@ namespace unicore
 		return cur;
 	}
 
+	int BitmapFont::find_kerning(uint32_t a, uint32_t b) const
+	{
+		if (const auto it = _kerning.find(a); it != _kerning.end())
+		{
+			if (const auto jt = it->second.find(b); jt != it->second.end())
+				return jt->second;
+		}
+
+		return 0;
+	}
+
 	Shared<Texture> BitmapFont::get_char_print_info(uint32_t code,
 		Vector2f& pos, Rectf* rect, Rectf* uv_rect) const
 	{
@@ -86,6 +98,61 @@ namespace unicore
 
 				return page;
 			}
+		}
+
+		return nullptr;
+	}
+
+	void BitmapFont::generate(const Vector2f& position, StringView text,
+		Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict)
+	{
+		Vector2f cur = position;
+		for (size_t i = 0; i < text.size(); i++)
+		{
+			const auto c = text[i];
+			VertexTexColorQuad2 quad;
+			if (auto tex = print_char(c, cur, quad))
+			{
+				quad_dict[tex].push_back(quad);
+				if (i + 1 < text.size())
+					cur.x += static_cast<float>(find_kerning(c, text[i + 1]));
+			}
+		}
+	}
+
+	Shared<Texture> BitmapFont::print_char(uint32_t code,
+		Vector2f& pos, VertexTexColorQuad2& quad) const
+	{
+		Rectf rect, uv;
+		if (auto tex = get_char_print_info(code, pos, &rect, &uv))
+		{
+			const float x1 = rect.min_x();
+			const float y1 = rect.min_y();
+			const float x2 = rect.max_x();
+			const float y2 = rect.max_y();
+
+			const float tx1 = uv.min_x();
+			const float ty1 = uv.min_y();
+			const float tx2 = uv.max_x();
+			const float ty2 = uv.max_y();
+
+			quad.v[0].pos.set(x1, y1);
+			quad.v[0].uv.set(tx1, ty1);
+			quad.v[0].col = ColorConst4b::White;
+
+			quad.v[1].pos.set(x2, y1);
+			quad.v[1].uv.set(tx2, ty1);
+			quad.v[1].col = ColorConst4b::White;
+
+			quad.v[2].pos.set(x2, y2);
+			quad.v[2].uv.set(tx2, ty2);
+			quad.v[2].col = ColorConst4b::White;
+
+			quad.v[3].pos.set(x1, y2);
+			quad.v[3].uv.set(tx1, ty2);
+			quad.v[3].col = ColorConst4b::White;
+
+			return tex;
 		}
 
 		return nullptr;
