@@ -58,6 +58,9 @@ namespace unicore
 			return *this;
 		}
 
+		UC_NODISCARD constexpr T min_value() const { return Math::min(x, y, z); }
+		UC_NODISCARD constexpr T max_value() const { return Math::max(x, y, z); }
+
 		void normalize()
 		{
 			const auto lng = length();

@@ -72,6 +72,9 @@ namespace unicore
 			y /= lng;
 		}
 
+		UC_NODISCARD constexpr T min_value() const { return Math::min(x, y); }
+		UC_NODISCARD constexpr T max_value() const { return Math::max(x, y); }
+
 		UC_NODISCARD Vector2<T> normalized() const
 		{
 			Vector2<T> vec(x, y);
