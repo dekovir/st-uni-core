@@ -1,10 +1,12 @@
 #pragma once
+#include "Vertex.hpp"
 #include "unicore/Color4.hpp"
 #include "unicore/Rect.hpp"
 #include "unicore/Transform2.hpp"
 
 namespace unicore
 {
+	class GeometryFont;
 	class RendererSDL;
 
 	//enum class GraphicsLineCap2D
@@ -68,11 +70,15 @@ namespace unicore
 
 		Graphics2D& draw_triangle(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2);
 		Graphics2D& draw_quad(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2, const Vector2f& p3);
+		Graphics2D& draw_quad(const VertexColorQuad2& quad);
 
 		Graphics2D& draw_convex_poly(const List<Vector2f>& points);
 
 		Graphics2D& draw_grid(const Vector2i& count, const Vector2f& step,
 			const Action<Graphics2D&, const Vector2f&>& draw_func, const Vector2f& offset = VectorConst2f::Zero);
+
+		Graphics2D& draw_text(const GeometryFont& font,
+			const Vector2f& position, WStringView text);
 
 	protected:
 		enum class BatchType

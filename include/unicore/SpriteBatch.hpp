@@ -68,7 +68,7 @@ namespace unicore
 
 		// FONT
 		SpriteBatch& print(const Shared<Font>& font,
-			const Vector2f& pos, StringView text,
+			const Vector2f& pos, WStringView text,
 			const Color4b& color = ColorConst4b::White);
 
 	protected:

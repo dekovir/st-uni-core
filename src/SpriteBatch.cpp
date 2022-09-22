@@ -293,7 +293,7 @@ namespace unicore
 
 	// DRAW FONT /////////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::print(const Shared<Font>& font,
-		const Vector2f& pos, StringView text, const Color4b& color)
+		const Vector2f& pos, WStringView text, const Color4b& color)
 	{
 		if (const auto textured = std::dynamic_pointer_cast<TexturedFont>(font))
 		{

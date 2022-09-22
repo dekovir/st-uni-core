@@ -1,42 +1,32 @@
 #include "StbTTFontCreator.hpp"
 #if defined(UNICORE_USE_STB_TRUETYPE)
+#include "unicore/Logger.hpp"
 #include "unicore/BinaryData.hpp"
-#include "unicore/Memory.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Renderer.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/stb/StbRectPack.hpp"
 
 namespace unicore
 {
 	Shared<StbTTFont> StbTTFontCreator::create_from_data(const Options& context, const TTFOptions& data)
 	{
-		return nullptr;
-		/*
-		constexpr int size = 512;
-		constexpr int total = size * size;
-		constexpr int char_start = 32;
-		constexpr int char_count = 96;
-		constexpr float height = 32;
-
-		context.cache.load<BinaryData>(context.)
-
-		MemoryChunk chunk(options.file.size());
-
-		options.file.seek(0);
-		if (!options.file.read(chunk))
+		const auto chunk = context.cache.load<BinaryData>(data.path);
+		if (!chunk)
 		{
-			UC_LOG_ERROR(options.logger) << "Failed to read";
+			UC_LOG_ERROR(context.logger) << "Failed to create font";
 			return nullptr;
 		}
 
 		stbtt_fontinfo font;
-		if (!stbtt_InitFont(&font, static_cast<const unsigned char*>(chunk.data()), 0))
+		if (!stbtt_InitFont(&font, static_cast<const unsigned char*>(chunk->data()), 0))
 		{
-			UC_LOG_ERROR(options.logger) << "Failed to init font";
+			UC_LOG_ERROR(context.logger) << "Failed to init font";
 			return nullptr;
 		}
 
-		const auto scale = stbtt_ScaleForPixelHeight(&font, height);
+		StbTTFont::ConstructionParams params;
+		const auto scale = stbtt_ScaleForPixelHeight(&font, static_cast<float>(data.height));
 
 		int ascent, descent, line_gap;
 		stbtt_GetFontVMetrics(&font, &ascent, &descent, &line_gap);
@@ -44,33 +34,59 @@ namespace unicore
 			Math::round_to_int(scale * static_cast<float>(ascent));
 		const auto line_height = scale * (ascent - descent + line_gap);
 
-		stbtt_bakedchar cdata[char_count];
-		MemoryChunk buffer(total);
-
-		int w, h, xoff, yoff;
-		auto bitmap = stbtt_GetCodepointBitmap(&font, 0, scale, 0, &w, &h, &xoff, &yoff);
-
-		const auto result = stbtt_BakeFontBitmap(
-			(const unsigned char*)chunk.data(), 0,
-			height, (unsigned char*)buffer.data(), size, size,
-			char_start, char_count, cdata);
-
-		DynamicSurface surface(size, size);
-		for (auto i = 0; i < total; i++)
+		const size_t char_count = data.chars.size();
+		List<unsigned char*> item_bm(char_count);
+		List<Vector2i> item_size(char_count);
+		List<Vector2i> item_off(char_count);
+		for (unsigned i = 0; i < char_count; i++)
 		{
-			const auto a = static_cast<const Byte*>(buffer.data())[i];
-			static_cast<UInt32*>(surface.data())[i] = Color4b(255, 255, 255, a).to_format(surface.format());
+			const auto  c = data.chars[i];
+
+			item_bm[i] = stbtt_GetCodepointBitmap(&font, 0, scale, c,
+				&item_size[i].x, &item_size[i].y, &item_off[i].x, &item_off[i].y);
 		}
 
-		auto tex = _renderer.create_texture(surface);
+		List<Recti> item_rect(char_count);
 
-		StbTTFont::KerningDictionary kerning;
-		StbTTFont::CharInfo infos;
+		StbRectPack packer;
+		Vector2i surface_size;
+		if (!packer.pack_optimize(item_size, item_rect, surface_size, { Vector2i(2048), 16 }))
+		{
+			UC_LOG_ERROR(context.logger) << "Failed to pack";
+			return nullptr;
+		}
 
-		for (auto i = 0; i < char_count; i++)
-			infos.emplace(i + char_start, cdata[i]);
+		DynamicSurface surface(surface_size);
+		for (unsigned i = 0; i < char_count; i++)
+		{
+			const auto& rect = item_rect[i];
+			DynamicSurface char_surface(rect.size());
+			char_surface.clear();
 
-		return std::make_shared<StbTTFont>(kerning, height, infos, tex);*/
+			for (auto y = 0; y < rect.w; y++)
+				for (auto x = 0; x < rect.h; x++)
+				{
+					const auto a = item_bm[i][x + y * rect.w];
+					char_surface.set(x, y, Color4b(255, 255, 255, a));
+				}
+
+			//char_surface.copy(surface, rect.position());
+
+			stbtt_bakedchar info;
+			info.xoff = item_off[i].x;
+			info.yoff = item_off[i].y;
+			info.xadvance = 0;
+			info.x0 = rect.min_x();
+			info.y0 = rect.min_y();
+			info.x1 = rect.max_x();
+			info.y1 = rect.max_y();
+
+			params.infos[data.chars[i]] = info;
+		}
+
+		params.texture = _renderer.create_texture(surface);
+
+		return std::make_shared<StbTTFont>(params);
 	}
 }
 #endif

@@ -1,4 +1,5 @@
 #include "unicore/Graphics2D.hpp"
+#include "unicore/Font.hpp"
 #include "unicore/RendererSDL.hpp"
 #include "unicore/Shapes.hpp"
 
@@ -6,6 +7,7 @@ namespace unicore
 {
 	static List<Vector2f> s_points;
 	static List<VertexColor2> s_verts;
+	static List<VertexColorQuad2> s_quads;
 
 	void Graphics2D::render(RendererSDL& renderer) const
 	{
@@ -382,6 +384,21 @@ namespace unicore
 		return *this;
 	}
 
+	Graphics2D& Graphics2D::draw_quad(const VertexColorQuad2& quad)
+	{
+		set_type(BatchType::Triangles);
+
+		_points.push_back(transform * quad.v[0].pos);
+		_points.push_back(transform * quad.v[1].pos);
+		_points.push_back(transform * quad.v[2].pos);
+		_points.push_back(transform * quad.v[0].pos);
+		_points.push_back(transform * quad.v[2].pos);
+		_points.push_back(transform * quad.v[3].pos);
+		_current.count += 6;
+
+		return *this;
+	}
+
 	Graphics2D& Graphics2D::draw_convex_poly(const List<Vector2f>& points)
 	{
 		for (unsigned i = 0; i + 2 < points.size(); i += 1)
@@ -399,6 +416,17 @@ namespace unicore
 				const auto center = offset + step * Vector2f(x, y);
 				draw_func(*this, center);
 			}
+
+		return *this;
+	}
+
+	Graphics2D& Graphics2D::draw_text(const GeometryFont& font,
+		const Vector2f& position, WStringView text)
+	{
+		s_quads.clear();
+		const auto count = font.generate(position, text, s_quads);
+		for (unsigned i = 0; i < count; i++)
+			draw_quad(s_quads[i]);
 
 		return *this;
 	}

@@ -26,8 +26,9 @@ namespace unicore
 		return _height;
 	}
 
-	Vector2f StbTTFont::calc_size(StringView text) const
+	Vector2f StbTTFont::calc_size(WStringView text) const
 	{
+		// TODO: Implement
 		return VectorConst2f::Zero;
 	}
 
@@ -68,17 +69,16 @@ namespace unicore
 		return nullptr;
 	}
 
-	void StbTTFont::generate(const Vector2f& position, StringView text,
+	void StbTTFont::generate(const Vector2f& position, WStringView text,
 		Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict)
 	{
 		Vector2f cur = position;
-		for (size_t i = 0; i < text.size(); i++)
+		for (const char c : text)
 		{
-			const auto c = text[i];
-			VertexTexColorQuad2 quad;
 			Rectf rect, uv;
 			if (auto tex = get_char_print_info(c, cur, &rect, &uv))
 			{
+				VertexTexColorQuad2 quad;
 				rect.y += _height;
 
 				const float x1 = rect.min_x();
@@ -108,7 +108,6 @@ namespace unicore
 				quad.v[3].col = ColorConst4b::White;
 
 				quad_dict[tex].push_back(quad);
-				//if (i + 1 < text.size())cur.x += static_cast<float>(find_kerning(c, text[i + 1]));
 			}
 		}
 	}

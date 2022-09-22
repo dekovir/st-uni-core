@@ -73,7 +73,7 @@ namespace unicore
 			entity.update(screen_size, delta);
 
 		// UPDATE SPRITE BATCH /////////////////////////////////////////////////////
-		const auto count_str = StringBuilder::format("Count: {}", _entites.size());
+		const auto count_str = StringBuilder::format(L"Count: {}", _entites.size());
 
 		auto& size = renderer.screen_size();
 		_sprite_batch.clear();

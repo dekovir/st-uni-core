@@ -35,21 +35,21 @@ namespace unicore
 		size_t get_used_resources(Set<Shared<Resource>>& resources) override;
 
 		UC_NODISCARD float get_height() const override;
-		UC_NODISCARD Vector2f calc_size(StringView text) const override;
+		UC_NODISCARD Vector2f calc_size(WStringView text) const override;
 
-		int find_kerning(uint32_t a, uint32_t b) const;
+		UC_NODISCARD int find_kerning(uint32_t a, uint32_t b) const;
 
 		Shared<Texture> get_char_print_info(uint32_t code,
 			Vector2f& pos, Rectf* rect, Rectf* uv_rect) const;
 
-		void generate(const Vector2f& position, StringView text,
+		void generate(const Vector2f& position, WStringView text,
 			Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict) override;
 
 	protected:
 		const List<Shared<Texture>> _pages;
 		const GlyphsDictionary _glyphs;
 		const KerningDictionary _kerning;
-		float _height;
+		const float _height;
 		const uint8_t _space_width = 0;
 
 		Shared<Texture> print_char(uint32_t code,

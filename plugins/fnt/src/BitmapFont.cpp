@@ -33,7 +33,7 @@ namespace unicore
 		return _height;
 	}
 
-	Vector2f BitmapFont::calc_size(StringView text) const
+	Vector2f BitmapFont::calc_size(WStringView text) const
 	{
 		Vector2f cur = { 0, _height };
 		Rectf r;
@@ -103,7 +103,7 @@ namespace unicore
 		return nullptr;
 	}
 
-	void BitmapFont::generate(const Vector2f& position, StringView text,
+	void BitmapFont::generate(const Vector2f& position, WStringView text,
 		Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict)
 	{
 		Vector2f cur = position;

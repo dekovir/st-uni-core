@@ -204,7 +204,7 @@ namespace unicore
 				_sprite_batch.draw(tile, _tr * center, _graphics.transform.angle, scale);
 			}
 
-		_sprite_batch.print(_font, { 400, 400 }, "Hello world!", ColorConst4b::Black);
+		_sprite_batch.print(_font, { 400, 400 }, L"Hello world!", ColorConst4b::Black);
 
 		_sprite_batch.flush();
 	}

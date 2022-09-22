@@ -12,14 +12,14 @@ namespace unicore
 		UC_OBJECT(Font, Resource)
 	public:
 		UC_NODISCARD virtual float get_height() const = 0;
-		UC_NODISCARD virtual Vector2f calc_size(StringView text) const = 0;
+		UC_NODISCARD virtual Vector2f calc_size(WStringView text) const = 0;
 	};
 
 	class GeometryFont : public Font
 	{
 		UC_OBJECT(GeometryFont, Font)
 	public:
-		virtual size_t generate(const Vector2f& position, StringView text,
+		virtual size_t generate(const Vector2f& position, WStringView text,
 			List<VertexColorQuad2>& quad_list) const = 0;
 	};
 
@@ -27,7 +27,7 @@ namespace unicore
 	{
 		UC_OBJECT(TexturedFont, Font)
 	public:
-		virtual void generate(const Vector2f& position, StringView text,
+		virtual void generate(const Vector2f& position, WStringView text,
 			Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict) = 0;
 	};
 }

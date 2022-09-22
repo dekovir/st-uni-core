@@ -243,14 +243,14 @@ namespace unicore
 					c.color.has(ConsoleColor8::ForegroundGreen) ? 255 : 0,
 					c.color.has(ConsoleColor8::ForegroundBlue) ? 255 : 0
 				);
-				_sprite_batch.print(_font, pos, str, color);
+				_sprite_batch.print(_font, pos, Unicode::to_wcs(str), color);
 			}
 
 		// DRAW TEXT
-		const auto fps_str = StringBuilder::format("FPS: {}", fps());
-		const auto sprites_str = StringBuilder::format("Sprites: {}", _sprite_count);
-		const auto update_str = StringBuilder::format("Update time: {}ms", _update_time.total_milliseconds());
-		const auto draw_str = StringBuilder::format("Draw time: {}ms", _draw_time.total_milliseconds());
+		const auto fps_str = StringBuilder::format(L"FPS: {}", fps());
+		const auto sprites_str = StringBuilder::format(L"Sprites: {}", _sprite_count);
+		const auto update_str = StringBuilder::format(L"Update time: {}ms", _update_time.total_milliseconds());
+		const auto draw_str = StringBuilder::format(L"Draw time: {}ms", _draw_time.total_milliseconds());
 
 		_sprite_batch.print(_font, { 0, 0 }, fps_str);
 		_sprite_batch.print(_font, { 0, 20 }, sprites_str);

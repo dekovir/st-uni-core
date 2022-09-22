@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/StringHelper.hpp"
+#include "unicore/Unicode.hpp"
 
 namespace unicore
 {
@@ -28,6 +29,14 @@ namespace unicore
 			StringBuilder builder;
 			internal_format(builder, format, args...);
 			return builder.data;
+		}
+
+		template<typename ... Args>
+		static WString format(WStringView format, const Args& ... args)
+		{
+			StringBuilder builder;
+			internal_format(builder, Unicode::to_utf8(format), args...);
+			return Unicode::to_wcs(builder.data);
 		}
 
 	protected:
@@ -133,7 +142,7 @@ namespace unicore
 	extern StringBuilder& operator<<(StringBuilder& builder, const List<T> list)
 	{
 		int index = 0;
-		for (const auto & value : list) 
+		for (const auto& value : list)
 		{
 			if (index > 0)
 				builder << ',';

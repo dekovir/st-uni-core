@@ -1,7 +1,7 @@
 #include "unicore/stb/StbEasyFont.hpp"
 #if defined(UNICORE_USE_STB_EASY_FONT)
 #include <stb_easy_font.h>
-#include "unicore/Vector3.hpp"
+#include "unicore/Unicode.hpp"
 
 namespace unicore
 {
@@ -26,18 +26,20 @@ namespace unicore
 		return sizeof(StbEasyFont);
 	}
 
-	Vector2f StbEasyFont::calc_size(StringView text) const
+	Vector2f StbEasyFont::calc_size(WStringView text) const
 	{
-		const auto w = stb_easy_font_width(const_cast<char*>(text.data()));
-		const auto h = stb_easy_font_height(const_cast<char*>(text.data()));
+		const auto str = Unicode::to_utf8(text);
+		const auto w = stb_easy_font_width(const_cast<char*>(str.data()));
+		const auto h = stb_easy_font_height(const_cast<char*>(str.data()));
 		return { static_cast<float>(w), static_cast<float>(h) };
 	}
 
 	size_t StbEasyFont::generate(const Vector2f& position,
-		StringView text, List<VertexColorQuad2>& quad_list) const
+		WStringView text, List<VertexColorQuad2>& quad_list) const
 	{
+		const auto str = Unicode::to_utf8(text);
 		const auto num_quads = stb_easy_font_print(
-			position.x, position.y, (char*)text.data(),
+			position.x, position.y, const_cast<char*>(str.data()),
 			nullptr, s_quads, BUFFER_SIZE * sizeof(Vertex));
 
 		constexpr auto color = ColorConst4b::White;
