@@ -108,8 +108,8 @@ namespace unicore
 			float a_sin, a_cos;
 			angle.sin_cos(a_sin, a_cos);
 			return {
-				x * a_cos - y * a_sin,
-				x * a_sin + y * a_cos
+				static_cast<T>(x * a_cos - y * a_sin),
+				static_cast<T>(x * a_sin + y * a_cos)
 			};
 		}
 

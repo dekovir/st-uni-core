@@ -46,6 +46,7 @@ namespace unicore
 
 		DynamicSurface circle(side, side);
 
+#if 1
 		circle.fill([radius_outer, radius_inner, &center](int x, int y) -> Color4b
 			{
 				const float distance = center.distance({ x, y });
@@ -58,6 +59,19 @@ namespace unicore
 
 		circle.fill(ColorConst4b::Clear, Recti(0, radius_outer - 3, side, 6));
 		circle.fill(ColorConst4b::Clear, Recti(radius_outer - 3, 0, 6, side));
+#else
+		circle.fill(ColorConst4b::Clear);
+
+		BufferPainter painter(circle);
+		for (unsigned i = 0; i < 360; i += 15)
+		{
+			const auto pos = Vector2i(0, 32).rotate(Degrees(static_cast<float>(i)));
+			painter.draw_line(32, 32, 32 + pos.x, 32 + pos.y, ColorConst4b::White);
+		}
+
+		for (unsigned i = 8; i <= 32; i += 8)
+			painter.draw_circle(32, 32, i - 1, ColorConst4b::White);
+#endif
 
 		_tex = renderer.create_texture(circle);
 	}
