@@ -29,7 +29,7 @@ namespace unicore
 	void TextBlock::calc_line_size(const Font& font, List<TextLine>& lines)
 	{
 		for (auto& line : lines)
-			line.size = font.calc_size(line.text);
+			line.size = !line.text.empty() ? font.calc_size(line.text) : Vector2f(0, font.get_height());
 	}
 
 	Vector2f TextBlock::calc_align_offset(const Vector2f& size, TextAlign align)
@@ -109,9 +109,9 @@ namespace unicore
 	}
 
 	// AlignedTextBlock ///////////////////////////////////////////////////////////
-	AlignedTextBlock::AlignedTextBlock(const Shared<Font>& font, const WStringView& text)
+	AlignedTextBlock::AlignedTextBlock(const Shared<Font>& font, const WStringView& text, TextAlign align)
 		: TextBlock(font, text)
-		, _align(TextAlign::TopLeft)
+		, _align(align)
 	{
 		update_align();
 	}

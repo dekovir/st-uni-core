@@ -41,7 +41,7 @@ namespace unicore
 			_batches.push_back(_current);
 
 			_current = {};
-			_current.vstart = _vertices.size();
+			_current.vstart = static_cast<unsigned>(_vertices.size());
 		}
 
 		return *this;

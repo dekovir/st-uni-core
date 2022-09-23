@@ -68,9 +68,8 @@ namespace unicore
 			const Vector2f& scale, const Color4b& color = ColorConst4b::White);
 
 		// FONT
-		SpriteBatch& print(const Shared<Font>& font,
-			const Vector2f& pos, WStringView text,
-			const Color4b& color = ColorConst4b::White);
+		SpriteBatch& print(const Shared<Font>& font, const Vector2f& pos,
+			WStringView text, const Color4b& color = ColorConst4b::White);
 
 		SpriteBatch& print(const TextBlock& block, const Vector2f& pos,
 			TextAlign align = TextAlign::TopLeft, const Color4b& color = ColorConst4b::White);
@@ -82,8 +81,8 @@ namespace unicore
 		struct Batch
 		{
 			Shared<Texture> texture;
-			size_t vstart = 0;
-			size_t vcount = 0;
+			unsigned vstart = 0;
+			unsigned vcount = 0;
 		};
 
 		List<VertexTexColor2> _vertices;

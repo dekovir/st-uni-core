@@ -45,7 +45,7 @@ namespace unicore
 	class AlignedTextBlock : public TextBlock
 	{
 	public:
-		AlignedTextBlock(const Shared<Font>& font, const WStringView& text);
+		AlignedTextBlock(const Shared<Font>& font, const WStringView& text, TextAlign align = TextAlign::TopLeft);
 
 		UC_NODISCARD const List<Vector2f>& offset_list() const { return _offset_list; }
 

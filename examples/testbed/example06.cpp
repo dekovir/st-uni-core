@@ -15,12 +15,14 @@ namespace unicore
 
 	void Example06::load(ResourceCache& resources)
 	{
+		//_font = resources.create<Font>(42);
+		//_font = resources.load<Font>(L"font_004.fnt"_path);
 		//_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
 	}
 
 	void Example06::update()
 	{
-		constexpr WStringView text = L"Hello world!\nSecond line\nThird line";
+		constexpr WStringView text = L"Hello world!\nSecond line\nThird line\n\nLast one";
 
 		const auto screen_size = renderer.screen_size().cast<Float>();
 		const auto center_screen = screen_size / 2.f;
@@ -29,15 +31,10 @@ namespace unicore
 		_graphics.set_color(ColorConst4b::Magenta);
 		_graphics.draw_line(VectorConst2f::Zero, screen_size);
 		_graphics.draw_line(Vector2f(screen_size.x, 0), Vector2f(0, screen_size.y));
-
 		_graphics.flush();
 
 		_sprite_batch.clear();
-
-		const TextBlock block(_font, text);
-
-		_sprite_batch.print(block, center_screen, TextAlign::Center);
-
+		_sprite_batch.print({ _font, text, TextAlign::Center }, center_screen);
 		_sprite_batch.flush();
 	}
 
