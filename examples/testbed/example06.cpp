@@ -16,7 +16,7 @@ namespace unicore
 	void Example06::load(ResourceCache& resources)
 	{
 		//_font = resources.create<Font>(42);
-		//_font = resources.load<Font>(L"font_004.fnt"_path);
+		_font = resources.load<Font>(L"font_004.fnt"_path);
 		//_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
 	}
 

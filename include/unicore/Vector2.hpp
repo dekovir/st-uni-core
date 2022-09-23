@@ -123,6 +123,11 @@ namespace unicore
 			return distance(*this, other);
 		}
 
+		UC_NODISCARD Vector2<T> snap(const Vector2<T>& value) const
+		{
+			return { Math::snap(x, value.x), Math::snap(y, value.y) };
+		}
+
 		static float constexpr dot(const Vector2<T>& a, const Vector2<T>& b)
 		{
 			return a.x * b.x + a.y * b.y;

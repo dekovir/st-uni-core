@@ -1,5 +1,6 @@
 #include "example01.hpp"
 #include "unicore/Time.hpp"
+#include "unicore/Font.hpp"
 #include "unicore/Color3.hpp"
 #include "unicore/Shapes.hpp"
 #include "unicore/Transform2.hpp"
@@ -118,13 +119,16 @@ namespace unicore
 	{
 		const auto formated = to_format4(PIXELFORMAT_R8G8B8A8, ColorConst4f::Yellow);
 		auto color = from_format3<float>(PIXELFORMAT_R8G8B8A8, (uint32_t)0x00FF00FF);
+
+		_font = resources.create<GeometryFont>(42);
 	}
 
 	void Example01::update()
 	{
-		_angle += 90_deg * static_cast<float>(time.delta().total_seconds());
+		_angle += 30_deg * static_cast<float>(time.delta().total_seconds());
 
-		auto& size = renderer.screen_size();
+		const auto& size = renderer.screen_size();
+		const auto center = size.cast<Float>() / 2.f;
 
 		Transform2 tr;
 		tr.move = size.cast<float>() / 2.f;
@@ -146,8 +150,8 @@ namespace unicore
 			// point grid
 			.move({ 200, 200 })
 			.rotate(45_deg)
-			.draw_grid({ 10, 10 }, { 10, 10 },
-				[](Graphics2D& graphics, const Vector2f& pos) { graphics.draw_point(Vector2f{ pos.x - 50, pos.y - 50 }); })
+			.draw_grid({ 10, 10 }, { 10, 10 }, [](Graphics2D& graphics, const Vector2f& pos)
+				{ graphics.draw_point(Vector2f{ pos.x - 50, pos.y - 50 }); })
 			.reset_transform()
 			// shapes
 			.set_color(ColorConst4b::Yellow)
@@ -179,9 +183,18 @@ namespace unicore
 			.move(VectorConst2f::AxisX * -150.f)
 			.draw_circle(VectorConst2f::Zero, 20, true)
 			.move(VectorConst2f::AxisY * 90.f)
-			.draw_circle(VectorConst2f::Zero, 20)
-			.flush()
-			;
+			.draw_circle(VectorConst2f::Zero, 20);
+
+		if (_font)
+		{
+			_graphics
+				//.reset_transform()
+				.set_transform({ center, 0_rad, Vector2f(3) })
+				.set_color(ColorConst4b::Cyan)
+				.draw_text(*_font, { 0, 0 }, L"Test string\nSecond line", TextAlign::Center);
+		}
+
+		_graphics.flush();
 	}
 
 	void Example01::draw() const

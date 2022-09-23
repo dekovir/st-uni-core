@@ -87,6 +87,15 @@ namespace unicore
 				static_cast<U>(z));
 		}
 
+		UC_NODISCARD Vector3<T> snap(const Vector3<T>& value) const
+		{
+			return {
+				Math::snap(x, value.x),
+				Math::snap(y, value.y),
+				Math::snap(z, value.z)
+			};
+		}
+
 		static constexpr Vector3<T> lerp(const Vector3<T>& a, const Vector3<T>& b, float t)
 		{
 			return Vector3<T>(

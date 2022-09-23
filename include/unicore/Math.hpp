@@ -168,6 +168,14 @@ namespace unicore
 			return value;
 		}
 
+		// SNAP //////////////////////////////////////////////////////////////////////
+		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static T snap(T value, T snap)
+		{
+			if (equals(value, 0)) return value;
+			return snap * round(value / snap);
+		}
+
 		// LERP //////////////////////////////////////////////////////////////////////
 		template<typename T, std::enable_if_t<sfinae::has_lerp_static_method_t<T>>* = nullptr>
 		static constexpr T lerp(const T& a, const T& b, float t)

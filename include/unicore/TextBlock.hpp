@@ -35,7 +35,7 @@ namespace unicore
 		static Vector2f calc_align_offset(const Font& font, WStringView text, TextAlign align);
 
 		static void calc_align_offset(const List<TextLine>& lines,
-			TextAlign align, List<Vector2f>& offset_list);
+			TextAlign align, List<Vector2f>& offset_list, bool round = true);
 
 	protected:
 		Shared<Font> _font;

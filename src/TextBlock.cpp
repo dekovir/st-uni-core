@@ -86,7 +86,7 @@ namespace unicore
 	}
 
 	void TextBlock::calc_align_offset(const List<TextLine>& lines,
-		TextAlign align, List<Vector2f>& offset_list)
+		TextAlign align, List<Vector2f>& offset_list, bool round)
 	{
 		const auto total_size = std::accumulate(lines.begin(), lines.end(),
 			VectorConst2f::Zero, [](Vector2f size, const TextLine& item)
@@ -103,7 +103,8 @@ namespace unicore
 
 		for (const auto& line : lines)
 		{
-			offset_list.push_back(total_offset);
+			if (!round) offset_list.push_back(total_offset);
+			else offset_list.push_back({ Math::round(total_offset.x), Math::round(total_offset.y) });
 			total_offset.y += line.size.y;
 		}
 	}

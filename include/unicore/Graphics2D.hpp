@@ -1,7 +1,8 @@
 #pragma once
 #include "Vertex.hpp"
-#include "unicore/Color4.hpp"
 #include "unicore/Rect.hpp"
+#include "unicore/Color4.hpp"
+#include "unicore/TextBlock.hpp"
 #include "unicore/Transform2.hpp"
 
 namespace unicore
@@ -45,6 +46,9 @@ namespace unicore
 
 		Graphics2D& move(const Vector2f& move);
 		Graphics2D& rotate(Radians angle);
+		Graphics2D& scale(const Vector2f& value);
+		Graphics2D& scale(Float value);
+
 		Graphics2D& set_transform(const Transform2& tr);
 		Graphics2D& reset_transform();
 
@@ -77,8 +81,8 @@ namespace unicore
 		Graphics2D& draw_grid(const Vector2i& count, const Vector2f& step,
 			const Action<Graphics2D&, const Vector2f&>& draw_func, const Vector2f& offset = VectorConst2f::Zero);
 
-		Graphics2D& draw_text(const GeometryFont& font,
-			const Vector2f& position, WStringView text);
+		Graphics2D& draw_text(const GeometryFont& font, const Vector2f& position,
+			WStringView text, TextAlign align = TextAlign::TopLeft);
 
 	protected:
 		enum class BatchType

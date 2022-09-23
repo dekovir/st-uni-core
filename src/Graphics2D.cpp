@@ -95,6 +95,18 @@ namespace unicore
 		return *this;
 	}
 
+	Graphics2D& Graphics2D::scale(const Vector2f& value)
+	{
+		transform *= Transform2::scaled(value);
+		return *this;
+	}
+
+	Graphics2D& Graphics2D::scale(Float value)
+	{
+		transform *= Transform2::scaled(value);
+		return *this;
+	}
+
 	Graphics2D& Graphics2D::set_transform(const Transform2& tr)
 	{
 		transform = tr;
@@ -421,12 +433,29 @@ namespace unicore
 	}
 
 	Graphics2D& Graphics2D::draw_text(const GeometryFont& font,
-		const Vector2f& position, WStringView text)
+		const Vector2f& position, WStringView text, TextAlign align)
 	{
-		s_quads.clear();
-		const auto count = font.generate(position, text, _current.color, s_quads);
-		for (unsigned i = 0; i < count; i++)
-			draw_quad(s_quads[i]);
+		if (align == TextAlign::TopLeft)
+		{
+			s_quads.clear();
+			const auto count = font.generate(position, text, _current.color, s_quads);
+			for (unsigned i = 0; i < count; i++)
+				draw_quad(s_quads[i]);
+		}
+		else
+		{
+			static List<TextLine> lines;
+			static List<Vector2f> offsets;
+
+			lines.clear();
+			TextBlock::parse_lines(text, lines);
+			TextBlock::calc_line_size(font, lines);
+
+			TextBlock::calc_align_offset(lines, align, offsets);
+
+			for (unsigned i = 0; i < lines.size(); i++)
+				draw_text(font, position + offsets[i], lines[i].text);
+		}
 
 		return *this;
 	}

@@ -1,6 +1,5 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/Math.hpp"
 #include "unicore/Graphics2D.hpp"
 
 namespace unicore
@@ -18,6 +17,7 @@ namespace unicore
 		void draw() const override;
 
 	protected:
+		Shared<GeometryFont> _font;
 		Graphics2D _graphics;
 		Radians _angle;
 	};

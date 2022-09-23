@@ -42,12 +42,17 @@ namespace unicore
 
 		static constexpr Transform2 rotated(Radians angle)
 		{
-			return Transform2(VectorConst2f::Zero, angle);
+			return{ VectorConst2f::Zero, angle };
 		}
 
 		static constexpr Transform2 scaled(const Vector2f& scale)
 		{
-			return Transform2(VectorConst2f::Zero, 0_rad, scale);
+			return { VectorConst2f::Zero, 0_rad, scale };
+		}
+
+		static constexpr Transform2 scaled(Float scale)
+		{
+			return { VectorConst2f::Zero, 0_rad, Vector2f(scale) };
 		}
 	};
 
@@ -59,11 +64,11 @@ namespace unicore
 
 	extern constexpr Transform2 operator*(const Transform2& a, const Transform2& b)
 	{
-		return Transform2(a * b.move, a.angle + b.angle, a.scale * b.scale);
+		return { a * b.move, a.angle + b.angle, a.scale * b.scale };
 	}
 
 	extern constexpr Transform2 operator+(const Transform2& a, const Transform2& b)
 	{
-		return Transform2(a.move + b.move, a.angle + b.angle, a.scale * b.scale);
+		return { a.move + b.move, a.angle + b.angle, a.scale * b.scale };
 	}
 }
