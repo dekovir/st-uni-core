@@ -18,6 +18,7 @@
 #include <typeindex>
 #include <algorithm>
 #include <utility>
+#include <numeric>
 
 #if defined (_WIN32)
 

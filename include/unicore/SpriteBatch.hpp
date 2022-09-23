@@ -1,6 +1,7 @@
 #pragma once
 #include "unicore/Rect.hpp"
 #include "unicore/Vertex.hpp"
+#include "unicore/TextBlock.hpp"
 
 namespace unicore
 {
@@ -69,6 +70,12 @@ namespace unicore
 		// FONT
 		SpriteBatch& print(const Shared<Font>& font,
 			const Vector2f& pos, WStringView text,
+			const Color4b& color = ColorConst4b::White);
+
+		SpriteBatch& print(const TextBlock& block, const Vector2f& pos,
+			TextAlign align = TextAlign::TopLeft, const Color4b& color = ColorConst4b::White);
+
+		SpriteBatch& print(const AlignedTextBlock& block, const Vector2f& pos,
 			const Color4b& color = ColorConst4b::White);
 
 	protected:

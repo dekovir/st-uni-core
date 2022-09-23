@@ -424,7 +424,7 @@ namespace unicore
 		const Vector2f& position, WStringView text)
 	{
 		s_quads.clear();
-		const auto count = font.generate(position, text, s_quads);
+		const auto count = font.generate(position, text, _current.color, s_quads);
 		for (unsigned i = 0; i < count; i++)
 			draw_quad(s_quads[i]);
 

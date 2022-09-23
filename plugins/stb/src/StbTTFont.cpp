@@ -26,10 +26,16 @@ namespace unicore
 		return _height;
 	}
 
-	Vector2f StbTTFont::calc_size(WStringView text) const
+	float StbTTFont::calc_width(WStringView text) const
 	{
-		// TODO: Implement
-		return VectorConst2f::Zero;
+		Vector2f cur = VectorConst2f::Zero;
+		for (const auto c : text)
+		{
+			Rectf rect, uv;
+			get_char_print_info(c, cur, &rect, &uv);
+		}
+
+		return cur.x;
 	}
 
 	Shared<Texture> StbTTFont::get_char_print_info(uint32_t code,
@@ -69,11 +75,12 @@ namespace unicore
 		return nullptr;
 	}
 
-	void StbTTFont::generate(const Vector2f& position, WStringView text,
+	void StbTTFont::generate(
+		const Vector2f& position, WStringView text, const Color4b& color,
 		Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict)
 	{
 		Vector2f cur = position;
-		for (const char c : text)
+		for (const auto c : text)
 		{
 			Rectf rect, uv;
 			if (auto tex = get_char_print_info(c, cur, &rect, &uv))
@@ -93,19 +100,19 @@ namespace unicore
 
 				quad.v[0].pos.set(x1, y1);
 				quad.v[0].uv.set(tx1, ty1);
-				quad.v[0].col = ColorConst4b::White;
+				quad.v[0].col = color;
 
 				quad.v[1].pos.set(x2, y1);
 				quad.v[1].uv.set(tx2, ty1);
-				quad.v[1].col = ColorConst4b::White;
+				quad.v[1].col = color;
 
 				quad.v[2].pos.set(x2, y2);
 				quad.v[2].uv.set(tx2, ty2);
-				quad.v[2].col = ColorConst4b::White;
+				quad.v[2].col = color;
 
 				quad.v[3].pos.set(x1, y2);
 				quad.v[3].uv.set(tx1, ty2);
-				quad.v[3].col = ColorConst4b::White;
+				quad.v[3].col = color;
 
 				quad_dict[tex].push_back(quad);
 			}

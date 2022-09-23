@@ -298,7 +298,7 @@ namespace unicore
 		if (const auto textured = std::dynamic_pointer_cast<TexturedFont>(font))
 		{
 			s_quad_dict.clear();
-			textured->generate(pos, text, s_quad_dict);
+			textured->generate(pos, text, color, s_quad_dict);
 
 			for (const auto& [tex, quad_list] : s_quad_dict)
 			{
@@ -310,7 +310,7 @@ namespace unicore
 		if (const auto geometry = std::dynamic_pointer_cast<GeometryFont>(font))
 		{
 			s_quad_list.clear();
-			geometry->generate(pos, text, s_quad_list);
+			geometry->generate(pos, text, color, s_quad_list);
 
 			for (const auto& quad : s_quad_list)
 			{
@@ -322,6 +322,28 @@ namespace unicore
 				draw_quad(s_quad);
 			}
 		}
+
+		return *this;
+	}
+
+	SpriteBatch& SpriteBatch::print(const TextBlock& block,
+		const Vector2f& pos, TextAlign align, const Color4b& color)
+	{
+		static List<Vector2f> offset;
+
+		TextBlock::calc_align_offset(block.lines(), align, offset);
+
+		for (unsigned i = 0; i < block.lines().size(); i++)
+			print(block.font(), pos + offset[i], block.lines()[i].text, color);
+
+		return *this;
+	}
+
+	SpriteBatch& SpriteBatch::print(const AlignedTextBlock& block,
+		const Vector2f& pos, const Color4b& color)
+	{
+		for (unsigned i = 0; i < block.lines().size(); i++)
+			print(block.font(), pos + block.offset_list()[i], block.lines()[i].text, color);
 
 		return *this;
 	}

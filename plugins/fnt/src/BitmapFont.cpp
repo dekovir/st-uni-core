@@ -33,7 +33,7 @@ namespace unicore
 		return _height;
 	}
 
-	Vector2f BitmapFont::calc_size(WStringView text) const
+	float BitmapFont::calc_width(WStringView text) const
 	{
 		Vector2f cur = { 0, _height };
 		Rectf r;
@@ -47,7 +47,7 @@ namespace unicore
 			else cur.x += r.w;
 		}
 
-		return cur;
+		return cur.x;
 	}
 
 	int BitmapFont::find_kerning(uint32_t a, uint32_t b) const
@@ -103,7 +103,8 @@ namespace unicore
 		return nullptr;
 	}
 
-	void BitmapFont::generate(const Vector2f& position, WStringView text,
+	void BitmapFont::generate(
+		const Vector2f& position, WStringView text, const Color4b& color,
 		Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict)
 	{
 		Vector2f cur = position;
@@ -111,7 +112,7 @@ namespace unicore
 		{
 			const auto c = text[i];
 			VertexTexColorQuad2 quad;
-			if (auto tex = print_char(c, cur, quad))
+			if (auto tex = print_char(c, cur, color, quad))
 			{
 				quad_dict[tex].push_back(quad);
 				if (i + 1 < text.size())
@@ -120,8 +121,8 @@ namespace unicore
 		}
 	}
 
-	Shared<Texture> BitmapFont::print_char(uint32_t code,
-		Vector2f& pos, VertexTexColorQuad2& quad) const
+	Shared<Texture> BitmapFont::print_char(uint32_t code, Vector2f& pos,
+		const Color4b& color, VertexTexColorQuad2& quad) const
 	{
 		Rectf rect, uv;
 		if (auto tex = get_char_print_info(code, pos, &rect, &uv))
@@ -138,19 +139,19 @@ namespace unicore
 
 			quad.v[0].pos.set(x1, y1);
 			quad.v[0].uv.set(tx1, ty1);
-			quad.v[0].col = ColorConst4b::White;
+			quad.v[0].col = color;
 
 			quad.v[1].pos.set(x2, y1);
 			quad.v[1].uv.set(tx2, ty1);
-			quad.v[1].col = ColorConst4b::White;
+			quad.v[1].col = color;
 
 			quad.v[2].pos.set(x2, y2);
 			quad.v[2].uv.set(tx2, ty2);
-			quad.v[2].col = ColorConst4b::White;
+			quad.v[2].col = color;
 
 			quad.v[3].pos.set(x1, y2);
 			quad.v[3].uv.set(tx1, ty2);
-			quad.v[3].col = ColorConst4b::White;
+			quad.v[3].col = color;
 
 			return tex;
 		}
