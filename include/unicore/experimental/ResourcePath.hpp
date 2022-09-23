@@ -6,12 +6,13 @@ namespace unicore
 	class ResourcePath
 	{
 	public:
-		constexpr ResourcePath(StringView base, StringView data)
-			: _base(base), _data(data)
+		constexpr ResourcePath(StringView base, StringView data, StringView args = "")
+			: _base(base), _data(data), _args(args)
 		{}
 
 		UC_NODISCARD constexpr StringView base() const { return _base; }
 		UC_NODISCARD constexpr StringView data() const { return _data; }
+		UC_NODISCARD constexpr StringView args() const { return _args; }
 
 		UC_NODISCARD String to_string() const
 		{
@@ -28,20 +29,31 @@ namespace unicore
 			return String(_data);
 		}
 
-		static constexpr ResourcePath make(StringView const str)
+		static constexpr ResourcePath make(const StringView str)
 		{
-			const auto pos = str.find_first_of(BaseSeparator);
-			if (pos != StringView::npos)
-				return { str.substr(0, pos), str.substr(pos + BaseSeparator.size()) };
+			const auto base_pos = str.find_first_of(BaseSeparator);
 
-			return { "", str };
+			const auto base =
+				base_pos != StringView::npos ? str.substr(0, base_pos) : StringView();
+			const auto tmp =
+				base_pos != StringView::npos ? str.substr(base_pos + BaseSeparator.size()) : str;
+
+			const auto args_pos = tmp.find_first_of(ArgsSeparator);
+			const auto data =
+				args_pos != StringView::npos ? tmp.substr(0, args_pos) : tmp;
+			const auto args =
+				args_pos != StringView::npos ? tmp.substr(args_pos + ArgsSeparator.size()) : StringView();
+
+			return { base , data, args };
 		}
 
 		static constexpr StringView BaseSeparator = ":";
+		static constexpr StringView ArgsSeparator = "?";
 
 	protected:
 		StringView _base;
 		StringView _data;
+		StringView _args;
 	};
 
 	static constexpr bool operator==(const ResourcePath& a, const ResourcePath& b)
