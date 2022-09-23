@@ -20,8 +20,8 @@ namespace unicore
 	{
 		for (const auto& batch : _batches)
 		{
-			renderer.draw_triangles(&_vertices[batch.vstart],
-				batch.vcount, batch.texture.get());
+			renderer.draw_triangles(&_vertices[batch.start],
+				batch.count, batch.texture.get());
 		}
 	}
 
@@ -36,12 +36,12 @@ namespace unicore
 
 	SpriteBatch& SpriteBatch::flush()
 	{
-		if (_current.vcount > 0)
+		if (_current.count > 0)
 		{
 			_batches.push_back(_current);
 
 			_current = {};
-			_current.vstart = static_cast<unsigned>(_vertices.size());
+			_current.start = static_cast<UInt16>(_vertices.size());
 		}
 
 		return *this;
@@ -57,7 +57,7 @@ namespace unicore
 		_vertices.push_back(v0);
 		_vertices.push_back(v1);
 		_vertices.push_back(v2);
-		_current.vcount += 3;
+		_current.count += 3;
 
 		return *this;
 	}
@@ -70,7 +70,7 @@ namespace unicore
 		_vertices.push_back(arr[0]);
 		_vertices.push_back(arr[1]);
 		_vertices.push_back(arr[2]);
-		_current.vcount += 3;
+		_current.count += 3;
 
 		return *this;
 	}
@@ -90,7 +90,7 @@ namespace unicore
 		_vertices.push_back(v3);
 		_vertices.push_back(v1);
 		_vertices.push_back(v2);
-		_current.vcount += 6;
+		_current.count += 6;
 
 		return *this;
 	}
@@ -107,7 +107,7 @@ namespace unicore
 		_vertices.push_back(arr[3]);
 		_vertices.push_back(arr[1]);
 		_vertices.push_back(arr[2]);
-		_current.vcount += 6;
+		_current.count += 6;
 
 		return *this;
 	}

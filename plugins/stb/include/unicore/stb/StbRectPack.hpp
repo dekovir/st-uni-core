@@ -29,6 +29,9 @@ namespace unicore
 			OptimizeMethod method = OptimizeMethod::RectWidth;
 		};
 
+		Vector2i calc_start_size(stbrp_rect* rects, int num_rects);
+		Vector2i calc_start_size(const List<Vector2i>& items);
+
 		// TODO: Replace (rects, num_rects) with span
 		bool pack_optimize(stbrp_rect* rects, int num_rects,
 			Vector2i& size, const OptimizeOptions& options);

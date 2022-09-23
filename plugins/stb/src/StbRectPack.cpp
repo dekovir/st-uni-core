@@ -45,6 +45,29 @@ namespace unicore
 		return result;
 	}
 
+	Vector2i StbRectPack::calc_start_size(stbrp_rect* rects, int num_rects)
+	{
+		int side = 64;
+		while (!pack({ side, side }, rects, num_rects))
+			side += 64;
+		return { side, side };
+	}
+
+	Vector2i StbRectPack::calc_start_size(const List<Vector2i>& items)
+	{
+		List<stbrp_rect> rects;
+		rects.resize(items.size());
+
+		for (unsigned i = 0; i < items.size(); i++)
+		{
+			rects[i].id = i;
+			rects[i].w = items[i].x;
+			rects[i].h = items[i].y;
+		}
+
+		return calc_start_size(rects.data(), rects.size());
+	}
+
 	bool StbRectPack::pack_optimize(stbrp_rect* rects, int num_rects,
 		Vector2i& size, const OptimizeOptions& options)
 	{

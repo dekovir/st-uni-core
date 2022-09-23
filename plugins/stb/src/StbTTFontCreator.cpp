@@ -11,7 +11,7 @@ namespace unicore
 {
 	Shared<StbTTFont> StbTTFontCreator::create_from_data(const Options& context, const TTFOptions& data)
 	{
-		const auto chunk = context.cache.load<BinaryData>(data.path);
+		const auto chunk = context.cache.load<BinaryData>(data.path, ResourceCacheFlag::IgnoreExtension);
 		if (!chunk)
 		{
 			UC_LOG_ERROR(context.logger) << "Failed to create font";
@@ -51,7 +51,10 @@ namespace unicore
 
 		StbRectPack packer;
 		Vector2i surface_size;
-		if (!packer.pack_optimize(item_size, item_rect, surface_size, { Vector2i(2048), 16 }))
+
+		const auto start_size = packer.calc_start_size(item_size);
+
+		if (!packer.pack_optimize(item_size, item_rect, surface_size, { start_size, 16 }))
 		{
 			UC_LOG_ERROR(context.logger) << "Failed to pack";
 			return nullptr;
@@ -79,7 +82,7 @@ namespace unicore
 			stbtt_bakedchar info;
 			info.xoff = static_cast<float>(item_off[i].x);
 			info.yoff = static_cast<float>(item_off[i].y);
-			info.xadvance = 0;
+			info.xadvance = rect.w;
 			info.x0 = rect.min_x();
 			info.y0 = rect.min_y();
 			info.x1 = rect.max_x();
