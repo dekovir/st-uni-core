@@ -3,7 +3,6 @@
 #include "unicore/Buffer2.hpp"
 #include "unicore/Color4.hpp"
 #include "unicore/Resource.hpp"
-#include "unicore/Canvas.hpp"
 
 namespace unicore
 {

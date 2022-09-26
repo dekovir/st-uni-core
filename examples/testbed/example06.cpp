@@ -2,6 +2,7 @@
 #include "unicore/Input.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/stb/StbTTFont.hpp"
 
 namespace unicore
 {
@@ -16,8 +17,11 @@ namespace unicore
 	void Example06::load(ResourceCache& resources)
 	{
 		//_font = resources.create<Font>(42);
-		_font = resources.load<Font>(L"font_004.fnt"_path);
+		//_font = resources.load<Font>(L"font_004.fnt"_path);
 		//_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
+		_font = resources.create<Font>(
+			TTFOptions{ L"ubuntu.regular.ttf"_path, 24,
+				(CharTable::Ascii + CharTable::Russian).view() });
 	}
 
 	void Example06::update()
@@ -34,6 +38,14 @@ namespace unicore
 		_graphics.flush();
 
 		_sprite_batch.clear();
+
+		if (const auto fnt = std::dynamic_pointer_cast<StbTTFont>(_font))
+		{
+			const auto size = fnt->texture()->size().cast<Float>();
+			const auto center = Vector2f(screen_size.x - size.x / 2, size.y / 2);
+			_sprite_batch.draw(fnt->texture(), center);
+		}
+
 		_sprite_batch.print({ _font, text, TextAlign::Center }, center_screen);
 		_sprite_batch.flush();
 	}

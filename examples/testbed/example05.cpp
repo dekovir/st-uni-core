@@ -1,9 +1,10 @@
 #include "example05.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Font.hpp"
+#include "unicore/Canvas.hpp"
 #include "unicore/Surface.hpp"
-#include "unicore/ResourceCache.hpp"
 #include "unicore/Texture.hpp"
+#include "unicore/ResourceCache.hpp"
 #include "unicore/experimental/ResourcePath.hpp"
 
 namespace unicore

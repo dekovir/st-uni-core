@@ -10,8 +10,8 @@ namespace unicore
 	struct TTFOptions
 	{
 		Path path;
-		int height;
-		WStringView chars = CharTable::Ascii.c_str();
+		int height = 32;
+		WStringView chars = CharTable::Ascii.view();
 	};
 
 	class StbTTFont : public TexturedFont
@@ -20,17 +20,21 @@ namespace unicore
 	public:
 		using CharInfo = Dictionary<uint32_t, stbtt_bakedchar>;
 
+		const Shared<Texture>& texture() const { return _texture; }
+
 		struct ConstructionParams
 		{
 			CharInfo infos;
 			Shared<Texture> texture;
 			float height;
+			float space_width;
 		};
 
 		explicit StbTTFont(const ConstructionParams& params)
 			: _infos(params.infos)
 			, _texture(params.texture)
 			, _height(params.height)
+			, _space_width(params.space_width)
 		{
 		}
 
@@ -49,6 +53,7 @@ namespace unicore
 		const CharInfo _infos;
 		Shared<Texture> _texture;
 		float _height;
+		float _space_width;
 	};
 }
 #endif

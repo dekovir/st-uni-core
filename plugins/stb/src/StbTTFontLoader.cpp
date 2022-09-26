@@ -36,6 +36,8 @@ namespace unicore
 			return nullptr;
 		}
 
+		const auto scale = stbtt_ScaleForPixelHeight(&font, height);
+
 		stbtt_bakedchar cdata[char_count];
 		MemoryChunk buffer(total);
 
@@ -52,6 +54,12 @@ namespace unicore
 		}
 
 		StbTTFont::ConstructionParams params;
+		{
+			int advance;
+			stbtt_GetCodepointHMetrics(&font, L' ', &advance, nullptr);
+			params.space_width = scale * static_cast<float>(advance);
+		}
+
 		params.height = height;
 		params.texture = _renderer.create_texture(surface);
 

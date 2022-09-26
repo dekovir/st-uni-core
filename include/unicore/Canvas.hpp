@@ -266,31 +266,17 @@ namespace unicore
 		// https://github.com/ssloy/tinyrenderer/wiki/Lesson-2:-Triangle-rasterization-and-back-face-culling
 
 		// COPY //////////////////////////////////////////////////////////////////////
-		bool copy_to(const Recti& src_rect, IBuffer2<T>& dest, const Vector2i& dest_pos = VectorConst2i::Zero)
+		void draw_buffer(const Vector2i& pos, const IBuffer2<T>& src)
 		{
-			const auto s = dest.size();
-			const Recti dest_rect(
-				dest_pos.x, dest_pos.y,
-				Math::min(src_rect.w, s.x - dest_pos.x),
-				Math::min(src_rect.h, s.y - dest_pos.y)
-			);
+			const auto& src_size = src.size();
 
-			for (int y = 0; y < dest_rect.h; y++)
-			{
-				for (int x = 0; x < dest_rect.w; x++)
+			for (int y = 0; y < src_size.y; y++)
+				for (int x = 0; x < src_size.x; x++)
 				{
 					T value;
-					if (_buffer.get(src_rect.x + x, src_rect.y, value))
-						dest.set(dest_rect.x + x, dest_rect.y + y, value);
+					if (src.get(x, y, value))
+						draw_point({ pos.x + x, pos.y + y }, value);
 				}
-			}
-
-			return true;
-		}
-
-		bool copy_to(IBuffer2<T>& dest, const Vector2i& dest_pos = VectorConst2i::Zero)
-		{
-			return copy_to(_buffer.get_rect(), dest, dest_pos);
 		}
 
 	protected:

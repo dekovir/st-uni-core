@@ -2,9 +2,9 @@
 #include "UnicoreMain.h"
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
+#include "unicore/Canvas.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Texture.hpp"
-
 namespace unicore
 {
 	constexpr Vector2i WindowSize = Vector2i(800, 600);

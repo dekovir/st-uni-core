@@ -41,6 +41,13 @@ namespace unicore
 	Shared<Texture> StbTTFont::get_char_print_info(uint32_t code,
 		Vector2f& pos, Rectf* rect, Rectf* uv_rect) const
 	{
+		switch (code)
+		{
+		case L' ':
+			pos.x += _space_width;
+			return nullptr;
+		}
+
 		if (const auto it = _infos.find(code); it != _infos.end())
 		{
 			const auto b = &it->second;
