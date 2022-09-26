@@ -25,14 +25,25 @@ namespace unicore
 	template<typename T>
 	struct color_limits
 	{
+		using ValueType = T;
 		static constexpr T min() noexcept { return std::numeric_limits<T>::min(); }
 		static constexpr T max() noexcept { return std::numeric_limits<T>::max(); }
 		static constexpr T range() noexcept { return std::numeric_limits<T>::max() - std::numeric_limits<T>::min(); }
 	};
 
 	template<>
+	struct color_limits<uint8_t>
+	{
+		using ValueType = unsigned;
+		static constexpr uint8_t min() noexcept { return 0; }
+		static constexpr uint8_t max() noexcept { return 0xFF; }
+		static constexpr uint8_t range() noexcept { return 0xFF; }
+	};
+
+	template<>
 	struct color_limits<float>
 	{
+		using ValueType = float;
 		static constexpr float min() noexcept { return 0.0f; }
 		static constexpr float max() noexcept { return 1.0f; }
 		static constexpr float range() noexcept { return 1.0f; }

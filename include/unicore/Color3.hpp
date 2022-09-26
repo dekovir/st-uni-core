@@ -11,8 +11,10 @@ namespace unicore
 	public:
 		T r, g, b;
 
-		static constexpr T MinValue = color_limits<T>::min();
-		static constexpr T MaxValue = color_limits<T>::max();
+		using Limits = color_limits<T>;
+
+		static constexpr T MinValue = Limits::min();
+		static constexpr T MaxValue = Limits::max();
 
 		constexpr Color3() : r(MaxValue), g(MaxValue), b(MaxValue) {}
 		constexpr Color3(T _r, T _g, T _b) : r(_r), g(_g), b(_b) {}
@@ -64,6 +66,28 @@ namespace unicore
 				(convert_component_to_uint8(b) << format.b_shift);
 		}
 
+		UC_NODISCARD constexpr uint32_t to_rgb() const
+		{
+			return
+				(convert_component_to_uint8(r) << 16) |
+				(convert_component_to_uint8(g) << 8) |
+				convert_component_to_uint8(b);
+		}
+
+		UC_NODISCARD constexpr Color3 invert() const
+		{
+			return {
+				static_cast<T>(Limits::max() - r),
+				static_cast<T>(Limits::max() - g),
+				static_cast<T>(Limits::max() - b)
+			};
+		}
+
+		static constexpr T clamp_value(T value)
+		{
+			return Math::clamp(value, MinValue, MaxValue);
+		}
+
 		static constexpr Color3 lerp(const Color3& a, const Color3& b, float t)
 		{
 			return {
@@ -85,14 +109,6 @@ namespace unicore
 			};
 		}
 
-		UC_NODISCARD constexpr uint32_t to_rgb() const
-		{
-			return
-				(convert_component_to_uint8(r) << 16) |
-				(convert_component_to_uint8(g) << 8) |
-				convert_component_to_uint8(b);
-		}
-
 		static Color3 create_random(Random& random)
 		{
 			return {
@@ -109,9 +125,9 @@ namespace unicore
 			if constexpr (std::is_same_v<T, uint8_t>) return value;
 
 			if constexpr (std::is_floating_point_v<T>)
-				return static_cast<T>((static_cast<T>(value) / 255.0f) * color_limits<T>::max());
+				return static_cast<T>((static_cast<T>(value) / 255.0f) * Limits::max());
 
-			return static_cast<T>((static_cast<double>(value) / 255.0) * color_limits<T>::range()) + color_limits<T>::min();
+			return static_cast<T>((static_cast<double>(value) / 255.0) * Limits::range()) + Limits::min();
 		}
 
 		// TODO: Convert to template
@@ -120,34 +136,57 @@ namespace unicore
 			if constexpr (std::is_same_v<T, uint8_t>) return value;
 
 			if constexpr (std::is_floating_point_v<T>)
-				return static_cast<uint8_t>((value / color_limits<T>::max()) * 0xFF);
+				return static_cast<uint8_t>((value / Limits::max()) * 0xFF);
 
-			return static_cast<uint8_t>((static_cast<double>(value) / static_cast<double>(color_limits<T>::range())) * 0xFF);
+			return static_cast<uint8_t>((static_cast<double>(value) / static_cast<double>(Limits::range())) * 0xFF);
 		}
 	};
 
-	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+	template<typename T>
 	static constexpr bool operator==(const Color3<T>& a, const Color3<T>& b)
 	{
 		return
-			a.r == b.r &&
-			a.g == b.g &&
-			a.b == b.b;
+			Math::equals(a.r, b.r) &&
+			Math::equals(a.g, b.g) &&
+			Math::equals(a.b, b.b);
 	}
 
-	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+	template<typename T>
 	static constexpr bool operator!=(const Color3<T>& a, const Color3<T>& b)
 	{
 		return !(a == b);
 	}
 
-	template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-	static constexpr Color3<T> operator*(const Color3<T>& color, T value)
+	template<typename T, std::enable_if<std::is_floating_point_v<T>>* = nullptr>
+	static constexpr Color3<T> operator*(const Color3<T>& a, const Color3<T>& b)
 	{
-		return Color3<T>(
-			color.r * value,
-			color.g * value,
-			color.b * value);
+		return {
+			a.r * b.r,
+			a.g * b.g,
+			a.b * b.b,
+		};
+	}
+
+	template<typename T>
+	static constexpr Color3<T> operator*(const Color3<T>& color,
+		typename Color3<T>::Limits::ValueType value)
+	{
+		return {
+			Color3<T>::clamp_value(color.r * value),
+			Color3<T>::clamp_value(color.g * value),
+			Color3<T>::clamp_value(color.b * value),
+		};
+	}
+
+	template<typename T>
+	static constexpr Color3<T> operator/(const Color3<T>& color,
+		typename Color3<T>::Limits::ValueType value)
+	{
+		return {
+			Color3<T>::clamp_value(color.r / value),
+			Color3<T>::clamp_value(color.g / value),
+			Color3<T>::clamp_value(color.b / value),
+		};
 	}
 
 	using Color3b = Color3<uint8_t>;

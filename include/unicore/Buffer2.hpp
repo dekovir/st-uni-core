@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Rect.hpp"
+#include "unicore/Canvas.hpp"
 
 namespace unicore
 {
@@ -172,175 +172,31 @@ namespace unicore
 	};
 
 	template<typename T>
-	class BufferPainter
+	struct BufferSet
 	{
-	public:
-		explicit BufferPainter(IBuffer2<T>& buffer)
-			: _buffer(buffer)
+		void operator()(IBuffer2<T>& buffer, int x, int y, const T& value) const
 		{
-		}
-
-		void draw_line_h(int x, int y, unsigned length, const T& value)
-		{
-			for (unsigned i = 0; i < length; i++)
-				_buffer.set(x + i, y, value);
-		}
-
-		void draw_line_h(const Vector2i& start, unsigned length, const T& value)
-		{
-			draw_line_h(start.x, start.y, length, value);
-		}
-
-		void draw_line_v(int x, int y, unsigned length, const T& value)
-		{
-			for (unsigned i = 0; i < length; i++)
-				_buffer.set(x, y + i, value);
-		}
-
-		void draw_line_v(const Vector2i& start, unsigned length, const T& value)
-		{
-			draw_line_v(start.x, start.y, length, value);
-		}
-
-		void draw_rect(const Recti& rect, const T& value)
-		{
-			draw_line_h(rect.x, rect.y, rect.w, value);
-			draw_line_h(rect.x, rect.y + rect.h, rect.w, value);
-
-			draw_line_v(rect.x, rect.y + 1, rect.h - 2, value);
-			draw_line_v(rect.x + rect.w, rect.y + 1, rect.h - 2, value);
-		}
-
-		void draw_line(int x1, int y1, int x2, int y2, const T& value)
-		{
-			int x, y;
-
-			const int dx = x2 - x1;
-			const int dy = y2 - y1;
-			const int dx1 = Math::abs(dx);
-			const int dy1 = Math::abs(dy);
-			int px = 2 * dy1 - dx1;
-			int py = 2 * dx1 - dy1;
-			if (dy1 <= dx1)
-			{
-				int xe;
-				if (dx >= 0)
-				{
-					x = x1;
-					y = y1;
-					xe = x2;
-				}
-				else
-				{
-					x = x2;
-					y = y2;
-					xe = x1;
-				}
-				_buffer.set(x, y, value);
-				for (int i = 0; x < xe; i++)
-				{
-					x = x + 1;
-					if (px < 0)
-					{
-						px = px + 2 * dy1;
-					}
-					else
-					{
-						if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0))
-						{
-							y = y + 1;
-						}
-						else
-						{
-							y = y - 1;
-						}
-						px = px + 2 * (dy1 - dx1);
-					}
-					_buffer.set(x, y, value);
-				}
-			}
-			else
-			{
-				int ye;
-				if (dy >= 0)
-				{
-					x = x1;
-					y = y1;
-					ye = y2;
-				}
-				else
-				{
-					x = x2;
-					y = y2;
-					ye = y1;
-				}
-				_buffer.set(x, y, value);
-				for (int i = 0; y < ye; i++)
-				{
-					y = y + 1;
-					if (py <= 0)
-					{
-						py = py + 2 * dx1;
-					}
-					else
-					{
-						if ((dx < 0 && dy < 0) || (dx > 0 && dy > 0))
-						{
-							x = x + 1;
-						}
-						else
-						{
-							x = x - 1;
-						}
-						py = py + 2 * (dx1 - dy1);
-					}
-					_buffer.set(x, y, value);
-				}
-			}
-		}
-
-		void draw_line(const Vector2i& p0, const Vector2i& p1, const T& value)
-		{
-			draw_line(p0.x, p0.y, p1.x, p1.y, value);
-		}
-
-		void draw_circle(int center_x, int center_y, int radius, const T& value)
-		{
-			int x = 0, y = radius;
-			int d = 3 - 2 * radius;
-			draw_circle_points(center_x, center_y, x, y, value);
-			while (y >= x)
-			{
-				x++;
-				if (d > 0)
-				{
-					y--;
-					d = d + 4 * (x - y) + 10;
-				}
-				else
-					d = d + 4 * x + 6;
-				draw_circle_points(center_x, center_y, x, y, value);
-			}
-		}
-
-		void draw_circle(const Vector2i& center, int radius, const T& value)
-		{
-			draw_circle(center.x, center.y, radius, value);
-		}
-
-	protected:
-		IBuffer2<T>& _buffer;
-
-		void draw_circle_points(int xc, int yc, int x, int y, const T& value)
-		{
-			_buffer.set(xc + x, yc + y, value);
-			_buffer.set(xc - x, yc + y, value);
-			_buffer.set(xc + x, yc - y, value);
-			_buffer.set(xc - x, yc - y, value);
-			_buffer.set(xc + y, yc + x, value);
-			_buffer.set(xc - y, yc + x, value);
-			_buffer.set(xc + y, yc - x, value);
-			_buffer.set(xc - y, yc - x, value);
+			buffer.set(x, y, value);
 		}
 	};
+
+	template<typename T>
+	using BufferGetAction = Action<int, int, const T&>;
+
+	template<typename T>
+	struct BufferGet
+	{
+		void operator()(IBuffer2<T>& buffer, int x, int y, const BufferGetAction<T>& callback) const
+		{
+			T value;
+			if (buffer.get(x, y, value))
+				callback(x, y, value);
+		}
+	};
+
+	template<typename TValue>
+	using BufferCanvas = Canvas<IBuffer2<TValue>, TValue, BufferSet<TValue>>;
+
+	template<typename TValue>
+	using BufferCanvasGet = Canvas<IBuffer2<TValue>, BufferGetAction<TValue>, BufferGet<TValue>>;
 }
