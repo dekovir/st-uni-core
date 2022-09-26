@@ -69,4 +69,6 @@ namespace unicore
 
 		bool set(int x, int y, Color4b value) override;
 	};
+
+	using SurfaceCanvas = BufferCanvas<Color4b>;
 }

@@ -62,7 +62,7 @@ namespace unicore
 #else
 		circle.fill(ColorConst4b::Clear);
 
-		BufferPainter painter(circle);
+		SurfaceCanvas painter(circle);
 		for (unsigned i = 0; i < 360; i += 15)
 		{
 			const auto pos = Vector2i(0, 32).rotate(Degrees(static_cast<float>(i)));
