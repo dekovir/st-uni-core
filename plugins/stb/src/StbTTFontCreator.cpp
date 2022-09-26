@@ -64,9 +64,11 @@ namespace unicore
 		DynamicSurface surface(surface_size);
 		for (unsigned i = 0; i < char_count; i++)
 		{
-			const auto rect = item_rect[i].cast<unsigned short>();
+			const auto rect = item_rect[i];
 			DynamicSurface char_surface(rect.w, rect.h);
-			char_surface.clear();
+			Canvas canvas(char_surface);
+
+			canvas.fill(ColorConst4b::Clear);
 
 			for (auto y = 0; y < rect.w; y++)
 				for (auto x = 0; x < rect.h; x++)
@@ -76,8 +78,7 @@ namespace unicore
 				}
 			stbtt_FreeBitmap(item_bm[i], nullptr);
 
-			// TODO: Fix!!!!!!!!
-			//char_surface.copy(surface, rect.position());
+			canvas.copy_to(surface, rect.position());
 
 			stbtt_bakedchar info;
 			info.xoff = static_cast<float>(item_off[i].x);

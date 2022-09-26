@@ -1,4 +1,5 @@
 #include "SolidSizeCreator.hpp"
+#include "unicore/Surface.hpp"
 #include "unicore/Renderer.hpp"
 
 namespace unicore
@@ -27,7 +28,8 @@ namespace unicore
 		const CreateResource::SolidSize& data)
 	{
 		auto surface = std::make_shared<DynamicSurface>(data.size);
-		surface->fill(data.color);
+		Canvas canvas(*surface);
+		canvas.fill(data.color);
 		return surface;
 	}
 
@@ -41,7 +43,8 @@ namespace unicore
 		const CreateResource::SolidSize& data)
 	{
 		DynamicSurface surface(data.size);
-		surface.fill(data.color);
+		Canvas canvas(surface);
+		canvas.fill(data.color);
 		return _renderer.create_texture(surface);
 	}
 }

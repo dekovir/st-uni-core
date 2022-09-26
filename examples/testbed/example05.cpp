@@ -139,9 +139,11 @@ namespace unicore
 		_tiles = resources.create<SpriteList>(
 			CreateResource::TileSet{ L"tiles.png"_path, Vector2i(16) });
 
-		_map.fill(CellType::Grass);
-		_map.fill(CellType::Solid, Recti(1, 1, 5, 5));
-		_map.set(10, 10, CellType::Solid);
+		Canvas canvas(_map);
+
+		canvas.fill(CellType::Grass);
+		canvas.fill_rect(Recti(1, 1, 5, 5), CellType::Solid);
+		canvas.draw_point({ 10, 10 }, CellType::Solid);
 
 		_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
 	}

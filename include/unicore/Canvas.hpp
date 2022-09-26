@@ -1,89 +1,126 @@
 #pragma once
-#include "unicore/Rect.hpp"
+#include "unicore/Buffer2.hpp"
 
 namespace unicore
 {
-	template<typename TData, typename TValue, typename TAction>
+	template<typename T>
 	class Canvas
 	{
 	public:
-		using ValueType = const TValue&;
+		using CallbackFunction = Function<bool, Canvas<T>&, const Vector2i&>;
 
-		TData& data() { return _data; }
-		const TData& data() const { return _data; }
+		using ValueType = const T&;
+		using CallbackType = const CallbackFunction&;
 
-		explicit Canvas(TData& data)
-			: _data(data)
+		explicit Canvas(IBuffer2<T>& buffer)
+			: _buffer(buffer)
 		{
 		}
 
-		void draw_point(int x, int y, ValueType value)
-		{
-			_action(_data, x, y, value);
-		}
+		UC_NODISCARD IBuffer2<T>& buffer() { return _buffer; }
+		UC_NODISCARD const IBuffer2<T>& buffer() const { return _buffer; }
+		UC_NODISCARD const Vector2i& size() const { return _buffer.size(); }
 
+		// POINT /////////////////////////////////////////////////////////////////////
 		void draw_point(const Vector2i& pos, ValueType value)
 		{
-			draw_point(pos.x, pos.y, value);
+			_buffer.set(pos.x, pos.y, value);
 		}
 
-		// TODO: Replace with span
-		void draw_points(const Vector2i* points, unsigned num_points, ValueType value)
+		// STRAIGHT LINE /////////////////////////////////////////////////////////////
+		void draw_line_h(const Vector2i& pos, unsigned length, ValueType value)
 		{
-			for (unsigned i = 0; i < num_points; i++)
-				_action(_data, points[i].x, points[i].y, value);
+			// TODO: Optimize with linear memory access
+			for (unsigned i = 0; i < length; i++)
+				_buffer.set(pos.x + i, pos.y, value);
 		}
 
-		void draw_line_h(int x, int y, unsigned length, ValueType value)
+		bool draw_line_h(const Vector2i& pos, unsigned length, CallbackType func)
+		{
+			// TODO: Optimize with linear memory access
+			for (unsigned i = 0; i < length; i++)
+			{
+				if (!func(*this, Vector2i(pos.x + i, pos.y)))
+					return false;
+			}
+
+			return true;
+		}
+
+		void draw_line_v(const Vector2i& pos, unsigned length, ValueType value)
 		{
 			for (unsigned i = 0; i < length; i++)
-				_action(_data, x + i, y, value);
+				_buffer.set(pos.x, pos.y + i, value);
 		}
 
-		void draw_line_h(const Vector2i& start, unsigned length, ValueType value)
-		{
-			draw_line_h(start.x, start.y, length, value);
-		}
-
-		void draw_line_v(int x, int y, unsigned length, ValueType value)
+		bool draw_line_v(const Vector2i& pos, unsigned length, CallbackType func)
 		{
 			for (unsigned i = 0; i < length; i++)
-				_action(_data, x, y + i, value);
+			{
+				if (!func(*this, Vector2i(pos.x, pos.y + i)))
+					return false;
+			}
+
+			return true;
 		}
 
-		void draw_line_v(const Vector2i& start, unsigned length, ValueType value)
-		{
-			draw_line_v(start.x, start.y, length, value);
-		}
-
-		void draw_rect(int x, int y, int w, int h, ValueType value)
-		{
-			draw_line_h(x, y, w, value);
-			draw_line_h(x, y + h, w, value);
-
-			draw_line_v(x, y + 1, h - 2, value);
-			draw_line_v(x + w, y + 1, h - 2, value);
-		}
-
+		// RECT //////////////////////////////////////////////////////////////////////
 		void draw_rect(const Recti& rect, ValueType value)
 		{
-			draw_rect(rect.x, rect.y, rect.w, rect.h, value);
+			draw_line_h(rect.x, rect.y, rect.w, value);
+			draw_line_h(rect.x, rect.y + rect.h, rect.w, value);
+
+			draw_line_v(rect.x, rect.y + 1, rect.h - 2, value);
+			draw_line_v(rect.x + rect.w, rect.y + 1, rect.h - 2, value);
 		}
 
-		void fill_rect(int x, int y, int w, int h, ValueType value)
+		bool draw_rect(const Recti& rect, CallbackType func)
 		{
-			for (unsigned i = 0; i < h; i++)
-				draw_line_h(x, y + i, w, value);
+			return
+				draw_line_h(rect.x, rect.y, rect.w, func) &&
+				draw_line_h(rect.x, rect.y + rect.h, rect.w, func) &&
+				draw_line_v(rect.x, rect.y + 1, rect.h - 2, func) &&
+				draw_line_v(rect.x + rect.w, rect.y + 1, rect.h - 2, func);
 		}
 
 		void fill_rect(const Recti& rect, ValueType value)
 		{
-			fill_rect(rect.x, rect.y, rect.w, rect.h, value);
+			for (unsigned i = 0; i < rect.h; i++)
+				draw_line_h(Vector2i(rect.x, rect.y + i), static_cast<unsigned>(rect.w), value);
 		}
 
-		void draw_line(int x1, int y1, int x2, int y2, ValueType value)
+		bool fill_rect(const Recti& rect, CallbackType func)
+		{
+			for (unsigned i = 0; i < rect.h; i++)
+			{
+				if (!draw_line_h(Vector2i(rect.x, rect.y + i), static_cast<unsigned>(rect.w), func))
+					return false;
+			}
+
+			return true;
+		}
+
+		void fill(ValueType value)
+		{
+			fill_rect(_buffer.get_rect(), value);
+		}
+
+		bool fill(CallbackType func)
+		{
+			return fill_rect(_buffer.get_rect(), func);
+		}
+
+		// LINE //////////////////////////////////////////////////////////////////////
+		// TODO: Rewrite line render
+		void draw_line(const Vector2i& p1, const Vector2i& p2, ValueType value)
 		{
 			int x, y;
+
+			const auto x1 = p1.x;
+			const auto y1 = p1.y;
+
+			const auto x2 = p2.x;
+			const auto y2 = p2.y;
 
 			const int dx = x2 - x1;
 			const int dy = y2 - y1;
@@ -106,7 +143,7 @@ namespace unicore
 					y = y2;
 					xe = x1;
 				}
-				_action(_data, x, y, value);
+				_buffer.set(x, y, value);
 				for (int i = 0; x < xe; i++)
 				{
 					x = x + 1;
@@ -126,7 +163,7 @@ namespace unicore
 						}
 						px = px + 2 * (dy1 - dx1);
 					}
-					_action(_data, x, y, value);
+					_buffer.set(x, y, value);
 				}
 			}
 			else
@@ -144,7 +181,7 @@ namespace unicore
 					y = y2;
 					ye = y1;
 				}
-				_action(_data, x, y, value);
+				_buffer.set(x, y, value);
 				for (int i = 0; y < ye; i++)
 				{
 					y = y + 1;
@@ -164,14 +201,9 @@ namespace unicore
 						}
 						py = py + 2 * (dx1 - dy1);
 					}
-					_action(_data, x, y, value);
+					_buffer.set(x, y, value);
 				}
 			}
-		}
-
-		void draw_line(const Vector2i& p0, const Vector2i& p1, ValueType value)
-		{
-			draw_line(p0.x, p0.y, p1.x, p1.y, value);
 		}
 
 		// TODO: Replace with span
@@ -181,16 +213,24 @@ namespace unicore
 				draw_line(points[i - 1], points[i], value);
 		}
 
-		void draw_line_poly(const List<Vector2i>& points, ValueType value)
+		// TODO: Replace with span
+		bool draw_line_poly(const Vector2i* points, unsigned num_points, CallbackType func)
 		{
-			draw_line_poly(points.data(), points.size(), value);
+			for (unsigned i = 1; i < num_points; i++)
+			{
+				if (!draw_line(points[i - 1], points[i], func))
+					return false;
+			}
+
+			return true;
 		}
 
-		void draw_circle(int center_x, int center_y, int radius, ValueType value)
+		// CIRCE /////////////////////////////////////////////////////////////////////
+		void draw_circle(const Vector2i& center, int radius, ValueType value)
 		{
 			int x = 0, y = radius;
 			int d = 3 - 2 * radius;
-			draw_circle_points(center_x, center_y, x, y, value);
+			draw_circle_points(center.x, center.y, x, y, value);
 			while (y >= x)
 			{
 				x++;
@@ -201,18 +241,13 @@ namespace unicore
 				}
 				else
 					d = d + 4 * x + 6;
-				draw_circle_points(center_x, center_y, x, y, value);
+				draw_circle_points(center.x, center.y, x, y, value);
 			}
 		}
 
-		void draw_circle(const Vector2i& center, int radius, ValueType value)
+		void fill_circle(const Vector2i& center, int radius, ValueType value)
 		{
-			draw_circle(center.x, center.y, radius, value);
-		}
-
-		void fill_circle(int center_x, int center_y, int radius, ValueType value)
-		{
-			// TODO: Optimize
+			// TODO: Optimize with draw_line_h
 			const int N = 2 * radius + 1;
 			for (int i = 0; i < N; i++)
 			{
@@ -222,33 +257,55 @@ namespace unicore
 					const int y = j - radius;
 
 					if (x * x + y * y <= radius * radius + 1)
-						_action(_data, center_x + x, center_y + y, value);
+						_buffer.set(center.x + x, center.y + y, value);
 				}
 			}
-		}
-
-		void fill_circle(const Vector2i& center, int radius, ValueType value)
-		{
-			fill_circle(center.x, center.y, radius, value);
 		}
 
 		// TODO: Implement triangle rasterization
 		// https://github.com/ssloy/tinyrenderer/wiki/Lesson-2:-Triangle-rasterization-and-back-face-culling
 
+		// COPY //////////////////////////////////////////////////////////////////////
+		bool copy_to(const Recti& src_rect, IBuffer2<T>& dest, const Vector2i& dest_pos = VectorConst2i::Zero)
+		{
+			const auto s = dest.size();
+			const Recti dest_rect(
+				dest_pos.x, dest_pos.y,
+				Math::min(src_rect.w, s.x - dest_pos.x),
+				Math::min(src_rect.h, s.y - dest_pos.y)
+			);
+
+			for (int y = 0; y < dest_rect.h; y++)
+			{
+				for (int x = 0; x < dest_rect.w; x++)
+				{
+					T value;
+					if (_buffer.get(src_rect.x + x, src_rect.y, value))
+						dest.set(dest_rect.x + x, dest_rect.y + y, value);
+				}
+			}
+
+			return true;
+		}
+
+		bool copy_to(IBuffer2<T>& dest, const Vector2i& dest_pos = VectorConst2i::Zero)
+		{
+			return copy_to(_buffer.get_rect(), dest, dest_pos);
+		}
+
 	protected:
-		TData& _data;
-		TAction _action;
+		IBuffer2<T>& _buffer;
 
 		void draw_circle_points(int xc, int yc, int x, int y, ValueType value)
 		{
-			_action(_data, xc + x, yc + y, value);
-			_action(_data, xc - x, yc + y, value);
-			_action(_data, xc + x, yc - y, value);
-			_action(_data, xc - x, yc - y, value);
-			_action(_data, xc + y, yc + x, value);
-			_action(_data, xc - y, yc + x, value);
-			_action(_data, xc + y, yc - x, value);
-			_action(_data, xc - y, yc - x, value);
+			_buffer.set(xc + x, yc + y, value);
+			_buffer.set(xc - x, yc + y, value);
+			_buffer.set(xc + x, yc - y, value);
+			_buffer.set(xc - x, yc - y, value);
+			_buffer.set(xc + y, yc + x, value);
+			_buffer.set(xc - y, yc + x, value);
+			_buffer.set(xc + y, yc - x, value);
+			_buffer.set(xc - y, yc - x, value);
 		}
 	};
 }

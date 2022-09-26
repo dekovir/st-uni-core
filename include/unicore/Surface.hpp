@@ -3,6 +3,7 @@
 #include "unicore/Buffer2.hpp"
 #include "unicore/Color4.hpp"
 #include "unicore/Resource.hpp"
+#include "unicore/Canvas.hpp"
 
 namespace unicore
 {
@@ -62,13 +63,6 @@ namespace unicore
 		UC_NODISCARD const Vector2i& size() const override { return Surface::size(); }
 		UC_NODISCARD bool get(int x, int y, Color4<unsigned char>& value) const override { return Surface::get(x, y, value); }
 
-		void fill(const Color4b& color, const Optional<Recti>& rect = std::nullopt) override;
-		void fill(FillFunction func, const Optional<Recti>& rect = std::nullopt) override;
-
-		void clear() { fill(ColorConst4b::Black); }
-
 		bool set(int x, int y, Color4b value) override;
 	};
-
-	using SurfaceCanvas = BufferCanvas<Color4b>;
 }

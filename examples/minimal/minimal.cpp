@@ -45,32 +45,38 @@ namespace unicore
 		constexpr Vector2i center(radius_outer, radius_outer);
 
 		DynamicSurface circle(side, side);
+		Canvas canvas(circle);
 
 #if 1
-		circle.fill([radius_outer, radius_inner, &center](int x, int y) -> Color4b
+		canvas.fill([radius_outer, radius_inner, &center](Canvas<Color4b>& canvas, const Vector2i& pos) -> bool
 			{
-				const float distance = center.distance({ x, y });
+				const float distance = center.distance(pos);
 				if (distance < radius_inner || distance > radius_outer)
-					return ColorConst4b::Clear;
+					canvas.draw_point(pos, ColorConst4b::Clear);
+				else
+				{
+					const float t = 1 - Math::sin(Math::Pi * (distance - radius_inner) / (radius_outer - radius_inner));
+					const auto color = Color4b::lerp(ColorConst4b::White, ColorConst4b::Clear, t);
+					canvas.draw_point(pos, color);
+				}
 
-				const float t = 1 - Math::sin(Math::Pi * (distance - radius_inner) / (radius_outer - radius_inner));
-				return Color4b::lerp(ColorConst4b::White, ColorConst4b::Clear, t);
+				return true;
 			});
 
-		circle.fill(ColorConst4b::Clear, Recti(0, radius_outer - 3, side, 6));
-		circle.fill(ColorConst4b::Clear, Recti(radius_outer - 3, 0, 6, side));
+		canvas.fill_rect(Recti(0, radius_outer - 3, side, 6), ColorConst4b::Clear);
+		canvas.fill_rect(Recti(radius_outer - 3, 0, 6, side), ColorConst4b::Clear);
 #else
-		circle.fill(ColorConst4b::Clear);
-
-		SurfaceCanvas painter(circle);
+		canvas.fill(ColorConst4b::Clear);
 		for (unsigned i = 0; i < 360; i += 15)
 		{
-			const auto pos = Vector2i(0, 32).rotate(Degrees(static_cast<float>(i)));
-			painter.draw_line(32, 32, 32 + pos.x, 32 + pos.y, ColorConst4b::White);
+			const auto pos = Vector2i(0, radius_outer).rotate(Degrees(static_cast<float>(i)));
+			canvas.draw_line(center, center + pos, ColorConst4b::White);
 		}
 
-		for (unsigned i = 8; i <= 32; i += 8)
-			painter.draw_circle(32, 32, i - 1, ColorConst4b::White);
+		constexpr auto step = radius_outer / 8;
+
+		for (unsigned i = step; i <= radius_outer; i += step)
+			canvas.draw_circle(center, i - 1, ColorConst4b::White);
 #endif
 
 		_tex = renderer.create_texture(circle);
@@ -125,9 +131,6 @@ namespace unicore
 			.set_color(ColorConst4b::Magenta)
 			.draw_line(VectorConst2i::Zero, screen_size)
 			.draw_line(Vector2i(0, screen_size.y), Vector2i(screen_size.x, 0))
-			.set_color(ColorConst4b::Cyan)
-			.draw_rect(Recti{ screen_size.x - 200, 100, 200, 100 }, true)
-			.draw_point(Vector2i{ 300, 300 })
 			.flush()
 			;
 

@@ -19,10 +19,10 @@ namespace unicore
 
 		~Vector2() = default;
 
-		void set(T _x, T _y)
+		void set(T x_, T y_)
 		{
-			x = _x;
-			y = _y;
+			x = x_;
+			y = y_;
 		}
 
 		UC_NODISCARD constexpr size_t size() const { return 2; }
@@ -33,11 +33,13 @@ namespace unicore
 
 		T& operator[](int index)
 		{
+			UC_ASSERT_MSG(index >= 0 && index < 3, "Invalid index");
 			return (&x)[index];
 		}
 
 		T operator[](int index) const
 		{
+			UC_ASSERT_MSG(index >= 0 && index < 3, "Invalid index");
 			return (&x)[index];
 		}
 
