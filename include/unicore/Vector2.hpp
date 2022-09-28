@@ -247,6 +247,16 @@ namespace unicore
 	{
 		return builder << value.x << "x" << value.y;
 	}
+
+	UNICORE_MATH_HASH(Vector2i)
+	{
+		return hash(value.x, value.y);
+	}
+
+	UNICORE_MATH_HASH(Vector2f)
+	{
+		return hash(value.x, value.y);
+	}
 }
 
 template<typename T>

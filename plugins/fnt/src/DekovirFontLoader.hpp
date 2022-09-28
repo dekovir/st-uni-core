@@ -8,6 +8,6 @@ namespace unicore
 	{
 	public:
 		DekovirFontLoader();
-		UC_NODISCARD Shared<Resource> load(const Options& options) override;
+		UC_NODISCARD Shared<Resource> load(const Context& options) override;
 	};
 }

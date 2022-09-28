@@ -1,4 +1,5 @@
 #include "unicore/ResourceCache.hpp"
+#include "unicore/Math.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
 #include "unicore/FileProvider.hpp"
@@ -71,17 +72,16 @@ namespace unicore
 
 	void ResourceCache::unload_unused()
 	{
-		for (auto& [path, dict] : _cached)
+		for (auto it = _cached.begin(); it != _cached.end();)
 		{
-			for (auto it = dict.begin(); it != dict.end();)
+			auto& info = it->second;
+			if (info.resource.use_count() == 1)
 			{
-				if (it->second.use_count() == 1)
-				{
-					UC_LOG_DEBUG(_logger) << "Unload resource " << *it->first << " from " << path;
-					it = dict.erase(it);
-				}
-				else ++it;
+				UC_LOG_DEBUG(_logger) << "Unload resource "
+					<< info.resource->type() << " from " << info.path;
+				it = _cached.erase(it);
 			}
+			else ++it;
 		}
 
 		// Remove expired weak pointers
@@ -92,15 +92,17 @@ namespace unicore
 		}
 	}
 
-	Shared<Resource> ResourceCache::find(const Path& path, TypeConstRef type) const
+	Shared<Resource> ResourceCache::find(const Path& path,
+		TypeConstRef type, const ResourceOptions* options) const
 	{
-		const auto it = _cached.find(path);
-		if (it == _cached.end()) return nullptr;
-
-		for (const auto& [res_type, resource] : it->second)
+		const size_t hash = make_hash(path, options);
+		const auto range = _cached.equal_range(hash);
+		for (auto it = range.first; it != range.second; ++it)
 		{
-			if (res_type == &type || res_type->is_derived_from(type))
-				return resource;
+			auto& info = it->second;
+			auto res_type = info.resource->type();
+			if (res_type.is_derived_from(type))
+				return info.resource;
 		}
 
 		return nullptr;
@@ -110,22 +112,20 @@ namespace unicore
 	{
 		for (const auto& it : _cached)
 		{
-			for (const auto& jt : it.second)
-			{
-				if (jt.second.get() == &resource)
-					return it.first;
-			}
+			auto& info = it.second;
+			if (info.resource.get() == &resource)
+				return info.path;
 		}
 
 		return std::nullopt;
 	}
 
-	Shared<Resource> ResourceCache::create(TypeConstRef type, const std::any& value)
+	Shared<Resource> ResourceCache::create(TypeConstRef type, const Any& value)
 	{
 		if (value.type() == typeid(Path))
 		{
 			const auto path = std::any_cast<Path>(value);
-			return load(path, type);
+			return load(path, type, nullptr, ResourceCacheFlags::Zero);
 		}
 
 		const auto it = _creators.find(&type);
@@ -161,14 +161,15 @@ namespace unicore
 		return nullptr;
 	}
 
-	Shared<Resource> ResourceCache::load(const Path& path, TypeConstRef type, ResourceCacheFlags flags)
+	Shared<Resource> ResourceCache::load(const Path& path,
+		TypeConstRef type, const ResourceOptions* options, ResourceCacheFlags flags)
 	{
-		if (auto resource_find = find(path, type))
+		if (auto resource_find = find(path, type, options))
 			return resource_find;
 
 		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;
 
-		if (auto resource = load_resource(path, type, flags, logger))
+		if (auto resource = load_resource(path, type, options, flags, logger))
 			return resource;
 
 		if (const auto it = _converters.find(&type); it != _converters.end())
@@ -176,14 +177,14 @@ namespace unicore
 			for (const auto& converter : it->second)
 			{
 				// TODO: Handle cyclic loading
-				if (auto raw = load(path, converter->raw_type(), flags))
+				if (auto raw = load(path, converter->raw_type(), options, flags))
 				{
 					if (auto resource = converter->convert(*raw, { *this, logger }))
 					{
 						// TODO: Optimize (get path directly from load function)
 						const auto converted_path = find_path(*raw);
 						_resources.push_back(resource);
-						add_resource(resource, converted_path.value_or(path));
+						add_resource(resource, converted_path.value_or(path), options);
 						return resource;
 					}
 				}
@@ -236,15 +237,13 @@ namespace unicore
 
 		for (const auto& it : _cached)
 		{
-			for (const auto& [_, resource] : it.second)
+			const auto& info = it.second;
+			if (system != nullptr)
+				*system += info.resource->get_system_memory_use();
+			if (video != nullptr)
 			{
-				if (system != nullptr)
-					*system += resource->get_system_memory_use();
-				if (video != nullptr)
-				{
-					if (const auto render_resource = std::dynamic_pointer_cast<RendererResource>(resource))
-						*video += render_resource->get_video_memory_use();
-				}
+				if (const auto render_resource = std::dynamic_pointer_cast<RendererResource>(info.resource))
+					*video += render_resource->get_video_memory_use();
 			}
 		}
 	}
@@ -296,11 +295,13 @@ namespace unicore
 		return lhs->priority() < rhs->priority();
 	}
 
-	Shared<Resource> ResourceCache::load_resource(const Path& path,
-		TypeConstRef type, ResourceCacheFlags flags, Logger* logger)
+	Shared<Resource> ResourceCache::load_resource(const Path& path, TypeConstRef type,
+		const ResourceOptions* options, ResourceCacheFlags flags, Logger* logger)
 	{
 		const auto it = _loaders.find(&type);
 		if (it == _loaders.end()) return nullptr;
+
+		//const TypeInfo* data_type = options ? &typeid(*options) : nullptr;
 
 		const auto& loaders = it->second;
 		// TODO: Implement loading stack for prevent recursive loading
@@ -317,7 +318,7 @@ namespace unicore
 					if (!stream)
 						continue;
 
-					if (auto resource = load_resource(*loader, new_path, *stream, logger))
+					if (auto resource = load_resource(*loader, new_path, *stream, options, logger))
 						return resource;
 				}
 			}
@@ -338,7 +339,12 @@ namespace unicore
 					.any([&extension](const WStringView ext) -> bool { return extension == ext; }))
 					continue;
 
-				if (auto resource = load_resource(*loader, path, *stream, logger))
+				//const auto& data_types = loader->data_types();
+				//if (!data_types.empty() && !linq::from(data_types)
+				//	.any([&data_type](const TypeIndex type) { return data_type == type; }))
+				//	continue;
+
+				if (auto resource = load_resource(*loader, path, *stream, options, logger))
 					return resource;
 			}
 		}
@@ -347,12 +353,12 @@ namespace unicore
 	}
 
 	Shared<Resource> ResourceCache::load_resource(ResourceLoader& loader,
-		const Path& path, ReadFile& file, Logger* logger)
+		const Path& path, ReadFile& file, const ResourceOptions* options, Logger* logger)
 	{
-		if (auto resource = loader.load({ path, *this, file, logger }))
+		if (auto resource = loader.load({ path, *this, file, options, logger }))
 		{
 			_resources.push_back(resource);
-			add_resource(resource, path);
+			add_resource(resource, path, options);
 
 			return resource;
 		}
@@ -360,17 +366,28 @@ namespace unicore
 		return nullptr;
 	}
 
-	bool ResourceCache::add_resource(const Shared<Resource>& resource, const Path& path)
+	bool ResourceCache::add_resource(const Shared<Resource>& resource,
+		const Path& path, const ResourceOptions* options)
 	{
 		if (resource->cache_policy() == ResourceCachePolicy::CanCache)
 		{
+			const auto hash = make_hash(path, options);
 			const auto& type = resource->type();
-			_cached[path].insert_or_assign(&type, resource);
+
+			CachedInfo info{ resource, path };
+			_cached.emplace(hash, info);
 			UC_LOG_DEBUG(_logger) << "Added " << type << " from " << path
 				<< " " << MemorySize{ resource->get_system_memory_use() };
 			return true;
 		}
 
 		return false;
+	}
+
+	size_t ResourceCache::make_hash(const Path& path, const ResourceOptions* options)
+	{
+		return options
+			? Math::hash(path, options->hash())
+			: Math::hash(path);
 	}
 }

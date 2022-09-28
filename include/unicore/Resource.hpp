@@ -14,9 +14,17 @@ namespace unicore
 		UC_OBJECT(Resource, Object)
 	public:
 		UC_NODISCARD virtual size_t get_system_memory_use() const = 0;
-
 		UC_NODISCARD virtual size_t get_used_resources(Set<Shared<Resource>>& resources) { return 0; }
+
+		// TODO: Replace with const value
 		UC_NODISCARD virtual ResourceCachePolicy cache_policy() const { return ResourceCachePolicy::CanCache; }
+	};
+
+	class ResourceOptions
+	{
+	public:
+		virtual ~ResourceOptions() = default;
+		UC_NODISCARD virtual size_t hash() const = 0;
 	};
 
 	template<typename T,
@@ -36,7 +44,6 @@ namespace unicore
 		UC_NODISCARD const DataType& data() const { return _data; }
 		UC_NODISCARD size_t size() const { return _data.size(); }
 
-		
 		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(ResourceList); }
 		UC_NODISCARD size_t get_used_resources(Set<Shared<Resource>>& resources) override
 		{

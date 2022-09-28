@@ -17,17 +17,27 @@ namespace unicore
 
 	void Memory::set(void* dest, int value, size_t size)
 	{
-		memset(dest, value, size);
+		std::memset(dest, value, size);
 	}
 
 	void Memory::copy(void* dest, const void* src, size_t size)
 	{
-		memcpy(dest, src, size);
+		std::memcpy(dest, src, size);
 	}
 
 	void Memory::move(void* dest, const void* src, size_t size)
 	{
-		memmove(dest, src, size);
+		std::memmove(dest, src, size);
+	}
+
+	int Memory::compare(const void* ptr1, const void* ptr2, size_t size)
+	{
+		return std::memcmp(ptr1, ptr2, size);
+	}
+
+	bool Memory::equals(const void* ptr1, const void* ptr2, size_t size)
+	{
+		return compare(ptr1, ptr2, size) == 0;
 	}
 
 	// ===========================================================================

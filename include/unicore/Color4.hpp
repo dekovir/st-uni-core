@@ -257,4 +257,14 @@ namespace unicore
 	//{
 	//	return Color4b::from_rgba(static_cast<uint32_t>(value));
 	//}
+
+	UNICORE_MATH_HASH(Color4b)
+	{
+		return value.to_format(pixel_format_abgr);
+	}
+
+	UNICORE_MATH_HASH(Color4f)
+	{
+		return hash(value.r, value.g, value.b, value.a);
+	}
 }

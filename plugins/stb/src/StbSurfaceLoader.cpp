@@ -38,7 +38,7 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> StbSurfaceLoader::load(const Options& options)
+	Shared<Resource> StbSurfaceLoader::load(const Context& options)
 	{
 		int w, h, n;
 		const auto data = stbi_load_from_callbacks(
@@ -59,7 +59,7 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> StbDynamicSurfaceLoader::load(const Options& options)
+	Shared<Resource> StbDynamicSurfaceLoader::load(const Context& options)
 	{
 		// Use cached Surface
 		if (const auto cached = options.cache.find<Surface>(options.path))

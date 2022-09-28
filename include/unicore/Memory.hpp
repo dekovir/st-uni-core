@@ -15,6 +15,9 @@ namespace unicore
 		static void set(void* dest, int value, size_t size);
 		static void copy(void* dest, const void* src, size_t size);
 		static void move(void* dest, const void* src, size_t size);
+
+		static int compare(const void* ptr1, const void* ptr2, size_t size);
+		static bool equals(const void* ptr1, const void* ptr2, size_t size);
 	};
 
 #define UC_ALLOC(size) Memory::alloc(size)
@@ -67,6 +70,7 @@ namespace unicore
 
 		UC_NODISCARD MemoryChunk clone() const;
 
+		// TODO: Rename to set
 		void fill(uint8_t value = 0);
 
 		void resize(size_t new_size, bool copy_data = true);

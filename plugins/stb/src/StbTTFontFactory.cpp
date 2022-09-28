@@ -1,65 +1,61 @@
-#include "StbTTFontCreator.hpp"
+#include "unicore/stb/StbTTFontFactory.hpp"
 #if defined(UNICORE_USE_STB_TRUETYPE)
-#include "unicore/Logger.hpp"
 #include "unicore/BinaryData.hpp"
+#include "unicore/Logger.hpp"
 #include "unicore/Canvas.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Renderer.hpp"
-#include "unicore/ResourceCache.hpp"
 #include "unicore/stb/StbRectPack.hpp"
+#include "unicore/stb/StbTTFont.hpp"
 
 namespace unicore
 {
-	Shared<StbTTFont> StbTTFontCreator::create_from_data(const Options& context, const TTFOptions& data)
+	StbTTFontFactory::StbTTFontFactory(const Shared<BinaryData>& data)
+		: _data(data)
 	{
-		if (data.height <= 0)
-		{
-			UC_LOG_ERROR(context.logger) << "Invalid height " << data.height;
-			return nullptr;
-		}
+		_valid = stbtt_InitFont(&_font_info,
+			static_cast<const unsigned char*>(_data->data()), 0);
+	}
 
-		const auto chunk = context.cache.load<BinaryData>(data.path, ResourceCacheFlag::IgnoreExtension);
-		if (!chunk)
-		{
-			UC_LOG_ERROR(context.logger) << "Load BinaryData failed";
-			return nullptr;
-		}
+	size_t StbTTFontFactory::get_system_memory_use() const
+	{
+		return sizeof(StbTTFontFactory) + _data->size();
+	}
 
-		stbtt_fontinfo font;
-		if (!stbtt_InitFont(&font, static_cast<const unsigned char*>(chunk->data()), 0))
-		{
-			UC_LOG_ERROR(context.logger) << "Failed to init font";
-			return nullptr;
-		}
+	Shared<TexturedFont> StbTTFontFactory::create(
+		Renderer& renderer, const TTFontOptions& options, Logger* logger)
+	{
+		if (!valid()) return nullptr;
 
-		const auto scale = stbtt_ScaleForPixelHeight(&font, static_cast<float>(data.height));
+		const auto scale = stbtt_ScaleForPixelHeight(
+			&_font_info, options.height);
 
 		StbTTFont::ConstructionParams params;
 
 		{
 			int advance;
-			stbtt_GetCodepointHMetrics(&font, L' ', &advance, nullptr);
+			stbtt_GetCodepointHMetrics(&_font_info, L' ', &advance, nullptr);
 			params.space_width = scale * static_cast<float>(advance);
 		}
 
 		int ascent, descent, line_gap;
-		stbtt_GetFontVMetrics(&font, &ascent, &descent, &line_gap);
+		stbtt_GetFontVMetrics(&_font_info, &ascent, &descent, &line_gap);
 		//const auto baseline = Math::round_to_int(scale * static_cast<float>(ascent));
-		params.height = data.height; //scale * static_cast<float>(ascent - descent + line_gap);
+		params.height = options.height;
 
 		// GENERATE CHAR BITMAPS
-		const size_t char_count = data.chars.size();
+		const size_t char_count = options.chars.size();
 		List<unsigned char*> item_bm(char_count);
 		List<Vector2i> item_size(char_count);
 		List<Vector2i> item_off(char_count);
 
 		for (unsigned i = 0; i < char_count; i++)
 		{
-			const auto c = data.chars[i];
+			const auto c = options.chars[i];
 
 			int w, h, xoff, yoff;
 			auto bm = stbtt_GetCodepointBitmap(
-				&font, 0, scale, c, &w, &h, &xoff, &yoff);
+				&_font_info, 0, scale, c, &w, &h, &xoff, &yoff);
 
 			item_bm[i] = bm;
 			item_size[i] = { w, h };
@@ -75,7 +71,7 @@ namespace unicore
 		const auto start_size = packer.calc_start_size(item_size);
 		if (!packer.pack_optimize(item_size, item_packed, surface_size, { start_size, 16 }))
 		{
-			UC_LOG_ERROR(context.logger) << "Failed to pack";
+			UC_LOG_ERROR(logger) << "Failed to pack";
 			return nullptr;
 		}
 
@@ -103,17 +99,17 @@ namespace unicore
 			info.yoff = static_cast<float>(item_off[i].y);
 
 			int advance;
-			stbtt_GetCodepointHMetrics(&font, data.chars[i], &advance, nullptr);
+			stbtt_GetCodepointHMetrics(&_font_info, options.chars[i], &advance, nullptr);
 			info.xadvance = advance * scale;
 			info.x0 = packed.min_x();
 			info.y0 = packed.min_y();
 			info.x1 = packed.max_x();
 			info.y1 = packed.max_y();
 
-			params.infos[data.chars[i]] = info;
+			params.infos[options.chars[i]] = info;
 		}
 
-		params.texture = _renderer.create_texture(font_surface);
+		params.texture = renderer.create_texture(font_surface);
 
 		return std::make_shared<StbTTFont>(params);
 	}

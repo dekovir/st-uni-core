@@ -1,26 +1,18 @@
 #pragma once
 #include "unicore/Font.hpp"
 #if defined(UNICORE_USE_STB_TRUETYPE)
-#include "unicore/Path.hpp"
 #include "unicore/Rect.hpp"
 #include <stb_truetype.h>
 
 namespace unicore
 {
-	struct TTFOptions
-	{
-		Path path;
-		int height = 32;
-		WStringView chars = CharTable::Ascii.view();
-	};
-
 	class StbTTFont : public TexturedFont
 	{
 		UC_OBJECT(StbTTFont, TexturedFont)
 	public:
 		using CharInfo = Dictionary<uint32_t, stbtt_bakedchar>;
 
-		const Shared<Texture>& texture() const { return _texture; }
+		UC_NODISCARD const Shared<Texture>& texture() const { return _texture; }
 
 		struct ConstructionParams
 		{

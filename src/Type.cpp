@@ -20,6 +20,11 @@ namespace unicore
 		return false;
 	}
 
+	bool Type::can_cast_to(TypeConstRef type) const
+	{
+		return is_derived_from(type);
+	}
+
 	constexpr bool operator==(const Type& a, const Type& b)
 	{
 		return &a.info == &b.info;

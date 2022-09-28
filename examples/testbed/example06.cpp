@@ -19,9 +19,11 @@ namespace unicore
 		//_font = resources.create<Font>(42);
 		//_font = resources.load<Font>(L"font_004.fnt"_path);
 		//_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
-		_font = resources.create<Font>(
-			TTFOptions{ L"ubuntu.regular.ttf"_path, 24,
-				(CharTable::Ascii + CharTable::Russian).view() });
+
+		TTFontOptions options;
+		options.height = 32;
+		options.chars = (CharTable::Ascii + CharTable::Russian).view();
+		_font = resources.load<Font>(L"ubuntu.regular.ttf"_path, options);
 	}
 
 	void Example06::update()

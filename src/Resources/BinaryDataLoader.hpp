@@ -9,6 +9,6 @@ namespace unicore
 		UC_OBJECT(BinaryDataLoader, ResourceLoaderT)
 	public:
 		BinaryDataLoader();
-		UC_NODISCARD Shared<Resource> load(const Options& options) override;
+		UC_NODISCARD Shared<Resource> load(const Context& options) override;
 	};
 }

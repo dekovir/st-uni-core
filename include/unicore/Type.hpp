@@ -25,6 +25,11 @@ namespace unicore
 
 		template<typename T>
 		UC_NODISCARD bool is_derived_from() const { return is_derived_from(get_type<T>()); }
+
+		UC_NODISCARD bool can_cast_to(TypeConstRef type) const;
+
+		template<typename T>
+		UC_NODISCARD bool can_cast_to() const { return can_cast_to(get_type<T>()); }
 	};
 
 	static constexpr bool operator==(const Type& a, const Type& b);

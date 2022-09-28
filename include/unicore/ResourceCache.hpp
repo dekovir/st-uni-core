@@ -32,7 +32,8 @@ namespace unicore
 		void unload_all();
 		void unload_unused();
 
-		UC_NODISCARD Shared<Resource> find(const Path& path, TypeConstRef type) const;
+		UC_NODISCARD Shared<Resource> find(const Path& path,
+			TypeConstRef type, const ResourceOptions* options = nullptr) const;
 		UC_NODISCARD Optional<Path> find_path(const Resource& resource) const;
 
 		template<typename T,
@@ -42,7 +43,7 @@ namespace unicore
 			return std::dynamic_pointer_cast<T>(find(path, get_type<T>()));
 		}
 
-		Shared<Resource> create(TypeConstRef type, const std::any& value);
+		Shared<Resource> create(TypeConstRef type, const Any& value);
 
 		template<typename T,
 			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
@@ -52,13 +53,21 @@ namespace unicore
 		}
 
 		Shared<Resource> load(const Path& path, TypeConstRef type,
-			ResourceCacheFlags flags = ResourceCacheFlags::Zero);
+			const ResourceOptions* options, ResourceCacheFlags flags);
 
 		template<typename T,
 			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
 		Shared<T> load(const Path& path, ResourceCacheFlags flags = ResourceCacheFlags::Zero)
 		{
-			return std::dynamic_pointer_cast<T>(load(path, get_type<T>(), flags));
+			return std::dynamic_pointer_cast<T>(load(path, get_type<T>(), nullptr, flags));
+		}
+
+		template<typename T, typename TData,
+			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr,
+			std::enable_if_t<std::is_base_of_v<ResourceOptions, TData>>* = nullptr>
+		Shared<T> load(const Path& path, const TData& options, ResourceCacheFlags flags = ResourceCacheFlags::Zero)
+		{
+			return std::dynamic_pointer_cast<T>(load(path, get_type<T>(), &options, flags));
 		}
 
 		void dump_used();
@@ -88,15 +97,25 @@ namespace unicore
 		Dictionary<TypeConstPtr, Set<Shared<ResourceConverter>>> _converters;
 		Dictionary<TypeConstPtr, Set<Shared<ResourceCreator>, CreatorSort>> _creators;
 
+		struct CachedInfo
+		{
+			Shared<Resource> resource;
+			Path path;
+			//Shared<ResourceOptions> options;
+		};
+
 		List<Weak<Resource>> _resources;
-		Dictionary<Path, Dictionary<TypeConstPtr, Shared<Resource>>> _cached;
+		DictionaryMulti<size_t, CachedInfo> _cached;
 
-		Shared<Resource> load_resource(const Path& path,
-			TypeConstRef type, ResourceCacheFlags flags, Logger* logger);
+		Shared<Resource> load_resource(const Path& path, TypeConstRef type,
+			const ResourceOptions* options, ResourceCacheFlags flags, Logger* logger);
 
-		Shared<Resource> load_resource(ResourceLoader& loader,
-			const Path& path, ReadFile& file, Logger* logger);
+		Shared<Resource> load_resource(ResourceLoader& loader, const Path& path,
+			ReadFile& file, const ResourceOptions* options, Logger* logger);
 
-		bool add_resource(const Shared<Resource>& resource, const Path& path);
+		bool add_resource(const Shared<Resource>& resource,
+			const Path& path, const ResourceOptions* options);
+
+		static size_t make_hash(const Path& path, const ResourceOptions* options);
 	};
 }

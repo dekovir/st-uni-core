@@ -7,7 +7,7 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> BinaryDataLoader::load(const Options& options)
+	Shared<Resource> BinaryDataLoader::load(const Context& options)
 	{
 		options.file.seek(0);
 		const auto size = options.file.size();

@@ -9,7 +9,7 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> TextDataLoader::load(const Options& options)
+	Shared<Resource> TextDataLoader::load(const Context& options)
 	{
 		options.file.seek(0);
 		const auto size = options.file.size();
@@ -27,7 +27,7 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> WTextDataLoader::load(const Options& options)
+	Shared<Resource> WTextDataLoader::load(const Context& options)
 	{
 		options.file.seek(0);
 		const auto size = options.file.size();

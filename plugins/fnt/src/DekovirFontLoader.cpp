@@ -9,7 +9,7 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> DekovirFontLoader::load(const Options& options)
+	Shared<Resource> DekovirFontLoader::load(const Context& options)
 	{
 		const auto xml = options.cache.load<XMLData>(
 			options.path, ResourceCacheFlag::IgnoreExtension);

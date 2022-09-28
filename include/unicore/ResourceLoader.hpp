@@ -12,20 +12,22 @@ namespace unicore
 	{
 		UC_OBJECT(ResourceLoader, Object)
 	public:
-		struct Options
+		struct Context
 		{
 			Path path;
 			ResourceCache& cache;
 			ReadFile& file;
+			const ResourceOptions* options;
 			Logger* logger = nullptr;
 		};
 
 		UC_NODISCARD virtual int priority() const { return 0; }
 
 		UC_NODISCARD virtual TypeConstRef resource_type() const = 0;
+		UC_NODISCARD virtual const TypeInfo* data_type() const { return nullptr; }
 		UC_NODISCARD virtual const List<WStringView>& extension() const = 0;
 
-		UC_NODISCARD virtual Shared<Resource> load(const Options& options) = 0;
+		UC_NODISCARD virtual Shared<Resource> load(const Context& context) = 0;
 	};
 
 	template<typename T,

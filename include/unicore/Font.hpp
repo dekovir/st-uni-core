@@ -31,4 +31,24 @@ namespace unicore
 		virtual void generate(const Vector2f& position, WStringView text, const Color4b& color,
 			Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict) = 0;
 	};
+
+	class TTFontOptions : public ResourceOptions
+	{
+	public:
+		float height = 16;
+		WStringView chars = CharTable::Ascii.view();
+
+		UC_NODISCARD size_t hash() const override
+		{
+			return Math::hash(height, chars);
+		}
+	};
+
+	class TTFontFactory : public Resource
+	{
+		UC_OBJECT(TTFontFactory, Resource)
+	public:
+		UC_NODISCARD virtual Shared<TexturedFont> create(Renderer& renderer,
+			const TTFontOptions& options, Logger* logger = nullptr) = 0;
+	};
 }

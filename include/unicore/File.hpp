@@ -4,6 +4,7 @@
 namespace unicore
 {
 	class MemoryChunk;
+	class BinaryData;
 
 	enum class SeekMethod
 	{
@@ -28,6 +29,8 @@ namespace unicore
 		virtual bool read(void* buffer, size_t size, size_t* bytes_read = nullptr) = 0;
 
 		bool read(MemoryChunk& chunk, size_t* bytes_read = nullptr);
+
+		Shared<BinaryData> as_data();
 	};
 
 	class WriteFile : public ReadFile

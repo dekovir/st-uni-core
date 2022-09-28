@@ -4,6 +4,7 @@
 #include "Resources/TextureConverter.hpp"
 #include "Resources/SolidSizeCreator.hpp"
 #include "Resources/SizeResourceCreator.hpp"
+#include "Resources/TTFontLoader.hpp"
 
 namespace unicore
 {
@@ -19,6 +20,8 @@ namespace unicore
 			cache->add_creator(std::make_shared<TextureSolidSizeCreator>(*renderer));
 			cache->add_creator(std::make_shared<DynamicTextureSizeCreator>(*renderer));
 			cache->add_creator(std::make_shared<TargetTextureSizeCreator>(*renderer));
+
+			cache->add_loader(std::make_shared<TTFontLoader>(*renderer));
 		}
 	}
 }
