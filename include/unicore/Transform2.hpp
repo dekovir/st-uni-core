@@ -35,6 +35,12 @@ namespace unicore
 
 		Transform2& operator*=(const Transform2& other);
 
+		void apply(Vector2f& vec) const
+		{
+			const auto mat = Matrix2f::transform(angle, scale);
+			vec = mat * vec + move;
+		}
+
 		static constexpr Transform2 moved(const Vector2f& move)
 		{
 			return Transform2(move);

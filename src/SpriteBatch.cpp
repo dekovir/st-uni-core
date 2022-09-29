@@ -2,6 +2,7 @@
 #include "unicore/Texture.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/Sprite.hpp"
+#include "unicore/Transform2.hpp"
 #include "unicore/RendererSDL.hpp"
 
 namespace unicore
@@ -318,6 +319,51 @@ namespace unicore
 				convert(quad.v[1], s_quad[1]);
 				convert(quad.v[2], s_quad[2]);
 				convert(quad.v[3], s_quad[3]);
+
+				draw_quad(s_quad);
+			}
+		}
+
+		return *this;
+	}
+
+	SpriteBatch& SpriteBatch::print(const Shared<Font>& font,
+		const Transform2& tr, WStringView text, const Color4b& color)
+	{
+		if (const auto textured = std::dynamic_pointer_cast<TexturedFont>(font))
+		{
+			s_quad_dict.clear();
+			textured->generate(VectorConst2f::Zero, text, color, s_quad_dict);
+
+			for (auto& [tex, quad_list] : s_quad_dict)
+			{
+				for (auto& quad : quad_list)
+				{
+					tr.apply(quad.v[0].pos);
+					tr.apply(quad.v[1].pos);
+					tr.apply(quad.v[2].pos);
+					tr.apply(quad.v[3].pos);
+					draw_quad(quad.v, tex);
+				}
+			}
+		}
+
+		if (const auto geometry = std::dynamic_pointer_cast<GeometryFont>(font))
+		{
+			s_quad_list.clear();
+			geometry->generate(VectorConst2f::Zero, text, color, s_quad_list);
+
+			for (const auto& quad : s_quad_list)
+			{
+				convert(quad.v[0], s_quad[0]);
+				convert(quad.v[1], s_quad[1]);
+				convert(quad.v[2], s_quad[2]);
+				convert(quad.v[3], s_quad[3]);
+
+				tr.apply(s_quad[0].pos);
+				tr.apply(s_quad[1].pos);
+				tr.apply(s_quad[2].pos);
+				tr.apply(s_quad[3].pos);
 
 				draw_quad(s_quad);
 			}

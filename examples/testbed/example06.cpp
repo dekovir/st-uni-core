@@ -49,6 +49,7 @@ namespace unicore
 		}
 
 		_sprite_batch.print({ _font, text, TextAlign::Center }, center_screen);
+		_sprite_batch.print(_font, Transform2({200, 600}, 45_rad, {2, 2}), L"Transformed text");
 		_sprite_batch.flush();
 	}
 

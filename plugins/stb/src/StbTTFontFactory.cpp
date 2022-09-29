@@ -58,7 +58,7 @@ namespace unicore
 				&_font_info, 0, scale, c, &w, &h, &xoff, &yoff);
 
 			item_bm[i] = bm;
-			item_size[i] = { w, h };
+			item_size[i] = { w + 2, h + 2 };
 			item_off[i] = { xoff, yoff };
 		}
 
@@ -82,7 +82,8 @@ namespace unicore
 
 		for (unsigned i = 0; i < char_count; i++)
 		{
-			const auto packed = item_packed[i];
+			const auto& r = item_packed[i];
+			const Recti packed = { r.x + 1, r.y + 1, r.w - 2, r.h - 2 };
 
 			// TODO: Optimize
 			for (int y = 0; y < packed.h; y++)
@@ -100,11 +101,11 @@ namespace unicore
 
 			int advance;
 			stbtt_GetCodepointHMetrics(&_font_info, options.chars[i], &advance, nullptr);
-			info.xadvance = advance * scale;
-			info.x0 = packed.min_x();
-			info.y0 = packed.min_y();
-			info.x1 = packed.max_x();
-			info.y1 = packed.max_y();
+			info.xadvance = scale * static_cast<Float>(advance);
+			info.x0 = static_cast<UInt16>(packed.min_x());
+			info.y0 = static_cast<UInt16>(packed.min_y());
+			info.x1 = static_cast<UInt16>(packed.max_x());
+			info.y1 = static_cast<UInt16>(packed.max_y());
 
 			params.infos[options.chars[i]] = info;
 		}
