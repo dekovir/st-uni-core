@@ -25,8 +25,8 @@ namespace unicore
 
 	void MyCore::on_init()
 	{
-		_font = resources.create<Font>(24);
-		//_font = resources.load<Font>(L"font_004.fnt"_path);
+		//_font = resources.create<Font>(24);
+		_font = resources.load<Font>(L"font_004.fnt"_path);
 		//_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
 
 		set_example(0);

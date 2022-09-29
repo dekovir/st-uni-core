@@ -10,7 +10,8 @@
 
 namespace unicore
 {
-	StbTTFontFactory::StbTTFontFactory(Renderer& renderer, const Shared<BinaryData>& data)
+	StbTTFontFactory::StbTTFontFactory(
+		Renderer& renderer, const Shared<BinaryData>& data)
 		: _renderer(renderer)
 		, _data(data)
 	{
@@ -23,7 +24,39 @@ namespace unicore
 		return sizeof(StbTTFontFactory) + _data->size();
 	}
 
-	Shared<TexturedFont> StbTTFontFactory::create_options(const Context& context, const TTFontOptions& options)
+	void StbTTFontFactory::get_font_metrics(
+		int* ascent, int* descent, int* line_gap) const
+	{
+		if (valid())
+			stbtt_GetFontVMetrics(&_font_info, ascent, descent, line_gap);
+	}
+
+	void StbTTFontFactory::get_codepoint_metrics(WChar c,
+		int* advance_width, int* left_side_bearing) const
+	{
+		stbtt_GetCodepointHMetrics(&_font_info,
+			c, advance_width, left_side_bearing);
+	}
+
+	static void bitmap_free(void* ptr)
+	{
+		stbtt_FreeBitmap(static_cast<unsigned char*>(ptr), nullptr);
+	}
+
+	MemoryChunk StbTTFontFactory::get_codepoint_bitmap(WChar c,
+		const Vector2f& scale, Vector2i& size, Vector2i* offset) const
+	{
+		const auto data = stbtt_GetCodepointBitmap(&_font_info,
+			scale.x, scale.y, c, &size.x, &size.y,
+			offset ? &offset->x : nullptr, offset ? &offset->y : nullptr);
+		if (data)
+			return MemoryChunk(data, size.x * size.y, &bitmap_free);
+
+		return {};
+	}
+
+	Shared<TexturedFont> StbTTFontFactory::create_options(
+		const Context& context, const TTFontOptions& options)
 	{
 		if (!valid()) return nullptr;
 
@@ -73,7 +106,8 @@ namespace unicore
 		Vector2i surface_size;
 
 		const auto start_size = packer.calc_start_size(item_size);
-		if (!packer.pack_optimize(item_size, item_packed, surface_size, { start_size, 16 }))
+		if (!packer.pack_optimize(item_size,
+			item_packed, surface_size, { start_size, 16 }))
 		{
 			UC_LOG_ERROR(context.logger) << "Failed to pack";
 			return nullptr;
