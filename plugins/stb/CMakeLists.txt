@@ -4,10 +4,11 @@ target_include_directories(stb INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/libs/stb")
 set_target_properties(stb PROPERTIES FOLDER "Libs")
 
 #unicore-stb
-option(UNICORE_STB_EASY_FONT "Add stb_easy_font implementation" ON)
-option(UNICORE_STB_IMAGE "Add stb_image implementation" ON)
-option(UNICORE_STB_RECT_PACK "Add stb_rect_pack implementation" OFF)
-option(UNICORE_STB_TRUETYPE "Add stb_truetype implementation" ON)
+option(UNICORE_STB_ALL "Add all stb" ON)
+option(UNICORE_STB_EASY_FONT "Add stb_easy_font implementation" ${UNICORE_STB_ALL})
+option(UNICORE_STB_IMAGE "Add stb_image implementation" ${UNICORE_STB_ALL})
+option(UNICORE_STB_RECT_PACK "Add stb_rect_pack implementation" ${UNICORE_STB_ALL})
+option(UNICORE_STB_TRUETYPE "Add stb_truetype implementation" ${UNICORE_STB_ALL})
 
 set(UNICORE_STB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(UNICORE_STB_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")
