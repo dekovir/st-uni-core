@@ -1,4 +1,5 @@
 #include "unicore/stb/StbPlugin.hpp"
+#include "unicore/Renderer.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "StbEasyFontCreator.hpp"
 #include "StbSurfaceLoader.hpp"
@@ -21,9 +22,12 @@ namespace unicore
 			cache->add_loader(std::make_shared<StbDynamicSurfaceLoader>());
 #endif
 
+			if (const auto renderer = context.modules.find<Renderer>())
+			{
 #if defined(UNICORE_USE_STB_TRUETYPE)
-			cache->add_loader(std::make_shared<StbTTFontFactoryLoader>());
+				cache->add_loader(std::make_shared<StbTTFontFactoryLoader>(*renderer));
 #endif
+			}
 		}
 	}
 }

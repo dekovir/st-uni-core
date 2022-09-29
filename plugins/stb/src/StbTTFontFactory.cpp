@@ -10,8 +10,9 @@
 
 namespace unicore
 {
-	StbTTFontFactory::StbTTFontFactory(const Shared<BinaryData>& data)
-		: _data(data)
+	StbTTFontFactory::StbTTFontFactory(Renderer& renderer, const Shared<BinaryData>& data)
+		: _renderer(renderer)
+		, _data(data)
 	{
 		_valid = stbtt_InitFont(&_font_info,
 			static_cast<const unsigned char*>(_data->data()), 0);
@@ -22,8 +23,7 @@ namespace unicore
 		return sizeof(StbTTFontFactory) + _data->size();
 	}
 
-	Shared<TexturedFont> StbTTFontFactory::create(
-		Renderer& renderer, const TTFontOptions& options, Logger* logger)
+	Shared<TexturedFont> StbTTFontFactory::create_options(const Context& context, const TTFontOptions& options)
 	{
 		if (!valid()) return nullptr;
 
@@ -71,7 +71,7 @@ namespace unicore
 		const auto start_size = packer.calc_start_size(item_size);
 		if (!packer.pack_optimize(item_size, item_packed, surface_size, { start_size, 16 }))
 		{
-			UC_LOG_ERROR(logger) << "Failed to pack";
+			UC_LOG_ERROR(context.logger) << "Failed to pack";
 			return nullptr;
 		}
 
@@ -110,7 +110,7 @@ namespace unicore
 			params.infos[options.chars[i]] = info;
 		}
 
-		params.texture = renderer.create_texture(font_surface);
+		params.texture = _renderer.create_texture(font_surface);
 
 		return std::make_shared<StbTTFont>(params);
 	}

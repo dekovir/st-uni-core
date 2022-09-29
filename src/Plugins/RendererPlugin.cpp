@@ -12,16 +12,19 @@ namespace unicore
 	{
 		Plugin::register_plugin(context);
 
-		if (auto [cache, renderer] = context.modules.finds<ResourceCache, Renderer>(); cache && renderer)
+		if (const auto cache = context.modules.find<ResourceCache>(); cache)
 		{
-			cache->add_converter(std::make_shared<TextureConverter>(*renderer));
-			cache->add_converter(std::make_shared<DynamicTextureConverter>(*renderer));
+			cache->add_loader(std::make_shared<TTFontLoader>());
 
-			cache->add_creator(std::make_shared<TextureSolidSizeCreator>(*renderer));
-			cache->add_creator(std::make_shared<DynamicTextureSizeCreator>(*renderer));
-			cache->add_creator(std::make_shared<TargetTextureSizeCreator>(*renderer));
+			if (const auto renderer = context.modules.find<Renderer>(); renderer)
+			{
+				cache->add_converter(std::make_shared<TextureConverter>(*renderer));
+				cache->add_converter(std::make_shared<DynamicTextureConverter>(*renderer));
 
-			cache->add_loader(std::make_shared<TTFontLoader>(*renderer));
+				cache->add_creator(std::make_shared<TextureSolidSizeCreator>(*renderer));
+				cache->add_creator(std::make_shared<DynamicTextureSizeCreator>(*renderer));
+				cache->add_creator(std::make_shared<TargetTextureSizeCreator>(*renderer));
+			}
 		}
 	}
 }

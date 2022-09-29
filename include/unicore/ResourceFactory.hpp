@@ -28,17 +28,23 @@ namespace unicore
 
 		UC_NODISCARD Shared<Resource> create(const Context& context) override
 		{
-			if (context.options == nullptr)
-				return create_default(context.logger);
+			if (context.options != nullptr)
+			{
+				auto data = dynamic_cast<const TOptions*>(context.options);
+				if (data == nullptr)
+					return nullptr;
 
-			auto data = dynamic_cast<const TOptions*>(context.options);
-			if (data == nullptr)
-				return nullptr;
+				return create_options(context, *data);
+			}
 
-			return create_options(context, *data);
+			return create_default({ nullptr, context.logger });
 		}
 
-		UC_NODISCARD virtual Shared<TResource> create_default(Logger* logger) = 0;
+		UC_NODISCARD virtual Shared<TResource> create_default(const Context& context)
+		{
+			return create_options(context, {});
+		}
+
 		UC_NODISCARD virtual Shared<TResource> create_options(const Context& context, const TOptions& options) = 0;
 	};
 }

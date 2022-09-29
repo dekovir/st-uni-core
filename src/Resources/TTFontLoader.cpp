@@ -5,9 +5,8 @@
 
 namespace unicore
 {
-	TTFontLoader::TTFontLoader(Renderer& renderer)
+	TTFontLoader::TTFontLoader()
 		: ResourceLoaderT({ L".ttf" })
-		, _renderer(renderer)
 	{
 	}
 
@@ -21,10 +20,10 @@ namespace unicore
 			return nullptr;
 		}
 
-		if (const auto data = dynamic_cast<const TTFontOptions*>(context.options))
-			return factory->create(_renderer, *data, context.logger);
+		if (const auto options = dynamic_cast<const TTFontOptions*>(context.options))
+			return factory->create_options({ context.options, context.logger }, *options);
 
 		const TTFontOptions params;
-		return factory->create(_renderer, params, context.logger);
+		return factory->create_default({ nullptr, context.logger });
 	}
 }
