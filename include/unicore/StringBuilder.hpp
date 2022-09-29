@@ -40,6 +40,25 @@ namespace unicore
 			return Unicode::to_wcs(builder.data);
 		}
 
+		static String quoted(StringView text, Char delim = '\"')
+		{
+			StringBuilder builder;
+			builder.append(delim);
+			builder.append(text);
+			builder.append(delim);
+			return builder.data;
+		}
+
+		static WString quoted(WStringView text, WChar delim = '\"')
+		{
+			// TODO: Optimize (Rewrite without Unicode methods)
+			StringBuilder builder;
+			builder.append(delim);
+			builder.append(text);
+			builder.append(delim);
+			return Unicode::to_wcs(builder.data);
+		}
+
 	protected:
 		static constexpr StringView Elem = "{}";
 

@@ -1,4 +1,4 @@
-#include "example06.hpp"
+﻿#include "example06.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/ResourceCache.hpp"
@@ -20,10 +20,8 @@ namespace unicore
 		//_font = resources.load<Font>(L"font_004.fnt"_path);
 		//_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
 
-		TTFontOptions options;
-		options.height = 32;
-		options.chars = (CharTable::Ascii + CharTable::Russian).view();
-		_font = resources.load<Font>(L"ubuntu.regular.ttf"_path, options);
+		_font = resources.load<Font>(L"ubuntu.regular.ttf"_path,
+			TTFontOptions{ 32, (CharTable::Ascii + CharTable::Russian).view() });
 	}
 
 	void Example06::update()
@@ -49,7 +47,8 @@ namespace unicore
 		}
 
 		_sprite_batch.print({ _font, text, TextAlign::Center }, center_screen);
-		_sprite_batch.print(_font, Transform2({200, 600}, 45_rad, {2, 2}), L"Transformed text");
+		_sprite_batch.print(_font, Transform2({ 200, 600 }, 45_rad, { 2, 2 }), L"Transformed text");
+		_sprite_batch.print(_font, {100, 100}, L"Привет мир!");
 		_sprite_batch.flush();
 	}
 

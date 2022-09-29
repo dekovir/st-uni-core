@@ -39,6 +39,16 @@ namespace unicore
 		float height = 16;
 		WStringView chars = CharTable::Ascii.view();
 
+		TTFontOptions() = default;
+
+		explicit TTFontOptions(float height_)
+			: height(height_)
+		{}
+
+		TTFontOptions(float height_, WStringView chars_)
+			: height(height_), chars(chars_)
+		{}
+
 		UC_NODISCARD size_t hash() const override
 		{
 			return Math::hash(height, chars);

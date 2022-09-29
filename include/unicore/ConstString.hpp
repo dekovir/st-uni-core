@@ -202,5 +202,7 @@ namespace unicore
 		static constexpr auto English = Alpha;
 		static constexpr auto Russian =
 			make_const_string(L"АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя");
+
+		// https://www.cogsci.ed.ac.uk/~richard/unicode-sample-3-2.html
 	}
 }

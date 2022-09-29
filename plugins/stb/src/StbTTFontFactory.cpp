@@ -43,15 +43,19 @@ namespace unicore
 		//const auto baseline = Math::round_to_int(scale * static_cast<float>(ascent));
 		params.height = options.height;
 
+		// REMOVE DUPLICATES
+		Set<WChar> chars_set(options.chars.begin(), options.chars.end());
+		List<WChar> chars(chars_set.begin(), chars_set.end());
+
 		// GENERATE CHAR BITMAPS
-		const size_t char_count = options.chars.size();
+		const size_t char_count = chars.size();
 		List<unsigned char*> item_bm(char_count);
 		List<Vector2i> item_size(char_count);
 		List<Vector2i> item_off(char_count);
 
 		for (unsigned i = 0; i < char_count; i++)
 		{
-			const auto c = options.chars[i];
+			const auto c = chars[i];
 
 			int w, h, xoff, yoff;
 			auto bm = stbtt_GetCodepointBitmap(
@@ -100,14 +104,14 @@ namespace unicore
 			info.yoff = static_cast<float>(item_off[i].y);
 
 			int advance;
-			stbtt_GetCodepointHMetrics(&_font_info, options.chars[i], &advance, nullptr);
+			stbtt_GetCodepointHMetrics(&_font_info, chars[i], &advance, nullptr);
 			info.xadvance = scale * static_cast<Float>(advance);
 			info.x0 = static_cast<UInt16>(packed.min_x());
 			info.y0 = static_cast<UInt16>(packed.min_y());
 			info.x1 = static_cast<UInt16>(packed.max_x());
 			info.y1 = static_cast<UInt16>(packed.max_y());
 
-			params.infos[options.chars[i]] = info;
+			params.infos[chars[i]] = info;
 		}
 
 		params.texture = _renderer.create_texture(font_surface);
