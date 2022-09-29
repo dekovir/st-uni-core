@@ -9,6 +9,7 @@ namespace unicore
 		UC_OBJECT(StbEasyFont, GeometryFont)
 	public:
 		StbEasyFont();
+		explicit StbEasyFont(float height);
 
 		UC_NODISCARD size_t get_system_memory_use() const override;
 
@@ -21,6 +22,9 @@ namespace unicore
 
 	protected:
 		const float _height;
+		const float _scale;
+
+		static int internal_calc_height();
 	};
 }
 #endif

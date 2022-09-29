@@ -1,7 +1,7 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/SpriteBatch.hpp"
 #include "unicore/TimeSpan.hpp"
+#include "unicore/SpriteBatch.hpp"
 
 namespace unicore
 {
@@ -30,9 +30,10 @@ namespace unicore
 		void update() override;
 		void draw() const override;
 
+		void get_text(List<WString>& lines) override;
+
 	protected:
 		Shared<Texture> _tex;
-		Shared<Font> _font;
 
 		SpriteBatch _sprite_batch;
 		List<Entity> _entites;

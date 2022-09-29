@@ -17,7 +17,14 @@ namespace unicore
 	static Vertex s_quads[BUFFER_SIZE];
 
 	StbEasyFont::StbEasyFont()
-		: _height(static_cast<float>(stb_easy_font_height((char*)"W")))
+		: _height(static_cast<float>(internal_calc_height()))
+		, _scale(1)
+	{
+	}
+
+	StbEasyFont::StbEasyFont(float height)
+		: _height(height)
+		, _scale(height / static_cast<float>(internal_calc_height()))
 	{
 	}
 
@@ -29,7 +36,7 @@ namespace unicore
 	float StbEasyFont::calc_width(WStringView text) const
 	{
 		const auto str = Unicode::to_utf8(text);
-		return static_cast<float>(stb_easy_font_width(const_cast<char*>(str.data())));
+		return _scale * static_cast<float>(stb_easy_font_width(const_cast<char*>(str.data())));
 	}
 
 	size_t StbEasyFont::generate(const Vector2f& position, WStringView text,
@@ -37,20 +44,25 @@ namespace unicore
 	{
 		const auto str = Unicode::to_utf8(text);
 		const auto num_quads = stb_easy_font_print(
-			position.x, position.y, const_cast<char*>(str.data()),
+			0, 0, const_cast<char*>(str.data()),
 			nullptr, s_quads, BUFFER_SIZE * sizeof(Vertex));
 
 		for (auto i = 0; i < num_quads; i++)
 		{
 			VertexColorQuad2 quad;
-			quad.v[0] = { s_quads[i * 4 + 0].pos, color };
-			quad.v[1] = { s_quads[i * 4 + 1].pos, color };
-			quad.v[2] = { s_quads[i * 4 + 2].pos, color };
-			quad.v[3] = { s_quads[i * 4 + 3].pos, color };
+			quad.v[0] = { position + s_quads[i * 4 + 0].pos * _scale, color };
+			quad.v[1] = { position + s_quads[i * 4 + 1].pos * _scale, color };
+			quad.v[2] = { position + s_quads[i * 4 + 2].pos * _scale, color };
+			quad.v[3] = { position + s_quads[i * 4 + 3].pos * _scale, color };
 			quad_list.emplace_back(quad);
 		}
 
 		return num_quads;
+	}
+
+	int StbEasyFont::internal_calc_height()
+	{
+		return stb_easy_font_height((char*)"W");
 	}
 }
 #endif

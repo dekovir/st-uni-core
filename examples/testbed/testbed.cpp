@@ -25,9 +25,9 @@ namespace unicore
 
 	void MyCore::on_init()
 	{
-		//_font = resources.create<Font>(42);
+		_font = resources.create<Font>(24);
 		//_font = resources.load<Font>(L"font_004.fnt"_path);
-		_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
+		//_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
 
 		set_example(0);
 	}
@@ -61,21 +61,36 @@ namespace unicore
 
 		// SPRITE BATCH ////////////////////////////////////////////////////////////
 		const auto screen_size = renderer.screen_size();
+		const auto& example_info = examples[_example_index];
 
-		const auto title_str = StringBuilder::format(L"Example: {}", examples[_example_index].title);
+		const auto title_str = StringBuilder::format(L"Example: {}", example_info.title);
 		const auto fps_str = StringBuilder::format(L"FPS: {}", fps());
 		const auto draw_str = StringBuilder::format(L"Draw: {}", _draw_calls);
 		const auto screen_str = StringBuilder::format(L"Screen: {}", screen_size);
 
+		_lines.clear();
+		_example->get_text(_lines);
+
 		if (_font)
 		{
+			const float height = _font->get_height();
+
 			_sprite_batch
 				.clear()
 				.print(_font, { 0, 0 }, fps_str)
-				.print(_font, { 200, 0 }, title_str)
-				.print(_font, { 0, _font->get_height() * 1 }, draw_str)
-				.print(_font, { 0, _font->get_height() * 2 }, screen_str)
-				.flush();
+				.print(_font, { 0, height * 1 }, draw_str)
+				.print(_font, { 0, height * 2 }, screen_str);
+
+			_sprite_batch
+				.print(_font, { 250, 0 }, title_str);
+
+			for (unsigned i = 0; i < _lines.size(); i++)
+			{
+				_sprite_batch
+					.print(_font, { 250, height * (i + 1) }, _lines[i]);
+			}
+
+			_sprite_batch.flush();
 		}
 	}
 

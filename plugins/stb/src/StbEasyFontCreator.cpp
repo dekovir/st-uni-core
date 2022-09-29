@@ -4,7 +4,7 @@ namespace unicore
 {
 	Shared<StbEasyFont> StbEasyFontCreator::create_from_data(const Options& context, const int& data)
 	{
-		return std::make_shared<StbEasyFont>();
+		return std::make_shared<StbEasyFont>(data);
 	}
 }
 #endif

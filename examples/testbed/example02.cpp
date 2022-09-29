@@ -1,7 +1,6 @@
 #include "example02.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
-#include "unicore/Font.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/StringBuilder.hpp"
@@ -33,7 +32,6 @@ namespace unicore
 
 	Example02::Example02(const ExampleContext& context)
 		: Example(context)
-		, _font(context.font)
 	{
 	}
 
@@ -73,8 +71,6 @@ namespace unicore
 			entity.update(screen_size, delta);
 
 		// UPDATE SPRITE BATCH /////////////////////////////////////////////////////
-		const auto count_str = StringBuilder::format(L"Count: {}", _entites.size());
-
 		auto& size = renderer.screen_size();
 		_sprite_batch.clear();
 
@@ -82,15 +78,17 @@ namespace unicore
 			_sprite_batch.draw(_tex, entity.center, entity.angle, entity.scale, entity.color);
 		_sprite_batch.draw(_tex, { static_cast<float>(size.x) - 32, 32 });
 
-		if (_font)
-			_sprite_batch.print(_font, { 200, _font->get_height() }, count_str);
-
 		_sprite_batch.flush();
 	}
 
 	void Example02::draw() const
 	{
 		_sprite_batch.render(renderer);
+	}
+
+	void Example02::get_text(List<WString>& lines)
+	{
+		lines.push_back(StringBuilder::format(L"Count: {}", _entites.size()));
 	}
 
 	void Example02::spawn_entity(const Vector2f& position, const Vector2i& size)
