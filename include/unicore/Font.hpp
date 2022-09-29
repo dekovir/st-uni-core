@@ -37,6 +37,7 @@ namespace unicore
 	{
 	public:
 		float height = 16;
+		// TODO: Replace to Set
 		WStringView chars = CharTable::Ascii.view();
 
 		TTFontOptions() = default;
