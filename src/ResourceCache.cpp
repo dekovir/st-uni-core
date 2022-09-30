@@ -73,16 +73,8 @@ namespace unicore
 		TypeConstRef type, const ResourceOptions* options) const
 	{
 		const size_t hash = make_hash(path, options);
-		const auto range = _cached.equal_range(hash);
-		for (auto it = range.first; it != range.second; ++it)
-		{
-			auto& info = it->second;
-			auto res_type = info.resource->type();
-			if (res_type.is_derived_from(type))
-				return info.resource;
-		}
-
-		return nullptr;
+		const auto info = internal_find(type, hash);
+		return info ? info->resource : nullptr;
 	}
 
 	Optional<Path> ResourceCache::find_path(const Resource& resource) const
@@ -105,8 +97,9 @@ namespace unicore
 	Shared<Resource> ResourceCache::load(const Path& path,
 		TypeConstRef type, const ResourceOptions* options, ResourceCacheFlags flags)
 	{
-		if (auto resource_find = find(path, type, options))
-			return resource_find;
+		const size_t hash = make_hash(path, options);
+		if (const auto cached_info = internal_find(type, hash))
+			return cached_info->resource;
 
 		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;
 
@@ -135,7 +128,7 @@ namespace unicore
 					<< " " << MemorySize{ resource->get_system_memory_use() };
 
 				_resources.push_back(resource);
-				add_resource(resource, path, options);
+				internal_add(resource, path, options, hash);
 
 				return resource;
 			}
@@ -220,19 +213,33 @@ namespace unicore
 	}
 
 	// ============================================================================
-	bool ResourceCache::LoaderSort::operator()(const Shared<ResourceLoader>& lhs, const Shared<ResourceLoader>& rhs) const
+	bool ResourceCache::LoaderSort::operator()(
+		const Shared<ResourceLoader>& lhs, const Shared<ResourceLoader>& rhs) const
 	{
 		if (lhs->priority() == rhs->priority())
 			return lhs < rhs;
 		return lhs->priority() < rhs->priority();
 	}
 
-	bool ResourceCache::add_resource(const Shared<Resource>& resource,
-		const Path& path, const ResourceOptions* options)
+	const ResourceCache::CachedInfo* ResourceCache::internal_find(TypeConstRef type, size_t hash) const
+	{
+		const auto range = _cached.equal_range(hash);
+		for (auto it = range.first; it != range.second; ++it)
+		{
+			auto& info = it->second;
+			auto res_type = info.resource->type();
+			if (res_type.is_derived_from(type))
+				return &info;
+		}
+
+		return nullptr;
+	}
+
+	bool ResourceCache::internal_add(const Shared<Resource>& resource,
+		const Path& path, const ResourceOptions* options, size_t hash)
 	{
 		if (resource->cache_policy() == ResourceCachePolicy::CanCache)
 		{
-			const auto hash = make_hash(path, options);
 			CachedInfo info{ resource, path };
 			_cached.emplace(hash, info);
 

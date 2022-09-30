@@ -93,14 +93,16 @@ namespace unicore
 		{
 			Shared<Resource> resource;
 			Path path;
-			//Shared<ResourceOptions> options;
+			//? Shared<ResourceOptions> options;
 		};
 
 		List<Weak<Resource>> _resources;
 		DictionaryMulti<size_t, CachedInfo> _cached;
 
-		bool add_resource(const Shared<Resource>& resource,
-			const Path& path, const ResourceOptions* options);
+		UC_NODISCARD const CachedInfo* internal_find(TypeConstRef type, size_t hash) const;
+
+		bool internal_add(const Shared<Resource>& resource,
+			const Path& path, const ResourceOptions* options, size_t hash);
 
 		static size_t make_hash(const Path& path, const ResourceOptions* options);
 	};
