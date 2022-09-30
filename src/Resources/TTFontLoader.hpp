@@ -4,13 +4,12 @@
 
 namespace unicore
 {
-	class TTFontLoader : public ResourceLoaderT<TexturedFont>
+	class TTFontLoader : public ResourceLoaderTypeOptions<TexturedFont, TTFontOptions>
 	{
 	public:
 		TTFontLoader();
 
-		UC_NODISCARD const TypeInfo* data_type() const override { return &typeid(TTFontOptions); }
-
-		UC_NODISCARD Shared<Resource> load(const Context& context) override;
+		UC_NODISCARD Shared<Resource> load_options(
+			const Context& context, const TTFontOptions& options) override;
 	};
 }

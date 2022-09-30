@@ -137,8 +137,8 @@ namespace unicore
 
 	void Example05::load(ResourceCache& resources)
 	{
-		_tiles = resources.create<SpriteList>(
-			CreateResource::TileSet{ L"tiles.png"_path, Vector2i(16) });
+		_tiles = resources.load<SpriteList>(L"tiles.png"_path,
+			TileSetOptions{ Vector2i(16) });
 
 		Canvas canvas(_map);
 

@@ -5,8 +5,6 @@
 #include "unicore/FileProvider.hpp"
 #include "unicore/RendererResource.hpp"
 #include "unicore/ResourceLoader.hpp"
-#include "unicore/ResourceCreator.hpp"
-#include "unicore/ResourceConverter.hpp"
 
 namespace unicore
 {
@@ -120,45 +118,22 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	Shared<Resource> ResourceCache::create(TypeConstRef type, const Any& value)
+	Shared<ReadFile> ResourceCache::open_read(const Path& path, bool quiet)
 	{
-		if (value.type() == typeid(Path))
+		auto file = _provider.open_read(path);
+		if (!file)
 		{
-			const auto path = std::any_cast<Path>(value);
-			return load(path, type, nullptr, ResourceCacheFlags::Zero);
-		}
-
-		const auto it = _creators.find(&type);
-		if (it == _creators.end())
-		{
-			UC_LOG_WARNING(_logger) << "No creator added for " << type;
+			if (!quiet)
+				UC_LOG_ERROR(_logger) << "Failed to open_read" << path;
 			return nullptr;
 		}
 
-		const ResourceCreator::Options context{ *this, &_logger };
+		return file;
+	}
 
-		for (const auto& creator : it->second)
-		{
-			if (!creator->can_create(value))
-				continue;
-
-			if (auto resource = creator->create(context, value); resource != nullptr)
-			{
-				UC_LOG_DEBUG(_logger) << "Created " << type << " from " << value.type().name()
-					<< " " << MemorySize{ resource->get_system_memory_use() };
-				_resources.push_back(resource);
-				return resource;
-			}
-
-			UC_LOG_ERROR(_logger) << "Failed to load " << type
-				<< " with creator " << creator->type()
-				<< " with value" << value.type();
-		}
-
-		UC_LOG_WARNING(_logger) << "No " << type << " creator found for '"
-			<< value.type().name() << "' value type";
-
-		return nullptr;
+	Shared<Resource> ResourceCache::create(TypeConstRef type, const ResourceOptions& options)
+	{
+		return load(Path::Empty, type, &options, ResourceCacheFlags::Zero);
 	}
 
 	Shared<Resource> ResourceCache::load(const Path& path,
@@ -169,29 +144,36 @@ namespace unicore
 
 		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;
 
-		if (auto resource = load_resource(path, type, options, flags, logger))
-			return resource;
-
-		if (const auto it = _converters.find(&type); it != _converters.end())
+		const auto it = _loaders.find(&type);
+		if (it == _loaders.end())
 		{
-			for (const auto& converter : it->second)
-			{
-				// TODO: Handle cyclic loading
-				if (auto raw = load(path, converter->raw_type(), options, flags))
-				{
-					if (auto resource = converter->convert(*raw, { *this, logger }))
-					{
-						// TODO: Optimize (get path directly from load function)
-						const auto converted_path = find_path(*raw);
-						_resources.push_back(resource);
-						add_resource(resource, converted_path.value_or(path), options);
-						return resource;
-					}
-				}
-			}
+			UC_LOG_ERROR(logger) << "No loaders for " << type;
+			return nullptr;
 		}
 
-		UC_LOG_WARNING(logger) << "Failed to load " << type << " from " << path;
+		// TODO: Implement loading stack for prevent recursive loading
+		const auto& loaders = it->second;
+		const auto extension = path.extension();
+		for (const auto& loader : loaders)
+		{
+			if (!flags.has(ResourceCacheFlag::IgnoreExtension) && !loader->can_load(path))
+				continue;
+
+			if (!loader->can_load(options))
+				continue;
+
+			if (auto resource = loader->load({ *this, path, options, logger }))
+			{
+				_resources.push_back(resource);
+				add_resource(resource, path, options);
+
+				return resource;
+			}
+
+			UC_LOG_ERROR(logger) << "Failed to load " << type << " with loader";
+		}
+
+		UC_LOG_ERROR(logger) << "Failed to load " << type << " from " << path;
 		return nullptr;
 	}
 
@@ -258,24 +240,11 @@ namespace unicore
 		}
 	}
 
-	void ResourceCache::add_converter(const Shared<ResourceConverter>& converter)
-	{
-		_converters[&converter->resource_type()].insert(converter);
-	}
-
-	void ResourceCache::add_creator(const Shared<ResourceCreator>& creator)
-	{
-		for (auto type = &creator->resource_type(); type != nullptr && type != &s_resource_type; type = type->parent)
-			_creators[type].insert(creator);
-	}
-
 	void ResourceCache::unregister_module(const ModuleContext& context)
 	{
 		Module::unregister_module(context);
 
 		_loaders.clear();
-		_converters.clear();
-		_creators.clear();
 
 		unload_all();
 	}
@@ -286,84 +255,6 @@ namespace unicore
 		if (lhs->priority() == rhs->priority())
 			return lhs < rhs;
 		return lhs->priority() < rhs->priority();
-	}
-
-	bool ResourceCache::CreatorSort::operator()(const Shared<ResourceCreator>& lhs, const Shared<ResourceCreator>& rhs) const
-	{
-		if (lhs->priority() == rhs->priority())
-			return lhs < rhs;
-		return lhs->priority() < rhs->priority();
-	}
-
-	Shared<Resource> ResourceCache::load_resource(const Path& path, TypeConstRef type,
-		const ResourceOptions* options, ResourceCacheFlags flags, Logger* logger)
-	{
-		const auto it = _loaders.find(&type);
-		if (it == _loaders.end()) return nullptr;
-
-		//const TypeInfo* data_type = options ? &typeid(*options) : nullptr;
-
-		const auto& loaders = it->second;
-		// TODO: Implement loading stack for prevent recursive loading
-		if (path.has_extension(Path::WildcardExt))
-		{
-			for (const auto& loader : loaders)
-			{
-				for (const auto& extension : loader->extension())
-				{
-					Path new_path(path);
-					new_path.replace_extension(extension);
-
-					const auto stream = _provider.open_read(new_path);
-					if (!stream)
-						continue;
-
-					if (auto resource = load_resource(*loader, new_path, *stream, options, logger))
-						return resource;
-				}
-			}
-		}
-		else
-		{
-			const auto stream = _provider.open_read(path);
-			if (!stream)
-			{
-				UC_LOG_WARNING(logger) << "Failed to open " << path;
-				return nullptr;
-			}
-
-			const auto extension = path.extension();
-			for (const auto& loader : loaders)
-			{
-				if (!flags.has(ResourceCacheFlag::IgnoreExtension) && !linq::from(loader->extension())
-					.any([&extension](const WStringView ext) -> bool { return extension == ext; }))
-					continue;
-
-				//const auto& data_types = loader->data_types();
-				//if (!data_types.empty() && !linq::from(data_types)
-				//	.any([&data_type](const TypeIndex type) { return data_type == type; }))
-				//	continue;
-
-				if (auto resource = load_resource(*loader, path, *stream, options, logger))
-					return resource;
-			}
-		}
-
-		return nullptr;
-	}
-
-	Shared<Resource> ResourceCache::load_resource(ResourceLoader& loader,
-		const Path& path, ReadFile& file, const ResourceOptions* options, Logger* logger)
-	{
-		if (auto resource = loader.load({ path, *this, file, options, logger }))
-		{
-			_resources.push_back(resource);
-			add_resource(resource, path, options);
-
-			return resource;
-		}
-
-		return nullptr;
 	}
 
 	bool ResourceCache::add_resource(const Shared<Resource>& resource,

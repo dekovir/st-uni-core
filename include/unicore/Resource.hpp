@@ -27,6 +27,12 @@ namespace unicore
 		UC_NODISCARD virtual size_t hash() const = 0;
 	};
 
+	class EmptyResourceOptions : public ResourceOptions
+	{
+	public:
+		UC_NODISCARD size_t hash() const override { return 0; }
+	};
+
 	template<typename T,
 		std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
 	class ResourceList : public Resource

@@ -10,8 +10,6 @@ namespace unicore
 	class Context;
 
 	class ResourceLoader;
-	class ResourceConverter;
-	class ResourceCreator;
 
 	class ReadFile;
 	class ReadFileProvider;
@@ -43,15 +41,27 @@ namespace unicore
 			return std::dynamic_pointer_cast<T>(find(path, get_type<T>()));
 		}
 
-		Shared<Resource> create(TypeConstRef type, const Any& value);
+		// FILES /////////////////////////////////////////////////////////////////////
+		Shared<ReadFile> open_read(const Path& path, bool quiet = false);
+
+		// CREATE ////////////////////////////////////////////////////////////////////
+		Shared<Resource> create(TypeConstRef type, const ResourceOptions& options);
 
 		template<typename T,
 			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-		Shared<T> create(const std::any& value)
+		Shared<T> create()
 		{
-			return std::dynamic_pointer_cast<T>(create(get_type<T>(), value));
+			return std::dynamic_pointer_cast<T>(create(get_type<T>(), EmptyResourceOptions{}));
 		}
 
+		template<typename T,
+			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
+		Shared<T> create(const ResourceOptions& options)
+		{
+			return std::dynamic_pointer_cast<T>(create(get_type<T>(), options));
+		}
+
+		// LOAD //////////////////////////////////////////////////////////////////////
 		Shared<Resource> load(const Path& path, TypeConstRef type,
 			const ResourceOptions* options, ResourceCacheFlags flags);
 
@@ -74,8 +84,6 @@ namespace unicore
 		void calc_memory_use(size_t* system, size_t* video) const;
 
 		void add_loader(const Shared<ResourceLoader>& loader);
-		void add_converter(const Shared<ResourceConverter>& converter);
-		void add_creator(const Shared<ResourceCreator>& creator);
 
 		void unregister_module(const ModuleContext& context) override;
 
@@ -85,17 +93,10 @@ namespace unicore
 			bool operator()(const Shared<ResourceLoader>& lhs, const Shared<ResourceLoader>& rhs) const;
 		};
 
-		struct CreatorSort
-		{
-			bool operator()(const Shared<ResourceCreator>& lhs, const Shared<ResourceCreator>& rhs) const;
-		};
-
 		Logger& _logger;
 		ReadFileProvider& _provider;
 
 		Dictionary<TypeConstPtr, Set<Shared<ResourceLoader>, LoaderSort>> _loaders;
-		Dictionary<TypeConstPtr, Set<Shared<ResourceConverter>>> _converters;
-		Dictionary<TypeConstPtr, Set<Shared<ResourceCreator>, CreatorSort>> _creators;
 
 		struct CachedInfo
 		{
@@ -106,12 +107,6 @@ namespace unicore
 
 		List<Weak<Resource>> _resources;
 		DictionaryMulti<size_t, CachedInfo> _cached;
-
-		Shared<Resource> load_resource(const Path& path, TypeConstRef type,
-			const ResourceOptions* options, ResourceCacheFlags flags, Logger* logger);
-
-		Shared<Resource> load_resource(ResourceLoader& loader, const Path& path,
-			ReadFile& file, const ResourceOptions* options, Logger* logger);
 
 		bool add_resource(const Shared<Resource>& resource,
 			const Path& path, const ResourceOptions* options);

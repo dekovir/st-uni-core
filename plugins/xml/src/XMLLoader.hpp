@@ -4,7 +4,7 @@
 
 namespace unicore
 {
-	class XMLDataLoader : public ResourceLoaderT<XMLData>
+	class XMLDataLoader : public ResourceLoaderType<XMLData>
 	{
 	public:
 		XMLDataLoader();

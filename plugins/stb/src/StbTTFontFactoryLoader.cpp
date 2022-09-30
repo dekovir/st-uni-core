@@ -1,20 +1,26 @@
 #include "StbTTFontFactoryLoader.hpp"
 #if defined(UNICORE_USE_STB_TRUETYPE)
+#include "unicore/ResourceCache.hpp"
+
 namespace unicore
 {
 	StbTTFontFactoryLoader::StbTTFontFactoryLoader(Renderer& renderer)
-		: ResourceLoaderT({ L".ttf" })
+		: ResourceLoaderType({ L".ttf" })
 		, _renderer(renderer)
 	{
 	}
 
-	Shared<Resource> StbTTFontFactoryLoader::load(const Context& options)
+	Shared<Resource> StbTTFontFactoryLoader::load(const Context& context)
 	{
-		auto data = options.file.as_data();
+		// TODO: Log open_read failed
+		const auto file = context.cache.open_read(context.path);
+		if (!file) return nullptr;
+
+		auto data = file->as_data();
 		auto factory = std::make_shared<StbTTFontFactory>(_renderer, data);
 		if (!factory->valid())
 		{
-			UC_LOG_ERROR(options.logger) << "Failed to load font from" << options.path;
+			UC_LOG_ERROR(context.logger) << "Failed to load font from" << context.path;
 			return nullptr;
 		}
 

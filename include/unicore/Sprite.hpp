@@ -1,23 +1,21 @@
 #pragma once
 #include "unicore/Resource.hpp"
 #include "unicore/Rect.hpp"
-#include "unicore/Path.hpp"
 
 namespace unicore
 {
 	class Texture;
 
-	namespace CreateResource
+	class TileSetOptions : public ResourceOptions
 	{
-		template<typename T>
-		using PathOrValue = Variant<Path, T>;
+	public:
+		Vector2i tile = Vector2i(32, 32);
 
-		struct TileSet
-		{
-			PathOrValue<Shared<Texture>> texture;
-			Vector2i tile;
-		};
-	}
+		TileSetOptions() = default;
+		explicit TileSetOptions(const Vector2i& tile_) : tile(tile_) {}
+
+		UC_NODISCARD size_t hash() const override { return Math::hash(tile); }
+	};
 
 	// TODO: Do we need virtual methods?
 	class Sprite : public Resource

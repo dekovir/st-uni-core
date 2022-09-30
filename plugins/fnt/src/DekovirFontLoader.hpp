@@ -4,7 +4,7 @@
 
 namespace unicore
 {
-	class DekovirFontLoader : public ResourceLoaderT<BitmapFont>
+	class DekovirFontLoader : public ResourceLoaderType<BitmapFont>
 	{
 	public:
 		DekovirFontLoader();

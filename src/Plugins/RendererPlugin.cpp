@@ -1,9 +1,8 @@
 #include "unicore/plugins/RendererPlugin.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Renderer.hpp"
-#include "Resources/TextureConverter.hpp"
-#include "Resources/SolidSizeCreator.hpp"
-#include "Resources/SizeResourceCreator.hpp"
+#include "Resources/TextureLoader.hpp"
+#include "Resources/SolidSizeLoader.hpp"
 #include "Resources/TTFontLoader.hpp"
 
 namespace unicore
@@ -18,12 +17,9 @@ namespace unicore
 
 			if (const auto renderer = context.modules.find<Renderer>(); renderer)
 			{
-				cache->add_converter(std::make_shared<TextureConverter>(*renderer));
-				cache->add_converter(std::make_shared<DynamicTextureConverter>(*renderer));
-
-				cache->add_creator(std::make_shared<TextureSolidSizeCreator>(*renderer));
-				cache->add_creator(std::make_shared<DynamicTextureSizeCreator>(*renderer));
-				cache->add_creator(std::make_shared<TargetTextureSizeCreator>(*renderer));
+				cache->add_loader(std::make_shared<TextureLoader>(*renderer));
+				cache->add_loader(std::make_shared<DynamicTextureLoader>(*renderer));
+				cache->add_loader(std::make_shared<TextureSolidSizeLoader>(*renderer));
 			}
 		}
 	}

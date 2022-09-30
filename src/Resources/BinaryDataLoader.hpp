@@ -4,11 +4,11 @@
 
 namespace unicore
 {
-	class BinaryDataLoader : public ResourceLoaderT<BinaryData>
+	class BinaryDataLoader : public ResourceLoaderType<BinaryData>
 	{
-		UC_OBJECT(BinaryDataLoader, ResourceLoaderT)
+		UC_OBJECT(BinaryDataLoader, ResourceLoaderType)
 	public:
 		BinaryDataLoader();
-		UC_NODISCARD Shared<Resource> load(const Context& options) override;
+		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 }

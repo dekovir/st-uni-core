@@ -5,7 +5,7 @@
 namespace unicore
 {
 	DekovirFontLoader::DekovirFontLoader()
-		: ResourceLoaderT({ L".fnt" })
+		: ResourceLoaderType({ L".fnt" })
 	{
 	}
 
@@ -20,7 +20,7 @@ namespace unicore
 		}
 
 		Path texture_path(options.path);
-		texture_path.replace_extension(Path::WildcardExt);
+		texture_path.replace_extension(L".png");
 
 		const auto texture = options.cache.load<Texture>(texture_path);
 		if (!texture)

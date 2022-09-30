@@ -5,36 +5,44 @@
 namespace unicore
 {
 	TextDataLoader::TextDataLoader()
-		: ResourceLoaderT({ L".txt" })
+		: ResourceLoaderType({ L".txt" })
 	{
 	}
 
-	Shared<Resource> TextDataLoader::load(const Context& options)
+	Shared<Resource> TextDataLoader::load(const Context& context)
 	{
-		options.file.seek(0);
-		const auto size = options.file.size();
+		// TODO: Log open_read failed
+		const auto file = context.cache.open_read(context.path);
+		if (!file) return nullptr;
+
+		file->seek(0);
+		const auto size = file->size();
 
 		String str;
 		str.resize(size);
-		if (options.file.read(str.data(), size))
+		if (file->read(str.data(), size))
 			return std::make_shared<TextData>(str);
 
 		return nullptr;
 	}
 
 	WTextDataLoader::WTextDataLoader()
-		: ResourceLoaderT({ L".txt" })
+		: ResourceLoaderType({ L".txt" })
 	{
 	}
 
-	Shared<Resource> WTextDataLoader::load(const Context& options)
+	Shared<Resource> WTextDataLoader::load(const Context& context)
 	{
-		options.file.seek(0);
-		const auto size = options.file.size();
+		// TODO: Log open_read failed
+		const auto file = context.cache.open_read(context.path);
+		if (!file) return nullptr;
+
+		file->seek(0);
+		const auto size = file->size();
 
 		String str;
 		str.resize(size);
-		if (options.file.read(str.data(), size))
+		if (file->read(str.data(), size))
 			return std::make_shared<TextData>(str);
 
 		return nullptr;

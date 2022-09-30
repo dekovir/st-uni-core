@@ -5,7 +5,7 @@
 namespace unicore
 {
 	XMLDataLoader::XMLDataLoader()
-		: ResourceLoaderT({ L".xml" })
+		: ResourceLoaderType({ L".xml" })
 	{
 	}
 

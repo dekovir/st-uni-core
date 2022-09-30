@@ -1,22 +1,28 @@
 #include "BinaryDataLoader.hpp"
+#include "unicore/File.hpp"
+#include "unicore/ResourceCache.hpp"
 
 namespace unicore
 {
 	BinaryDataLoader::BinaryDataLoader()
-		: ResourceLoaderT({ L".dat" })
+		: ResourceLoaderType({ L".dat" })
 	{
 	}
 
-	Shared<Resource> BinaryDataLoader::load(const Context& options)
+	Shared<Resource> BinaryDataLoader::load(const Context& context)
 	{
-		options.file.seek(0);
-		const auto size = options.file.size();
+		// TODO: Log open_read failed
+		const auto file = context.cache.open_read(context.path);
+		if (!file) return nullptr;
+
+		file->seek(0);
+		const auto size = file->size();
 
 		MemoryChunk chunk(size);
-		if (options.file.read(chunk.data(), size))
+		if (file->read(chunk.data(), size))
 			return std::make_shared<BinaryData>(chunk);
 
-		UC_LOG_ERROR(options.logger) << "Read failed";
+		UC_LOG_ERROR(context.logger) << "Read failed";
 		return nullptr;
 	}
 }

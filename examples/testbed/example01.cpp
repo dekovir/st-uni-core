@@ -120,7 +120,7 @@ namespace unicore
 		const auto formatted = to_format4(PIXELFORMAT_R8G8B8A8, ColorConst4f::Yellow);
 		auto color = from_format3<float>(PIXELFORMAT_R8G8B8A8, (uint32_t)0x00FF00FF);
 
-		_font = resources.create<GeometryFont>(12);
+		_font = resources.create<GeometryFont>(EmptyResourceOptions{});
 	}
 
 	void Example01::update()

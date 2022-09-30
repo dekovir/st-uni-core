@@ -1,8 +1,7 @@
 #include "unicore/plugins/SurfacePlugin.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "Resources/SolidSizeCreator.hpp"
-#include "Resources/SizeResourceCreator.hpp"
-#include "Resources/SpriteListTileSetCreator.hpp"
+#include "Resources/SolidSizeLoader.hpp"
+#include "Resources/SpriteListTileSetLoader.hpp"
 
 namespace unicore
 {
@@ -12,12 +11,9 @@ namespace unicore
 
 		if (const auto cache = context.modules.find<ResourceCache>())
 		{
-			cache->add_creator(std::make_shared<SurfaceSizeSurfaceCreator>());
-			cache->add_creator(std::make_shared<DynamicSurfaceSolidSizeCreator>());
-
-			cache->add_creator(std::make_shared<DynamicSurfaceSizeCreator>());
-
-			cache->add_creator(std::make_shared<SpriteListTileSetCreator>());
+			cache->add_loader(std::make_shared<SurfaceSizeSurfaceLoader>());
+			cache->add_loader(std::make_shared<DynamicSurfaceSolidSizeLoader>());
+			cache->add_loader(std::make_shared<SpriteListTileSetLoader>());
 		}
 	}
 }

@@ -1,0 +1,54 @@
+#include "SolidSizeLoader.hpp"
+#include "unicore/Canvas.hpp"
+#include "unicore/Surface.hpp"
+#include "unicore/Renderer.hpp"
+
+namespace unicore
+{
+	static void fill_pixel_data(void* data, const Vector2i& size, const Color4b& color)
+	{
+		const auto c = color.to_format(pixel_format_abgr);
+		const auto pixels = static_cast<uint32_t*>(data);
+
+		const int total = size.area();
+		for (int i = 0; i < total; i++)
+			pixels[i] = c;
+	}
+
+	// SurfaceSizeSurfaceLoader ///////////////////////////////////////////////////
+	Shared<Resource> SurfaceSizeSurfaceLoader::load_options(
+		const Context& context, const SolidSizeOptions& options)
+	{
+		// TODO: Process context path
+		MemoryChunk chunk(options.size.area() * 4);
+		fill_pixel_data(chunk.data(), options.size, options.color);
+		return std::make_shared<Surface>(options.size, chunk);
+	}
+
+	// DynamicSurfaceSolidSizeLoader //////////////////////////////////////////////
+	Shared<Resource> DynamicSurfaceSolidSizeLoader::load_options(
+		const Context& context, const SolidSizeOptions& options)
+	{
+		// TODO: Process context path
+		auto surface = std::make_shared<DynamicSurface>(options.size);
+		Canvas canvas(*surface);
+		canvas.fill(options.color);
+		return surface;
+	}
+
+	// TextureSolidSizeLoader /////////////////////////////////////////////////////
+	TextureSolidSizeLoader::TextureSolidSizeLoader(Renderer& renderer)
+		: _renderer(renderer)
+	{
+	}
+
+	Shared<Resource> TextureSolidSizeLoader::load_options(
+		const Context& context, const SolidSizeOptions& options)
+	{
+		// TODO: Process context path
+		DynamicSurface surface(options.size);
+		Canvas canvas(surface);
+		canvas.fill(options.color);
+		return _renderer.create_texture(surface);
+	}
+}

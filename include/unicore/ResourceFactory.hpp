@@ -18,6 +18,7 @@ namespace unicore
 		UC_NODISCARD virtual Shared<Resource> create(const Context& context) = 0;
 	};
 
+	// ResourceFactoryT ///////////////////////////////////////////////////////////
 	template<typename TResource, typename TOptions>
 	class ResourceFactoryT : public ResourceFactory
 	{
@@ -30,19 +31,14 @@ namespace unicore
 		{
 			if (context.options != nullptr)
 			{
-				auto data = dynamic_cast<const TOptions*>(context.options);
-				if (data == nullptr)
+				auto options = dynamic_cast<const TOptions*>(context.options);
+				if (options == nullptr)
 					return nullptr;
 
-				return create_options(context, *data);
+				return create_options(context, *options);
 			}
 
-			return create_default({ nullptr, context.logger });
-		}
-
-		UC_NODISCARD virtual Shared<TResource> create_default(const Context& context)
-		{
-			return create_options(context, {});
+			return create_options({ nullptr, context.logger }, {});
 		}
 
 		UC_NODISCARD virtual Shared<TResource> create_options(const Context& context, const TOptions& options) = 0;

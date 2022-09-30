@@ -6,16 +6,31 @@
 
 namespace unicore
 {
-	namespace CreateResource
+	class SolidSizeOptions : public ResourceOptions
 	{
-		struct SolidSize
-		{
-			Color4b color;
-			Vector2i size = Vector2i(8);
-		};
+	public:
+		Color4b color = ColorConst4b::White;
+		Vector2i size = Vector2i(8);
 
-		using Size = Vector2i;
-	}
+		SolidSizeOptions() = default;
+
+		explicit SolidSizeOptions(const Color4b& color_) : color(color_) {}
+		SolidSizeOptions(const Color4b& color_, const Vector2i& size_) : color(color_), size(size_) {}
+
+		UC_NODISCARD size_t hash() const override { return Math::hash(color, size); }
+	};
+
+	class SizeOptions : public ResourceOptions
+	{
+	public:
+		Vector2i size = Vector2i(128);
+
+		SizeOptions() = default;
+
+		explicit SizeOptions(const Vector2i& size_) : size(size_) {}
+
+		UC_NODISCARD size_t hash() const override { return Math::hash(size); }
+	};
 
 	using SurfaceFormat = PixelFormat<uint32_t, uint8_t>;
 

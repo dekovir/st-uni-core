@@ -6,11 +6,11 @@
 namespace unicore
 {
 	TTFontLoader::TTFontLoader()
-		: ResourceLoaderT({ L".ttf" })
+		: ResourceLoaderTypeOptions({ L".ttf" })
 	{
 	}
 
-	Shared<Resource> TTFontLoader::load(const Context& context)
+	Shared<Resource> TTFontLoader::load_options(const Context& context, const TTFontOptions& options)
 	{
 		const auto factory = context.cache.load<TTFontFactory>(
 			context.path, ResourceCacheFlag::IgnoreExtension);
@@ -20,10 +20,6 @@ namespace unicore
 			return nullptr;
 		}
 
-		if (const auto options = dynamic_cast<const TTFontOptions*>(context.options))
-			return factory->create_options({ context.options, context.logger }, *options);
-
-		const TTFontOptions params;
-		return factory->create_default({ nullptr, context.logger });
+		return factory->create_options({ nullptr, context.logger }, options);
 	}
 }

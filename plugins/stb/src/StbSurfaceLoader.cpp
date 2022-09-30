@@ -34,18 +34,22 @@ namespace unicore
 
 	// StbSurfaceLoader ///////////////////////////////////////////////////////////
 	StbSurfaceLoader::StbSurfaceLoader()
-		: ResourceLoaderT(s_ext)
+		: ResourceLoaderType(s_ext)
 	{
 	}
 
-	Shared<Resource> StbSurfaceLoader::load(const Context& options)
+	Shared<Resource> StbSurfaceLoader::load(const Context& context)
 	{
+		// TODO: Log open_read failed
+		const auto file = context.cache.open_read(context.path);
+		if (!file) return nullptr;
+
 		int w, h, n;
 		const auto data = stbi_load_from_callbacks(
-			&s_stream_callbacks, &options.file, &w, &h, &n, 4);
+			&s_stream_callbacks, file.get(), &w, &h, &n, 4);
 		if (!data)
 		{
-			UC_LOG_ERROR(options.logger) << stbi_failure_reason();
+			UC_LOG_ERROR(context.logger) << stbi_failure_reason();
 			return nullptr;
 		}
 
@@ -55,26 +59,30 @@ namespace unicore
 
 	// StbDynamicSurfaceLoader ////////////////////////////////////////////////////
 	StbDynamicSurfaceLoader::StbDynamicSurfaceLoader()
-		: ResourceLoaderT(s_ext)
+		: ResourceLoaderType(s_ext)
 	{
 	}
 
-	Shared<Resource> StbDynamicSurfaceLoader::load(const Context& options)
+	Shared<Resource> StbDynamicSurfaceLoader::load(const Context& context)
 	{
 		// Use cached Surface
-		if (const auto cached = options.cache.find<Surface>(options.path))
+		if (const auto cached = context.cache.find<Surface>(context.path))
 		{
 			auto surface = std::make_shared<DynamicSurface>(cached->size());
 			Memory::copy(surface->data(), cached->data(), cached->size_bytes());
 			return surface;
 		}
 
+		// TODO: Log open_read failed
+		const auto file = context.cache.open_read(context.path);
+		if (!file) return nullptr;
+
 		// Direct load to surface to prevent double memory consumption (Surface + DynamicSurface)
 		int w, h, n;
-		const auto data = stbi_load_from_callbacks(&s_stream_callbacks, &options.file, &w, &h, &n, 4);
+		const auto data = stbi_load_from_callbacks(&s_stream_callbacks, file.get(), &w, &h, &n, 4);
 		if (!data)
 		{
-			UC_LOG_ERROR(options.logger) << stbi_failure_reason();
+			UC_LOG_ERROR(context.logger) << stbi_failure_reason();
 			return nullptr;
 		}
 

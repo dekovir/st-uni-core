@@ -4,19 +4,19 @@
 
 namespace unicore
 {
-	class TextDataLoader : public ResourceLoaderT<TextData>
+	class TextDataLoader : public ResourceLoaderType<TextData>
 	{
-		UC_OBJECT(TextDataLoader, ResourceLoaderT)
+		UC_OBJECT(TextDataLoader, ResourceLoaderType)
 	public:
 		TextDataLoader();
-		UC_NODISCARD Shared<Resource> load(const Context& options) override;
+		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 
-	class WTextDataLoader : public ResourceLoaderT<WTextData>
+	class WTextDataLoader : public ResourceLoaderType<WTextData>
 	{
-		UC_OBJECT(TextDataLoader, ResourceLoaderT)
+		UC_OBJECT(TextDataLoader, ResourceLoaderType)
 	public:
 		WTextDataLoader();
-		UC_NODISCARD Shared<Resource> load(const Context& options) override;
+		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 }

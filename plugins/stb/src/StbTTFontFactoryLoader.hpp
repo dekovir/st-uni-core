@@ -7,13 +7,13 @@ namespace unicore
 {
 	class Renderer;
 
-	class StbTTFontFactoryLoader : public ResourceLoaderT<StbTTFontFactory>
+	class StbTTFontFactoryLoader : public ResourceLoaderType<StbTTFontFactory>
 	{
 		UC_OBJECT(StbTTFontFactoryLoader, ResourceLoader)
 	public:
 		explicit StbTTFontFactoryLoader(Renderer& renderer);
 
-		UC_NODISCARD Shared<Resource> load(const Context& options) override;
+		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 
 	protected:
 		Renderer& _renderer;
