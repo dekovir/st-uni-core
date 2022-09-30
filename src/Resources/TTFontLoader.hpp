@@ -4,7 +4,10 @@
 
 namespace unicore
 {
-	class TTFontLoader : public ResourceLoaderTypeOptions<TexturedFont, TTFontOptions, ResourceLoaderPolicy::NotEmptyPath>
+	class TTFontLoader : public ResourceLoaderOptionsTyped<
+		TexturedFont, TTFontOptions,
+		ResourceLoaderPathPolicy::NotEmpty,
+		ResourceLoaderOptionsPolicy::NullOrExact<TTFontOptions>>
 	{
 	public:
 		UC_NODISCARD Shared<Resource> load_options(

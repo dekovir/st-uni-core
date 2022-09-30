@@ -4,15 +4,15 @@
 
 namespace unicore
 {
-	struct DekovirFontLoadPolicy : ResourceLoaderPolicy::ExtensionPolicy
+	struct DekovirFontLoadPolicy : ResourceLoaderPathPolicy::Extension
 	{
 		DekovirFontLoadPolicy()
-			: ExtensionPolicy({ L".fnt" })
+			: Extension({ L".fnt" })
 		{
 		}
 	};
 
-	class DekovirFontLoader : public ResourceLoaderType<BitmapFont, DekovirFontLoadPolicy>
+	class DekovirFontLoader : public ResourceLoaderTyped<BitmapFont, DekovirFontLoadPolicy>
 	{
 	public:
 		UC_NODISCARD Shared<Resource> load(const Context& options) override;

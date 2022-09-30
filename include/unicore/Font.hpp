@@ -57,10 +57,10 @@ namespace unicore
 		}
 	};
 
-	struct TTFontLoadPolicy : ResourceLoaderPolicy::ExtensionPolicy
+	struct TTFontLoadPathPolicy : ResourceLoaderPathPolicy::Extension
 	{
-		explicit TTFontLoadPolicy()
-			: ExtensionPolicy({ L".ttf" })
+		explicit TTFontLoadPathPolicy()
+			: Extension({ L".ttf" })
 		{
 		}
 	};

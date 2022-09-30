@@ -5,7 +5,8 @@
 
 namespace unicore
 {
-	Shared<Resource> TTFontLoader::load_options(const Context& context, const TTFontOptions& options)
+	Shared<Resource> TTFontLoader::load_options(
+		const Context& context, const TTFontOptions& options)
 	{
 		const auto factory = context.cache.load<TTFontFactory>(
 			context.path, ResourceCacheFlag::IgnoreExtension);

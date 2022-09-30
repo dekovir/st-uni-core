@@ -29,34 +29,26 @@ namespace unicore
 		UC_NODISCARD virtual bool can_load(const ResourceOptions* options) const = 0;
 
 		UC_NODISCARD virtual Shared<Resource> load(const Context& context) = 0;
-
-		//protected:
-		//	template<typename T,
-		//		std::enable_if_t<std::is_base_of_v<ResourceOptions, T>>* = nullptr>
-		//	static auto convert_options(const ResourceOptions* options)
-		//	{
-		//		return dynamic_cast<const T*>(options);
-		//	}
 	};
 
-	// ResourceLoaderType /////////////////////////////////////////////////////////
-	namespace ResourceLoaderPolicy
+	// ResourceLoaderPolicy ///////////////////////////////////////////////////////
+	namespace ResourceLoaderPathPolicy
 	{
-		struct NoPath
+		struct Empty
 		{
 			bool operator()(const Path& path) const { return path.empty(); }
 		};
 
-		struct NotEmptyPath
+		struct NotEmpty
 		{
 			bool operator()(const Path& path) const { return !path.empty(); }
 		};
 
-		struct ExtensionPolicy
+		struct Extension
 		{
 			const Set<WStringView> extension;
 
-			explicit ExtensionPolicy(const std::initializer_list<WStringView> extension_)
+			explicit Extension(const std::initializer_list<WStringView> extension_)
 				: extension(extension_) {}
 
 			bool operator()(const Path& path) const
@@ -64,14 +56,17 @@ namespace unicore
 				return extension.find(path.extension()) != extension.end();
 			}
 		};
+	}
 
-		struct NoOptions
+	namespace ResourceLoaderOptionsPolicy
+	{
+		struct Null
 		{
 			bool operator()(const ResourceOptions* options) const { return options == nullptr; }
 		};
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<ResourceOptions, T>>* = nullptr>
-		struct OptionsType
+		struct Exact
 		{
 			bool operator()(const ResourceOptions* options) const
 			{
@@ -80,45 +75,49 @@ namespace unicore
 		};
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<ResourceOptions, T>>* = nullptr>
-		struct NoOrOptionsType : OptionsType<T>
+		struct NullOrExact : Exact<T>
 		{
 			bool operator()(const ResourceOptions* options) const
 			{
-				return options == nullptr || OptionsType<T>::operator()(options);
+				return options == nullptr || Exact<T>::operator()(options);
 			}
 		};
 	}
 
+	// ResourceLoaderTyped ////////////////////////////////////////////////////////
 	template<typename T, typename PathPolicy,
-		typename OptionsPolicy = ResourceLoaderPolicy::NoOptions,
+		typename OptionsPolicy = ResourceLoaderOptionsPolicy::Null,
 		std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-	class ResourceLoaderType : public ResourceLoader
+	class ResourceLoaderTyped : public ResourceLoader
 	{
-		UC_OBJECT(ResourceLoaderType, ResourceLoader)
+		UC_OBJECT(ResourceLoaderTyped, ResourceLoader)
 	public:
 		UC_NODISCARD bool can_load(const Path& path) const override
 		{
-			static const PathPolicy policy;
-			return policy(path);
+			return _path_policy(path);
 		}
 
 		UC_NODISCARD bool can_load(const ResourceOptions* options) const override
 		{
 			static const OptionsPolicy policy;
-			return policy(options);
+			return _options_policy(options);
 		}
 
 		UC_NODISCARD TypeConstRef resource_type() const override { return get_type<T>(); }
+
+	protected:
+		const PathPolicy _path_policy;
+		const OptionsPolicy _options_policy;
 	};
 
-	// ResourceLoaderTypeOptions //////////////////////////////////////////////////
+	// ResourceLoaderOptionsTyped /////////////////////////////////////////////////
 	template<typename T, typename TOptions, typename PathPolicy,
-		typename OptionsPolicy = ResourceLoaderPolicy::OptionsType<TOptions>,
+		typename OptionsPolicy = ResourceLoaderOptionsPolicy::Exact<TOptions>,
 		std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr,
 		std::enable_if_t<std::is_base_of_v<ResourceOptions, TOptions>>* = nullptr>
-	class ResourceLoaderTypeOptions : public ResourceLoaderType<T, PathPolicy, OptionsPolicy>
+	class ResourceLoaderOptionsTyped : public ResourceLoaderTyped<T, PathPolicy, OptionsPolicy>
 	{
-		UC_OBJECT(ResourceLoaderTypeOptions, ResourceLoader)
+		UC_OBJECT(ResourceLoaderOptionsTyped, ResourceLoader)
 	public:
 		UC_NODISCARD const TypeInfo* options_type() const override { return &typeid(TOptions); }
 
