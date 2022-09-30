@@ -3,7 +3,6 @@
 #include "unicore/Vertex.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/ConstString.hpp"
-#include "unicore/ResourceFactory.hpp"
 #include "unicore/ResourceLoader.hpp"
 
 namespace unicore
@@ -65,9 +64,11 @@ namespace unicore
 		}
 	};
 
-	class TTFontFactory : public ResourceFactoryT<TexturedFont, TTFontOptions>
+	class TTFontFactory : public Resource
 	{
-		UC_OBJECT(TTFontFactory, ResourceFactory)
+		UC_OBJECT(TTFontFactory, Resource)
 	public:
+		virtual Shared<TexturedFont> create(
+			const TTFontOptions& options, Logger* logger) = 0;
 	};
 }

@@ -10,6 +10,8 @@
 
 namespace unicore
 {
+	class Context;
+
 	StbTTFontFactory::StbTTFontFactory(
 		Renderer& renderer, const Shared<BinaryData>& data)
 		: _renderer(renderer)
@@ -55,8 +57,8 @@ namespace unicore
 		return {};
 	}
 
-	Shared<TexturedFont> StbTTFontFactory::create_options(
-		const Context& context, const TTFontOptions& options)
+	Shared<TexturedFont> StbTTFontFactory::create(
+		const TTFontOptions& options, Logger* logger)
 	{
 		if (!valid()) return nullptr;
 
@@ -109,7 +111,7 @@ namespace unicore
 		if (!packer.pack_optimize(item_size,
 			item_packed, surface_size, { start_size, 16 }))
 		{
-			UC_LOG_ERROR(context.logger) << "Failed to pack";
+			UC_LOG_ERROR(logger) << "Failed to pack";
 			return nullptr;
 		}
 

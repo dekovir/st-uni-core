@@ -26,7 +26,7 @@ namespace unicore
 		MemoryChunk get_codepoint_bitmap(WChar c,
 			const Vector2f& scale, Vector2i& size, Vector2i* offset = nullptr) const;
 
-		UC_NODISCARD Shared<TexturedFont> create_options(const Context& context, const TTFontOptions& options) override;
+		UC_NODISCARD Shared<TexturedFont> create(const TTFontOptions& options, Logger* logger) override;
 
 	protected:
 		Renderer& _renderer;

@@ -16,6 +16,6 @@ namespace unicore
 			return nullptr;
 		}
 
-		return factory->create_options({ nullptr, context.logger }, options);
+		return factory->create(options, context.logger);
 	}
 }
