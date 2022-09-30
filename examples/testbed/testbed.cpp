@@ -125,7 +125,7 @@ namespace unicore
 
 		example->load(resources);
 		resources.unload_unused();
-		resources.dump_used();
+		//resources.dump_used();
 	}
 
 	UNICORE_MAIN_CORE(MyCore);

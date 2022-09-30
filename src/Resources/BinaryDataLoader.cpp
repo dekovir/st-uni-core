@@ -7,7 +7,7 @@ namespace unicore
 	Shared<Resource> BinaryDataLoader::load(const Context& context)
 	{
 		// TODO: Log open_read failed
-		const auto file = context.cache.open_read(context.path);
+		const auto file = context.cache.load<ReadFile>(context.path);
 		if (!file) return nullptr;
 
 		file->seek(0);

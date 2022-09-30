@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Object.hpp"
+#include "unicore/Resource.hpp"
 
 namespace unicore
 {
@@ -13,10 +13,13 @@ namespace unicore
 		End,
 	};
 
-	class File : public Object
+	class File : public Resource
 	{
-		UC_OBJECT(File, Object)
+		UC_OBJECT(File, Resource)
 	public:
+		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(File); }
+		UC_NODISCARD ResourceCachePolicy cache_policy() const override { return ResourceCachePolicy::NoCache; }
+
 		UC_NODISCARD virtual int64_t size() const = 0;
 		virtual int64_t seek(int64_t offset, SeekMethod method = SeekMethod::Begin) = 0;
 	};

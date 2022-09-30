@@ -35,7 +35,7 @@ namespace unicore
 	Shared<Resource> StbSurfaceLoader::load(const Context& context)
 	{
 		// TODO: Log open_read failed
-		const auto file = context.cache.open_read(context.path);
+		const auto file = context.cache.load<ReadFile>(context.path);
 		if (!file) return nullptr;
 
 		int w, h, n;
@@ -63,7 +63,7 @@ namespace unicore
 		}
 
 		// TODO: Log open_read failed
-		const auto file = context.cache.open_read(context.path);
+		const auto file = context.cache.load<ReadFile>(context.path);
 		if (!file) return nullptr;
 
 		// Direct load to surface to prevent double memory consumption (Surface + DynamicSurface)

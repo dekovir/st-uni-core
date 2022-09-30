@@ -12,7 +12,7 @@ namespace unicore
 			context.path, ResourceCacheFlag::IgnoreExtension);
 		if (!factory)
 		{
-			UC_LOG_ERROR(context.logger) << "Failed to load font";
+			UC_LOG_ERROR(context.logger) << "Failed to load TTFont";
 			return nullptr;
 		}
 

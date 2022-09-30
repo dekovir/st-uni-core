@@ -57,8 +57,34 @@ namespace unicore
 		}
 	}
 
-	ResourceCache::ResourceCache(Logger& logger, ReadFileProvider& provider)
-		: _logger(logger), _provider(provider)
+	struct FromPath
+	{
+		explicit FromPath(const Path& path_) : path(path_) {}
+		const Path& path;
+	};
+
+	struct WithOptions
+	{
+		explicit WithOptions(const ResourceOptions* options_) : options(options_) {}
+		const ResourceOptions* options;
+	};
+
+	UNICODE_STRING_BUILDER_FORMAT(const FromPath&)
+	{
+		if (!value.path.empty())
+			return builder << " from " << value.path;
+		return builder;
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const WithOptions&)
+	{
+		if (value.options != nullptr)
+			return builder << " with " << typeid(*value.options);
+		return builder;
+	}
+
+	ResourceCache::ResourceCache(Logger& logger)
+		: _logger(logger)
 	{
 	}
 
@@ -118,19 +144,6 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	Shared<ReadFile> ResourceCache::open_read(const Path& path, bool quiet)
-	{
-		auto file = _provider.open_read(path);
-		if (!file)
-		{
-			if (!quiet)
-				UC_LOG_ERROR(_logger) << "Failed to open_read" << path;
-			return nullptr;
-		}
-
-		return file;
-	}
-
 	Shared<Resource> ResourceCache::create(TypeConstRef type, const ResourceOptions& options)
 	{
 		return load(Path::Empty, type, &options, ResourceCacheFlags::Zero);
@@ -164,6 +177,10 @@ namespace unicore
 
 			if (auto resource = loader->load({ *this, path, options, logger }))
 			{
+				UC_LOG_DEBUG(_logger) << "Loaded " << resource->type()
+					<< FromPath(path) << WithOptions(options)
+					<< " " << MemorySize{ resource->get_system_memory_use() };
+
 				_resources.push_back(resource);
 				add_resource(resource, path, options);
 
@@ -173,7 +190,7 @@ namespace unicore
 			UC_LOG_ERROR(logger) << "Failed to load " << type << " with loader";
 		}
 
-		UC_LOG_ERROR(logger) << "Failed to load " << type << " from " << path;
+		UC_LOG_ERROR(logger) << "Failed to load " << type << FromPath(path) << WithOptions(options);
 		return nullptr;
 	}
 
@@ -263,12 +280,12 @@ namespace unicore
 		if (resource->cache_policy() == ResourceCachePolicy::CanCache)
 		{
 			const auto hash = make_hash(path, options);
-			const auto& type = resource->type();
-
 			CachedInfo info{ resource, path };
 			_cached.emplace(hash, info);
-			UC_LOG_DEBUG(_logger) << "Added " << type << " from " << path
-				<< " " << MemorySize{ resource->get_system_memory_use() };
+
+			UC_LOG_DEBUG(_logger) << "Added " << resource->type()
+				<< FromPath(path) << WithOptions(options);
+
 			return true;
 		}
 

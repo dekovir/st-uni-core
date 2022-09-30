@@ -9,6 +9,11 @@ namespace unicore
 	{
 	}
 
+	size_t ReadMemoryFile::get_system_memory_use() const
+	{
+		return ReadFile::get_system_memory_use() + (_chunk ? _chunk->size() : 0);
+	}
+
 	int64_t ReadMemoryFile::size() const
 	{
 		return static_cast<int64_t>(_chunk->size());
@@ -57,6 +62,11 @@ namespace unicore
 	WriteMemoryFile::WriteMemoryFile(size_t size)
 		: _bytes(size, 0)
 	{
+	}
+
+	size_t WriteMemoryFile::get_system_memory_use() const
+	{
+		return WriteFile::get_system_memory_use() + _bytes.size();
 	}
 
 	int64_t WriteMemoryFile::size() const

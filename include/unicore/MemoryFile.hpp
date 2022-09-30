@@ -10,6 +10,8 @@ namespace unicore
 	public:
 		explicit ReadMemoryFile(const Shared<MemoryChunk>& chunk);
 
+		UC_NODISCARD size_t get_system_memory_use() const override;
+
 		UC_NODISCARD int64_t size() const override;
 		int64_t seek(int64_t offset, SeekMethod method) override;
 
@@ -26,6 +28,8 @@ namespace unicore
 		UC_OBJECT(WriteMemoryFile, WriteFile)
 	public:
 		explicit WriteMemoryFile(size_t size = 0);
+
+		UC_NODISCARD size_t get_system_memory_use() const override;
 
 		UC_NODISCARD int64_t size() const override;
 

@@ -8,11 +8,7 @@ namespace unicore
 {
 	class Logger;
 	class Context;
-
 	class ResourceLoader;
-
-	class ReadFile;
-	class ReadFileProvider;
 
 	enum class ResourceCacheFlag
 	{
@@ -25,7 +21,7 @@ namespace unicore
 	{
 		UC_OBJECT(ResourceCache, Module)
 	public:
-		ResourceCache(Logger& logger, ReadFileProvider& provider);
+		explicit ResourceCache(Logger& logger);
 
 		void unload_all();
 		void unload_unused();
@@ -40,9 +36,6 @@ namespace unicore
 		{
 			return std::dynamic_pointer_cast<T>(find(path, get_type<T>()));
 		}
-
-		// FILES /////////////////////////////////////////////////////////////////////
-		Shared<ReadFile> open_read(const Path& path, bool quiet = false);
 
 		// CREATE ////////////////////////////////////////////////////////////////////
 		Shared<Resource> create(TypeConstRef type, const ResourceOptions& options);
@@ -94,8 +87,6 @@ namespace unicore
 		};
 
 		Logger& _logger;
-		ReadFileProvider& _provider;
-
 		Dictionary<TypeConstPtr, Set<Shared<ResourceLoader>, LoaderSort>> _loaders;
 
 		struct CachedInfo
