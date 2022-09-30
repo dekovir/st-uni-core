@@ -19,7 +19,6 @@ namespace unicore
 	Shared<Resource> SurfaceSizeSurfaceLoader::load_options(
 		const Context& context, const SolidSizeOptions& options)
 	{
-		// TODO: Process context path
 		MemoryChunk chunk(options.size.area() * 4);
 		fill_pixel_data(chunk.data(), options.size, options.color);
 		return std::make_shared<Surface>(options.size, chunk);
@@ -29,7 +28,6 @@ namespace unicore
 	Shared<Resource> DynamicSurfaceSolidSizeLoader::load_options(
 		const Context& context, const SolidSizeOptions& options)
 	{
-		// TODO: Process context path
 		auto surface = std::make_shared<DynamicSurface>(options.size);
 		Canvas canvas(*surface);
 		canvas.fill(options.color);
@@ -45,7 +43,6 @@ namespace unicore
 	Shared<Resource> TextureSolidSizeLoader::load_options(
 		const Context& context, const SolidSizeOptions& options)
 	{
-		// TODO: Process context path
 		DynamicSurface surface(options.size);
 		Canvas canvas(surface);
 		canvas.fill(options.color);

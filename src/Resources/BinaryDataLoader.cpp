@@ -4,11 +4,6 @@
 
 namespace unicore
 {
-	BinaryDataLoader::BinaryDataLoader()
-		: ResourceLoaderType({ L".dat" })
-	{
-	}
-
 	Shared<Resource> BinaryDataLoader::load(const Context& context)
 	{
 		// TODO: Log open_read failed

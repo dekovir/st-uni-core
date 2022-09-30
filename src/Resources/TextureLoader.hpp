@@ -5,7 +5,7 @@
 
 namespace unicore
 {
-	class TextureLoader : public ResourceLoaderType<Texture>
+	class TextureLoader : public ResourceLoaderType<Texture, ResourceLoaderPolicy::NotEmptyPath>
 	{
 	public:
 		explicit TextureLoader(Renderer& render);
@@ -16,7 +16,7 @@ namespace unicore
 		Renderer& _renderer;
 	};
 
-	class DynamicTextureLoader : public ResourceLoaderType<DynamicTexture>
+	class DynamicTextureLoader : public ResourceLoaderType<DynamicTexture, ResourceLoaderPolicy::NotEmptyPath>
 	{
 	public:
 		explicit DynamicTextureLoader(Renderer& render);

@@ -4,11 +4,6 @@
 
 namespace unicore
 {
-	DekovirFontLoader::DekovirFontLoader()
-		: ResourceLoaderType({ L".fnt" })
-	{
-	}
-
 	Shared<Resource> DekovirFontLoader::load(const Context& options)
 	{
 		const auto xml = options.cache.load<XMLData>(

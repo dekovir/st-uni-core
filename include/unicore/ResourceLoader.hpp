@@ -40,46 +40,86 @@ namespace unicore
 	};
 
 	// ResourceLoaderType /////////////////////////////////////////////////////////
-	template<typename T,
+	namespace ResourceLoaderPolicy
+	{
+		struct NoPath
+		{
+			bool operator()(const Path& path) const { return path.empty(); }
+		};
+
+		struct NotEmptyPath
+		{
+			bool operator()(const Path& path) const { return !path.empty(); }
+		};
+
+		struct ExtensionPolicy
+		{
+			const Set<WStringView> extension;
+
+			explicit ExtensionPolicy(const std::initializer_list<WStringView> extension_)
+				: extension(extension_) {}
+
+			bool operator()(const Path& path) const
+			{
+				return extension.find(path.extension()) != extension.end();
+			}
+		};
+
+		struct NoOptions
+		{
+			bool operator()(const ResourceOptions* options) const { return options == nullptr; }
+		};
+
+		template<typename T, std::enable_if_t<std::is_base_of_v<ResourceOptions, T>>* = nullptr>
+		struct OptionsType
+		{
+			bool operator()(const ResourceOptions* options) const
+			{
+				return options != nullptr && typeid(*options) == typeid(T);
+			}
+		};
+
+		template<typename T, std::enable_if_t<std::is_base_of_v<ResourceOptions, T>>* = nullptr>
+		struct NoOrOptionsType : OptionsType<T>
+		{
+			bool operator()(const ResourceOptions* options) const
+			{
+				return options == nullptr || OptionsType<T>::operator()(options);
+			}
+		};
+	}
+
+	template<typename T, typename PathPolicy,
+		typename OptionsPolicy = ResourceLoaderPolicy::NoOptions,
 		std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
 	class ResourceLoaderType : public ResourceLoader
 	{
 		UC_OBJECT(ResourceLoaderType, ResourceLoader)
 	public:
-		ResourceLoaderType() = default;
-		ResourceLoaderType(const std::initializer_list<WStringView> ext_list)
-			: _extensions(ext_list)
-		{
-		}
-
 		UC_NODISCARD bool can_load(const Path& path) const override
 		{
-			return
-				_extensions.empty() ||
-				(_extensions.find(path.extension()) != _extensions.end());
+			static const PathPolicy policy;
+			return policy(path);
 		}
 
-		UC_NODISCARD bool can_load(const ResourceOptions* options) const override { return options == nullptr; }
+		UC_NODISCARD bool can_load(const ResourceOptions* options) const override
+		{
+			static const OptionsPolicy policy;
+			return policy(options);
+		}
 
 		UC_NODISCARD TypeConstRef resource_type() const override { return get_type<T>(); }
-
-	private:
-		const Set<WStringView> _extensions;
 	};
 
 	// ResourceLoaderTypeOptions //////////////////////////////////////////////////
-	template<typename T, typename TOptions,
+	template<typename T, typename TOptions, typename PathPolicy,
+		typename OptionsPolicy = ResourceLoaderPolicy::OptionsType<TOptions>,
 		std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr,
 		std::enable_if_t<std::is_base_of_v<ResourceOptions, TOptions>>* = nullptr>
-	class ResourceLoaderTypeOptions : public ResourceLoaderType<T>
+	class ResourceLoaderTypeOptions : public ResourceLoaderType<T, PathPolicy, OptionsPolicy>
 	{
-		UC_OBJECT(ResourceLoaderTypeOptions, ResourceLoaderType<T>)
+		UC_OBJECT(ResourceLoaderTypeOptions, ResourceLoader)
 	public:
-		ResourceLoaderTypeOptions() = default;
-		ResourceLoaderTypeOptions(const std::initializer_list<WStringView> ext_list)
-			: ParentType(ext_list)
-		{}
-
 		UC_NODISCARD const TypeInfo* options_type() const override { return &typeid(TOptions); }
 
 		UC_NODISCARD bool can_load(const ResourceOptions* options) const override

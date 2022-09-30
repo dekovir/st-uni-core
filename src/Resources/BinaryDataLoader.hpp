@@ -4,11 +4,18 @@
 
 namespace unicore
 {
-	class BinaryDataLoader : public ResourceLoaderType<BinaryData>
+	struct BinaryDataLoadPolicy : ResourceLoaderPolicy::ExtensionPolicy
+	{
+		BinaryDataLoadPolicy()
+			: ExtensionPolicy({ L".dat" })
+		{
+		}
+	};
+
+	class BinaryDataLoader : public ResourceLoaderType<BinaryData, BinaryDataLoadPolicy>
 	{
 		UC_OBJECT(BinaryDataLoader, ResourceLoaderType)
 	public:
-		BinaryDataLoader();
 		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 }

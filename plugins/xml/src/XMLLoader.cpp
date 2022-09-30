@@ -4,11 +4,6 @@
 
 namespace unicore
 {
-	XMLDataLoader::XMLDataLoader()
-		: ResourceLoaderType({ L".xml" })
-	{
-	}
-
 	Shared<Resource> XMLDataLoader::load(const Context& options)
 	{
 		const auto data = options.cache.load<TextData>(

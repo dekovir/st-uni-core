@@ -4,19 +4,25 @@
 
 namespace unicore
 {
-	class TextDataLoader : public ResourceLoaderType<TextData>
+	struct TextLoadPolicy : ResourceLoaderPolicy::ExtensionPolicy
+	{
+		TextLoadPolicy()
+			: ExtensionPolicy({ L".txt" })
+		{
+		}
+	};
+
+	class TextDataLoader : public ResourceLoaderType<TextData, TextLoadPolicy>
 	{
 		UC_OBJECT(TextDataLoader, ResourceLoaderType)
 	public:
-		TextDataLoader();
 		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 
-	class WTextDataLoader : public ResourceLoaderType<WTextData>
+	class WTextDataLoader : public ResourceLoaderType<WTextData, TextLoadPolicy>
 	{
 		UC_OBJECT(TextDataLoader, ResourceLoaderType)
 	public:
-		WTextDataLoader();
 		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 }

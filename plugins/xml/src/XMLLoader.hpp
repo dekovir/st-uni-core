@@ -4,11 +4,17 @@
 
 namespace unicore
 {
-	class XMLDataLoader : public ResourceLoaderType<XMLData>
+	struct XMLLoadPolicy : ResourceLoaderPolicy::ExtensionPolicy
+	{
+		XMLLoadPolicy()
+			: ExtensionPolicy({ L".xml" })
+		{
+		}
+	};
+
+	class XMLDataLoader : public ResourceLoaderType<XMLData, XMLLoadPolicy>
 	{
 	public:
-		XMLDataLoader();
-
 		UC_NODISCARD Shared<Resource> load(const Context& options) override;
 	};
 }

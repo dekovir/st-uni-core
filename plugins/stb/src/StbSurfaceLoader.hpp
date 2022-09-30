@@ -5,21 +5,25 @@
 
 namespace unicore
 {
-	class StbSurfaceLoader : public ResourceLoaderType<Surface>
+	struct StbSurfaceLoadPolicy : ResourceLoaderPolicy::ExtensionPolicy
+	{
+		StbSurfaceLoadPolicy()
+			: ExtensionPolicy({ L".png",L".tga",L".jpg",L".jpeg" })
+		{
+		}
+	};
+
+	class StbSurfaceLoader : public ResourceLoaderType<Surface, StbSurfaceLoadPolicy>
 	{
 		UC_OBJECT(StbSurfaceLoader, ResourceLoader)
 	public:
-		StbSurfaceLoader();
-
 		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 
-	class StbDynamicSurfaceLoader : public ResourceLoaderType<DynamicSurface>
+	class StbDynamicSurfaceLoader : public ResourceLoaderType<DynamicSurface, StbSurfaceLoadPolicy>
 	{
 		UC_OBJECT(StbDynamicSurfaceLoader, ResourceLoader)
 	public:
-		StbDynamicSurfaceLoader();
-
 		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 }

@@ -4,6 +4,7 @@
 #include "unicore/Texture.hpp"
 #include "unicore/ConstString.hpp"
 #include "unicore/ResourceFactory.hpp"
+#include "unicore/ResourceLoader.hpp"
 
 namespace unicore
 {
@@ -53,6 +54,14 @@ namespace unicore
 		UC_NODISCARD size_t hash() const override
 		{
 			return Math::hash(height, chars);
+		}
+	};
+
+	struct TTFontLoadPolicy : ResourceLoaderPolicy::ExtensionPolicy
+	{
+		explicit TTFontLoadPolicy()
+			: ExtensionPolicy({ L".ttf" })
+		{
 		}
 	};
 

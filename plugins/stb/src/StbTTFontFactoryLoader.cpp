@@ -5,8 +5,7 @@
 namespace unicore
 {
 	StbTTFontFactoryLoader::StbTTFontFactoryLoader(Renderer& renderer)
-		: ResourceLoaderType({ L".ttf" })
-		, _renderer(renderer)
+		: _renderer(renderer)
 	{
 	}
 

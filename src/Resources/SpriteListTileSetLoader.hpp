@@ -4,7 +4,7 @@
 
 namespace unicore
 {
-	class SpriteListTileSetLoader : public ResourceLoaderTypeOptions<SpriteList, TileSetOptions>
+	class SpriteListTileSetLoader : public ResourceLoaderTypeOptions<SpriteList, TileSetOptions, ResourceLoaderPolicy::NotEmptyPath>
 	{
 		UC_OBJECT(SpriteListTileSetLoader, ResourceLoader)
 	public:

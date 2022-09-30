@@ -30,14 +30,8 @@ namespace unicore
 	}
 
 	static constexpr stbi_io_callbacks s_stream_callbacks{ stbi_stream_read, stbi_stream_skip, stbi_stream_eof };
-	static constexpr std::initializer_list<WStringView> s_ext = { L".png",L".tga",L".jpg",L".jpeg" };
 
 	// StbSurfaceLoader ///////////////////////////////////////////////////////////
-	StbSurfaceLoader::StbSurfaceLoader()
-		: ResourceLoaderType(s_ext)
-	{
-	}
-
 	Shared<Resource> StbSurfaceLoader::load(const Context& context)
 	{
 		// TODO: Log open_read failed
@@ -58,11 +52,6 @@ namespace unicore
 	}
 
 	// StbDynamicSurfaceLoader ////////////////////////////////////////////////////
-	StbDynamicSurfaceLoader::StbDynamicSurfaceLoader()
-		: ResourceLoaderType(s_ext)
-	{
-	}
-
 	Shared<Resource> StbDynamicSurfaceLoader::load(const Context& context)
 	{
 		// Use cached Surface

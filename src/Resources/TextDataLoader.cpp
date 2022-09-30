@@ -4,11 +4,6 @@
 
 namespace unicore
 {
-	TextDataLoader::TextDataLoader()
-		: ResourceLoaderType({ L".txt" })
-	{
-	}
-
 	Shared<Resource> TextDataLoader::load(const Context& context)
 	{
 		// TODO: Log open_read failed
@@ -24,11 +19,6 @@ namespace unicore
 			return std::make_shared<TextData>(str);
 
 		return nullptr;
-	}
-
-	WTextDataLoader::WTextDataLoader()
-		: ResourceLoaderType({ L".txt" })
-	{
 	}
 
 	Shared<Resource> WTextDataLoader::load(const Context& context)
