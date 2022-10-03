@@ -83,33 +83,29 @@ namespace unicore
 
 		void fill_rect(const Recti& rect, ValueType value)
 		{
-			for (unsigned i = 0; i < rect.h; i++)
-				draw_line_h(Vector2i(rect.x, rect.y + i), static_cast<unsigned>(rect.w), value);
+			const auto r = _buffer.get_clip_rect(rect);
+			internal_fill_rect(r, value);
 		}
 
 		bool fill_rect(const Recti& rect, CallbackType func)
 		{
-			for (unsigned i = 0; i < rect.h; i++)
-			{
-				if (!draw_line_h(Vector2i(rect.x, rect.y + i), static_cast<unsigned>(rect.w), func))
-					return false;
-			}
-
-			return true;
+			const auto r = _buffer.get_clip_rect(rect);
+			return internal_fill_rect(r, func);
 		}
 
 		void fill(ValueType value)
 		{
-			fill_rect(_buffer.rect(), value);
+			internal_fill_rect(_buffer.rect(), value);
 		}
 
 		bool fill(CallbackType func)
 		{
-			return fill_rect(_buffer.rect(), func);
+			return internal_fill_rect(_buffer.rect(), func);
 		}
 
 		// LINE //////////////////////////////////////////////////////////////////////
 		// TODO: Rewrite line render
+		// TODO: Add draw_line for callback
 		void draw_line(const Vector2i& p1, const Vector2i& p2, ValueType value)
 		{
 			int x, y;
@@ -224,6 +220,7 @@ namespace unicore
 		}
 
 		// CIRCE /////////////////////////////////////////////////////////////////////
+		// TODO: Add draw_circle with callback
 		void draw_circle(const Vector2i& center, int radius, ValueType value)
 		{
 			int x = 0, y = radius;
@@ -243,6 +240,7 @@ namespace unicore
 			}
 		}
 
+		// TODO: Add fill_circle with callback
 		void fill_circle(const Vector2i& center, int radius, ValueType value)
 		{
 			// TODO: Optimize with draw_line_h
@@ -294,6 +292,23 @@ namespace unicore
 			_buffer.set(xc - y, yc + x, value);
 			_buffer.set(xc + y, yc - x, value);
 			_buffer.set(xc - y, yc - x, value);
+		}
+
+		void internal_fill_rect(const Recti& rect, ValueType value)
+		{
+			for (unsigned i = 0; i < rect.h; i++)
+				draw_line_h(Vector2i(rect.x, rect.y + i), static_cast<unsigned>(rect.w), value);
+		}
+
+		bool internal_fill_rect(const Recti& rect, CallbackType func)
+		{
+			for (unsigned i = 0; i < rect.h; i++)
+			{
+				if (!draw_line_h(Vector2i(rect.x, rect.y + i), static_cast<unsigned>(rect.w), func))
+					return false;
+			}
+
+			return true;
 		}
 	};
 }
