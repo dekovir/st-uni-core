@@ -34,6 +34,20 @@ namespace unicore
 		UC_NODISCARD size_t hash() const override { return Hash; }
 	};
 
+	class ResourceOptionsTag : public ResourceOptions
+	{
+	public:
+		const StringView text;
+		const size_t hash_value;
+
+		explicit ResourceOptionsTag(StringView text);
+
+		UC_NODISCARD size_t hash() const override { return hash_value; }
+	};
+
+#define UNICORE_RESOURCE_OPTIONS_TAG(name) \
+	static const auto name = ResourceOptionsTag(#name)
+
 	class EmptyResourceOptions : public ResourceOptions
 	{
 	public:

@@ -42,13 +42,6 @@ namespace unicore
 
 		template<typename T,
 			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-		Shared<T> create()
-		{
-			return std::dynamic_pointer_cast<T>(create(get_type<T>(), EmptyResourceOptions{}));
-		}
-
-		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
 		Shared<T> create(const ResourceOptions& options)
 		{
 			return std::dynamic_pointer_cast<T>(create(get_type<T>(), options));
