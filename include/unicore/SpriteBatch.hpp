@@ -85,8 +85,8 @@ namespace unicore
 		struct Batch
 		{
 			Shared<Texture> texture;
-			UInt16 start = 0;
-			UInt16 count = 0;
+			UInt32 start = 0;
+			UInt32 count = 0;
 		};
 
 		List<VertexTexColor2> _vertices;
