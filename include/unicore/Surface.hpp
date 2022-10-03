@@ -20,18 +20,6 @@ namespace unicore
 		UC_NODISCARD size_t hash() const override { return Math::hash(color, size); }
 	};
 
-	class SizeOptions : public ResourceOptions
-	{
-	public:
-		Vector2i size = Vector2i(128);
-
-		SizeOptions() = default;
-
-		explicit SizeOptions(const Vector2i& size_) : size(size_) {}
-
-		UC_NODISCARD size_t hash() const override { return Math::hash(size); }
-	};
-
 	using SurfaceFormat = PixelFormat<uint32_t, uint8_t>;
 
 	class BaseSurface : public Resource
@@ -58,6 +46,9 @@ namespace unicore
 
 		UC_NODISCARD bool get(int x, int y, Color4b& value) const override;
 
+		unsigned get_line_h(int x, int y, unsigned lng, Color4b* dest) const override;
+		unsigned get_line_v(int x, int y, unsigned lng, Color4b* dest) const override;
+
 	protected:
 		Vector2i _size = VectorConst2i::Zero;
 		MemoryChunk _chunk;
@@ -78,5 +69,11 @@ namespace unicore
 		UC_NODISCARD bool get(int x, int y, Color4<unsigned char>& value) const override { return Surface::get(x, y, value); }
 
 		bool set(int x, int y, Color4b value) override;
+
+		unsigned set_line_h(int x, int y, unsigned lng, const Color4b& value) override;
+		unsigned set_line_v(int x, int y, unsigned lng, const Color4b& value) override;
+
+		unsigned set_line_h(int x, int y, unsigned lng, const Color4b* src) override;
+		unsigned set_line_v(int x, int y, unsigned lng, const Color4b* src) override;
 	};
 }

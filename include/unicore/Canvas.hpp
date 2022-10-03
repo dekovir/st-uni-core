@@ -30,9 +30,7 @@ namespace unicore
 		// STRAIGHT LINE /////////////////////////////////////////////////////////////
 		void draw_line_h(const Vector2i& pos, unsigned length, ValueType value)
 		{
-			// TODO: Optimize with linear memory access
-			for (unsigned i = 0; i < length; i++)
-				_buffer.set(pos.x + i, pos.y, value);
+			_buffer.set_line_h(pos, length, value);
 		}
 
 		bool draw_line_h(const Vector2i& pos, unsigned length, CallbackType func)
@@ -49,12 +47,12 @@ namespace unicore
 
 		void draw_line_v(const Vector2i& pos, unsigned length, ValueType value)
 		{
-			for (unsigned i = 0; i < length; i++)
-				_buffer.set(pos.x, pos.y + i, value);
+			_buffer.set_line_v(pos, length, value);
 		}
 
 		bool draw_line_v(const Vector2i& pos, unsigned length, CallbackType func)
 		{
+			// TODO: Optimize with linear memory access
 			for (unsigned i = 0; i < length; i++)
 			{
 				if (!func(*this, Vector2i(pos.x, pos.y + i)))
@@ -102,12 +100,12 @@ namespace unicore
 
 		void fill(ValueType value)
 		{
-			fill_rect(_buffer.get_rect(), value);
+			fill_rect(_buffer.rect(), value);
 		}
 
 		bool fill(CallbackType func)
 		{
-			return fill_rect(_buffer.get_rect(), func);
+			return fill_rect(_buffer.rect(), func);
 		}
 
 		// LINE //////////////////////////////////////////////////////////////////////
@@ -268,15 +266,19 @@ namespace unicore
 		// COPY //////////////////////////////////////////////////////////////////////
 		void draw_buffer(const Vector2i& pos, const IBuffer2<T>& src)
 		{
-			const auto& src_size = src.size();
+			Recti rect{ pos, src.size() };
+			_buffer.clip_rect(rect);
 
-			for (int y = 0; y < src_size.y; y++)
-				for (int x = 0; x < src_size.x; x++)
+			if (rect.w > 0 && rect.h > 0)
+			{
+				List<T> line(rect.w);
+
+				for (int y = 0; y < rect.h; y++)
 				{
-					T value;
-					if (src.get(x, y, value))
-						draw_point({ pos.x + x, pos.y + y }, value);
+					const auto w = src.get_line_h(0, y, rect.w, line.data());
+					_buffer.set_line_h({ pos.x, pos.y + y }, w, line.data());
 				}
+			}
 		}
 
 	protected:

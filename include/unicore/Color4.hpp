@@ -214,8 +214,8 @@ namespace unicore
 		};
 	}
 
-	using Color4b = Color4<uint8_t>;
-	using Color4f = Color4<float>;
+	using Color4b = Color4<Byte>;
+	using Color4f = Color4<Float>;
 
 	namespace details
 	{

@@ -125,7 +125,8 @@ namespace unicore
 			const auto& r = item_packed[i];
 			const Recti packed = { r.x + 1, r.y + 1, r.w - 2, r.h - 2 };
 
-			// TODO: Optimize
+#if 1
+			// TODO: Optimize glyph copying
 			for (int y = 0; y < packed.h; y++)
 				for (int x = 0; x < packed.w; x++)
 				{
@@ -133,6 +134,18 @@ namespace unicore
 					const Color4b color(255, 255, 255, a);
 					canvas.draw_point({ packed.x + x, packed.y + y }, color);
 				}
+#else
+			DynamicSurface glyph_surface(packed.w, packed.h);
+			const auto total = packed.size().area();
+			for (int offset = 0; offset < total; offset++)
+			{
+				const auto a = item_bm[i][offset];
+				const Color4b color(255, 255, 255, a);
+				static_cast<UInt32*>(glyph_surface.data())[offset]
+					= color.to_format(glyph_surface.format());
+			}
+			canvas.draw_buffer(packed.position(), glyph_surface);
+#endif
 			stbtt_FreeBitmap(item_bm[i], nullptr);
 
 			stbtt_bakedchar info;
