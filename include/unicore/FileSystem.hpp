@@ -4,8 +4,6 @@
 
 namespace unicore
 {
-	class FileProviderLoader;
-
 	class FileSystem : public Module, public WriteFileProvider
 	{
 		UC_OBJECT(FileSystem, Module)
@@ -14,10 +12,6 @@ namespace unicore
 
 		void add_read(const Shared<ReadFileProvider>& provider);
 		void set_write(const Shared<WriteFileProvider>& provider);
-
-		void add_loader(const Shared<FileProviderLoader>& creator);
-
-		bool mount(const Path& path);
 
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
@@ -36,7 +30,5 @@ namespace unicore
 		Logger& _logger;
 		List<Shared<ReadFileProvider>> _providers;
 		Shared<WriteFileProvider> _write;
-
-		Set<Shared<FileProviderLoader>> _provider_loaders;
 	};
 }

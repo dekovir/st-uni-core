@@ -8,6 +8,11 @@ namespace unicore
 	constexpr WStringView Wildcard = L"*";
 
 	// FileProvider ///////////////////////////////////////////////////////////////
+	size_t FileProvider::get_system_memory_use() const
+	{
+		return sizeof(FileProvider);
+	}
+
 	bool FileProvider::exists(const Path& path) const
 	{
 		return stats(path).has_value();
@@ -117,6 +122,11 @@ namespace unicore
 	}
 
 	// DirectoryFileProvider //////////////////////////////////////////////////////
+	size_t DirectoryFileProvider::get_system_memory_use() const
+	{
+		return sizeof(DirectoryFileProvider);
+	}
+
 	Optional<FileStats> DirectoryFileProvider::stats(const Path& path) const
 	{
 		return _provider.stats(make_path(path));
@@ -140,6 +150,11 @@ namespace unicore
 	}
 
 	// CachedFileProvider /////////////////////////////////////////////////////////
+	size_t CachedFileProvider::get_system_memory_use() const
+	{
+		return sizeof(CachedFileProvider);
+	}
+
 	bool CachedFileProvider::exists(const Path& path) const
 	{
 		return find_data(path) != nullptr;

@@ -1,6 +1,5 @@
 #include "unicore/FileSystem.hpp"
 #include "unicore/Logger.hpp"
-#include "unicore/FileProviderLoader.hpp"
 
 namespace unicore
 {
@@ -25,57 +24,6 @@ namespace unicore
 
 		_write = provider;
 		_providers.insert(_providers.begin(), _write);
-	}
-
-	void FileSystem::add_loader(const Shared<FileProviderLoader>& creator)
-	{
-		_provider_loaders.insert(creator);
-	}
-
-	bool FileSystem::mount(const Path& path)
-	{
-		if (_providers.empty())
-		{
-			UC_LOG_ERROR(_logger) << "Failed to mount. No providers";
-			return true;
-		}
-
-		const FileProviderLoader::Options options{ &_logger };
-
-		for (auto it = _providers.rbegin(); it != _providers.rend(); ++it)
-		{
-			const auto provider = *it;
-
-			auto stats = provider->stats(path);
-			if (!stats.has_value()) continue;
-
-			if (stats.value().type == FileType::Directory)
-			{
-				add_read(std::make_shared<DirectoryFileProvider>(*provider, path));
-				return true;
-			}
-
-			for (const auto& loader : _provider_loaders)
-			{
-				if (!loader->can_load(path))
-					continue;
-
-				auto stream = provider->open_read(path);
-				if (!stream) continue;
-
-				if (const auto result = loader->load(stream, options); result)
-				{
-					add_read(result);
-					return true;
-				}
-
-				UC_LOG_ERROR(_logger) << "Failed to create FileProvider from "
-					<< loader->type() << " at " << path;
-			}
-		}
-
-		UC_LOG_WARNING(_logger) << "Failed to mount " << path;
-		return false;
 	}
 
 	Optional<FileStats> FileSystem::stats(const Path& path) const

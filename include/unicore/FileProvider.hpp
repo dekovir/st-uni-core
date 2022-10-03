@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/EnumFlag.hpp"
-#include "unicore/Object.hpp"
+#include "unicore/Resource.hpp"
 #include "unicore/Path.hpp"
 #include "unicore/Containers.hpp"
 #include "unicore/DateTime.hpp"
@@ -42,10 +42,12 @@ namespace unicore
 	};
 
 	// FileProvider ///////////////////////////////////////////////////////////////
-	class FileProvider : public Object
+	class FileProvider : public Resource
 	{
-		UC_OBJECT(FileProvider, Object)
+		UC_OBJECT(FileProvider, Resource)
 	public:
+		UC_NODISCARD size_t get_system_memory_use() const override;
+
 		UC_NODISCARD virtual Optional<FileStats> stats(const Path& path) const = 0;
 		UC_NODISCARD virtual bool exists(const Path& path) const;
 
@@ -110,6 +112,8 @@ namespace unicore
 		explicit DirectoryFileProvider(ReadFileProvider& provider, const Path& base)
 			: _provider(provider), _base(base) {}
 
+		UC_NODISCARD size_t get_system_memory_use() const override;
+
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 		UC_NODISCARD bool exists(const Path& path) const override;
 
@@ -130,6 +134,8 @@ namespace unicore
 	{
 		UC_OBJECT(CachedFileProvider, ReadFileProvider)
 	public:
+		UC_NODISCARD size_t get_system_memory_use() const override;
+
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
