@@ -27,6 +27,13 @@ namespace unicore
 		UC_NODISCARD virtual size_t hash() const = 0;
 	};
 
+	template<size_t Hash>
+	class ResourceOptionsHash : public ResourceOptions
+	{
+	public:
+		UC_NODISCARD size_t hash() const override { return Hash; }
+	};
+
 	class EmptyResourceOptions : public ResourceOptions
 	{
 	public:

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "unicore/Defs.hpp"
+#include "unicore/Hash.hpp"
 
 namespace unicore
 {
@@ -10,6 +10,7 @@ namespace unicore
 		static constexpr size_t size = N;
 
 		TChar data[N + 1];
+		size_t hash;
 
 		constexpr ConstString() noexcept
 			: data{}
@@ -41,15 +42,20 @@ namespace unicore
 			return data;
 		}
 
-		UC_NODISCARD BasicStringView<TChar> view() const noexcept
+		UC_NODISCARD constexpr BasicStringView<TChar> view() const noexcept
 		{
 			return BasicStringView<TChar>(data, N + 1);
 		}
 
-		UC_NODISCARD BasicString<TChar> str() const noexcept
+		UC_NODISCARD constexpr BasicString<TChar> str() const noexcept
 		{
 			return data;
 		}
+
+		//UC_NODISCARD constexpr auto hash() const
+		//{
+		//	return Crc32::compute(data, N);
+		//}
 
 		template <size_t Pos, size_t Count = npos>
 		UC_NODISCARD constexpr auto substr() const noexcept
@@ -88,13 +94,13 @@ namespace unicore
 	private:
 		template <size_t... Idx>
 		constexpr ConstString(const ConstString<TChar, N>& other, std::index_sequence<Idx...>) noexcept
-			: data{ other.data[Idx]... }
+			: data{ other.data[Idx]... }, hash(Crc32::compute(view()))
 		{
 		}
 
 		template <size_t... Idx>
 		constexpr ConstString(const TChar(&data)[sizeof...(Idx) + 1], std::index_sequence<Idx...>) noexcept
-			: data{ data[Idx]... }
+			: data{ data[Idx]... }, hash(Crc32::compute(view()))
 		{
 		}
 	};
