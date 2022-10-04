@@ -1,4 +1,4 @@
-#include "unicore/GridTopology.hpp"
+#include "unicore/grid/GridTopology.hpp"
 #include "unicore/Math.hpp"
 
 namespace unicore

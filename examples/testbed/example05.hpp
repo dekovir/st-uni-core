@@ -4,8 +4,7 @@
 #include "unicore/Sprite.hpp"
 #include "unicore/SpriteBatch.hpp"
 #include "unicore/Graphics2D.hpp"
-#include "unicore/GridMap.hpp"
-#include "unicore/Sprite.hpp"
+#include "unicore/grid/GridMap.hpp"
 
 namespace unicore
 {

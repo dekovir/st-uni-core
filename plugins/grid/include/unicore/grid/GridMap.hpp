@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/Buffer2.hpp"
-#include "unicore/GridTopology.hpp"
+#include "unicore/grid/GridTopology.hpp"
 
 namespace unicore
 {
