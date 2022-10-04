@@ -1,5 +1,6 @@
 #pragma once
 #include "example.hpp"
+#if defined(UNICORE_USE_GRID)
 #include "unicore/Transform2.hpp"
 #include "unicore/Sprite.hpp"
 #include "unicore/SpriteBatch.hpp"
@@ -36,3 +37,4 @@ namespace unicore
 		SpriteBatch _sprite_batch;
 	};
 }
+#endif

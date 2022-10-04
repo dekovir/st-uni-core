@@ -1,4 +1,5 @@
 #include "example05.hpp"
+#if defined(UNICORE_USE_GRID)
 #include "unicore/Input.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/Canvas.hpp"
@@ -101,3 +102,4 @@ namespace unicore
 		_graphics.render(renderer);
 	}
 }
+#endif
