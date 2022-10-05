@@ -47,13 +47,13 @@ namespace unicore
 
 	bool ReadMemoryFile::read(void* buffer, size_t size, size_t* bytes_read)
 	{
-		const auto count = Math::min(size, _chunk->size() - _position);
+		const auto count = Math::min<int64_t>(size, _chunk->size() - _position);
 		if (bytes_read) *bytes_read = count;
 		if (count > 0)
 		{
 			const auto data = static_cast<const uint8_t*>(_chunk->data());
 			Memory::copy(buffer, data + _position, count);
-			_position += static_cast<int64_t>(count);
+			_position += count;
 			return true;
 		}
 
@@ -104,12 +104,12 @@ namespace unicore
 
 	bool WriteMemoryFile::read(void* buffer, size_t size, size_t* bytes_read)
 	{
-		const auto count = Math::min(size, _bytes.size() - _position);
+		const auto count = Math::min<int64_t>(size, _bytes.size() - _position);
 		if (bytes_read) *bytes_read = count;
 		if (count > 0)
 		{
 			Memory::copy(buffer, _bytes.data() + _position, count);
-			_position += static_cast<int64_t>(count);
+			_position += count;
 			return true;
 		}
 
