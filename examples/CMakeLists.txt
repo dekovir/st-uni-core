@@ -1,6 +1,7 @@
 # OPTIONS ######################################################################
 option(UNICORE_EXAMPLES_ALL "Add all examples projects" OFF)
 option(UNICORE_EXAMPLE_MINIMAL "Add Minimal project" ${UNICORE_EXAMPLES_ALL})
+option(UNICORE_EXAMPLE_RAYCAST "Add Raycast project" ${UNICORE_EXAMPLES_ALL})
 option(UNICORE_EXAMPLE_WASM "Add wasm example project" ${UNICORE_EXAMPLES_ALL})
 option(UNICORE_TESTBED "Add Testbed project" ${UNICORE_EXAMPLES_ALL})
 
@@ -12,6 +13,19 @@ if (UNICORE_EXAMPLE_MINIMAL)
 	add_executable(minimal "${EXAMPLE_MINIMAL_SRC}")
 	unicore_init_executable(minimal)
 	set_target_properties(minimal PROPERTIES FOLDER "Examples")
+endif()
+
+# EXAMPLE_RAYCAST ##############################################################
+if (UNICORE_EXAMPLE_RAYCAST)
+	set(EXAMPLE_RAYCAST_DIR "${EXAMPLES_DIR}/raycast")
+	file(GLOB EXAMPLE_RAYCAST_SRC "${EXAMPLE_RAYCAST_DIR}/*.cpp" "${EXAMPLE_RAYCAST_DIR}/*.hpp")
+
+	add_executable(raycast "${EXAMPLE_RAYCAST_SRC}")
+	unicore_init_executable(raycast)
+	set_target_properties(raycast PROPERTIES FOLDER "Examples")
+
+	unciore_link_stb(raycast)
+	unciore_link_raycast(raycast)
 endif()
 
 # EXAMPLE_WASM #################################################################
@@ -43,6 +57,7 @@ if (UNICORE_TESTBED)
 	unciore_link_fnt(testbed)
 	unciore_link_grid(testbed)
 	unciore_link_imgui(testbed)
+	unciore_link_raycast(testbed)
 	unciore_link_stb(testbed)
 	unciore_link_szip(testbed)
 	unciore_link_xml(testbed)

@@ -3,6 +3,7 @@ option(UNICORE_PLUGINS_ALL "Add all unciore plugins" ON)
 option(UNICORE_PLUGIN_FNT "Add unicore-fnt plugin" ${UNICORE_PLUGINS_ALL})
 option(UNICORE_PLUGIN_GRID "Add unicore-grid plugin" ${UNICORE_PLUGINS_ALL})
 option(UNICORE_PLUGIN_IMGUI "Add unicore-imgui plugin" ${UNICORE_PLUGINS_ALL})
+option(UNICORE_PLUGIN_RAYCAST "Add unicore-raycast plugin" ${UNICORE_PLUGINS_ALL})
 option(UNICORE_PLUGIN_STB "Add unicore-stb plugin (stb)" ${UNICORE_PLUGINS_ALL})
 option(UNICORE_PLUGIN_SZIP "Add unicore-szip plugin (7zip)" ${UNICORE_PLUGINS_ALL})
 option(UNICORE_PLUGIN_WASM "Add unicore-wasm plugin" ${UNICORE_PLUGINS_ALL})
@@ -19,6 +20,10 @@ endif()
 
 if (UNICORE_PLUGIN_IMGUI)
 	add_subdirectory("${PLUGINS_DIR}/imgui")
+endif()
+
+if (UNICORE_PLUGIN_RAYCAST)
+	add_subdirectory("${PLUGINS_DIR}/raycast")
 endif()
 
 if (UNICORE_PLUGIN_STB)
