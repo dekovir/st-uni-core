@@ -33,6 +33,8 @@ namespace unicore
 		UC_NODISCARD bool has_extension() const;
 		UC_NODISCARD bool has_extension(WStringView ext) const;
 
+		UC_NODISCARD bool starts_with(const Path& path) const;
+
 		void parent_path(Path& parentPath) const;
 		UC_NODISCARD Path parent_path() const;
 

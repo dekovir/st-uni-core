@@ -115,85 +115,26 @@ namespace unicore
 		//using DataType = intptr_t;
 		//virtual ~CachedPathData() = default;
 
-		struct EntryData
+		UC_NODISCARD bool contains(const Path& path) const
 		{
-			Dictionary<WString, DataType> files;
-			Dictionary<WString, EntryData> subfolders;
-		};
-
-		EntryData root;
-
-		UC_NODISCARD const EntryData* find_entry(const Path& path) const
-		{
-			_elements.clear();
-			path.explode(_elements);
-
-			auto data = &root;
-			for (const auto& _element : _elements)
-			{
-				const auto it = data->subfolders.find(_element);
-				if (it != data->subfolders.end())
-					data = &it->second;
-
-				return nullptr;
-			}
-
-			return nullptr;
+			return _entries.find(path) != _entries.end();
 		}
 
-		UC_NODISCARD const DataType* find_data(const Path& path) const
+		UC_NODISCARD Optional<DataType> find_data(const Path& path) const
 		{
-			path.explode(_parent, _file);
+			auto it = _entries.find(path);
+			if (it != _entries.end())
+				return it->second;
 
-			const auto entry = find_entry(_parent);
-			if (entry != nullptr)
-			{
-				const auto it = entry->files.find(_file);
-				if (it != entry->files.end())
-					return &it->second;
-			}
-
-			return nullptr;
-		}
-
-		EntryData* make_entry(const Path& path)
-		{
-			_elements.clear();
-			path.explode(_elements);
-
-			EntryData* data = &root;
-			for (auto& _element : _elements)
-			{
-				auto it = data->subfolders.find(_element);
-				if (it != data->subfolders.end())
-					data = &it->second;
-
-				data = &data->subfolders[_element];
-			}
-
-			return data;
+			return std::nullopt;
 		}
 
 		void add_entry(const Path& path, const DataType& data)
 		{
-			path.explode(_parent, _file);
-
-			const auto entry = make_entry(_parent);
-			entry->files.emplace(_file, data);
+			_entries.emplace(path, data);
 		}
 
 	protected:
-		static List<WString> _elements;
-		static Path _parent;
-		static WString _file;
+		Dictionary<Path, DataType> _entries;
 	};
-
-	template<typename DataType>
-	List<WString> CachedPathData<DataType>::_elements;
-
-	template<typename DataType>
-	Path CachedPathData<DataType>::_parent;
-
-	template<typename DataType>
-	WString CachedPathData<DataType>::_file;
 }

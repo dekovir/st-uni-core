@@ -12,7 +12,8 @@ namespace unicore
 		}
 	};
 
-	class XMLDataLoader : public ResourceLoaderTyped<XMLData, XMLLoadPolicy>
+	class XMLDataLoader : public ResourceLoaderTyped<
+		ResourceLoaderTypePolicy::Multiple<XMLData>, XMLLoadPolicy>
 	{
 	public:
 		UC_NODISCARD Shared<Resource> load(const Context& options) override;

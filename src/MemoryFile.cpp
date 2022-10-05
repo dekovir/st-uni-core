@@ -42,16 +42,18 @@ namespace unicore
 
 	bool ReadMemoryFile::eof() const
 	{
-		return _position >= static_cast<int64_t>(_chunk->size());
+		return _position >= size();
 	}
 
 	bool ReadMemoryFile::read(void* buffer, size_t size, size_t* bytes_read)
 	{
-		const auto count = Math::min<size_t>(size, _chunk->size() - _position);
+		const auto count = Math::min(size, _chunk->size() - _position);
 		if (bytes_read) *bytes_read = count;
 		if (count > 0)
 		{
-			Memory::copy(buffer, _chunk->data(), count);
+			const auto data = static_cast<const uint8_t*>(_chunk->data());
+			Memory::copy(buffer, data + _position, count);
+			_position += static_cast<int64_t>(count);
 			return true;
 		}
 
@@ -102,10 +104,16 @@ namespace unicore
 
 	bool WriteMemoryFile::read(void* buffer, size_t size, size_t* bytes_read)
 	{
-		const auto count = Math::min(static_cast<int64_t>(size), this->size() - _position);
-		Memory::copy(buffer, _bytes.data() + _position, count);
+		const auto count = Math::min(size, _bytes.size() - _position);
 		if (bytes_read) *bytes_read = count;
-		return true;
+		if (count > 0)
+		{
+			Memory::copy(buffer, _bytes.data() + _position, count);
+			_position += static_cast<int64_t>(count);
+			return true;
+		}
+
+		return false;
 	}
 
 	bool WriteMemoryFile::flush()
@@ -117,6 +125,7 @@ namespace unicore
 	{
 		_bytes.resize(_position + size);
 		Memory::copy(_bytes.data() + _position, buffer, size);
+		_position += static_cast<int64_t>(size);
 		if (bytes_written) *bytes_written = size;
 		return true;
 	}

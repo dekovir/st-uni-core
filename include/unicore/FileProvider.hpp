@@ -87,6 +87,7 @@ namespace unicore
 
 	protected:
 		static bool enumerate_test_flags(FileType type, EnumerateFlags flags);
+		static bool enumerate_test_options(FileType type, const EnumerateOptions& options);
 	};
 
 	// WriteFileProvider /////////////////////////////////////////////////////////
@@ -147,6 +148,7 @@ namespace unicore
 	protected:
 		UC_NODISCARD virtual Optional<FileStats> stats_index(intptr_t index) const = 0;
 		UC_NODISCARD virtual Shared<ReadFile> open_read_index(intptr_t index) = 0;
-		UC_NODISCARD virtual bool enumerate_index(intptr_t index, const EnumerateOptions& options) const = 0;
+
+		UC_NODISCARD virtual bool enumerate_index(intptr_t index, const EnumerateOptions& options) const;
 	};
 }

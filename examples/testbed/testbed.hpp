@@ -5,6 +5,8 @@
 
 namespace unicore
 {
+	class ReadFileProvider;
+
 	class MyCore : public SDLCore
 	{
 	public:
@@ -15,6 +17,7 @@ namespace unicore
 		int _example_index = -1;
 
 		Shared<Font> _font;
+		Shared<ReadFileProvider> _archive;
 		SpriteBatch _sprite_batch;
 		DefaultRandom _random;
 

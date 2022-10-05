@@ -26,16 +26,7 @@ namespace unicore
 		void unload_all();
 		void unload_unused();
 
-		UC_NODISCARD Shared<Resource> find(const Path& path,
-			TypeConstRef type, const ResourceOptions* options = nullptr) const;
 		UC_NODISCARD Optional<Path> find_path(const Resource& resource) const;
-
-		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-		UC_NODISCARD Shared<T> find(const Path& path) const
-		{
-			return std::dynamic_pointer_cast<T>(find(path, get_type<T>()));
-		}
 
 		// CREATE ////////////////////////////////////////////////////////////////////
 		Shared<Resource> create(TypeConstRef type, const ResourceOptions& options);
@@ -55,7 +46,9 @@ namespace unicore
 			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
 		Shared<T> load(const Path& path, ResourceCacheFlags flags = ResourceCacheFlags::Zero)
 		{
-			return std::dynamic_pointer_cast<T>(load(path, get_type<T>(), nullptr, flags));
+			auto& type = get_type<T>();
+			auto resource = load(path, type, nullptr, flags);
+			return std::dynamic_pointer_cast<T>(resource);
 		}
 
 		template<typename T, typename TData,
@@ -90,12 +83,7 @@ namespace unicore
 		};
 
 		List<Weak<Resource>> _resources;
-		DictionaryMulti<size_t, CachedInfo> _cached;
-
-		UC_NODISCARD const CachedInfo* internal_find(TypeConstRef type, size_t hash) const;
-
-		bool internal_add(const Shared<Resource>& resource,
-			const Path& path, const ResourceOptions* options, size_t hash);
+		Dictionary<ResourceLoader*, Dictionary<size_t, CachedInfo>> _cached;
 
 		static size_t make_hash(const Path& path, const ResourceOptions* options);
 	};

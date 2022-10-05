@@ -112,6 +112,11 @@ namespace unicore
 		return false;
 	}
 
+	bool ReadFileProvider::enumerate_test_options(FileType type, const EnumerateOptions& options)
+	{
+		return enumerate_test_flags(type, options.flags);
+	}
+
 	// WriteFileProvider //////////////////////////////////////////////////////////
 	bool WriteFileProvider::write_chunk(const Path& path, const MemoryChunk& chunk)
 	{
@@ -157,13 +162,13 @@ namespace unicore
 
 	bool CachedFileProvider::exists(const Path& path) const
 	{
-		return find_data(path) != nullptr;
+		return contains(path);
 	}
 
 	Optional<FileStats> CachedFileProvider::stats(const Path& path) const
 	{
 		const auto data = find_data(path);
-		return data != nullptr ? stats_index(*data) : std::nullopt;
+		return data.has_value() ? stats_index(data.value()) : std::nullopt;
 	}
 
 	uint16_t CachedFileProvider::enumerate_entries(
@@ -171,17 +176,19 @@ namespace unicore
 		List<WString>& name_list, const EnumerateOptions& options) const
 	{
 		uint16_t count = 0;
-		if (const auto entry = find_entry(path); entry != nullptr)
+		for (const auto& [entry_path, entry_index] : _entries)
 		{
-			for (const auto& [name, index] : entry->files)
+			if (entry_path.starts_with(path))
 			{
-				if (StringHelper::compare_to_mask(WStringView(name), search_pattern))
+				// TODO: Optimize enumeration
+				auto parent_path = entry_path.parent_path();
+				if (path == parent_path)
 				{
-					if (!enumerate_index(index, options))
-						continue;
-
-					name_list.push_back(name);
-					count++;
+					if (enumerate_index(entry_index, options))
+					{
+						name_list.push_back(entry_path.filename());
+						count++;
+					}
 				}
 			}
 		}
@@ -192,6 +199,17 @@ namespace unicore
 	Shared<ReadFile> CachedFileProvider::open_read(const Path& path)
 	{
 		const auto data = find_data(path);
-		return data != nullptr ? open_read_index(*data) : nullptr;
+		return data.has_value() ? open_read_index(data.value()) : nullptr;
+	}
+
+	bool CachedFileProvider::enumerate_index(intptr_t index, const EnumerateOptions& options) const
+	{
+		if (const auto stats = stats_index(index); stats.has_value())
+		{
+			const auto type = stats.value().type;
+			return enumerate_test_options(type, options);
+		}
+
+		return false;
 	}
 }

@@ -1,4 +1,4 @@
-#include "SolidSizeLoader.hpp"
+#include "unicore/loaders/SolidSizeLoader.hpp"
 #include "unicore/Canvas.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Renderer.hpp"

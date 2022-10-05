@@ -6,7 +6,9 @@
 namespace unicore
 {
 	class StbEasyFontLoader : public ResourceLoaderOptionsTyped<
-		StbEasyFont, EmptyResourceOptions, ResourceLoaderPathPolicy::Empty>
+		EmptyResourceOptions,
+		ResourceLoaderTypePolicy::Multiple<StbEasyFont, GeometryFont>,
+		ResourceLoaderPathPolicy::Empty>
 	{
 		UC_OBJECT(StbEasyFontLoader, ResourceLoader)
 	public:

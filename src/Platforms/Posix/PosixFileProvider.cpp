@@ -70,7 +70,7 @@ namespace unicore
 					continue;
 
 				const auto type = entry->d_type == DT_DIR ? FileType::Directory : FileType::File;
-				if (!enumerate_test_flags(type, options.flags))
+				if (!enumerate_test_options(type, options))
 					continue;
 
 				const auto wcs = Unicode::to_wcs(file_name);

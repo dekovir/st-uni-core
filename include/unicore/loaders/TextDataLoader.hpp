@@ -12,14 +12,16 @@ namespace unicore
 		}
 	};
 
-	class TextDataLoader : public ResourceLoaderTyped<TextData, TextLoadPolicy>
+	class TextDataLoader : public ResourceLoaderTyped<
+		ResourceLoaderTypePolicy::Multiple<TextData>, TextLoadPolicy>
 	{
 		UC_OBJECT(TextDataLoader, ResourceLoaderTyped)
 	public:
 		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 
-	class WTextDataLoader : public ResourceLoaderTyped<WTextData, TextLoadPolicy>
+	class WTextDataLoader : public ResourceLoaderTyped<
+		ResourceLoaderTypePolicy::Multiple<WTextData>, TextLoadPolicy>
 	{
 		UC_OBJECT(TextDataLoader, ResourceLoaderTyped)
 	public:

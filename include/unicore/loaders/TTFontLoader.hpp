@@ -5,7 +5,8 @@
 namespace unicore
 {
 	class TTFontLoader : public ResourceLoaderOptionsTyped<
-		TexturedFont, TTFontOptions,
+		TTFontOptions,
+		ResourceLoaderTypePolicy::Multiple<TexturedFont, Font>,
 		ResourceLoaderPathPolicy::NotEmpty,
 		ResourceLoaderOptionsPolicy::NullOrExact<TTFontOptions>>
 	{

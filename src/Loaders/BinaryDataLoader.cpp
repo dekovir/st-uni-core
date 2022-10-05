@@ -1,4 +1,4 @@
-#include "BinaryDataLoader.hpp"
+#include "unicore/loaders/BinaryDataLoader.hpp"
 #include "unicore/File.hpp"
 #include "unicore/ResourceCache.hpp"
 

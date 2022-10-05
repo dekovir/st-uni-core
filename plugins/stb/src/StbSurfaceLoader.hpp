@@ -13,14 +13,16 @@ namespace unicore
 		}
 	};
 
-	class StbSurfaceLoader : public ResourceLoaderTyped<Surface, StbSurfaceLoadPolicy>
+	class StbSurfaceLoader : public ResourceLoaderTyped<
+		ResourceLoaderTypePolicy::Single<Surface>, StbSurfaceLoadPolicy>
 	{
 		UC_OBJECT(StbSurfaceLoader, ResourceLoader)
 	public:
 		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 
-	class StbDynamicSurfaceLoader : public ResourceLoaderTyped<DynamicSurface, StbSurfaceLoadPolicy>
+	class StbDynamicSurfaceLoader : public ResourceLoaderTyped<
+		ResourceLoaderTypePolicy::Single<DynamicSurface>, StbSurfaceLoadPolicy>
 	{
 		UC_OBJECT(StbDynamicSurfaceLoader, ResourceLoader)
 	public:

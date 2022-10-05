@@ -1,4 +1,4 @@
-#include "SpriteListTileSetLoader.hpp"
+#include "unicore/loaders/SpriteListTileSetLoader.hpp"
 #include "unicore/Texture.hpp"
 #include "unicore/ResourceCache.hpp"
 

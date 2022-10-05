@@ -12,7 +12,8 @@ namespace unicore
 		}
 	};
 
-	class BinaryDataLoader : public ResourceLoaderTyped<BinaryData, BinaryDataLoadPolicy>
+	class BinaryDataLoader : public ResourceLoaderTyped<
+		ResourceLoaderTypePolicy::Multiple<BinaryData>, BinaryDataLoadPolicy>
 	{
 		UC_OBJECT(BinaryDataLoader, ResourceLoaderTyped)
 	public:

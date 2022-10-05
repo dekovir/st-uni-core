@@ -72,7 +72,7 @@ namespace unicore
 					continue;
 
 				const auto type = get_file_type(data.dwFileAttributes);
-				if (!enumerate_test_flags(type, options.flags))
+				if (!enumerate_test_options(type, options))
 					continue;
 
 				name_list.push_back(file_name);

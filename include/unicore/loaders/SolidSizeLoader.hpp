@@ -6,8 +6,10 @@
 namespace unicore
 {
 	// SurfaceSizeSurfaceLoader ///////////////////////////////////////////////////
-	class SurfaceSizeSurfaceLoader
-		: public ResourceLoaderOptionsTyped<Surface, SolidSizeOptions, ResourceLoaderPathPolicy::Empty>
+	class SurfaceSizeSurfaceLoader : public ResourceLoaderOptionsTyped<
+		SolidSizeOptions,
+		ResourceLoaderTypePolicy::Multiple<Surface>,
+		ResourceLoaderPathPolicy::Empty>
 	{
 	public:
 		Shared<Resource> load_options(const Context& context,
@@ -15,8 +17,10 @@ namespace unicore
 	};
 
 	// DynamicSurfaceSolidSizeLoader //////////////////////////////////////////////
-	class DynamicSurfaceSolidSizeLoader
-		: public ResourceLoaderOptionsTyped<DynamicSurface, SolidSizeOptions, ResourceLoaderPathPolicy::Empty>
+	class DynamicSurfaceSolidSizeLoader : public ResourceLoaderOptionsTyped<
+		SolidSizeOptions,
+		ResourceLoaderTypePolicy::Multiple<DynamicSurface>,
+		ResourceLoaderPathPolicy::Empty>
 	{
 	public:
 		Shared<Resource> load_options(const Context& context,
@@ -24,8 +28,10 @@ namespace unicore
 	};
 
 	// TextureSolidSizeLoader /////////////////////////////////////////////////////
-	class TextureSolidSizeLoader
-		: public ResourceLoaderOptionsTyped<Texture, SolidSizeOptions, ResourceLoaderPathPolicy::Empty>
+	class TextureSolidSizeLoader : public ResourceLoaderOptionsTyped<
+		SolidSizeOptions,
+		ResourceLoaderTypePolicy::Multiple<Texture>,
+		ResourceLoaderPathPolicy::Empty>
 	{
 	public:
 		explicit TextureSolidSizeLoader(Renderer& renderer);

@@ -1,7 +1,6 @@
 #pragma once
 #include "unicore/Path.hpp"
 #include "unicore/Resource.hpp"
-#include "unicore/File.hpp"
 #include "unicore/Logger.hpp"
 
 namespace unicore
@@ -20,7 +19,7 @@ namespace unicore
 			Logger* logger = nullptr;
 		};
 
-		UC_NODISCARD virtual TypeConstRef resource_type() const = 0;
+		UC_NODISCARD virtual const List<TypeConstPtr>& resource_types() const = 0;
 
 		UC_NODISCARD virtual int priority() const { return 0; }
 		UC_NODISCARD virtual const TypeInfo* options_type() const { return nullptr; }
@@ -32,6 +31,29 @@ namespace unicore
 	};
 
 	// ResourceLoaderPolicy ///////////////////////////////////////////////////////
+	namespace ResourceLoaderTypePolicy
+	{
+		template<typename T>
+		struct Single
+		{
+			const List<TypeConstPtr>& operator()() const
+			{
+				static const List<TypeConstPtr> list{ &get_type<T>() };
+				return list;
+			}
+		};
+
+		template<typename... Types>
+		struct Multiple
+		{
+			const List<TypeConstPtr>& operator()() const
+			{
+				static const List<TypeConstPtr> list{ &get_type<Types>()... };
+				return list;
+			}
+		};
+	}
+
 	namespace ResourceLoaderPathPolicy
 	{
 		struct Empty
@@ -85,13 +107,17 @@ namespace unicore
 	}
 
 	// ResourceLoaderTyped ////////////////////////////////////////////////////////
-	template<typename T, typename PathPolicy,
-		typename OptionsPolicy = ResourceLoaderOptionsPolicy::Null,
-		std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
+	template<typename TypePolicy, typename PathPolicy,
+		typename OptionsPolicy = ResourceLoaderOptionsPolicy::Null>
 	class ResourceLoaderTyped : public ResourceLoader
 	{
 		UC_OBJECT(ResourceLoaderTyped, ResourceLoader)
 	public:
+		UC_NODISCARD const List<TypeConstPtr>& resource_types() const override
+		{
+			return _type_policy();
+		}
+
 		UC_NODISCARD bool can_load(const Path& path) const override
 		{
 			return _path_policy(path);
@@ -103,19 +129,17 @@ namespace unicore
 			return _options_policy(options);
 		}
 
-		UC_NODISCARD TypeConstRef resource_type() const override { return get_type<T>(); }
-
 	protected:
+		const TypePolicy _type_policy;
 		const PathPolicy _path_policy;
 		const OptionsPolicy _options_policy;
 	};
 
 	// ResourceLoaderOptionsTyped /////////////////////////////////////////////////
-	template<typename T, typename TOptions, typename PathPolicy,
+	template<typename TOptions, typename TypePolicy, typename PathPolicy,
 		typename OptionsPolicy = ResourceLoaderOptionsPolicy::Exact<TOptions>,
-		std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr,
 		std::enable_if_t<std::is_base_of_v<ResourceOptions, TOptions>>* = nullptr>
-	class ResourceLoaderOptionsTyped : public ResourceLoaderTyped<T, PathPolicy, OptionsPolicy>
+	class ResourceLoaderOptionsTyped : public ResourceLoaderTyped<TypePolicy, PathPolicy, OptionsPolicy>
 	{
 		UC_OBJECT(ResourceLoaderOptionsTyped, ResourceLoader)
 	public:

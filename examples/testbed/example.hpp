@@ -28,6 +28,7 @@ namespace unicore
 	class Example : public Object
 	{
 	public:
+		const ExampleContext& context;
 		Logger& logger;
 		Random& random;
 		Time& time;

@@ -8,8 +8,6 @@
 
 namespace unicore
 {
-	static auto& s_resource_type = get_type<Resource>();
-
 	struct FromPath
 	{
 		explicit FromPath(const Path& path_) : path(path_) {}
@@ -49,16 +47,19 @@ namespace unicore
 
 	void ResourceCache::unload_unused()
 	{
-		for (auto it = _cached.begin(); it != _cached.end();)
+		for (auto& [_, cached] : _cached)
 		{
-			auto& info = it->second;
-			if (info.resource.use_count() == 1)
+			for (auto jt = cached.begin(); jt != cached.end();)
 			{
-				UC_LOG_DEBUG(_logger) << "Unload resource "
-					<< info.resource->type() << " from " << info.path;
-				it = _cached.erase(it);
+				auto& info = jt->second;
+				if (info.resource.use_count() == 1)
+				{
+					UC_LOG_DEBUG(_logger) << "Unload resource "
+						<< info.resource->type() << " from " << info.path;
+					jt = cached.erase(jt);
+				}
+				else ++jt;
 			}
-			else ++it;
 		}
 
 		// Remove expired weak pointers
@@ -69,21 +70,16 @@ namespace unicore
 		}
 	}
 
-	Shared<Resource> ResourceCache::find(const Path& path,
-		TypeConstRef type, const ResourceOptions* options) const
-	{
-		const size_t hash = make_hash(path, options);
-		const auto info = internal_find(type, hash);
-		return info ? info->resource : nullptr;
-	}
-
 	Optional<Path> ResourceCache::find_path(const Resource& resource) const
 	{
 		for (const auto& it : _cached)
 		{
-			auto& info = it.second;
-			if (info.resource.get() == &resource)
-				return info.path;
+			for (const auto& jt : it.second)
+			{
+				auto& info = jt.second;
+				if (info.resource.get() == &resource)
+					return info.path;
+			}
 		}
 
 		return std::nullopt;
@@ -97,22 +93,20 @@ namespace unicore
 	Shared<Resource> ResourceCache::load(const Path& path,
 		TypeConstRef type, const ResourceOptions* options, ResourceCacheFlags flags)
 	{
-		const size_t hash = make_hash(path, options);
-		if (const auto cached_info = internal_find(type, hash))
-			return cached_info->resource;
-
 		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;
 
-		const auto it = _loaders.find(&type);
-		if (it == _loaders.end())
+		const auto loaders_it = _loaders.find(&type);
+		if (loaders_it == _loaders.end())
 		{
 			UC_LOG_ERROR(logger) << "No loaders for " << type;
 			return nullptr;
 		}
 
 		// TODO: Implement loading stack for prevent recursive loading
-		const auto& loaders = it->second;
+		const auto& loaders = loaders_it->second;
 		const auto extension = path.extension();
+		const size_t hash = make_hash(path, options);
+
 		for (const auto& loader : loaders)
 		{
 			if (!flags.has(ResourceCacheFlag::IgnoreExtension) && !loader->can_load(path))
@@ -121,6 +115,20 @@ namespace unicore
 			if (!loader->can_load(options))
 				continue;
 
+			if (const auto it = _cached.find(loader.get()); it != _cached.end())
+			{
+				for (const auto& [h, info] : it->second)
+				{
+					auto res_type = info.resource->type();
+					if (hash == h && res_type.is_derived_from(type))
+					{
+						UC_LOG_DEBUG(_logger) << "Get from cache " << res_type
+							<< FromPath(path) << WithOptions(options);
+						return info.resource;
+					}
+				}
+			}
+
 			if (auto resource = loader->load({ *this, path, options, logger }))
 			{
 				UC_LOG_DEBUG(_logger) << "Loaded " << resource->type()
@@ -128,12 +136,19 @@ namespace unicore
 					<< " " << MemorySize{ resource->get_system_memory_use() };
 
 				_resources.push_back(resource);
-				internal_add(resource, path, options, hash);
+				if (resource->cache_policy() == ResourceCachePolicy::CanCache)
+				{
+					CachedInfo info{ resource, path };
+					_cached[loader.get()].emplace(hash, info);
+
+					UC_LOG_DEBUG(_logger) << "Added " << resource->type()
+						<< FromPath(path) << WithOptions(options);
+				}
 
 				return resource;
 			}
 
-			UC_LOG_ERROR(logger) << "Failed to load " << type << " with loader";
+			//UC_LOG_ERROR(logger) << "Failed to load " << type << " with loader";
 		}
 
 		UC_LOG_ERROR(logger) << "Failed to load " << type << FromPath(path) << WithOptions(options);
@@ -182,25 +197,25 @@ namespace unicore
 
 		for (const auto& it : _cached)
 		{
-			const auto& info = it.second;
-			if (system != nullptr)
-				*system += info.resource->get_system_memory_use();
-			if (video != nullptr)
+			for (const auto& jt : it.second)
 			{
-				if (const auto render_resource = std::dynamic_pointer_cast<RendererResource>(info.resource))
-					*video += render_resource->get_video_memory_use();
+				const auto& info = jt.second;
+				if (system != nullptr)
+					*system += info.resource->get_system_memory_use();
+				if (video != nullptr)
+				{
+					if (const auto render_resource = std::dynamic_pointer_cast<RendererResource>(info.resource))
+						*video += render_resource->get_video_memory_use();
+				}
 			}
 		}
 	}
 
 	void ResourceCache::add_loader(const Shared<ResourceLoader>& loader)
 	{
-		for (auto type = &loader->resource_type(); type != nullptr; type = type->parent)
-		{
-			_loaders[type].insert(loader);
-			if (type == &s_resource_type)
-				break;
-		}
+		for (const auto& resource_type : loader->resource_types())
+			_loaders[resource_type].insert(loader);
+		//UC_LOG_DEBUG(_logger) << "Added " << loader->type();
 	}
 
 	void ResourceCache::unregister_module(const ModuleContext& context)
@@ -219,37 +234,6 @@ namespace unicore
 		if (lhs->priority() == rhs->priority())
 			return lhs < rhs;
 		return lhs->priority() < rhs->priority();
-	}
-
-	const ResourceCache::CachedInfo* ResourceCache::internal_find(TypeConstRef type, size_t hash) const
-	{
-		const auto range = _cached.equal_range(hash);
-		for (auto it = range.first; it != range.second; ++it)
-		{
-			auto& info = it->second;
-			auto res_type = info.resource->type();
-			if (res_type.is_derived_from(type))
-				return &info;
-		}
-
-		return nullptr;
-	}
-
-	bool ResourceCache::internal_add(const Shared<Resource>& resource,
-		const Path& path, const ResourceOptions* options, size_t hash)
-	{
-		if (resource->cache_policy() == ResourceCachePolicy::CanCache)
-		{
-			CachedInfo info{ resource, path };
-			_cached.emplace(hash, info);
-
-			UC_LOG_DEBUG(_logger) << "Added " << resource->type()
-				<< FromPath(path) << WithOptions(options);
-
-			return true;
-		}
-
-		return false;
 	}
 
 	size_t ResourceCache::make_hash(const Path& path, const ResourceOptions* options)

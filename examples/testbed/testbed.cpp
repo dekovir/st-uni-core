@@ -3,10 +3,13 @@
 #include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Font.hpp"
+#include "unicore/FileProvider.hpp"
+#include "unicore/loaders/FileLoader.hpp"
 #include "unicore/stb/StbPlugin.hpp"
 #include "unicore/xml/XMLPlugin.hpp"
 #include "unicore/fnt/FNTPlugin.hpp"
 #include "unicore/imgui/ImGuiPlugin.hpp"
+#include "unicore/szip/SZipFilePlugin.hpp"
 
 namespace unicore
 {
@@ -21,10 +24,17 @@ namespace unicore
 		create_plugin<XMLPlugin>();
 		create_plugin<FNTPlugin>();
 		create_plugin<ImGuiPlugin>();
+		create_plugin<SZipFilePlugin>();
 	}
 
 	void MyCore::on_init()
 	{
+#if 1
+		_archive = resources.load<ReadFileProvider>(L"negative.7z"_path);
+		if (_archive)
+			resources.add_loader(std::make_shared<ReadFileLoader>(*_archive));
+#endif
+
 		//_font = resources.create<Font>(EmptyResourceOptions{});
 		//_font = resources.load<Font>(L"font_004.fnt"_path);
 		_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);

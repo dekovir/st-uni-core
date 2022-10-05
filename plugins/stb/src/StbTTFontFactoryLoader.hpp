@@ -7,7 +7,9 @@ namespace unicore
 {
 	class Renderer;
 
-	class StbTTFontFactoryLoader : public ResourceLoaderTyped<StbTTFontFactory, TTFontLoadPathPolicy>
+	class StbTTFontFactoryLoader : public ResourceLoaderTyped<
+		ResourceLoaderTypePolicy::Multiple<StbTTFontFactory, TTFontFactory>,
+		TTFontLoadPathPolicy>
 	{
 		UC_OBJECT(StbTTFontFactoryLoader, ResourceLoader)
 	public:

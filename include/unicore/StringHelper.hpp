@@ -25,6 +25,19 @@ namespace unicore::StringHelper
 	extern String print_format(StringView format, ...);
 
 	template<typename Char>
+	static bool starts_with(const BasicStringView<Char> string,
+		const BasicStringView<Char> prefix, bool case_sensitive)
+	{
+		if (string.length() >= prefix.length())
+		{
+			return compare(
+				string.data(), prefix.data(), case_sensitive) == 0;
+		}
+
+		return false;
+	}
+
+	template<typename Char>
 	static bool ends_with(const BasicStringView<Char> string,
 		const BasicStringView<Char> ending, bool case_sensitive)
 	{

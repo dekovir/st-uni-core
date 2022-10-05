@@ -12,7 +12,9 @@ namespace unicore
 		}
 	};
 
-	class DekovirFontLoader : public ResourceLoaderTyped<BitmapFont, DekovirFontLoadPolicy>
+	class DekovirFontLoader : public ResourceLoaderTyped<
+		ResourceLoaderTypePolicy::Multiple<BitmapFont, Font>,
+		DekovirFontLoadPolicy>
 	{
 	public:
 		UC_NODISCARD Shared<Resource> load(const Context& options) override;

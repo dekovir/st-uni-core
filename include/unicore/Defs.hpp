@@ -193,6 +193,9 @@ namespace unicore
 	template<typename T>
 	extern TypeIndex get_type_index(const T& value) { return TypeIndex(get_type_info(value)); }
 
+	template<typename... Types>
+	extern List<TypeIndex> get_type_indices() { return { get_type_index<Types>()... }; }
+
 	template<typename T>
 	using Ref = std::reference_wrapper<T>;
 

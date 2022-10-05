@@ -1,5 +1,6 @@
 #include "StbSurfaceLoader.hpp"
 #if defined(UNICORE_USE_STB_IMAGE)
+#include "unicore/File.hpp"
 #include "unicore/ResourceCache.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -43,7 +44,7 @@ namespace unicore
 			&s_stream_callbacks, file.get(), &w, &h, &n, 4);
 		if (!data)
 		{
-			UC_LOG_ERROR(context.logger) << stbi_failure_reason();
+			UC_LOG_ERROR(context.logger) << "Failed to load with reason - " << stbi_failure_reason();
 			return nullptr;
 		}
 
@@ -54,32 +55,13 @@ namespace unicore
 	// StbDynamicSurfaceLoader ////////////////////////////////////////////////////
 	Shared<Resource> StbDynamicSurfaceLoader::load(const Context& context)
 	{
-		// Use cached Surface
-		if (const auto cached = context.cache.find<Surface>(context.path))
-		{
-			auto surface = std::make_shared<DynamicSurface>(cached->size());
-			Memory::copy(surface->data(), cached->data(), cached->size_bytes());
-			return surface;
-		}
-
-		// TODO: Log open_read failed
-		const auto file = context.cache.load<ReadFile>(context.path);
-		if (!file) return nullptr;
-
-		// Direct load to surface to prevent double memory consumption (Surface + DynamicSurface)
-		int w, h, n;
-		const auto data = stbi_load_from_callbacks(&s_stream_callbacks, file.get(), &w, &h, &n, 4);
-		if (!data)
-		{
-			UC_LOG_ERROR(context.logger) << stbi_failure_reason();
+		const auto surface = context.cache.load<Surface>(context.path);
+		if (!surface)
 			return nullptr;
-		}
 
-		auto surface = std::make_shared<DynamicSurface>(w, h);
-		Memory::copy(surface->data(), data, surface->size_bytes());
-		stbi_image_free(data);
-
-		return surface;
+		auto dynamic_surface = std::make_shared<DynamicSurface>(surface->size());
+		Memory::copy(dynamic_surface->data(), surface->data(), surface->size_bytes());
+		return dynamic_surface;
 	}
 }
 #endif

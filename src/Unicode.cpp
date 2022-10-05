@@ -55,7 +55,7 @@ namespace unicore::Unicode
 		return {};
 	}
 
-	String to_utf8(const std::basic_string_view<char16_t> str, bool* success)
+	String to_utf8(const BasicStringView<char16_t> str, bool* success)
 	{
 		std::string result;
 		if (try_convert(str, result))
@@ -79,5 +79,11 @@ namespace unicore::Unicode
 
 		if (success != nullptr) *success = false;
 		return {};
+	}
+
+	WString to_wcs(const BasicStringView<char16_t> str, bool* success)
+	{
+		// TODO: Optimize convert
+		return to_wcs(to_utf8(str), success);
 	}
 }

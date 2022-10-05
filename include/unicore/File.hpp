@@ -36,6 +36,27 @@ namespace unicore
 		Shared<BinaryData> as_data();
 	};
 
+	enum class WriteFileMode : uint8_t
+	{
+		// Creates a new file, always.
+		CreateAlways,
+		// Creates a new file, only if it does not already exist.
+		CreateNew,
+	};
+
+	class WriteFileOptions : public ResourceOptions
+	{
+	public:
+		WriteFileMode mode;
+
+		UC_NODISCARD size_t hash() const override { return static_cast<size_t>(mode); }
+
+		explicit WriteFileOptions(WriteFileMode mode = WriteFileMode::CreateAlways)
+			: mode(mode)
+		{
+		}
+	};
+
 	class WriteFile : public ReadFile
 	{
 		UC_OBJECT(WriteFile, ReadFile)

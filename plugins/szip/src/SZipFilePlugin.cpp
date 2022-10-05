@@ -1,0 +1,16 @@
+#include "unicore/szip/SZipFilePlugin.hpp"
+#include "unicore/ResourceCache.hpp"
+#include "SZipFileArchiveLoader.hpp"
+
+namespace unicore
+{
+	void SZipFilePlugin::register_plugin(const ModuleContext& context)
+	{
+		Plugin::register_plugin(context);
+
+		if (const auto cache = context.modules.find<ResourceCache>())
+		{
+			cache->add_loader(std::make_shared<SZipFileArchiveLoader>());
+		}
+	}
+}

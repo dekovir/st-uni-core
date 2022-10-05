@@ -79,6 +79,12 @@ namespace unicore
 		return extension() == ext;
 	}
 
+	bool Path::starts_with(const Path& path) const
+	{
+		return StringHelper::starts_with(
+			WStringView(_data), WStringView(path._data), false);
+	}
+
 	void Path::parent_path(Path& parentPath) const
 	{
 		const auto pos = find_filename_pos(_data);
