@@ -17,8 +17,7 @@ namespace unicore
 		: _renderer(renderer)
 		, _data(data)
 	{
-		_valid = stbtt_InitFont(&_font_info,
-			static_cast<const unsigned char*>(_data->data()), 0);
+		_valid = stbtt_InitFont(&_font_info, _data->data_as<unsigned char>(), 0);
 	}
 
 	size_t StbTTFontFactory::get_system_memory_use() const

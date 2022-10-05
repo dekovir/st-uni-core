@@ -20,7 +20,7 @@ namespace unicore
 	{
 		IM3Module mod;
 		const auto error = m3_ParseModule(_handle,
-			&mod, static_cast<const uint8_t*>(data->data()), data->size());
+			&mod, data->data_as<uint8_t>(), data->size());
 		if (!error)
 			return std::make_shared<WasmModule>(mod, data, _logger);
 

@@ -70,16 +70,16 @@ namespace unicore
 
 		UC_NODISCARD MemoryChunk clone() const;
 
-		// TODO: Rename to set
-		void fill(uint8_t value = 0);
+		void set(uint8_t value = 0);
 
-		void resize(size_t new_size, bool copy_data = true);
-		void free();
+		void swap(void** data, size_t* size, Memory::FreeFunc* free);
 
 	protected:
 		void* _data;
 		size_t _size;
 		Memory::FreeFunc _free;
+
+		void internal_free();
 	};
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const MemoryChunk&);

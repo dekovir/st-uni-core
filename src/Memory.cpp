@@ -65,16 +65,19 @@ namespace unicore
 
 	MemoryChunk::~MemoryChunk()
 	{
-		free();
+		internal_free();
 	}
 
 	MemoryChunk& MemoryChunk::operator=(const MemoryChunk& other)
 	{
 		if (this != &other)
 		{
-			free();
+			// TODO: Optimize (if same size)
+			internal_free();
 
-			resize(other.size(), false);
+			_data = Memory::alloc(other.size());
+			_size = other.size();
+
 			Memory::copy(_data, other._data, _size);
 		}
 
@@ -85,7 +88,7 @@ namespace unicore
 	{
 		if (this != &other)
 		{
-			free();
+			internal_free();
 
 			_data = std::exchange(other._data, nullptr);
 			_size = std::exchange(other._size, 0);
@@ -101,31 +104,20 @@ namespace unicore
 		return clone;
 	}
 
-	void MemoryChunk::fill(uint8_t value)
+	void MemoryChunk::set(uint8_t value)
 	{
 		if (!empty())
 			Memory::set(_data, value, _size);
 	}
 
-	void MemoryChunk::resize(size_t new_size, bool copy_data)
+	void MemoryChunk::swap(void** data, size_t* size, Memory::FreeFunc* free)
 	{
-		if (new_size == _size) return;
-
-		const auto new_mem = Memory::alloc(new_size);
-		if (copy_data)
-		{
-			const auto copy_size = Math::min(new_size, _size);
-			Memory::copy(new_mem, _data, copy_size);
-		}
-
-		free();
-
-		_data = new_mem;
-		_size = new_size;
-		_free = &Memory::free;
+		if (_data) std::swap(_data, *data);
+		if (_size) std::swap(_size, *size);
+		if (_free) std::swap(_free, *free);
 	}
 
-	void MemoryChunk::free()
+	void MemoryChunk::internal_free()
 	{
 		if (_free && _data)
 			_free(_data);
