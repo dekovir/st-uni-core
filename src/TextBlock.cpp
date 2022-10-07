@@ -3,27 +3,27 @@
 
 namespace unicore
 {
-	TextBlock::TextBlock(const Shared<Font>& font, WStringView text)
+	TextBlock::TextBlock(const Shared<Font>& font, StringView32 text)
 		: _font(font)
 	{
 		parse_lines(text, _lines);
 		calc_line_size(*_font, _lines);
 	}
 
-	void TextBlock::parse_lines(WStringView text_, List<TextLine>& lines)
+	void TextBlock::parse_lines(StringView32 text_, List<TextLine>& lines)
 	{
-		WStringView text = text_;
+		StringView32 text = text_;
 		size_t pos;
-		while ((pos = text.find_first_of(L'\n')) != WStringView::npos)
+		while ((pos = text.find_first_of(L'\n')) != StringView32::npos)
 		{
 			if (pos > 0)
-				lines.push_back({ WString(text.substr(0, pos)) });
-			else lines.push_back({ L"" });
+				lines.push_back({ String32(text.substr(0, pos)) });
+			else lines.push_back({ U"" });
 			text = text.substr(pos + 1);
 		}
 
 		if (!text.empty())
-			lines.push_back({ WString(text) });
+			lines.push_back({ String32(text) });
 	}
 
 	void TextBlock::calc_line_size(const Font& font, List<TextLine>& lines)
@@ -79,7 +79,7 @@ namespace unicore
 		return offset;
 	}
 
-	Vector2f TextBlock::calc_align_offset(const Font& font, WStringView text, TextAlign align)
+	Vector2f TextBlock::calc_align_offset(const Font& font, StringView32 text, TextAlign align)
 	{
 		const auto size = font.calc_size(text);
 		return calc_align_offset(size, align);
@@ -110,7 +110,7 @@ namespace unicore
 	}
 
 	// AlignedTextBlock ///////////////////////////////////////////////////////////
-	AlignedTextBlock::AlignedTextBlock(const Shared<Font>& font, const WStringView& text, TextAlign align)
+	AlignedTextBlock::AlignedTextBlock(const Shared<Font>& font, const StringView32& text, TextAlign align)
 		: TextBlock(font, text)
 		, _align(align)
 	{

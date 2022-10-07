@@ -16,7 +16,7 @@ namespace unicore
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
 		uint16_t enumerate_entries(const Path& path,
-			WStringView search_pattern, List<WString>& name_list,
+			StringView search_pattern, List<String>& name_list,
 			const EnumerateOptions& options) const override;
 
 		bool create_directory(const Path& path) override;

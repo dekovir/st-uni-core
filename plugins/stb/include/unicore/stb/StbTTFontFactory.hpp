@@ -22,8 +22,8 @@ namespace unicore
 
 		void get_font_metrics(int* ascent, int* descent, int* line_gap) const;
 
-		void get_codepoint_metrics(WChar c, int* advance_width, int* left_side_bearing) const;
-		MemoryChunk get_codepoint_bitmap(WChar c,
+		void get_codepoint_metrics(Char32 c, int* advance_width, int* left_side_bearing) const;
+		MemoryChunk get_codepoint_bitmap(Char32 c,
 			const Vector2f& scale, Vector2i& size, Vector2i* offset = nullptr) const;
 
 		UC_NODISCARD Shared<TexturedFont> create(const TTFontOptions& options, Logger* logger) override;

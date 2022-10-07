@@ -14,7 +14,7 @@ namespace unicore
 
 	struct TextLine
 	{
-		WString text;
+		String32 text;
 		Vector2f size = VectorConst2f::Zero;
 		//Vector2f offset = VectorConst2f::Zero;
 	};
@@ -22,17 +22,17 @@ namespace unicore
 	class TextBlock
 	{
 	public:
-		TextBlock(const Shared<Font>& font, WStringView text);
+		TextBlock(const Shared<Font>& font, StringView32 text);
 
 		UC_NODISCARD const Shared<Font>& font() const { return _font; }
 		UC_NODISCARD const List<TextLine>& lines() const { return _lines; }
 
-		static void parse_lines(WStringView text_, List<TextLine>& lines);
+		static void parse_lines(StringView32 text_, List<TextLine>& lines);
 
 		static void calc_line_size(const Font& font, List<TextLine>& lines);
 
 		static Vector2f calc_align_offset(const Vector2f& size, TextAlign align);
-		static Vector2f calc_align_offset(const Font& font, WStringView text, TextAlign align);
+		static Vector2f calc_align_offset(const Font& font, StringView32 text, TextAlign align);
 
 		static void calc_align_offset(const List<TextLine>& lines,
 			TextAlign align, List<Vector2f>& offset_list, bool round = true);
@@ -45,7 +45,7 @@ namespace unicore
 	class AlignedTextBlock : public TextBlock
 	{
 	public:
-		AlignedTextBlock(const Shared<Font>& font, const WStringView& text, TextAlign align = TextAlign::TopLeft);
+		AlignedTextBlock(const Shared<Font>& font, const StringView32& text, TextAlign align = TextAlign::TopLeft);
 
 		UC_NODISCARD const List<Vector2f>& offset_list() const { return _offset_list; }
 

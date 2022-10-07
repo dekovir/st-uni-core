@@ -14,9 +14,15 @@ namespace unicore
 		append(str);
 	}
 
-	void StringBuilder::append(wchar_t c)
+	void StringBuilder::append(Char16 c)
 	{
-		const wchar_t str[] = { c, 0 };
+		const Char16 str[] = { c, 0 };
+		append(str);
+	}
+
+	void StringBuilder::append(Char32 c)
+	{
+		const Char32 str[] = { c, 0 };
 		append(str);
 	}
 
@@ -25,7 +31,12 @@ namespace unicore
 		data.append(text);
 	}
 
-	void StringBuilder::append(WStringView text)
+	void StringBuilder::append(StringView16 text)
+	{
+		data.append(Unicode::to_utf8(text));
+	}
+
+	void StringBuilder::append(StringView32 text)
 	{
 		data.append(Unicode::to_utf8(text));
 	}
@@ -43,7 +54,7 @@ namespace unicore
 
 	UNICODE_STRING_BUILDER_FORMAT(bool)
 	{
-		return builder << (value ? L"true" : L"false");
+		return builder << (value ? "true" : "false");
 	}
 
 #if defined (_HAS_EXCEPTIONS)
@@ -59,7 +70,13 @@ namespace unicore
 		return builder;
 	}
 
-	UNICODE_STRING_BUILDER_FORMAT(const wchar_t)
+	UNICODE_STRING_BUILDER_FORMAT(const Char16)
+	{
+		builder.append(value);
+		return builder;
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const Char32)
 	{
 		builder.append(value);
 		return builder;
@@ -72,7 +89,14 @@ namespace unicore
 		return builder;
 	}
 
-	UNICODE_STRING_BUILDER_FORMAT(const wchar_t*)
+	UNICODE_STRING_BUILDER_FORMAT(const Char16*)
+	{
+		if (value != nullptr)
+			builder.append(value);
+		return builder;
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const Char32*)
 	{
 		if (value != nullptr)
 			builder.append(value);

@@ -38,13 +38,13 @@ namespace unicore
 	}
 
 	uint16_t FileSystem::enumerate_entries(
-		const Path& path, WStringView search_pattern,
-		List<WString>& name_list, const EnumerateOptions& options) const
+		const Path& path, StringView search_pattern,
+		List<String>& name_list, const EnumerateOptions& options) const
 	{
 		// TODO: Test this with multiple providers
 		const auto size = name_list.size();
 
-		Set<WString> names;
+		Set<String> names;
 		for (const auto& provider : _providers)
 		{
 			provider->enumerate_entries(path, search_pattern, name_list, options);

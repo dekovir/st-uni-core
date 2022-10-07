@@ -2,7 +2,6 @@
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #include <Windows.h>
 #include <debugapi.h>
-#include <cstdio>
 
 namespace unicore
 {
@@ -11,8 +10,9 @@ namespace unicore
 		if (_prev == text)
 			return;
 
-		const auto str = StringBuilder::format("{} {}\n", type_to_str(type), text);
-		OutputDebugStringA(str.data());
+		const auto str = StringBuilder::format(U"{} {}\n", type_to_str(type), text);
+		const auto wcs = Unicode::to_wcs(str);
+		OutputDebugStringW(wcs.data());
 		_prev = text;
 	}
 }

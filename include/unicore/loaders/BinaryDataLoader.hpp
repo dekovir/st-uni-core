@@ -7,7 +7,7 @@ namespace unicore
 	struct BinaryDataLoadPolicy : ResourceLoaderPathPolicy::Extension
 	{
 		BinaryDataLoadPolicy()
-			: Extension({ L".dat" })
+			: Extension({ ".dat" })
 		{
 		}
 	};

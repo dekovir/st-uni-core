@@ -17,9 +17,9 @@ namespace unicore
 	{
 		UC_OBJECT(BitmapFont, TexturedFont)
 	public:
-		using KerningDictionary = Dictionary<uint32_t, Dictionary<uint32_t, int>>;
+		using KerningDictionary = Dictionary<Char32, Dictionary<Char32, int>>;
 		using PagesList = List<Shared<Texture>>;
-		using GlyphsDictionary = Dictionary<uint32_t, BitmapFontGlyph>;
+		using GlyphsDictionary = Dictionary<Char32, BitmapFontGlyph>;
 
 		struct ConstructionParams
 		{
@@ -36,14 +36,14 @@ namespace unicore
 		size_t get_used_resources(Set<Shared<Resource>>& resources) override;
 
 		UC_NODISCARD float get_height() const override;
-		UC_NODISCARD float calc_width(WStringView text) const override;
+		UC_NODISCARD float calc_width(StringView32 text) const override;
 
-		UC_NODISCARD int find_kerning(uint32_t a, uint32_t b) const;
+		UC_NODISCARD int find_kerning(Char32 a, Char32 b) const;
 
-		Shared<Texture> get_char_print_info(uint32_t code,
+		Shared<Texture> get_char_print_info(Char32 code,
 			Vector2f& pos, Rectf* rect, Rectf* uv_rect) const;
 
-		void generate(const Vector2f& position, WStringView text, const Color4b& color,
+		void generate(const Vector2f& position, StringView32 text, const Color4b& color,
 			Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict) override;
 
 	protected:
@@ -53,7 +53,7 @@ namespace unicore
 		const float _height;
 		const uint8_t _space_width = 0;
 
-		Shared<Texture> print_char(uint32_t code, Vector2f& pos,
+		Shared<Texture> print_char(Char32 code, Vector2f& pos,
 			const Color4b& color, VertexTexColorQuad2& quad) const;
 	};
 }

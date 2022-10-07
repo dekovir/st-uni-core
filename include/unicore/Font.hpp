@@ -13,15 +13,15 @@ namespace unicore
 	public:
 		UC_NODISCARD virtual float get_height() const = 0;
 
-		UC_NODISCARD virtual float calc_width(WStringView text) const = 0;
-		UC_NODISCARD virtual Vector2f calc_size(WStringView text) const;
+		UC_NODISCARD virtual float calc_width(StringView32 text) const = 0;
+		UC_NODISCARD virtual Vector2f calc_size(StringView32 text) const;
 	};
 
 	class GeometryFont : public Font
 	{
 		UC_OBJECT(GeometryFont, Font)
 	public:
-		virtual size_t generate(const Vector2f& position, WStringView text,
+		virtual size_t generate(const Vector2f& position, StringView32 text,
 			const Color4b& color, List<VertexColorQuad2>& quad_list) const = 0;
 	};
 
@@ -29,7 +29,7 @@ namespace unicore
 	{
 		UC_OBJECT(TexturedFont, Font)
 	public:
-		virtual void generate(const Vector2f& position, WStringView text, const Color4b& color,
+		virtual void generate(const Vector2f& position, StringView32 text, const Color4b& color,
 			Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict) = 0;
 	};
 
@@ -38,7 +38,7 @@ namespace unicore
 	public:
 		float height = 16;
 		// TODO: Replace to Set
-		WStringView chars = CharTable::Ascii.view();
+		StringView32 chars = CharTable::Ascii.view();
 
 		TTFontOptions() = default;
 
@@ -46,7 +46,7 @@ namespace unicore
 			: height(height_)
 		{}
 
-		TTFontOptions(float height_, WStringView chars_)
+		TTFontOptions(float height_, StringView32 chars_)
 			: height(height_), chars(chars_)
 		{}
 
@@ -59,7 +59,7 @@ namespace unicore
 	struct TTFontLoadPathPolicy : ResourceLoaderPathPolicy::Extension
 	{
 		explicit TTFontLoadPathPolicy()
-			: Extension({ L".ttf" })
+			: Extension({ ".ttf" })
 		{
 		}
 	};

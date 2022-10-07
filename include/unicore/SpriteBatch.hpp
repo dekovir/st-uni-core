@@ -70,10 +70,10 @@ namespace unicore
 
 		// FONT
 		SpriteBatch& print(const Shared<Font>& font, const Vector2f& pos,
-			WStringView text, const Color4b& color = ColorConst4b::White);
+			StringView32 text, const Color4b& color = ColorConst4b::White);
 
 		SpriteBatch& print(const Shared<Font>& font, const Transform2& tr,
-			WStringView text, const Color4b& color = ColorConst4b::White);
+			StringView32 text, const Color4b& color = ColorConst4b::White);
 
 		SpriteBatch& print(const TextBlock& block, const Vector2f& pos,
 			TextAlign align = TextAlign::TopLeft, const Color4b& color = ColorConst4b::White);

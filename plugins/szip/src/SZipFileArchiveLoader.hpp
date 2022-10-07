@@ -7,7 +7,7 @@ namespace unicore
 	struct SZipPathPolicy : ResourceLoaderPathPolicy::Extension
 	{
 		explicit SZipPathPolicy()
-			: Extension({ L".7z" })
+			: Extension({ ".7z" })
 		{
 		}
 	};

@@ -54,27 +54,27 @@ namespace unicore
 		UC_NODISCARD bool is_file(const Path& path) const;
 		UC_NODISCARD bool is_directory(const Path& path) const;
 
-		virtual uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
-			List<WString>& name_list, const EnumerateOptions& options = {}) const = 0;
+		virtual uint16_t enumerate_entries(const Path& path, StringView search_pattern,
+			List<String>& name_list, const EnumerateOptions& options = {}) const = 0;
 
-		uint16_t enumerate_entries(const Path& path, List<WString>& name_list,
+		uint16_t enumerate_entries(const Path& path, List<String>& name_list,
 			const EnumerateOptions& options = {}) const;
 
 		uint16_t enumerate_files(const Path& path,
-			WStringView search_pattern, List<WString>& name_list) const;
-		uint16_t enumerate_files(const Path& path, List<WString>& name_list) const;
+			StringView search_pattern, List<String>& name_list) const;
+		uint16_t enumerate_files(const Path& path, List<String>& name_list) const;
 
 		uint16_t enumerate_dirs(const Path& path,
-			WStringView search_pattern, List<WString>& name_list) const;
-		uint16_t enumerate_dirs(const Path& path, List<WString>& name_list) const;
+			StringView search_pattern, List<String>& name_list) const;
+		uint16_t enumerate_dirs(const Path& path, List<String>& name_list) const;
 
-		UC_NODISCARD virtual List<WString> get_files(
-			const Path& path, WStringView search_pattern) const;
-		UC_NODISCARD virtual List<WString> get_files(const Path& path) const;
+		UC_NODISCARD virtual List<String> get_files(
+			const Path& path, StringView search_pattern) const;
+		UC_NODISCARD virtual List<String> get_files(const Path& path) const;
 
-		UC_NODISCARD virtual List<WString> get_dirs(
-			const Path& path, WStringView search_pattern) const;
-		UC_NODISCARD virtual List<WString> get_dirs(const Path& path) const;
+		UC_NODISCARD virtual List<String> get_dirs(
+			const Path& path, StringView search_pattern) const;
+		UC_NODISCARD virtual List<String> get_dirs(const Path& path) const;
 	};
 
 	// ReadFileProvider ///////////////////////////////////////////////////////////
@@ -118,8 +118,8 @@ namespace unicore
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 		UC_NODISCARD bool exists(const Path& path) const override;
 
-		uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
-			List<WString>& name_list, const EnumerateOptions& options) const override;
+		uint16_t enumerate_entries(const Path& path, StringView search_pattern,
+			List<String>& name_list, const EnumerateOptions& options) const override;
 
 		Shared<ReadFile> open_read(const Path& path) override;
 
@@ -140,8 +140,8 @@ namespace unicore
 		UC_NODISCARD bool exists(const Path& path) const override;
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
-		uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
-			List<WString>& name_list, const EnumerateOptions& options) const override;
+		uint16_t enumerate_entries(const Path& path, StringView search_pattern,
+			List<String>& name_list, const EnumerateOptions& options) const override;
 
 		Shared<ReadFile> open_read(const Path& path) override;
 

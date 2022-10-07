@@ -145,15 +145,15 @@ namespace unicore
 
 	void MyCore::on_init()
 	{
-		_font = resources.load<Font>(L"font_004.fnt"_path);
-		if (auto tex = resources.load<Texture>(L"zazaka.png"_path))
+		_font = resources.load<Font>("font_004.fnt"_path);
+		if (auto tex = resources.load<Texture>("zazaka.png"_path))
 			_spr = std::make_shared<Sprite>(tex);
 
 		ConsoleLogger wasm_logger(_console);
 		_env = WasmEnvironment::create(wasm_logger);
 
 		UC_LOG_INFO(wasm_logger) << "Loading release.wasm";
-		if (const auto data = resources.load<BinaryData>(L"logic.wasm"_path))
+		if (const auto data = resources.load<BinaryData>("logic.wasm"_path))
 		{
 			_runtime = _env->new_runtime();
 			if (_runtime)
@@ -243,14 +243,14 @@ namespace unicore
 					c.color.has(ConsoleColor8::ForegroundGreen) ? 255 : 0,
 					c.color.has(ConsoleColor8::ForegroundBlue) ? 255 : 0
 				);
-				_sprite_batch.print(_font, pos, Unicode::to_wcs(str), color);
+				_sprite_batch.print(_font, pos, Unicode::to_utf32(str), color);
 			}
 
 		// DRAW TEXT
-		const auto fps_str = StringBuilder::format(L"FPS: {}", fps());
-		const auto sprites_str = StringBuilder::format(L"Sprites: {}", _sprite_count);
-		const auto update_str = StringBuilder::format(L"Update time: {}ms", _update_time.total_milliseconds());
-		const auto draw_str = StringBuilder::format(L"Draw time: {}ms", _draw_time.total_milliseconds());
+		const auto fps_str = StringBuilder::format(U"FPS: {}", fps());
+		const auto sprites_str = StringBuilder::format(U"Sprites: {}", _sprite_count);
+		const auto update_str = StringBuilder::format(U"Update time: {}ms", _update_time.total_milliseconds());
+		const auto draw_str = StringBuilder::format(U"Draw time: {}ms", _draw_time.total_milliseconds());
 
 		_sprite_batch.print(_font, { 0, 0 }, fps_str);
 		_sprite_batch.print(_font, { 0, 20 }, sprites_str);

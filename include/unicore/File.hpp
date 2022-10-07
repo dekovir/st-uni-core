@@ -118,7 +118,8 @@ namespace unicore
 		}
 
 		FileWriter& write(StringView str);
-		FileWriter& write(WStringView str);
+		FileWriter& write(StringView16 str);
+		FileWriter& write(StringView32 str);
 
 		template<typename T,
 			std::enable_if_t<std::is_integral_v<T>>* = nullptr>

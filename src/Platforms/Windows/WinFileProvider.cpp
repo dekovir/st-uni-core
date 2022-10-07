@@ -53,8 +53,8 @@ namespace unicore
 	}
 
 	uint16_t WinFileProvider::enumerate_entries(
-		const Path& path, WStringView search_pattern,
-		List<WString>& name_list, const EnumerateOptions& options) const
+		const Path& path, StringView search_pattern,
+		List<String>& name_list, const EnumerateOptions& options) const
 	{
 		const auto native_path = to_native_path(path / search_pattern);
 
@@ -67,7 +67,7 @@ namespace unicore
 		{
 			do
 			{
-				const auto file_name = std::wstring(data.cFileName);
+				const auto file_name = std::wstring_view(data.cFileName);
 				if (file_name == L"." || file_name == L"..")
 					continue;
 
@@ -75,7 +75,7 @@ namespace unicore
 				if (!enumerate_test_options(type, options))
 					continue;
 
-				name_list.push_back(file_name);
+				name_list.push_back(Unicode::to_utf8(file_name));
 				count++;
 			} while (FindNextFileW(find, &data));
 
@@ -152,16 +152,17 @@ namespace unicore
 
 	Path WinFileProvider::get_current_dir() const
 	{
-		if (GetCurrentDirectoryW(MAX_PATH, s_buffer) > 0)
-			return Path(s_buffer);
+		const auto count = GetCurrentDirectoryW(MAX_PATH, s_buffer);
+		if (count > 0)
+			return Path(Unicode::to_utf8(std::wstring_view(s_buffer, count)));
 
 		UC_LOG_ERROR(_logger) << "get_current_dir failed with error - " << WinError::get_last();
 		return Path::Empty;
 	}
 
-	WString WinFileProvider::to_native_path(const Path& path) const
+	std::wstring WinFileProvider::to_native_path(const Path& path) const
 	{
-		return (_current_dir / path).native_path();
+		return Unicode::to_wcs((_current_dir / path).native_path());
 	}
 
 	DateTime WinFileProvider::to_datetime(FILETIME const& ft)

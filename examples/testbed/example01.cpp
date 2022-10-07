@@ -191,7 +191,7 @@ namespace unicore
 				//.reset_transform()
 				.set_transform({ center, 0_rad, Vector2f(3) })
 				.set_color(ColorConst4b::Cyan)
-				.draw_text(*_font, { 0, 0 }, L"Test string\nSecond line", TextAlign::Center);
+				.draw_text(*_font, { 0, 0 }, U"Test string\nSecond line", TextAlign::Center);
 		}
 
 		_graphics.flush();
