@@ -10,8 +10,7 @@ namespace unicore
 		if (_prev == text)
 			return;
 
-		const auto str = StringBuilder::format(U"{} {}\n", type_to_str(type), text);
-		const auto wcs = Unicode::to_wcs(str);
+		const auto wcs = StringBuilder::format(L"{} {}\n", type_to_str(type), text);
 		OutputDebugStringW(wcs.data());
 		_prev = text;
 	}
