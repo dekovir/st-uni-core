@@ -12,7 +12,7 @@ namespace unicore::Unicode
 		return true;
 	}
 
-	bool try_convert(StringView32 from, std::wstring& to)
+	bool try_convert(StringView32 from, StringW& to)
 	{
 		String utf8;
 		return
@@ -34,7 +34,7 @@ namespace unicore::Unicode
 		return true;
 	}
 
-	bool try_convert(StringView16 from, std::wstring& to)
+	bool try_convert(StringView16 from, StringW& to)
 	{
 		String str;
 		return
@@ -49,7 +49,7 @@ namespace unicore::Unicode
 		return true;
 	}
 
-	bool try_convert(std::wstring_view from, String32& to)
+	bool try_convert(StringViewW from, String32& to)
 	{
 		String str;
 		return
@@ -57,7 +57,7 @@ namespace unicore::Unicode
 			try_convert(str, to);
 	}
 
-	bool try_convert(std::wstring_view from, String16& to)
+	bool try_convert(StringViewW from, String16& to)
 	{
 		String str;
 		return
@@ -65,7 +65,7 @@ namespace unicore::Unicode
 			try_convert(str, to);
 	}
 
-	bool try_convert(std::wstring_view from, String& to)
+	bool try_convert(StringViewW from, String& to)
 	{
 		static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> conv;
 		to = conv.to_bytes(from.data());
@@ -86,7 +86,7 @@ namespace unicore::Unicode
 		return true;
 	}
 
-	bool try_convert(StringView from, std::wstring& to)
+	bool try_convert(StringView from, StringW& to)
 	{
 		static std::wstring_convert< std::codecvt_utf8<wchar_t>, wchar_t > conv;
 		to = conv.from_bytes(from.data());
@@ -103,14 +103,9 @@ namespace unicore::Unicode
 		return to<Char32>(from, success);
 	}
 
-	String32 to_utf32(std::wstring_view from, bool* success)
+	String32 to_utf32(StringViewW from, bool* success)
 	{
 		return to<Char32>(from, success);
-	}
-
-	String16 to_utf16(StringView from, bool* success)
-	{
-		return to<Char16>(from, success);
 	}
 
 	String16 to_utf16(StringView32 from, bool* success)
@@ -118,12 +113,27 @@ namespace unicore::Unicode
 		return to<Char16>(from, success);
 	}
 
-	std::wstring to_wcs(StringView from, bool* success)
+	String16 to_utf16(StringViewW from, bool* success)
+	{
+		return to<Char16>(from, success);
+	}
+
+	String16 to_utf16(StringView from, bool* success)
+	{
+		return to<Char16>(from, success);
+	}
+
+	StringW to_wcs(StringView32 from, bool* success)
 	{
 		return to<wchar_t>(from, success);
 	}
 
-	std::wstring to_wcs(StringView32 from, bool* success)
+	StringW to_wcs(StringView16 from, bool* success)
+	{
+		return to<wchar_t>(from, success);
+	}
+
+	StringW to_wcs(StringView from, bool* success)
 	{
 		return to<wchar_t>(from, success);
 	}
@@ -138,7 +148,7 @@ namespace unicore::Unicode
 		return to<Char>(from, success);
 	}
 
-	String to_utf8(std::wstring_view from, bool* success)
+	String to_utf8(StringViewW from, bool* success)
 	{
 		return to<Char>(from, success);
 	}

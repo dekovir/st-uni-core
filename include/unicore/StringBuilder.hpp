@@ -34,7 +34,7 @@ namespace unicore
 		}
 
 		template<typename ... Args>
-		static std::wstring format(std::wstring format, const Args& ... args)
+		static StringW format(StringViewW format, const Args& ... args)
 		{
 			// TODO: Optimize (Rewrite without Unicode methods)
 			StringBuilder builder;
