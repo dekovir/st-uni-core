@@ -30,14 +30,14 @@ namespace unicore
 	void MyCore::on_init()
 	{
 #if 1
-		_archive = resources.load<ReadFileProvider>(L"negative.7z"_path);
+		_archive = resources.load<ReadFileProvider>("negative.7z"_path);
 		if (_archive)
 			resources.add_loader(std::make_shared<ReadFileLoader>(*_archive));
 #endif
 
 		//_font = resources.create<Font>(EmptyResourceOptions{});
 		//_font = resources.load<Font>(L"font_004.fnt"_path);
-		_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
+		_font = resources.load<Font>("ubuntu.regular.ttf"_path);
 
 		set_example(0);
 	}
@@ -73,10 +73,10 @@ namespace unicore
 		const auto screen_size = renderer.screen_size();
 		const auto& example_info = examples[_example_index];
 
-		const auto title_str = StringBuilder::format(L"Example: {}", example_info.title);
-		const auto fps_str = StringBuilder::format(L"FPS: {}", fps());
-		const auto draw_str = StringBuilder::format(L"Draw: {}", _draw_calls);
-		const auto screen_str = StringBuilder::format(L"Screen: {}", screen_size);
+		const auto title_str = StringBuilder::format(U"Example: {}", example_info.title);
+		const auto fps_str = StringBuilder::format(U"FPS: {}", fps());
+		const auto draw_str = StringBuilder::format(U"Draw: {}", _draw_calls);
+		const auto screen_str = StringBuilder::format(U"Screen: {}", screen_size);
 
 		_lines.clear();
 		_example->get_text(_lines);

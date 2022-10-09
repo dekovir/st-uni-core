@@ -15,8 +15,8 @@ namespace unicore
 
 		UC_NODISCARD Optional<FileStats> stats(const Path& path) const override;
 
-		uint16_t enumerate_entries(const Path& path, WStringView search_pattern,
-			List<WString>& name_list, const EnumerateOptions& options) const override;
+		uint16_t enumerate_entries(const Path& path, StringView search_pattern,
+			List<String>& name_list, const EnumerateOptions& options) const override;
 
 		UC_NODISCARD Shared<ReadFile> open_read(const Path& path) override;
 

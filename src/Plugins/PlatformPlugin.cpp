@@ -13,7 +13,8 @@ namespace unicore
 		{
 			cache->add_loader(std::make_shared<BinaryDataLoader>());
 			cache->add_loader(std::make_shared<TextDataLoader>());
-			cache->add_loader(std::make_shared<WTextDataLoader>());
+			//cache->add_loader(std::make_shared<TextData16Loader>());
+			//cache->add_loader(std::make_shared<TextData32Loader>());
 		}
 	}
 }

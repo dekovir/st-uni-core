@@ -20,13 +20,13 @@ namespace unicore
 		//_font = resources.load<Font>(L"font_004.fnt"_path);
 		//_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
 
-		_font = resources.load<Font>(L"ubuntu.regular.ttf"_path,
+		_font = resources.load<Font>("ubuntu.regular.ttf"_path,
 			TTFontOptions{ 32, (CharTable::Ascii + CharTable::Russian).view() });
 	}
 
 	void Example06::update()
 	{
-		constexpr WStringView text = L"Hello world!\nSecond line\nThird line\n\nLast one";
+		constexpr auto text = U"Hello world!\nSecond line\nThird line\n\nLast one";
 
 		const auto screen_size = renderer.screen_size().cast<Float>();
 		const auto center_screen = screen_size / 2.f;
@@ -47,8 +47,8 @@ namespace unicore
 		}
 
 		_sprite_batch.print({ _font, text, TextAlign::Center }, center_screen);
-		_sprite_batch.print(_font, Transform2({ 200, 600 }, 45_rad, { 2, 2 }), L"Transformed text");
-		_sprite_batch.print(_font, { 100, 100 }, L"Привет мир!");
+		_sprite_batch.print(_font, Transform2({ 200, 600 }, 45_rad, { 2, 2 }), U"Transformed text");
+		_sprite_batch.print(_font, { 100, 100 }, U"Привет мир!");
 		_sprite_batch.flush();
 	}
 

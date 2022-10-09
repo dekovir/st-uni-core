@@ -433,7 +433,7 @@ namespace unicore
 	}
 
 	Graphics2D& Graphics2D::draw_text(const GeometryFont& font,
-		const Vector2f& position, WStringView text, TextAlign align)
+		const Vector2f& position, StringView32 text, TextAlign align)
 	{
 		if (align == TextAlign::TopLeft)
 		{

@@ -26,7 +26,7 @@ namespace unicore
 		return _height;
 	}
 
-	float StbTTFont::calc_width(WStringView text) const
+	float StbTTFont::calc_width(StringView32 text) const
 	{
 		Vector2f cur = VectorConst2f::Zero;
 		for (const auto c : text)
@@ -83,7 +83,7 @@ namespace unicore
 	}
 
 	void StbTTFont::generate(
-		const Vector2f& position, WStringView text, const Color4b& color,
+		const Vector2f& position, StringView32 text, const Color4b& color,
 		Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict)
 	{
 		Vector2f cur = position;

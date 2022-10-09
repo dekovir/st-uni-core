@@ -30,7 +30,7 @@ namespace unicore
 		void update() override;
 		void draw() const override;
 
-		void get_text(List<WString>& lines) override;
+		void get_text(List<String32>& lines) override;
 
 	protected:
 		Shared<Texture> _tex;

@@ -21,7 +21,7 @@ namespace unicore
 
 	void Example05::load(ResourceCache& resources)
 	{
-		_tiles = resources.load<SpriteList>(L"tiles.png"_path,
+		_tiles = resources.load<SpriteList>("tiles.png"_path,
 			TileSetOptions{ Vector2i(16) });
 
 		Canvas canvas(_map);
@@ -30,7 +30,7 @@ namespace unicore
 		canvas.fill_rect(Recti(1, 1, 5, 5), CellType::Solid);
 		canvas.draw_point({ 10, 10 }, CellType::Solid);
 
-		_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
+		_font = resources.load<Font>("ubuntu.regular.ttf"_path);
 	}
 
 	void Example05::update()
@@ -91,7 +91,7 @@ namespace unicore
 				_sprite_batch.draw(tile, _tr * center, _graphics.transform.angle, scale);
 			}
 
-		_sprite_batch.print(_font, { 400, 400 }, L"Hello world!", ColorConst4b::Black);
+		_sprite_batch.print(_font, { 400, 400 }, U"Hello world!", ColorConst4b::Black);
 
 		_sprite_batch.flush();
 	}

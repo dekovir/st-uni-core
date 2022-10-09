@@ -7,7 +7,7 @@ namespace unicore
 	struct XMLLoadPolicy : ResourceLoaderPathPolicy::Extension
 	{
 		XMLLoadPolicy()
-			: Extension({ L".xml" })
+			: Extension({ ".xml" })
 		{
 		}
 	};

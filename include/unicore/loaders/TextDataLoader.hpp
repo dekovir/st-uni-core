@@ -7,7 +7,7 @@ namespace unicore
 	struct TextLoadPolicy : ResourceLoaderPathPolicy::Extension
 	{
 		TextLoadPolicy()
-			: Extension({ L".txt" })
+			: Extension({ ".txt" })
 		{
 		}
 	};
@@ -20,10 +20,18 @@ namespace unicore
 		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 
-	class WTextDataLoader : public ResourceLoaderTyped<
-		ResourceLoaderTypePolicy::Multiple<WTextData>, TextLoadPolicy>
+	class TextData16Loader : public ResourceLoaderTyped<
+		ResourceLoaderTypePolicy::Multiple<TextData16>, TextLoadPolicy>
 	{
-		UC_OBJECT(TextDataLoader, ResourceLoaderTyped)
+		UC_OBJECT(TextData16Loader, ResourceLoaderTyped)
+	public:
+		UC_NODISCARD Shared<Resource> load(const Context& context) override;
+	};
+
+		class TextData32Loader : public ResourceLoaderTyped<
+		ResourceLoaderTypePolicy::Multiple<TextData32>, TextLoadPolicy>
+	{
+		UC_OBJECT(TextData16Loader, ResourceLoaderTyped)
 	public:
 		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};

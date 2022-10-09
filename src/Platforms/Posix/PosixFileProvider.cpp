@@ -52,8 +52,8 @@ namespace unicore
 	}
 
 	uint16_t PosixFileProvider::enumerate_entries(
-		const Path& path, WStringView search_pattern,
-		List<WString>& name_list, const EnumerateOptions& options) const
+		const Path& path, StringView search_pattern,
+		List<String>& name_list, const EnumerateOptions& options) const
 	{
 		const auto native_path = to_native(path);
 
@@ -73,11 +73,10 @@ namespace unicore
 				if (!enumerate_test_options(type, options))
 					continue;
 
-				const auto wcs = Unicode::to_wcs(file_name);
-				if (StringHelper::compare_to_mask(WStringView(wcs), WStringView(search_pattern)))
+				if (StringHelper::compare_to_mask(file_name, search_pattern))
 				{
 					count++;
-					name_list.push_back(wcs);
+					name_list.push_back(String(file_name));
 				}
 			}
 
@@ -144,16 +143,15 @@ namespace unicore
 	Path PosixFileProvider::get_current_dir() const
 	{
 #if defined(UNICORE_PLATFORM_EMSCRIPTEN)
-		return Path(L".");
+		return Path(".");
 #else
-		const auto path = get_current_dir_name();
-		return Path(Unicode::to_wcs(path));
+		return Path(get_current_dir_name());
 #endif
 	}
 
 	String PosixFileProvider::to_native(const Path& path) const
 	{
-		return Unicode::to_utf8((_current_dir / path).native_path());
+		return (_current_dir / path).native_path();
 	}
 }
 

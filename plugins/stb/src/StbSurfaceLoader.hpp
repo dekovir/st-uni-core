@@ -8,7 +8,7 @@ namespace unicore
 	struct StbSurfaceLoadPolicy : ResourceLoaderPathPolicy::Extension
 	{
 		StbSurfaceLoadPolicy()
-			: Extension({ L".png",L".tga",L".jpg",L".jpeg" })
+			: Extension({ ".png", ".tga", ".jpg", ".jpeg" })
 		{
 		}
 	};

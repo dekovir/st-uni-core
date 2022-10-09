@@ -32,7 +32,7 @@ namespace unicore
 			stbtt_GetFontVMetrics(&_font_info, ascent, descent, line_gap);
 	}
 
-	void StbTTFontFactory::get_codepoint_metrics(WChar c,
+	void StbTTFontFactory::get_codepoint_metrics(Char32 c,
 		int* advance_width, int* left_side_bearing) const
 	{
 		stbtt_GetCodepointHMetrics(&_font_info,
@@ -44,7 +44,7 @@ namespace unicore
 		stbtt_FreeBitmap(static_cast<unsigned char*>(ptr), nullptr);
 	}
 
-	MemoryChunk StbTTFontFactory::get_codepoint_bitmap(WChar c,
+	MemoryChunk StbTTFontFactory::get_codepoint_bitmap(Char32 c,
 		const Vector2f& scale, Vector2i& size, Vector2i* offset) const
 	{
 		const auto data = stbtt_GetCodepointBitmap(&_font_info,
@@ -78,8 +78,8 @@ namespace unicore
 		params.height = options.height;
 
 		// REMOVE DUPLICATES
-		Set<WChar> chars_set(options.chars.begin(), options.chars.end());
-		List<WChar> chars(chars_set.begin(), chars_set.end());
+		Set<Char32> chars_set(options.chars.begin(), options.chars.end());
+		List<Char32> chars(chars_set.begin(), chars_set.end());
 
 		// GENERATE CHAR BITMAPS
 		const size_t char_count = chars.size();

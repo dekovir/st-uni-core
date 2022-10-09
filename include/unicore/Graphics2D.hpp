@@ -82,7 +82,7 @@ namespace unicore
 			const Action<Graphics2D&, const Vector2f&>& draw_func, const Vector2f& offset = VectorConst2f::Zero);
 
 		Graphics2D& draw_text(const GeometryFont& font, const Vector2f& position,
-			WStringView text, TextAlign align = TextAlign::TopLeft);
+			StringView32 text, TextAlign align = TextAlign::TopLeft);
 
 	protected:
 		enum class BatchType

@@ -23,7 +23,7 @@ namespace unicore
 
 		uint32_t _draw_calls = 0;
 
-		List<WString> _lines;
+		List<String32> _lines;
 
 		void on_init() override;
 		void on_update() override;

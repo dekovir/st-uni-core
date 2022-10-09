@@ -26,13 +26,13 @@ namespace unicore
 		return sizeof(StbEasyFont);
 	}
 
-	float StbEasyFont::calc_width(WStringView text) const
+	float StbEasyFont::calc_width(StringView32 text) const
 	{
 		const auto str = Unicode::to_utf8(text);
 		return static_cast<float>(stb_easy_font_width(const_cast<char*>(str.data())));
 	}
 
-	size_t StbEasyFont::generate(const Vector2f& position, WStringView text,
+	size_t StbEasyFont::generate(const Vector2f& position, StringView32 text,
 		const Color4b& color, List<VertexColorQuad2>& quad_list) const
 	{
 		const auto str = Unicode::to_utf8(text);

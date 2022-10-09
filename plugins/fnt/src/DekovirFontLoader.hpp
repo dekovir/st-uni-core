@@ -7,7 +7,7 @@ namespace unicore
 	struct DekovirFontLoadPolicy : ResourceLoaderPathPolicy::Extension
 	{
 		DekovirFontLoadPolicy()
-			: Extension({ L".fnt" })
+			: Extension({ ".fnt" })
 		{
 		}
 	};

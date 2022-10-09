@@ -15,7 +15,7 @@ namespace unicore
 		}
 
 		Path texture_path(options.path);
-		texture_path.replace_extension(L".png");
+		texture_path.replace_extension(".png");
 
 		const auto texture = options.cache.load<Texture>(texture_path);
 		if (!texture)

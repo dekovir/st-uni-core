@@ -3,6 +3,12 @@
 
 namespace unicore::StringHelper
 {
+	namespace sfinae
+	{
+		template <class T>
+		constexpr bool is_char_v = std::is_same_v<T, char> || std::is_same_v<T, Char16> || std::is_same_v<T, Char32>;
+	}
+
 	template<typename TChar, typename Tag>
 	struct Data
 	{
@@ -17,35 +23,27 @@ namespace unicore::StringHelper
 	using DefaultWString = Data<wchar_t, DefaultTag>;
 
 	// METHODS ////////////////////////////////////////////////////////////////////
-	extern int compare(const StringView a, const StringView b, bool case_sensitive);
-	extern int compare(const WStringView a, const WStringView b, bool case_sensitive);
-
 	extern String to_hex(intptr_t value);
-
 	extern String print_format(StringView format, ...);
 
 	template<typename Char>
 	static bool starts_with(const BasicStringView<Char> string,
-		const BasicStringView<Char> prefix, bool case_sensitive)
+		const BasicStringView<Char> prefix)
 	{
 		if (string.length() >= prefix.length())
-		{
-			return compare(
-				string.data(), prefix.data(), case_sensitive) == 0;
-		}
+			return string.substr(0, prefix.length()) == prefix;
 
 		return false;
 	}
 
 	template<typename Char>
 	static bool ends_with(const BasicStringView<Char> string,
-		const BasicStringView<Char> ending, bool case_sensitive)
+		const BasicStringView<Char> ending)
 	{
 		if (string.length() >= ending.length())
 		{
 			const auto offset = string.length() - ending.length();
-			return compare(
-				string.data() + offset, ending.data(), case_sensitive) == 0;
+			return BasicStringView<Char>(string.data() + offset).compare(ending) == 0;
 		}
 
 		return false;

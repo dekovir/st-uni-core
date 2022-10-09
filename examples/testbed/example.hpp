@@ -42,7 +42,7 @@ namespace unicore
 		virtual void update() = 0;
 		virtual void draw() const = 0;
 
-		virtual void get_text(List<WString>& lines) {}
+		virtual void get_text(List<String32>& lines) {}
 	};
 
 	using ExampleFactory = std::function<Shared<Example>(const ExampleContext& context)>;

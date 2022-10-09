@@ -31,9 +31,15 @@ namespace unicore
 		return *this;
 	}
 
-	FileWriter& FileWriter::write(WStringView str)
+	FileWriter& FileWriter::write(StringView16 str)
 	{
-		stream.write(str.data(), sizeof(wchar_t) * str.size());
+		stream.write(str.data(), sizeof(Char16) * str.size());
+		return *this;
+	}
+
+	FileWriter& FileWriter::write(StringView32 str)
+	{
+		stream.write(str.data(), sizeof(Char32) * str.size());
 		return *this;
 	}
 }

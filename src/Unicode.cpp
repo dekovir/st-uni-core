@@ -4,86 +4,152 @@
 
 namespace unicore::Unicode
 {
-	bool try_convert(const WStringView from, String& to)
+	bool try_convert(StringView32 from, String16& to)
 	{
-		// TODO: Replace with no exception library
-		//try
-		//{
+		std::wstring_convert<std::codecvt_utf16<char32_t>, char32_t> conv;
+		std::string bytes = conv.to_bytes(from.data());
+		to = std::u16string(reinterpret_cast<const char16_t*>(bytes.c_str()), bytes.length() / sizeof(char16_t));
+		return true;
+	}
+
+	bool try_convert(StringView32 from, StringW& to)
+	{
+		String utf8;
+		return
+			try_convert(from, utf8) &&
+			try_convert(utf8, to);
+	}
+
+	bool try_convert(StringView32 from, String& to)
+	{
+		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
+		to = conv.to_bytes(from.data());
+		return true;
+	}
+
+	bool try_convert(StringView16 from, String32& to)
+	{
+		std::wstring_convert<std::codecvt_utf16<char32_t>, char32_t> conv;
+		to = conv.from_bytes(reinterpret_cast<const char*>(from.data()), reinterpret_cast<const char*>(from.data() + from.size()));
+		return true;
+	}
+
+	bool try_convert(StringView16 from, StringW& to)
+	{
+		String str;
+		return
+			try_convert(from, str) &&
+			try_convert(str, to);
+	}
+
+	bool try_convert(StringView16 from, String& to)
+	{
+		std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> conv;
+		to = conv.to_bytes(from.data());
+		return true;
+	}
+
+	bool try_convert(StringViewW from, String32& to)
+	{
+		String str;
+		return
+			try_convert(from, str) &&
+			try_convert(str, to);
+	}
+
+	bool try_convert(StringViewW from, String16& to)
+	{
+		String str;
+		return
+			try_convert(from, str) &&
+			try_convert(str, to);
+	}
+
+	bool try_convert(StringViewW from, String& to)
+	{
 		static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> conv;
 		to = conv.to_bytes(from.data());
 		return true;
-		//}
-		//catch (...)
-		//{
-		//	return false;
-		//}
 	}
 
-	bool try_convert(const std::basic_string_view<char16_t> from, String& to)
+	bool try_convert(StringView from, String32& to)
 	{
-		static std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> converter;
-		to = converter.to_bytes(from.data());
+		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
+		to = conv.from_bytes(from.data());
 		return true;
 	}
 
-	bool try_convert(const StringView from, WString& to)
+	bool try_convert(StringView from, String16& to)
 	{
-		// TODO: Replace with no exception library
-		//try
-		//{
+		std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conv;
+		to = conv.from_bytes(from.data());
+		return true;
+	}
+
+	bool try_convert(StringView from, StringW& to)
+	{
 		static std::wstring_convert< std::codecvt_utf8<wchar_t>, wchar_t > conv;
 		to = conv.from_bytes(from.data());
 		return true;
-		//}
-		//catch (...)
-		//{
-		//	return false;
-		//}
 	}
 
-	//
-	String to_utf8(const WStringView str, bool* success)
+	String32 to_utf32(StringView from, bool* success)
 	{
-		std::string result;
-		if (try_convert(str, result))
-		{
-			if (success != nullptr) *success = true;
-			return result;
-		}
-
-		if (success != nullptr) *success = false;
-		return {};
+		return to<Char32>(from, success);
 	}
 
-	String to_utf8(const BasicStringView<char16_t> str, bool* success)
+	String32 to_utf32(StringView16 from, bool* success)
 	{
-		std::string result;
-		if (try_convert(str, result))
-		{
-			if (success != nullptr) *success = true;
-			return result;
-		}
-
-		if (success != nullptr) *success = false;
-		return {};
+		return to<Char32>(from, success);
 	}
 
-	WString to_wcs(const StringView str, bool* success)
+	String32 to_utf32(StringViewW from, bool* success)
 	{
-		std::wstring result;
-		if (try_convert(str, result))
-		{
-			if (success != nullptr) *success = true;
-			return result;
-		}
-
-		if (success != nullptr) *success = false;
-		return {};
+		return to<Char32>(from, success);
 	}
 
-	WString to_wcs(const BasicStringView<char16_t> str, bool* success)
+	String16 to_utf16(StringView32 from, bool* success)
 	{
-		// TODO: Optimize convert
-		return to_wcs(to_utf8(str), success);
+		return to<Char16>(from, success);
+	}
+
+	String16 to_utf16(StringViewW from, bool* success)
+	{
+		return to<Char16>(from, success);
+	}
+
+	String16 to_utf16(StringView from, bool* success)
+	{
+		return to<Char16>(from, success);
+	}
+
+	StringW to_wcs(StringView32 from, bool* success)
+	{
+		return to<wchar_t>(from, success);
+	}
+
+	StringW to_wcs(StringView16 from, bool* success)
+	{
+		return to<wchar_t>(from, success);
+	}
+
+	StringW to_wcs(StringView from, bool* success)
+	{
+		return to<wchar_t>(from, success);
+	}
+
+	String to_utf8(StringView32 from, bool* success)
+	{
+		return to<Char>(from, success);
+	}
+
+	String to_utf8(StringView16 from, bool* success)
+	{
+		return to<Char>(from, success);
+	}
+
+	String to_utf8(StringViewW from, bool* success)
+	{
+		return to<Char>(from, success);
 	}
 }

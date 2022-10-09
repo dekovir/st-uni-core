@@ -5,7 +5,7 @@
 
 namespace unicore
 {
-	constexpr WStringView Wildcard = L"*";
+	constexpr StringView Wildcard = "*";
 
 	// FileProvider ///////////////////////////////////////////////////////////////
 	size_t FileProvider::get_system_memory_use() const
@@ -31,57 +31,57 @@ namespace unicore
 	}
 
 	uint16_t FileProvider::enumerate_entries(const Path& path,
-		List<WString>& name_list, const EnumerateOptions& options) const
+		List<String>& name_list, const EnumerateOptions& options) const
 	{
 		return enumerate_entries(path, Wildcard, name_list, options);
 	}
 
 	uint16_t FileProvider::enumerate_files(const Path& path,
-		WStringView search_pattern, List<WString>& name_list) const
+		StringView search_pattern, List<String>& name_list) const
 	{
 		return enumerate_entries(path, search_pattern, name_list, { EnumerateFlag::Files });
 	}
 
-	uint16_t FileProvider::enumerate_files(const Path& path, List<WString>& name_list) const
+	uint16_t FileProvider::enumerate_files(const Path& path, List<String>& name_list) const
 	{
 		return enumerate_files(path, Wildcard, name_list);
 	}
 
 	uint16_t FileProvider::enumerate_dirs(const Path& path,
-		WStringView search_pattern, List<WString>& name_list) const
+		StringView search_pattern, List<String>& name_list) const
 	{
 		return enumerate_entries(path, search_pattern, name_list, { EnumerateFlag::Directories });
 	}
 
-	uint16_t FileProvider::enumerate_dirs(const Path& path, List<WString>& name_list) const
+	uint16_t FileProvider::enumerate_dirs(const Path& path, List<String>& name_list) const
 	{
 		return enumerate_dirs(path, Wildcard, name_list);
 	}
 
-	List<WString> FileProvider::get_files(const Path& path, WStringView search_pattern) const
+	List<String> FileProvider::get_files(const Path& path, StringView search_pattern) const
 	{
-		List<WString> name_list;
+		List<String> name_list;
 		enumerate_files(path, search_pattern, name_list);
 		return name_list;
 	}
 
-	List<WString> FileProvider::get_files(const Path& path) const
+	List<String> FileProvider::get_files(const Path& path) const
 	{
-		List<WString> name_list;
+		List<String> name_list;
 		enumerate_files(path, Wildcard, name_list);
 		return name_list;
 	}
 
-	List<WString> FileProvider::get_dirs(const Path& path, WStringView search_pattern) const
+	List<String> FileProvider::get_dirs(const Path& path, StringView search_pattern) const
 	{
-		List<WString> name_list;
+		List<String> name_list;
 		enumerate_dirs(path, search_pattern, name_list);
 		return name_list;
 	}
 
-	List<WString> FileProvider::get_dirs(const Path& path) const
+	List<String> FileProvider::get_dirs(const Path& path) const
 	{
-		List<WString> name_list;
+		List<String> name_list;
 		enumerate_dirs(path, Wildcard, name_list);
 		return name_list;
 	}
@@ -143,8 +143,8 @@ namespace unicore
 	}
 
 	uint16_t DirectoryFileProvider::enumerate_entries(
-		const Path& path, WStringView search_pattern,
-		List<WString>& name_list, const EnumerateOptions& options) const
+		const Path& path, StringView search_pattern,
+		List<String>& name_list, const EnumerateOptions& options) const
 	{
 		return _provider.enumerate_entries(make_path(path), search_pattern, name_list, options);
 	}
@@ -172,8 +172,8 @@ namespace unicore
 	}
 
 	uint16_t CachedFileProvider::enumerate_entries(
-		const Path& path, WStringView search_pattern,
-		List<WString>& name_list, const EnumerateOptions& options) const
+		const Path& path, StringView search_pattern,
+		List<String>& name_list, const EnumerateOptions& options) const
 	{
 		uint16_t count = 0;
 		for (const auto& [entry_path, entry_index] : _entries)

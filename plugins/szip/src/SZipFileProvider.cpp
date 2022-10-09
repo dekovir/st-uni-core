@@ -50,17 +50,16 @@ namespace unicore
 
 	void SZipFileProvider::cache_files()
 	{
-		List<UInt16> name_buffer;
+		String16 name_buffer;
 
 		for (UInt32 index = 0; index < _data->db.NumFiles; index++)
 		{
 			const auto lng = SzArEx_GetFileNameUtf16(&_data->db, index, nullptr);
 
 			name_buffer.resize(lng);
-			SzArEx_GetFileNameUtf16(&_data->db, index, name_buffer.data());
-			auto name_wcs = Unicode::to_wcs(BasicStringView<char16_t>(
-				reinterpret_cast<char16_t*>(name_buffer.data()), name_buffer.size()));
-			const Path path(name_wcs);
+			SzArEx_GetFileNameUtf16(&_data->db, index,
+				reinterpret_cast<UInt16*>(name_buffer.data()));
+			const Path path(name_buffer);
 
 			add_entry(path, index);
 		}

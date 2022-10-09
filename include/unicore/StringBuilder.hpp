@@ -15,10 +15,12 @@ namespace unicore
 		~StringBuilder() = default;
 
 		void append(char c);
-		void append(wchar_t c);
+		void append(Char16 c);
+		void append(Char32 c);
 
 		void append(StringView text);
-		void append(WStringView text);
+		void append(StringView16 text);
+		void append(StringView32 text);
 
 		StringBuilder& operator=(const StringBuilder& other) noexcept = default;
 		StringBuilder& operator=(StringBuilder&& other) noexcept;
@@ -32,12 +34,30 @@ namespace unicore
 		}
 
 		template<typename ... Args>
-		static WString format(WStringView format, const Args& ... args)
+		static StringW format(StringViewW format, const Args& ... args)
 		{
 			// TODO: Optimize (Rewrite without Unicode methods)
 			StringBuilder builder;
 			internal_format(builder, Unicode::to_utf8(format), args...);
 			return Unicode::to_wcs(builder.data);
+		}
+
+		template<typename ... Args>
+		static String16 format(StringView16 format, const Args& ... args)
+		{
+			// TODO: Optimize (Rewrite without Unicode methods)
+			StringBuilder builder;
+			internal_format(builder, Unicode::to_utf8(format), args...);
+			return Unicode::to_utf16(builder.data);
+		}
+
+		template<typename ... Args>
+		static String32 format(StringView32 format, const Args& ... args)
+		{
+			// TODO: Optimize (Rewrite without Unicode methods)
+			StringBuilder builder;
+			internal_format(builder, Unicode::to_utf8(format), args...);
+			return Unicode::to_utf32(builder.data);
 		}
 
 		static String quoted(StringView text, Char delim = '\"')
@@ -49,14 +69,14 @@ namespace unicore
 			return builder.data;
 		}
 
-		static WString quoted(WStringView text, WChar delim = '\"')
+		static String16 quoted(StringView16 text, Char16 delim = '\"')
 		{
 			// TODO: Optimize (Rewrite without Unicode methods)
 			StringBuilder builder;
 			builder.append(delim);
 			builder.append(text);
 			builder.append(delim);
-			return Unicode::to_wcs(builder.data);
+			return Unicode::to<Char16>(StringView(builder.data));
 		}
 
 	protected:
@@ -96,10 +116,12 @@ namespace unicore
 #endif
 
 	extern UNICODE_STRING_BUILDER_FORMAT(char);
-	extern UNICODE_STRING_BUILDER_FORMAT(wchar_t);
+	extern UNICODE_STRING_BUILDER_FORMAT(Char16);
+	extern UNICODE_STRING_BUILDER_FORMAT(Char32);
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const char*);
-	extern UNICODE_STRING_BUILDER_FORMAT(const wchar_t*);
+	extern UNICODE_STRING_BUILDER_FORMAT(const Char16*);
+	extern UNICODE_STRING_BUILDER_FORMAT(const Char32*);
 
 	extern UNICODE_STRING_BUILDER_FORMAT(float);
 	extern UNICODE_STRING_BUILDER_FORMAT(double);
@@ -108,7 +130,7 @@ namespace unicore
 	extern UNICODE_STRING_BUILDER_FORMAT(const std::type_index&);
 
 	template<typename TChar,
-		std::enable_if_t<std::is_same_v<TChar, char> || std::is_same_v<TChar, wchar_t>>* = nullptr>
+		std::enable_if_t<StringHelper::sfinae::is_char_v<TChar>>* = nullptr>
 	extern StringBuilder& operator << (StringBuilder& builder, const BasicStringView<TChar> value)
 	{
 		builder.append(value);
@@ -116,7 +138,7 @@ namespace unicore
 	}
 
 	template<typename TChar,
-		std::enable_if_t<std::is_same_v<TChar, char> || std::is_same_v<TChar, wchar_t>>* = nullptr>
+		std::enable_if_t<StringHelper::sfinae::is_char_v<TChar>>* = nullptr>
 	extern StringBuilder& operator << (StringBuilder& builder, const BasicString<TChar>& value)
 	{
 		builder.append(value);

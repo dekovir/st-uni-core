@@ -33,7 +33,7 @@ namespace unicore
 		return _height;
 	}
 
-	float BitmapFont::calc_width(WStringView text) const
+	float BitmapFont::calc_width(StringView32 text) const
 	{
 		Vector2f cur = { 0, _height };
 		Rectf r;
@@ -50,7 +50,7 @@ namespace unicore
 		return cur.x;
 	}
 
-	int BitmapFont::find_kerning(uint32_t a, uint32_t b) const
+	int BitmapFont::find_kerning(Char32 a, Char32 b) const
 	{
 		if (const auto it = _kerning.find(a); it != _kerning.end())
 		{
@@ -61,7 +61,7 @@ namespace unicore
 		return 0;
 	}
 
-	Shared<Texture> BitmapFont::get_char_print_info(uint32_t code,
+	Shared<Texture> BitmapFont::get_char_print_info(Char32 code,
 		Vector2f& pos, Rectf* rect, Rectf* uv_rect) const
 	{
 		if (code == 32)
@@ -104,7 +104,7 @@ namespace unicore
 	}
 
 	void BitmapFont::generate(
-		const Vector2f& position, WStringView text, const Color4b& color,
+		const Vector2f& position, StringView32 text, const Color4b& color,
 		Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict)
 	{
 		Vector2f cur = position;
@@ -121,7 +121,7 @@ namespace unicore
 		}
 	}
 
-	Shared<Texture> BitmapFont::print_char(uint32_t code, Vector2f& pos,
+	Shared<Texture> BitmapFont::print_char(Char32 code, Vector2f& pos,
 		const Color4b& color, VertexTexColorQuad2& quad) const
 	{
 		Rectf rect, uv;

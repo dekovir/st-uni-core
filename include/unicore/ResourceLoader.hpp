@@ -68,9 +68,9 @@ namespace unicore
 
 		struct Extension
 		{
-			const Set<WStringView> extension;
+			const Set<StringView> extension;
 
-			explicit Extension(const std::initializer_list<WStringView> extension_)
+			explicit Extension(const std::initializer_list<StringView> extension_)
 				: extension(extension_) {}
 
 			bool operator()(const Path& path) const

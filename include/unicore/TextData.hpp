@@ -37,17 +37,32 @@ namespace unicore
 		}
 	};
 
-	class WTextData : public BasicTextData<wchar_t>
+		class TextData16 : public BasicTextData<Char16>
 	{
-		UC_OBJECT(WTextData, BasicTextData)
+		UC_OBJECT(TextData16, BasicTextData)
 	public:
-		explicit WTextData(WStringView data)
-			: BasicTextData<wchar_t>(data)
+		explicit TextData16(StringView16 data)
+			: BasicTextData(data)
 		{
 		}
 
-		explicit WTextData(WString data)
-			: BasicTextData<wchar_t>(std::move(data))
+		explicit TextData16(String16 data)
+			: BasicTextData(std::move(data))
+		{
+		}
+	};
+
+	class TextData32 : public BasicTextData<Char32>
+	{
+		UC_OBJECT(TextData32, BasicTextData)
+	public:
+		explicit TextData32(StringView32 data)
+			: BasicTextData(data)
+		{
+		}
+
+		explicit TextData32(String32 data)
+			: BasicTextData(std::move(data))
 		{
 		}
 	};

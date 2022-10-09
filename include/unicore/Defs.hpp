@@ -77,7 +77,9 @@ namespace unicore
 	using namespace std::string_view_literals;
 
 	using Char = char;
-	using WChar = wchar_t;
+	using CharW = wchar_t;
+	using Char16 = char16_t;
+	using Char32 = char32_t;
 
 	using Int = int;
 	using UInt = unsigned int;
@@ -153,13 +155,17 @@ namespace unicore
 
 	template<typename T>
 	using BasicString = std::basic_string<T>;
-	using String = BasicString<char>;
-	using WString = BasicString<wchar_t>;
+	using String = BasicString<Char>;
+	using StringW = BasicString<CharW>;
+	using String16 = BasicString<Char16>;
+	using String32 = BasicString<Char32>;
 
 	template<typename T>
 	using BasicStringView = std::basic_string_view<T>;
-	using StringView = BasicStringView<char>;
-	using WStringView = BasicStringView<wchar_t>;
+	using StringView = BasicStringView<Char>;
+	using StringViewW = BasicStringView<CharW>;
+	using StringView16 = BasicStringView<Char16>;
+	using StringView32 = BasicStringView<Char32>;
 
 	template<typename T>
 	using Optional = std::optional<T>;

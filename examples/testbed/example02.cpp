@@ -38,7 +38,7 @@ namespace unicore
 	void Example02::load(ResourceCache& resources)
 	{
 #if 1
-		_tex = resources.load<Texture>(L"zazaka.png"_path);
+		_tex = resources.load<Texture>("zazaka.png"_path);
 #else
 		if (const auto surface = resources.load<DynamicSurface>(L"zazaka.png"_path))
 		{
@@ -86,9 +86,9 @@ namespace unicore
 		_sprite_batch.render(renderer);
 	}
 
-	void Example02::get_text(List<WString>& lines)
+	void Example02::get_text(List<String32>& lines)
 	{
-		lines.push_back(StringBuilder::format(L"Count: {}", _entites.size()));
+		lines.push_back(StringBuilder::format(U"Count: {}", _entites.size()));
 	}
 
 	void Example02::spawn_entity(const Vector2f& position, const Vector2i& size)
