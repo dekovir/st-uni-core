@@ -138,7 +138,7 @@ namespace unicore
 					// TODO: Use surface format
 					surface_data[surface_offset] = 0x00FFFFFF + (a << 24);
 				}
-#elif 1
+#else
 			for (int y = 0; y < packed.h; y++)
 				for (int x = 0; x < packed.w; x++)
 				{
@@ -146,17 +146,6 @@ namespace unicore
 					const Color4b color(255, 255, 255, a);
 					canvas.draw_point({ packed.x + x, packed.y + y }, color);
 				}
-#else
-			DynamicSurface glyph_surface(packed.w, packed.h);
-			const auto total = packed.size().area();
-			for (int offset = 0; offset < total; offset++)
-			{
-				const auto a = item_bm[i][offset];
-				const Color4b color(255, 255, 255, a);
-				static_cast<UInt32*>(glyph_surface.data())[offset]
-					= color.to_format(glyph_surface.format());
-			}
-			canvas.draw_buffer(packed.position(), glyph_surface);
 #endif
 			stbtt_FreeBitmap(item_bm[i], nullptr);
 
