@@ -125,7 +125,20 @@ namespace unicore
 			const Recti packed = { r.x + 1, r.y + 1, r.w - 2, r.h - 2 };
 
 #if 1
-			// TODO: Optimize glyph copying
+			int bm_offset = 0;
+			int surface_offset = packed.x + packed.y * surface_size.x;
+			auto surface_data = static_cast<UInt32*>(font_surface.data());
+
+			for (int y = 0; y < packed.h; y++, surface_offset += surface_size.x - packed.w)
+				for (int x = 0; x < packed.w; x++, bm_offset++, surface_offset++)
+				{
+					const auto a = item_bm[i][bm_offset];
+					//const Color4b color(255, 255, 255, a);
+					//color.to_format(font_surface.format());
+					// TODO: Use surface format
+					surface_data[surface_offset] = 0x00FFFFFF + (a << 24);
+				}
+#elif 1
 			for (int y = 0; y < packed.h; y++)
 				for (int x = 0; x < packed.w; x++)
 				{
