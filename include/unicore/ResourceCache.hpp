@@ -16,7 +16,51 @@ namespace unicore
 	};
 	UNICORE_ENUM_FLAGS(ResourceCacheFlag, ResourceCacheFlags);
 
-	class ResourceCache : public Module
+	class IResourceCache
+	{
+	public:
+		virtual ~IResourceCache() = default;
+
+		// CREATE ////////////////////////////////////////////////////////////////////
+		Shared<Resource> create(TypeConstRef type, const ResourceOptions& options)
+		{
+			return load_raw(Path::Empty, type, &options, ResourceCacheFlags::Zero);
+		}
+
+		template<typename T,
+			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
+		Shared<T> create(const ResourceOptions& options)
+		{
+			auto& type = get_type<T>();
+			auto resource = create(type, options);
+			return std::dynamic_pointer_cast<T>(resource);
+		}
+
+		// LOAD //////////////////////////////////////////////////////////////////////
+		virtual Shared<Resource> load_raw(const Path& path, TypeConstRef type,
+			const ResourceOptions* options, ResourceCacheFlags flags) = 0;
+
+		template<typename T,
+			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
+		Shared<T> load(const Path& path, ResourceCacheFlags flags = ResourceCacheFlags::Zero)
+		{
+			auto& type = get_type<T>();
+			auto resource = load_raw(path, type, nullptr, flags);
+			return std::dynamic_pointer_cast<T>(resource);
+		}
+
+		template<typename T, typename TData,
+			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr,
+			std::enable_if_t<std::is_base_of_v<ResourceOptions, TData>>* = nullptr>
+		Shared<T> load(const Path& path, const TData& options, ResourceCacheFlags flags = ResourceCacheFlags::Zero)
+		{
+			auto& type = get_type<T>();
+			auto resource = load_raw(path, type, &options, flags);
+			return std::dynamic_pointer_cast<T>(resource);
+		}
+	};
+
+	class ResourceCache : public Module, public IResourceCache
 	{
 		UC_OBJECT(ResourceCache, Module)
 	public:
@@ -27,36 +71,8 @@ namespace unicore
 
 		UC_NODISCARD Optional<Path> find_path(const Resource& resource) const;
 
-		// CREATE ////////////////////////////////////////////////////////////////////
-		Shared<Resource> create(TypeConstRef type, const ResourceOptions& options);
-
-		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-		Shared<T> create(const ResourceOptions& options)
-		{
-			return std::dynamic_pointer_cast<T>(create(get_type<T>(), options));
-		}
-
-		// LOAD //////////////////////////////////////////////////////////////////////
-		Shared<Resource> load(const Path& path, TypeConstRef type,
-			const ResourceOptions* options, ResourceCacheFlags flags);
-
-		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr>
-		Shared<T> load(const Path& path, ResourceCacheFlags flags = ResourceCacheFlags::Zero)
-		{
-			auto& type = get_type<T>();
-			auto resource = load(path, type, nullptr, flags);
-			return std::dynamic_pointer_cast<T>(resource);
-		}
-
-		template<typename T, typename TData,
-			std::enable_if_t<std::is_base_of_v<Resource, T>>* = nullptr,
-			std::enable_if_t<std::is_base_of_v<ResourceOptions, TData>>* = nullptr>
-		Shared<T> load(const Path& path, const TData& options, ResourceCacheFlags flags = ResourceCacheFlags::Zero)
-		{
-			return std::dynamic_pointer_cast<T>(load(path, get_type<T>(), &options, flags));
-		}
+		Shared<Resource> load_raw(const Path& path, TypeConstRef type,
+			const ResourceOptions* options, ResourceCacheFlags flags) override;
 
 		void dump_used();
 		void calc_memory_use(size_t* system, size_t* video) const;

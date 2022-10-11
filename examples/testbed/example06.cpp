@@ -14,7 +14,7 @@ namespace unicore
 	{
 	}
 
-	void Example06::load(ResourceCache& resources)
+	void Example06::load(IResourceCache& resources)
 	{
 		//_font = resources.create<Font>(EmptyResourceOptions{});
 		//_font = resources.load<Font>(L"font_004.fnt"_path);

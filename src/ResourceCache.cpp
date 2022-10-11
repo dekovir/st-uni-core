@@ -85,12 +85,7 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	Shared<Resource> ResourceCache::create(TypeConstRef type, const ResourceOptions& options)
-	{
-		return load(Path::Empty, type, &options, ResourceCacheFlags::Zero);
-	}
-
-	Shared<Resource> ResourceCache::load(const Path& path,
+	Shared<Resource> ResourceCache::load_raw(const Path& path,
 		TypeConstRef type, const ResourceOptions* options, ResourceCacheFlags flags)
 	{
 		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;

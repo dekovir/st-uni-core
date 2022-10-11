@@ -21,7 +21,7 @@ namespace unicore
 	public:
 		explicit Example05(const ExampleContext& context);
 
-		void load(ResourceCache& resources) override;
+		void load(IResourceCache& resources) override;
 		void update() override;
 		void draw() const override;
 

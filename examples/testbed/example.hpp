@@ -10,7 +10,7 @@ namespace unicore
 	class Time;
 	class Input;
 	class RendererSDL;
-	class ResourceCache;
+	class IResourceCache;
 
 	class Font;
 
@@ -38,7 +38,7 @@ namespace unicore
 
 		explicit Example(const ExampleContext& context);
 
-		virtual void load(ResourceCache& resources) {}
+		virtual void load(IResourceCache& resources) {}
 		virtual void update() = 0;
 		virtual void draw() const = 0;
 

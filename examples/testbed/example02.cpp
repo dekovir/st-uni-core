@@ -35,7 +35,7 @@ namespace unicore
 	{
 	}
 
-	void Example02::load(ResourceCache& resources)
+	void Example02::load(IResourceCache& resources)
 	{
 #if 1
 		_tex = resources.load<Texture>("zazaka.png"_path);
