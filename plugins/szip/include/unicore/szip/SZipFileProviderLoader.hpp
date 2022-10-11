@@ -12,12 +12,12 @@ namespace unicore
 		}
 	};
 
-	class SZipFileArchiveLoader : public ResourceLoaderTyped<
+	class SZipFileProviderLoader : public ResourceLoaderTyped<
 		ResourceLoaderTypePolicy::Multiple<ReadFileProvider>, SZipPathPolicy>
 	{
-		UC_OBJECT(SZipFileArchiveLoader, ResourceLoader)
+		UC_OBJECT(SZipFileProviderLoader, ResourceLoader)
 	public:
-		SZipFileArchiveLoader();
+		SZipFileProviderLoader();
 		UC_NODISCARD Shared<Resource> load(const Context& context) override;
 	};
 }

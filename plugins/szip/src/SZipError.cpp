@@ -1,4 +1,4 @@
-#include "SZipError.hpp"
+#include "unicore/szip/SZipError.hpp"
 #include "unicore/StringBuilder.hpp"
 
 namespace unicore

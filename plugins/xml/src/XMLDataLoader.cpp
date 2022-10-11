@@ -1,4 +1,4 @@
-#include "XMLLoader.hpp"
+#include "unicore/xml/XMLDataLoader.hpp"
 #include "unicore/TextData.hpp"
 #include "unicore/ResourceCache.hpp"
 

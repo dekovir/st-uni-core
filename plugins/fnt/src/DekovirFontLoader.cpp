@@ -1,4 +1,4 @@
-#include "DekovirFontLoader.hpp"
+#include "unicore/fnt/DekovirFontLoader.hpp"
 #include "unicore/TextData.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/xml/XMLData.hpp"

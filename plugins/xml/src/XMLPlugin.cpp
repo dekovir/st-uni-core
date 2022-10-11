@@ -1,6 +1,6 @@
 #include "unicore/xml/XMLPlugin.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "XMLLoader.hpp"
+#include "unicore/xml/XMLDataLoader.hpp"
 
 namespace unicore
 {
