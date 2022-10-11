@@ -47,6 +47,11 @@ namespace unicore
 			cos_value = TypeTag::cos(_value);
 		}
 
+		UC_NODISCARD std::pair<Float, Float> sin_cos() const
+		{
+			return std::make_pair(TypeTag::sin(_value), TypeTag::cos(_value));
+		}
+
 		Angle& operator+=(const Angle& other)
 		{
 			_value += other.value();

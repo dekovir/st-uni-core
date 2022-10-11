@@ -105,6 +105,15 @@ namespace unicore
 				Math::lerp(a.z, b.z, t)
 				);
 		}
+
+		static constexpr Vector3<T> cross(const Vector3<T>& a, const Vector3<T>& b)
+		{
+			return Vector3<T>(
+				a[1] * b[2] - b[1] * a[2],
+				a[2] * b[0] - b[2] * a[0],
+				a[0] * b[1] - b[0] * a[1]
+				);
+		}
 	};
 
 	typedef Vector3<float> Vector3f;

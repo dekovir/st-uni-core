@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Vector2.hpp"
+#include "unicore/Vector3.hpp"
 #include "unicore/Color4.hpp"
 
 namespace unicore
@@ -24,7 +25,10 @@ namespace unicore
 	};
 
 	using VertexColor2 = VertexColor<Vector2f, Color4b>;
+	using VertexColor3 = VertexColor<Vector3f, Color4b>;
+
 	using VertexColorQuad2 = Quad<VertexColor2>;
+	using VertexColorQuad3 = Quad<VertexColor3>;
 
 	template<typename TPos, typename TTexCoords, typename TColor>
 	struct VertexTexColor
@@ -45,5 +49,8 @@ namespace unicore
 	};
 
 	using VertexTexColor2 = VertexTexColor<Vector2f, Vector2f, Color4b>;
+	using VertexTexColor3 = VertexTexColor<Vector3f, Vector2f, Color4b>;
+
 	using VertexTexColorQuad2 = Quad<VertexTexColor2>;
+	using VertexTexColorQuad3 = Quad<VertexTexColor3>;
 }

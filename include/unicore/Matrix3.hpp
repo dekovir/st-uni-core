@@ -1,6 +1,7 @@
 #pragma once
 #include "unicore/Vector2.hpp"
 #include "unicore/Vector3.hpp"
+#include "unicore/Rect.hpp"
 
 namespace unicore
 {
@@ -19,6 +20,15 @@ namespace unicore
 			T m10, T m11, T m12,
 			T m20, T m21, T m22)
 			: mat{ { m00, m01, m02 }, { m10, m11, m12 }, { m20, m21, m22 } }
+		{}
+
+		// TODO: Replace with span
+		constexpr Matrix3(const T* m)
+			: Matrix3(
+				m[0], m[1], m[2],
+				m[3], m[4], m[5],
+				m[6], m[7], m[8]
+			)
 		{}
 
 		constexpr Matrix3(const Matrix3& other) = default;
@@ -92,12 +102,12 @@ namespace unicore
 			return translate(vec.x, vec.y);
 		}
 
-		static constexpr Matrix3 scale(const Vector3<T>& vec)
+		static constexpr Matrix3 scale(const Vector2<T>& vec)
 		{
 			return Matrix3(
 				vec.x, 0, 0,
 				0, vec.y, 0,
-				0, 0, vec.z
+				0, 0, 1
 			);
 		}
 
@@ -112,12 +122,29 @@ namespace unicore
 
 		static Matrix3 rotation(Radians angle)
 		{
-			const auto cos_val = angle.cos();
-			const auto sin_val = angle.sin();
+			const auto [sin_val, cos_val] = angle.sin_cos();
 			return Matrix3(
 				+cos_val, +sin_val, 0,
 				-sin_val, +cos_val, 0,
 				0, 0, 1
+			);
+		}
+
+		static constexpr Matrix3 projection(const Vector2<T>& size)
+		{
+			return scale(T(2.0) / size);
+		}
+
+		static constexpr Matrix3 projection(const Rect<T>& rect)
+		{
+			const Vector2<T> difference(rect.top_right() - rect.bottom_right());
+			const Vector2<T> scale(T(2.0) / difference);
+			const Vector2<T> offset((rect.top_right() + rect.bottom_left()) / difference);
+
+			return Matrix3(
+				scale.x, 0, 0,
+				0, scale.y, 0,
+				-offset.x, -offset.y, 1
 			);
 		}
 	};
@@ -125,16 +152,16 @@ namespace unicore
 	using Matrix3f = Matrix3<float>;
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
-	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+	template<typename T>
 	static constexpr bool operator==(const Matrix3<T>& a, const Matrix3<T>& b)
 	{
 		return
-			a.mat[0] == b.mat[0] &&
-			a.mat[1] == b.mat[1] &&
-			a.mat[2] == b.mat[2];
+			Math::equals(a.mat[0], b.mat[0]) &&
+			Math::equals(a.mat[1], b.mat[1]) &&
+			Math::equals(a.mat[2], b.mat[2]);
 	}
 
-	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+	template<typename T>
 	static constexpr bool operator!=(const Matrix3<T>& a, const Matrix3<T>& b)
 	{
 		return !(a == b);
@@ -184,20 +211,23 @@ namespace unicore
 	}
 
 	// CONST /////////////////////////////////////////////////////////////////////
-	template<typename T>
-	struct MatrixConst3
+	namespace details
 	{
-		static constexpr Matrix3<T> Zero = Matrix3<T>(
-			0, 0, 0,
-			0, 0, 0,
-			0, 0, 0
-			);
+		template<typename T>
+		struct MatrixConst3
+		{
+			static constexpr Matrix3<T> Zero = Matrix3<T>(
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0
+				);
 
-		static constexpr Matrix3<T> Identity = Matrix3<T>(
-			1, 0, 0,
-			0, 1, 0,
-			0, 0, 1);
-	};
+			static constexpr Matrix3<T> Identity = Matrix3<T>(
+				1, 0, 0,
+				0, 1, 0,
+				0, 0, 1);
+		};
+	}
 
-	using MatrixConst3f = MatrixConst3<float>;
+	using MatrixConst3f = details::MatrixConst3<float>;
 }
