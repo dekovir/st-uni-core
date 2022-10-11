@@ -17,7 +17,7 @@ namespace unicore
 		explicit SolidSizeOptions(const Color4b& color_) : color(color_) {}
 		SolidSizeOptions(const Color4b& color_, const Vector2i& size_) : color(color_), size(size_) {}
 
-		UC_NODISCARD size_t hash() const override { return Math::hash(color, size); }
+		UC_NODISCARD size_t hash() const override { return Hash::make(color, size); }
 	};
 
 	using SurfaceFormat = PixelFormat<uint32_t, uint8_t>;
@@ -35,7 +35,7 @@ namespace unicore
 	{
 		UC_OBJECT(Surface, Resource)
 	public:
-		Surface(const Vector2i& size, MemoryChunk chunk);
+		Surface(const Vector2i& size, MemoryChunk&& chunk);
 
 		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(Surface) + _chunk.size(); }
 		UC_NODISCARD const Vector2i& size() const override { return _size; }

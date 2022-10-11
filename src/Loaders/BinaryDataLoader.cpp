@@ -15,7 +15,7 @@ namespace unicore
 
 		MemoryChunk chunk(size);
 		if (file->read(chunk.data(), size))
-			return std::make_shared<BinaryData>(chunk);
+			return std::make_shared<BinaryData>(std::move(chunk));
 
 		UC_LOG_ERROR(context.logger) << "Read failed";
 		return nullptr;

@@ -1,4 +1,5 @@
-#include "DekovirFontLoader.hpp"
+#include "unicore/fnt/DekovirFontLoader.hpp"
+#include "unicore/TextData.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/xml/XMLData.hpp"
 
@@ -6,11 +7,17 @@ namespace unicore
 {
 	Shared<Resource> DekovirFontLoader::load(const Context& options)
 	{
-		const auto xml = options.cache.load<XMLData>(
-			options.path, ResourceCacheFlag::IgnoreExtension);
-		if (!xml)
+		const auto text = options.cache.load<TextData>(options.path);
+		if (!text)
 		{
-			UC_LOG_ERROR(options.logger) << "Failed to load xml";
+			UC_LOG_ERROR(options.logger) << "Failed to load TextData";
+			return nullptr;
+		}
+
+		XMLData xml;
+		if (xml.doc.Parse(text->data().data(), text->data().size()) != tinyxml2::XML_SUCCESS)
+		{
+			UC_LOG_ERROR(options.logger) << "Failed to parse xml data";
 			return nullptr;
 		}
 
@@ -24,7 +31,7 @@ namespace unicore
 			return nullptr;
 		}
 
-		const auto root = xml->doc.FirstChildElement("font");
+		const auto root = xml.doc.FirstChildElement("font");
 		if (!root)
 		{
 			UC_LOG_ERROR(options.logger) << "Invalid Font format";

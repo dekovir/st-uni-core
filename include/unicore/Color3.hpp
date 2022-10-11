@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Math.hpp"
+#include "unicore/Hash.hpp"
 #include "unicore/Random.hpp"
 #include "unicore/PixelFormat.hpp"
 
@@ -222,4 +223,14 @@ namespace unicore
 
 	using ColorPalette3b = details::ColorPalette3<uint8_t>;
 	using ColorPalette3f = details::ColorPalette3<float>;
+
+	UNICORE_MAKE_HASH(Color3b)
+	{
+		return make(value.r, value.g, value.b);
+	}
+
+	UNICORE_MAKE_HASH(Color3f)
+	{
+		return make(value.r, value.g, value.b);
+	}
 }

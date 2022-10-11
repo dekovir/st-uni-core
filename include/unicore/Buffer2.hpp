@@ -49,6 +49,17 @@ namespace unicore
 		UC_NODISCARD virtual bool get(int x, int y, T& value) const = 0;
 		UC_NODISCARD bool get(const Vector2i& pos, T& value) const { return get(pos.x, pos.y, value); }
 
+		UC_NODISCARD T get_or_default(int x, int y, const T& default_value) const
+		{
+			T value;
+			return get(x, y, value) ? value : default_value;
+		}
+
+		UC_NODISCARD T get_or_default(const Vector2i& pos, const T& default_value) const
+		{
+			return get_or_default(pos.x, pos.y, default_value);
+		}
+
 		// TODO: Replace raw pointer
 		virtual unsigned get_line_h(int x, int y, unsigned lng, T* dest) const
 		{

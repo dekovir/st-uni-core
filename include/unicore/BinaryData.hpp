@@ -22,7 +22,7 @@ namespace unicore
 		UC_OBJECT(BinaryData, BasicBinaryData)
 	public:
 		BinaryData(void* data, size_t size, Memory::FreeFunc free = &Memory::free);
-		explicit BinaryData(MemoryChunk& chunk);
+		explicit BinaryData(MemoryChunk&& chunk);
 		~BinaryData() override;
 
 		UC_NODISCARD size_t get_system_memory_use() const override;

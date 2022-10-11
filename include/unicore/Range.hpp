@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Math.hpp"
+#include "unicore/Hash.hpp"
 #include "unicore/Random.hpp"
 
 namespace unicore
@@ -54,4 +55,14 @@ namespace unicore
 
 	using RangeConsti = details::RangeConst<int>;
 	using RangeConstf = details::RangeConst<float>;
+
+	UNICORE_MAKE_HASH(Rangei)
+	{
+		return make(value.min, value.max);
+	}
+
+	UNICORE_MAKE_HASH(Rangef)
+	{
+		return make(value.min, value.max);
+	}
 }

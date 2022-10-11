@@ -6,9 +6,10 @@
 namespace unicore
 {
 	class TextureLoader : public ResourceLoaderTyped<
-		ResourceLoaderTypePolicy::Multiple<Texture>,
+		ResourceLoaderTypePolicy::Single<Texture>,
 		ResourceLoaderPathPolicy::NotEmpty>
 	{
+		UC_OBJECT(TextureLoader, ResourceLoader)
 	public:
 		explicit TextureLoader(Renderer& render);
 
@@ -19,9 +20,10 @@ namespace unicore
 	};
 
 	class DynamicTextureLoader : public ResourceLoaderTyped<
-		ResourceLoaderTypePolicy::Multiple<DynamicTexture>,
+		ResourceLoaderTypePolicy::Single<DynamicTexture>,
 		ResourceLoaderPathPolicy::NotEmpty>
 	{
+		UC_OBJECT(DynamicTextureLoader, ResourceLoader)
 	public:
 		explicit DynamicTextureLoader(Renderer& render);
 

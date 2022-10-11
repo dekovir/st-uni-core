@@ -2,7 +2,7 @@
 
 namespace unicore
 {
-	Surface::Surface(const Vector2i& size, MemoryChunk chunk)
+	Surface::Surface(const Vector2i& size, MemoryChunk&& chunk)
 		: _size(size), _chunk(std::move(chunk))
 	{
 	}

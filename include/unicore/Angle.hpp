@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Math.hpp"
+#include "unicore/Hash.hpp"
 
 namespace unicore
 {
@@ -44,6 +45,11 @@ namespace unicore
 		{
 			sin_value = TypeTag::sin(_value);
 			cos_value = TypeTag::cos(_value);
+		}
+
+		UC_NODISCARD std::pair<Float, Float> sin_cos() const
+		{
+			return std::make_pair(TypeTag::sin(_value), TypeTag::cos(_value));
 		}
 
 		Angle& operator+=(const Angle& other)
@@ -171,5 +177,15 @@ namespace unicore
 	static constexpr Degrees operator"" _deg(long double value)
 	{
 		return Degrees(static_cast<float>(value));
+	}
+
+	UNICORE_MAKE_HASH(Radians)
+	{
+		return make(value.value());
+	}
+
+	UNICORE_MAKE_HASH(Degrees)
+	{
+		return make(value);
 	}
 }

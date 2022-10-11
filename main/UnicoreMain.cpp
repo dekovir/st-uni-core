@@ -1,4 +1,4 @@
-#include "UnicoreMain.h"
+#include "UnicoreMain.hpp"
 #include "unicore/app/RendererCore.hpp"
 #if defined(UNICORE_USE_SDL2_MAIN)
 #	include <SDL_main.h>

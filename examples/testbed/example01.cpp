@@ -115,7 +115,7 @@ namespace unicore
 		return r | g | b | a;
 	}
 
-	void Example01::load(ResourceCache& resources)
+	void Example01::load(IResourceCache& resources)
 	{
 		const auto formatted = to_format4(PIXELFORMAT_R8G8B8A8, ColorConst4f::Yellow);
 		auto color = from_format3<float>(PIXELFORMAT_R8G8B8A8, (uint32_t)0x00FF00FF);

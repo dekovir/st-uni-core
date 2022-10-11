@@ -76,6 +76,8 @@ namespace unicore
 	using namespace std::string_literals;
 	using namespace std::string_view_literals;
 
+	using Bool = bool;
+
 	using Char = char;
 	using CharW = wchar_t;
 	using Char16 = char16_t;

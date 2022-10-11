@@ -1,4 +1,4 @@
-#include "StbEasyFontLoader.hpp"
+#include "unicore/stb/StbEasyFontLoader.hpp"
 #if defined(UNICORE_USE_STB_EASY_FONT)
 namespace unicore
 {

@@ -16,7 +16,7 @@ namespace unicore
 
 		MemoryChunk chunk(s);
 		read(chunk);
-		return std::make_shared<BinaryData>(chunk);
+		return std::make_shared<BinaryData>(std::move(chunk));
 	}
 
 	bool WriteFile::write(const MemoryChunk& chunk, size_t* bytes_written)

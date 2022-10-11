@@ -4,16 +4,9 @@
 
 namespace unicore
 {
-	struct BinaryDataLoadPolicy : ResourceLoaderPathPolicy::Extension
-	{
-		BinaryDataLoadPolicy()
-			: Extension({ ".dat" })
-		{
-		}
-	};
-
 	class BinaryDataLoader : public ResourceLoaderTyped<
-		ResourceLoaderTypePolicy::Multiple<BinaryData>, BinaryDataLoadPolicy>
+		ResourceLoaderTypePolicy::Single<BinaryData>,
+		ResourceLoaderPathPolicy::NotEmpty>
 	{
 		UC_OBJECT(BinaryDataLoader, ResourceLoaderTyped)
 	public:

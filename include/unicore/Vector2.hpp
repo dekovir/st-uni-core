@@ -1,6 +1,7 @@
 #pragma once
 #include "unicore/Math.hpp"
 #include "unicore/Angle.hpp"
+#include "unicore/Hash.hpp"
 
 namespace unicore
 {
@@ -248,14 +249,14 @@ namespace unicore
 		return builder << value.x << "x" << value.y;
 	}
 
-	UNICORE_MATH_HASH(Vector2i)
+	UNICORE_MAKE_HASH(Vector2i)
 	{
-		return hash(value.x, value.y);
+		return make(value.x, value.y);
 	}
 
-	UNICORE_MATH_HASH(Vector2f)
+	UNICORE_MAKE_HASH(Vector2f)
 	{
-		return hash(value.x, value.y);
+		return make(value.x, value.y);
 	}
 }
 

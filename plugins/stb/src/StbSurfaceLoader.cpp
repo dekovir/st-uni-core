@@ -1,4 +1,4 @@
-#include "StbSurfaceLoader.hpp"
+#include "unicore/stb/StbSurfaceLoader.hpp"
 #if defined(UNICORE_USE_STB_IMAGE)
 #include "unicore/File.hpp"
 #include "unicore/ResourceCache.hpp"

@@ -1,18 +1,18 @@
-#include "SZipFileArchiveLoader.hpp"
+#include "unicore/szip/SZipFileProviderLoader.hpp"
+#include <7zCrc.h>
 #include "unicore/ResourceCache.hpp"
 #include "unicore/szip/SZipFileProvider.hpp"
-#include "SZipUtils.hpp"
-#include "SZipError.hpp"
-#include <7zCrc.h>
+#include "unicore/szip/SZipUtils.hpp"
+#include "unicore/szip/SZipError.hpp"
 
 namespace unicore
 {
-	SZipFileArchiveLoader::SZipFileArchiveLoader()
+	SZipFileProviderLoader::SZipFileProviderLoader()
 	{
 		CrcGenerateTable();
 	}
 
-	Shared<Resource> SZipFileArchiveLoader::load(const Context& context)
+	Shared<Resource> SZipFileProviderLoader::load(const Context& context)
 	{
 		const auto file = context.cache.load<ReadFile>(context.path);
 		if (!file)

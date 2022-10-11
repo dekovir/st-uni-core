@@ -5,7 +5,7 @@
 
 namespace unicore
 {
-	class ResourceCache;
+	class IResourceCache;
 
 	class ResourceLoader : public Object
 	{
@@ -13,7 +13,7 @@ namespace unicore
 	public:
 		struct Context
 		{
-			ResourceCache& cache;
+			IResourceCache& cache;
 			Path path;
 			const ResourceOptions* options;
 			Logger* logger = nullptr;

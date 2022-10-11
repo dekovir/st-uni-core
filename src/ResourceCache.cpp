@@ -1,5 +1,4 @@
 #include "unicore/ResourceCache.hpp"
-#include "unicore/Math.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
 #include "unicore/FileProvider.hpp"
@@ -85,12 +84,7 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	Shared<Resource> ResourceCache::create(TypeConstRef type, const ResourceOptions& options)
-	{
-		return load(Path::Empty, type, &options, ResourceCacheFlags::Zero);
-	}
-
-	Shared<Resource> ResourceCache::load(const Path& path,
+	Shared<Resource> ResourceCache::load_raw(const Path& path,
 		TypeConstRef type, const ResourceOptions* options, ResourceCacheFlags flags)
 	{
 		const auto logger = !flags.has(ResourceCacheFlag::Quiet) ? &_logger : nullptr;
@@ -109,7 +103,7 @@ namespace unicore
 
 		for (const auto& loader : loaders)
 		{
-			if (!flags.has(ResourceCacheFlag::IgnoreExtension) && !loader->can_load(path))
+			if (!loader->can_load(path))
 				continue;
 
 			if (!loader->can_load(options))
@@ -132,13 +126,13 @@ namespace unicore
 			if (auto resource = loader->load({ *this, path, options, logger }))
 			{
 				UC_LOG_DEBUG(_logger) << "Loaded " << resource->type()
-					<< FromPath(path) << WithOptions(options)
+					<< FromPath(path) << WithOptions(options) << " by " << loader->type()
 					<< " " << MemorySize{ resource->get_system_memory_use() };
 
 				_resources.push_back(resource);
 				if (resource->cache_policy() == ResourceCachePolicy::CanCache)
 				{
-					CachedInfo info{ resource, path };
+					CachedInfo info{ resource, path, loader.get() };
 					_cached[loader.get()].emplace(hash, info);
 
 					UC_LOG_DEBUG(_logger) << "Added " << resource->type()
@@ -151,7 +145,8 @@ namespace unicore
 			//UC_LOG_ERROR(logger) << "Failed to load " << type << " with loader";
 		}
 
-		UC_LOG_ERROR(logger) << "Failed to load " << type << FromPath(path) << WithOptions(options);
+		UC_LOG_ERROR(logger) << "Failed to load "
+			<< type << FromPath(path) << WithOptions(options);
 		return nullptr;
 	}
 
@@ -215,16 +210,16 @@ namespace unicore
 	{
 		for (const auto& resource_type : loader->resource_types())
 			_loaders[resource_type].insert(loader);
-		//UC_LOG_DEBUG(_logger) << "Added " << loader->type();
+		UC_LOG_DEBUG(_logger) << "Add " << loader->type();
 	}
 
 	void ResourceCache::unregister_module(const ModuleContext& context)
 	{
 		Module::unregister_module(context);
 
-		_loaders.clear();
-
 		unload_all();
+
+		_loaders.clear();
 	}
 
 	// ============================================================================
@@ -239,7 +234,7 @@ namespace unicore
 	size_t ResourceCache::make_hash(const Path& path, const ResourceOptions* options)
 	{
 		return options
-			? Math::hash(path, options->hash())
-			: Math::hash(path);
+			? Hash::make(path, options->hash())
+			: Hash::make(path);
 	}
 }

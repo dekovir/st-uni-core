@@ -19,14 +19,8 @@ namespace unicore
 	{
 	}
 
-	Shared<Resource> WriteFileLoader::load_options(const Context& context, const WriteFileOptions& options)
+	Shared<Resource> WriteFileLoader::load(const Context& context)
 	{
-		if (options.mode == WriteFileMode::CreateNew)
-		{
-			if (_provider.exists(context.path))
-				return nullptr;
-		}
-
 		return _provider.create_new(context.path);
 	}
 }

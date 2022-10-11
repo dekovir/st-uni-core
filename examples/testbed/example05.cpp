@@ -19,7 +19,7 @@ namespace unicore
 	{
 	}
 
-	void Example05::load(ResourceCache& resources)
+	void Example05::load(IResourceCache& resources)
 	{
 		_tiles = resources.load<SpriteList>("tiles.png"_path,
 			TileSetOptions{ Vector2i(16) });

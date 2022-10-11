@@ -120,4 +120,23 @@ namespace unicore
 			return compute<TChar>(view.data(), view.size(), crc);
 		}
 	};
+
+	namespace Hash
+	{
+		template<typename T>
+		static size_t make(const T& value)
+		{
+			return std::hash<T>{}(value);
+		}
+
+		template<typename T, typename... Args>
+		static size_t make(T first, Args... args)
+		{
+			const size_t value = make<T>(first) ^ (make(args...) << 1);
+			return value;
+		}
+	}
+
+#define UNICORE_MAKE_HASH(Type) \
+	template<> inline size_t Hash::make<Type>(const Type& value)
 }

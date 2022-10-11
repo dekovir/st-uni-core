@@ -27,6 +27,6 @@ namespace unicore
 				list.push_back(spr);
 			}
 
-		return std::make_shared<SpriteList>(list);
+		return std::make_shared<SpriteList>(std::move(list));
 	}
 }

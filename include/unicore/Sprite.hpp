@@ -14,7 +14,7 @@ namespace unicore
 		TileSetOptions() = default;
 		explicit TileSetOptions(const Vector2i& tile_) : tile(tile_) {}
 
-		UC_NODISCARD size_t hash() const override { return Math::hash(tile); }
+		UC_NODISCARD size_t hash() const override { return Hash::make(tile); }
 	};
 
 	// TODO: Do we need virtual methods?

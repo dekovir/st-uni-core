@@ -2,8 +2,8 @@
 #include "unicore/Unicode.hpp"
 #include "unicore/Logger.hpp"
 #include "unicore/MemoryFile.hpp"
-#include "SZipUtils.hpp"
-#include "SZipError.hpp"
+#include "unicore/szip/SZipUtils.hpp"
+#include "unicore/szip/SZipError.hpp"
 
 namespace unicore
 {

@@ -1,15 +1,11 @@
 #include "testbed.hpp"
-#include "UnicoreMain.h"
+#include "UnicoreMain.hpp"
+#include "InitPlugins.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Surface.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/FileProvider.hpp"
 #include "unicore/loaders/FileLoader.hpp"
-#include "unicore/stb/StbPlugin.hpp"
-#include "unicore/xml/XMLPlugin.hpp"
-#include "unicore/fnt/FNTPlugin.hpp"
-#include "unicore/imgui/ImGuiPlugin.hpp"
-#include "unicore/szip/SZipFilePlugin.hpp"
 
 namespace unicore
 {
@@ -20,11 +16,7 @@ namespace unicore
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
-		create_plugin<StbPlugin>();
-		create_plugin<XMLPlugin>();
-		create_plugin<FNTPlugin>();
-		create_plugin<ImGuiPlugin>();
-		create_plugin<SZipFilePlugin>();
+		init_plugins(*this);
 	}
 
 	void MyCore::on_init()

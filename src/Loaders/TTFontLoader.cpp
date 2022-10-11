@@ -8,8 +8,7 @@ namespace unicore
 	Shared<Resource> TTFontLoader::load_options(
 		const Context& context, const TTFontOptions& options)
 	{
-		const auto factory = context.cache.load<TTFontFactory>(
-			context.path, ResourceCacheFlag::IgnoreExtension);
+		const auto factory = context.cache.load<TTFontFactory>(context.path);
 		if (!factory)
 		{
 			UC_LOG_ERROR(context.logger) << "Failed to load TTFont";

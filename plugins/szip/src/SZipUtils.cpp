@@ -1,4 +1,4 @@
-#include "SZipUtils.hpp"
+#include "unicore/szip/SZipUtils.hpp"
 #include "unicore/Memory.hpp"
 
 namespace unicore

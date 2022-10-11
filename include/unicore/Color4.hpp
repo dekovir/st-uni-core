@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Math.hpp"
+#include "unicore/Hash.hpp"
 #include "unicore/Random.hpp"
 #include "unicore/PixelFormat.hpp"
 
@@ -258,13 +259,13 @@ namespace unicore
 	//	return Color4b::from_rgba(static_cast<uint32_t>(value));
 	//}
 
-	UNICORE_MATH_HASH(Color4b)
+	UNICORE_MAKE_HASH(Color4b)
 	{
 		return value.to_format(pixel_format_abgr);
 	}
 
-	UNICORE_MATH_HASH(Color4f)
+	UNICORE_MAKE_HASH(Color4f)
 	{
-		return hash(value.r, value.g, value.b, value.a);
+		return make(value.r, value.g, value.b, value.a);
 	}
 }

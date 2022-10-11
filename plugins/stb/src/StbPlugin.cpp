@@ -1,9 +1,9 @@
 #include "unicore/stb/StbPlugin.hpp"
 #include "unicore/Renderer.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "StbEasyFontLoader.hpp"
-#include "StbSurfaceLoader.hpp"
-#include "StbTTFontFactoryLoader.hpp"
+#include "unicore/stb/StbEasyFontLoader.hpp"
+#include "unicore/stb/StbSurfaceLoader.hpp"
+#include "unicore/stb/StbTTFontFactoryLoader.hpp"
 
 namespace unicore
 {
