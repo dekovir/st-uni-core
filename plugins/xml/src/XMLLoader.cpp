@@ -6,11 +6,10 @@ namespace unicore
 {
 	Shared<Resource> XMLDataLoader::load(const Context& options)
 	{
-		const auto data = options.cache.load<TextData>(
-			options.path, ResourceCacheFlag::IgnoreExtension);
+		const auto data = options.cache.load<TextData>(options.path);
 		if (!data)
 		{
-			UC_LOG_ERROR(options.logger) << "Failed to load BinaryData";
+			UC_LOG_ERROR(options.logger) << "Failed to load TextData";
 			return nullptr;
 		}
 

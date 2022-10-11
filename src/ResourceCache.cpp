@@ -109,7 +109,7 @@ namespace unicore
 
 		for (const auto& loader : loaders)
 		{
-			if (!flags.has(ResourceCacheFlag::IgnoreExtension) && !loader->can_load(path))
+			if (!loader->can_load(path))
 				continue;
 
 			if (!loader->can_load(options))

@@ -9,7 +9,7 @@ namespace unicore
 	{
 	}
 
-	BinaryData::BinaryData(MemoryChunk& chunk)
+	BinaryData::BinaryData(MemoryChunk&& chunk)
 		: _data(nullptr), _size(0), _free(nullptr)
 	{
 		chunk.swap(&_data, &_size, &_free);

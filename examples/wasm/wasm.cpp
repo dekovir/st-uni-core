@@ -1,5 +1,6 @@
 #include "wasm.hpp"
-#include "UnicoreMain.h"
+#include "UnicoreMain.hpp"
+#include "InitPlugins.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Timer.hpp"
 #include "unicore/Input.hpp"
@@ -8,13 +9,9 @@
 #include "unicore/BinaryData.hpp"
 #include "unicore/RendererSDL.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "unicore/stb/StbPlugin.hpp"
-#include "unicore/xml/XMLPlugin.hpp"
-#include "unicore/fnt/FNTPlugin.hpp"
 #include "unicore/wasm/WasmEnvironment.hpp"
 #include "unicore/wasm/WasmModule.hpp"
 #include "unicore/wasm/WasmRuntime.hpp"
-#include "unicore/wasm/WasmPlugin.hpp"
 #include <locale>
 
 namespace unicore
@@ -131,10 +128,7 @@ namespace unicore
 
 		s_example = this;
 
-		create_plugin<StbPlugin>();
-		create_plugin<XMLPlugin>();
-		create_plugin<FNTPlugin>();
-		create_plugin<WasmPlugin>();
+		init_plugins(*this);
 	}
 
 	MyCore::~MyCore()
@@ -237,7 +231,9 @@ namespace unicore
 					continue;
 
 				const Vector2f pos(x * 10, y * 20 + 100);
-				const StringView str(&c.c, 1);
+				Char buf[2] = { c.c, 0 };
+
+				const StringView str(buf);
 				const Color4b color(
 					c.color.has(ConsoleColor8::ForegroundRed) ? 255 : 0,
 					c.color.has(ConsoleColor8::ForegroundGreen) ? 255 : 0,

@@ -13,7 +13,6 @@ namespace unicore
 	enum class ResourceCacheFlag
 	{
 		Quiet = 1 << 0,
-		IgnoreExtension = 1 << 1,
 	};
 	UNICORE_ENUM_FLAGS(ResourceCacheFlag, ResourceCacheFlags);
 

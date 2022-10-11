@@ -86,16 +86,19 @@ if (WIN32)
 	target_link_libraries(unicore PRIVATE Shlwapi)
 endif()
 
-add_subdirectory(${PROJECT_DIR}/plugins)
-
 #target_compile_options(unicore PUBLIC -fno-exceptions)
+
+# PLUGINS ######################################################################
+add_subdirectory(${PLUGINS_DIR})
+
 
 # APP ##########################################################################
 add_subdirectory(${PROJECT_DIR}/logic)
 
 # MAIN #########################################################################
 set(MAIN_DIR "${PROJECT_DIR}/main")
-file(GLOB_RECURSE MAIN_SRC "${MAIN_DIR}/*.cpp" "${MAIN_DIR}/*.h")
+file(GLOB MAIN_SRC "${MAIN_DIR}/UnicoreMain.*")
+file(GLOB PLUGINS_SRC "${MAIN_DIR}/InitPlugins.*")
 
 add_library(unicore-main STATIC ${MAIN_SRC})
 unicore_group_sources_by_folder(unicore-main)
@@ -131,6 +134,7 @@ function(unicore_init_executable target_name)
 	endif()
 
 	unicore_init_target(${target_name})
+	target_sources(${target_name} PUBLIC ${PLUGINS_SRC})
 	target_link_libraries(${target_name} PRIVATE unicore-app unicore-main)
 
 	if (MSVC)

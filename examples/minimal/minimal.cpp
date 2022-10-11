@@ -1,5 +1,6 @@
 #include "minimal.hpp"
-#include "UnicoreMain.h"
+#include "UnicoreMain.hpp"
+#include "InitPlugins.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
 #include "unicore/Canvas.hpp"
@@ -33,6 +34,7 @@ namespace unicore
 	MyCore::MyCore(const CoreSettings& settings)
 		: SDLCore(create_settings(settings, "Minimal", { false, WindowSize, WindowFlags }))
 	{
+		init_plugins(*this);
 	}
 
 	void MyCore::on_init()

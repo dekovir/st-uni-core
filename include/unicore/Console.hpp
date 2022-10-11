@@ -99,8 +99,8 @@ namespace unicore
 	using DefaultConsoleChar = ConsoleChar<char, ConsoleColor8Value>;
 	using DefaultConsole = Console<DefaultConsoleChar>;
 
-	using DefaultConsoleCharW = ConsoleChar<wchar_t, ConsoleColor8Value>;
-	using DefaultConsoleW = Console<DefaultConsoleCharW>;
+	using DefaultConsoleCharU = ConsoleChar<Char32, ConsoleColor8Value>;
+	using DefaultConsoleU = Console<DefaultConsoleCharU>;
 
 	class ConsoleLogger : public Logger
 	{
