@@ -1,6 +1,5 @@
 #include "unicore/Platform.hpp"
 #include "unicore/Logger.hpp"
-#include "unicore/loaders/FileLoader.hpp"
 
 #if defined(UNICORE_USE_SDL2)
 #	include "Platforms/SDL2/SDL2Platform.hpp"
@@ -20,7 +19,6 @@ namespace unicore
 		, resources_logger("[Cache] ", logger)
 		, resources(resources_logger)
 	{
-		resources.add_loader(std::make_shared<ReadFileLoader>(file_system));
 	}
 
 	Unique<Platform> Platform::create()

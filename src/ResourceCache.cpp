@@ -216,7 +216,7 @@ namespace unicore
 	{
 		for (const auto& resource_type : loader->resource_types())
 			_loaders[resource_type].insert(loader);
-		//UC_LOG_DEBUG(_logger) << "Added " << loader->type();
+		UC_LOG_DEBUG(_logger) << "Add " << loader->type();
 	}
 
 	void ResourceCache::unregister_module(const ModuleContext& context)

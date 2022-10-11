@@ -9,6 +9,7 @@ namespace unicore
 		ResourceLoaderTypePolicy::Multiple<Texture>,
 		ResourceLoaderPathPolicy::NotEmpty>
 	{
+		UC_OBJECT(TextureLoader, ResourceLoader)
 	public:
 		explicit TextureLoader(Renderer& render);
 
@@ -22,6 +23,7 @@ namespace unicore
 		ResourceLoaderTypePolicy::Multiple<DynamicTexture>,
 		ResourceLoaderPathPolicy::NotEmpty>
 	{
+		UC_OBJECT(DynamicTextureLoader, ResourceLoader)
 	public:
 		explicit DynamicTextureLoader(Renderer& render);
 

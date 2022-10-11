@@ -11,6 +11,7 @@ namespace unicore
 		ResourceLoaderTypePolicy::Multiple<Surface>,
 		ResourceLoaderPathPolicy::Empty>
 	{
+		UC_OBJECT(SurfaceSizeSurfaceLoader, ResourceLoader)
 	public:
 		Shared<Resource> load_options(const Context& context,
 			const SolidSizeOptions& options) override;
@@ -22,6 +23,7 @@ namespace unicore
 		ResourceLoaderTypePolicy::Multiple<DynamicSurface>,
 		ResourceLoaderPathPolicy::Empty>
 	{
+		UC_OBJECT(DynamicSurfaceSolidSizeLoader, ResourceLoader)
 	public:
 		Shared<Resource> load_options(const Context& context,
 			const SolidSizeOptions& options) override;
@@ -33,6 +35,7 @@ namespace unicore
 		ResourceLoaderTypePolicy::Multiple<Texture>,
 		ResourceLoaderPathPolicy::Empty>
 	{
+		UC_OBJECT(TextureSolidSizeLoader, ResourceLoader)
 	public:
 		explicit TextureSolidSizeLoader(Renderer& renderer);
 

@@ -1,6 +1,5 @@
 #include "unicore/app/RendererCore.hpp"
 #include "unicore/Time.hpp"
-#include "unicore/plugins/RendererPlugin.hpp"
 
 namespace unicore
 {
@@ -10,8 +9,6 @@ namespace unicore
 		, renderer(renderer_factory(_renderer_logger, display))
 	{
 		_modules.add(renderer);
-
-		create_plugin<RendererPlugin>();
 	}
 
 	void RendererCore::update()

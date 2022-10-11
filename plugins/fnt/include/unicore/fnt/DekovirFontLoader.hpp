@@ -16,6 +16,7 @@ namespace unicore
 		ResourceLoaderTypePolicy::Multiple<BitmapFont, Font>,
 		DekovirFontLoadPolicy>
 	{
+		UC_OBJECT(DekovirFontLoader, ResourceLoader)
 	public:
 		UC_NODISCARD Shared<Resource> load(const Context& options) override;
 	};

@@ -10,6 +10,7 @@ namespace unicore
 		ResourceLoaderPathPolicy::NotEmpty,
 		ResourceLoaderOptionsPolicy::NullOrExact<TTFontOptions>>
 	{
+		UC_OBJECT(TTFontLoader, ResourceLoader)
 	public:
 		UC_NODISCARD Shared<Resource> load_options(
 			const Context& context, const TTFontOptions& options) override;

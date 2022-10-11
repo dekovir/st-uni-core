@@ -1,4 +1,7 @@
 #include "InitPlugins.hpp"
+#include "unicore/plugins/PlatformPlugin.hpp"
+#include "unicore/plugins/SurfacePlugin.hpp"
+#include "unicore/plugins/RendererPlugin.hpp"
 
 #if defined(UNICORE_USE_FNT)
 #include "unicore/fnt/FNTPlugin.hpp"
@@ -32,6 +35,10 @@ namespace unicore
 {
 	void init_plugins(Core& core)
 	{
+		core.create_plugin<PlatformPlugin>();
+		core.create_plugin<SurfacePlugin>();
+		core.create_plugin<RendererPlugin>();
+
 #if defined(UNICORE_USE_FNT)
 		core.create_plugin<FNTPlugin>();
 #endif

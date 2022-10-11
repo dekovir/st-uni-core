@@ -1,10 +1,10 @@
 #include "unicore/app/Core.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
+#include "unicore/Plugin.hpp"
 #include "unicore/TimeSpan.hpp"
 #include "unicore/FileSystem.hpp"
-#include "unicore/plugins/PlatformPlugin.hpp"
-#include "unicore/plugins/SurfacePlugin.hpp"
+#include "unicore/loaders/FileLoader.hpp"
 
 namespace unicore
 {
@@ -21,9 +21,6 @@ namespace unicore
 		_modules.add(input);
 		_modules.add(file_system);
 		_modules.add(resources);
-
-		create_plugin<PlatformPlugin>();
-		create_plugin<SurfacePlugin>();
 	}
 
 	Core::~Core()
@@ -37,6 +34,8 @@ namespace unicore
 
 		for (const auto& plugin : _plugins)
 			plugin->register_plugin({ &logger, _modules });
+
+		resources.add_loader(std::make_shared<ReadFileLoader>(file_system));
 
 		on_init();
 	}
@@ -52,5 +51,6 @@ namespace unicore
 	void Core::add_plugin(Unique<Plugin>&& plugin)
 	{
 		_plugins.push_back(std::move(plugin));
+		UC_LOG_DEBUG(_logger) << "Add " << _plugins.back()->type();
 	}
 }
