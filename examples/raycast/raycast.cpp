@@ -1,5 +1,6 @@
 #include "raycast.hpp"
-#include "UnicoreMain.h"
+#include "UnicoreMain.hpp"
+#include "InitPlugins.hpp"
 #include "unicore/Input.hpp"
 
 namespace unicore
@@ -10,6 +11,7 @@ namespace unicore
 	MyCore::MyCore(const CoreSettings& settings)
 		: SDLCore(create_settings(settings, "Raycast", { false, WindowSize, WindowFlags }))
 	{
+		init_plugins(*this);
 	}
 
 	void MyCore::on_init()
