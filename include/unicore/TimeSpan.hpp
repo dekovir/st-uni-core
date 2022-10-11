@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Defs.hpp"
+#include "unicore/Hash.hpp"
 #include <chrono>
 
 namespace unicore
@@ -152,4 +153,9 @@ namespace unicore
 	};
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const TimeSpan&);
+
+	UNICORE_MAKE_HASH(TimeSpan)
+	{
+		return value.total_milliseconds();
+	}
 }

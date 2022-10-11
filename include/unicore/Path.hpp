@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Math.hpp"
+#include "unicore/Hash.hpp"
 
 namespace unicore
 {
@@ -117,8 +118,8 @@ namespace unicore
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const Path&);
 
-	UNICORE_MATH_HASH(Path)
+	UNICORE_MAKE_HASH(Path)
 	{
-		return hash(value.data());
+		return make(value.data());
 	}
 }

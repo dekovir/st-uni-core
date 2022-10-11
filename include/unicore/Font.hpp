@@ -52,7 +52,7 @@ namespace unicore
 
 		UC_NODISCARD size_t hash() const override
 		{
-			return Math::hash(height, chars);
+			return Hash::make(height, chars);
 		}
 	};
 

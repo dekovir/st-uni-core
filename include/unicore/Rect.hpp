@@ -1,4 +1,5 @@
 #pragma once
+#include "unicore/Hash.hpp"
 #include "unicore/Range.hpp"
 #include "unicore/Vector2.hpp"
 #include "unicore/StringBuilder.hpp"
@@ -251,17 +252,14 @@ namespace unicore
 			<< '(' << value.x << ',' << value.y << ','
 			<< value.w << ',' << value.h << ')';
 	}
-}
 
-template<typename T>
-struct std::hash<unicore::Rect<T>>
-{
-	std::size_t operator()(const unicore::Rect<T>& value) const noexcept
+	UNICORE_MAKE_HASH(Recti)
 	{
-		return
-			std::hash<T>{}(value.x) ^
-			std::hash<T>{}(value.w << 2) ^
-			std::hash<T>{}(value.y >> 2) ^
-			std::hash<T>{}(value.h >> 1);
+		return make(value.x, value.y, value.w, value.h);
 	}
-};
+
+	UNICORE_MAKE_HASH(Rectf)
+	{
+		return make(value.x, value.y, value.w, value.h);
+	}
+}

@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Math.hpp"
+#include "unicore/Hash.hpp"
 
 namespace unicore
 {
@@ -188,4 +189,14 @@ namespace unicore
 
 	using VectorConst3i = details::VectorConst3<int>;
 	using VectorConst3f = details::VectorConst3<float>;
+
+	UNICORE_MAKE_HASH(Vector3i)
+	{
+		return make(value.x, value.y, value.z);
+	}
+
+	UNICORE_MAKE_HASH(Vector3f)
+	{
+		return make(value.x, value.y, value.z);
+	}
 }

@@ -1,5 +1,4 @@
 #include "unicore/ResourceCache.hpp"
-#include "unicore/Math.hpp"
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
 #include "unicore/FileProvider.hpp"
@@ -235,7 +234,7 @@ namespace unicore
 	size_t ResourceCache::make_hash(const Path& path, const ResourceOptions* options)
 	{
 		return options
-			? Math::hash(path, options->hash())
-			: Math::hash(path);
+			? Hash::make(path, options->hash())
+			: Hash::make(path);
 	}
 }

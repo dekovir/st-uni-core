@@ -194,22 +194,5 @@ namespace unicore
 		{
 			return static_cast<Float>(t - a) / static_cast<Float>(b - a);
 		}
-
-		// HASH //////////////////////////////////////////////////////////////////////
-		template<typename T>
-		static size_t hash(const T& value)
-		{
-			return std::hash<T>{}(value);
-		}
-
-		template<typename T, typename... Args>
-		static size_t hash(T first, Args... args)
-		{
-			const size_t value = hash<T>(first) ^ (hash(args...) << 1);
-			return value;
-		}
 	}
-
-#define UNICORE_MATH_HASH(Type) \
-	template<> inline size_t Math::hash<Type>(const Type& value)
 }

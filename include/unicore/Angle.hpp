@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/Math.hpp"
+#include "unicore/Hash.hpp"
 
 namespace unicore
 {
@@ -171,5 +172,15 @@ namespace unicore
 	static constexpr Degrees operator"" _deg(long double value)
 	{
 		return Degrees(static_cast<float>(value));
+	}
+
+	UNICORE_MAKE_HASH(Radians)
+	{
+		return make(value.value());
+	}
+
+	UNICORE_MAKE_HASH(Degrees)
+	{
+		return make(value);
 	}
 }
