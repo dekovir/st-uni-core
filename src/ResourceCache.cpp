@@ -132,13 +132,13 @@ namespace unicore
 			if (auto resource = loader->load({ *this, path, options, logger }))
 			{
 				UC_LOG_DEBUG(_logger) << "Loaded " << resource->type()
-					<< FromPath(path) << WithOptions(options)
+					<< FromPath(path) << WithOptions(options) << " by " << loader->type()
 					<< " " << MemorySize{ resource->get_system_memory_use() };
 
 				_resources.push_back(resource);
 				if (resource->cache_policy() == ResourceCachePolicy::CanCache)
 				{
-					CachedInfo info{ resource, path };
+					CachedInfo info{ resource, path, loader.get() };
 					_cached[loader.get()].emplace(hash, info);
 
 					UC_LOG_DEBUG(_logger) << "Added " << resource->type()
@@ -151,7 +151,8 @@ namespace unicore
 			//UC_LOG_ERROR(logger) << "Failed to load " << type << " with loader";
 		}
 
-		UC_LOG_ERROR(logger) << "Failed to load " << type << FromPath(path) << WithOptions(options);
+		UC_LOG_ERROR(logger) << "Failed to load "
+			<< type << FromPath(path) << WithOptions(options);
 		return nullptr;
 	}
 
@@ -222,9 +223,9 @@ namespace unicore
 	{
 		Module::unregister_module(context);
 
-		_loaders.clear();
-
 		unload_all();
+
+		_loaders.clear();
 	}
 
 	// ============================================================================

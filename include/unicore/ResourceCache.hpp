@@ -78,6 +78,7 @@ namespace unicore
 		{
 			Shared<Resource> resource;
 			Path path;
+			ResourceLoader* loader;
 			//? Shared<ResourceOptions> options;
 		};
 
