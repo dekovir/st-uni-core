@@ -62,7 +62,7 @@ namespace unicore
 	public:
 		using DataType = List<Shared<T>>;
 
-		explicit ResourceList(DataType data)
+		explicit ResourceList(DataType&& data)
 			: _data(std::move(data))
 		{}
 
@@ -91,7 +91,7 @@ namespace unicore
 		using ResourceList = List<Shared<T>>;
 		using NamesDictionary = Dictionary<String, uint16_t>;
 
-		ResourceDictionary(ResourceList list, NamesDictionary names)
+		ResourceDictionary(ResourceList&& list, NamesDictionary&& names)
 			:_list(std::move(list)), _names(std::move(names))
 		{}
 

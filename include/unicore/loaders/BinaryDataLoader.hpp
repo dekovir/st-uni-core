@@ -5,7 +5,7 @@
 namespace unicore
 {
 	class BinaryDataLoader : public ResourceLoaderTyped<
-		ResourceLoaderTypePolicy::Multiple<BinaryData>,
+		ResourceLoaderTypePolicy::Single<BinaryData>,
 		ResourceLoaderPathPolicy::NotEmpty>
 	{
 		UC_OBJECT(BinaryDataLoader, ResourceLoaderTyped)

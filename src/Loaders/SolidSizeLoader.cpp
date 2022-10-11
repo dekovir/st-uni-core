@@ -21,7 +21,7 @@ namespace unicore
 	{
 		MemoryChunk chunk(options.size.area() * 4);
 		fill_pixel_data(chunk.data(), options.size, options.color);
-		return std::make_shared<Surface>(options.size, chunk);
+		return std::make_shared<Surface>(options.size, std::move(chunk));
 	}
 
 	// DynamicSurfaceSolidSizeLoader //////////////////////////////////////////////

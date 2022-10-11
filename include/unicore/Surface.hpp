@@ -35,7 +35,7 @@ namespace unicore
 	{
 		UC_OBJECT(Surface, Resource)
 	public:
-		Surface(const Vector2i& size, MemoryChunk chunk);
+		Surface(const Vector2i& size, MemoryChunk&& chunk);
 
 		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(Surface) + _chunk.size(); }
 		UC_NODISCARD const Vector2i& size() const override { return _size; }

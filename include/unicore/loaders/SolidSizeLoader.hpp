@@ -8,7 +8,7 @@ namespace unicore
 	// SurfaceSizeSurfaceLoader ///////////////////////////////////////////////////
 	class SurfaceSizeSurfaceLoader : public ResourceLoaderOptionsTyped<
 		SolidSizeOptions,
-		ResourceLoaderTypePolicy::Multiple<Surface>,
+		ResourceLoaderTypePolicy::Single<Surface>,
 		ResourceLoaderPathPolicy::Empty>
 	{
 		UC_OBJECT(SurfaceSizeSurfaceLoader, ResourceLoader)
@@ -20,7 +20,7 @@ namespace unicore
 	// DynamicSurfaceSolidSizeLoader //////////////////////////////////////////////
 	class DynamicSurfaceSolidSizeLoader : public ResourceLoaderOptionsTyped<
 		SolidSizeOptions,
-		ResourceLoaderTypePolicy::Multiple<DynamicSurface>,
+		ResourceLoaderTypePolicy::Single<DynamicSurface>,
 		ResourceLoaderPathPolicy::Empty>
 	{
 		UC_OBJECT(DynamicSurfaceSolidSizeLoader, ResourceLoader)
@@ -32,7 +32,7 @@ namespace unicore
 	// TextureSolidSizeLoader /////////////////////////////////////////////////////
 	class TextureSolidSizeLoader : public ResourceLoaderOptionsTyped<
 		SolidSizeOptions,
-		ResourceLoaderTypePolicy::Multiple<Texture>,
+		ResourceLoaderTypePolicy::Single<Texture>,
 		ResourceLoaderPathPolicy::Empty>
 	{
 		UC_OBJECT(TextureSolidSizeLoader, ResourceLoader)

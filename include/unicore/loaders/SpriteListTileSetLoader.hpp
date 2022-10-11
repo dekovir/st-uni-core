@@ -6,7 +6,7 @@ namespace unicore
 {
 	class SpriteListTileSetLoader : public ResourceLoaderOptionsTyped<
 		TileSetOptions,
-		ResourceLoaderTypePolicy::Multiple<SpriteList>,
+		ResourceLoaderTypePolicy::Single<SpriteList>,
 		ResourceLoaderPathPolicy::NotEmpty>
 	{
 		UC_OBJECT(SpriteListTileSetLoader, ResourceLoader)
