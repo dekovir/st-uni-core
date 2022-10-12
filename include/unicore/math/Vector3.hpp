@@ -117,6 +117,8 @@ namespace unicore
 	typedef Vector3<float> Vector3f;
 	typedef Vector3<int>   Vector3i;
 
+	typedef Vector3<Radians> Angles3f;
+
 	static_assert(sizeof(Vector3f) == sizeof(float) * 3);
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////

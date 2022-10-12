@@ -72,7 +72,7 @@ namespace unicore
 			return *this;
 		}
 
-		UC_NODISCARD Vector3<Radians> euler_angles() const
+		UC_NODISCARD Angles3f euler_angles() const
 		{
 			const float check = 2.0f * (-y * z + w * x);
 
@@ -155,7 +155,7 @@ namespace unicore
 			};
 		}
 
-		static Quaternion from_euler(const Vector3<Radians>& angles)
+		static Quaternion from_euler(const Angles3f& angles)
 		{
 			return from_euler(angles.x, angles.y, angles.z);
 		}
