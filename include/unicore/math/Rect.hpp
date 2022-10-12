@@ -1,7 +1,7 @@
 #pragma once
-#include "unicore/Hash.hpp"
-#include "unicore/Range.hpp"
-#include "unicore/Vector2.hpp"
+#include "unicore/math/Hash.hpp"
+#include "unicore/math/Range.hpp"
+#include "unicore/math/Vector2.hpp"
 #include "unicore/StringBuilder.hpp"
 
 namespace unicore

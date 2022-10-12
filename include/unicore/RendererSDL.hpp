@@ -1,8 +1,8 @@
 #pragma once
 #include "unicore/Renderer.hpp"
 #include "unicore/EnumFlag.hpp"
+#include "unicore/math/Angle.hpp"
 #include "unicore/Vertex.hpp"
-#include "unicore/Angle.hpp"
 
 namespace unicore
 {

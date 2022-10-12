@@ -1,15 +1,13 @@
 #pragma once
-#include "unicore/Math.hpp"
-#include "unicore/Hash.hpp"
+#include "unicore/math/Math.hpp"
+#include "unicore/math/Hash.hpp"
 
 namespace unicore
 {
 	template<typename T>
 	struct Vector3
 	{
-		T x;
-		T y;
-		T z;
+		T x, y, z;
 
 		constexpr Vector3() noexcept = default;
 		constexpr Vector3(T x, T y) noexcept;
@@ -150,35 +148,48 @@ namespace unicore
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>
-	static std::enable_if_t<std::is_integral_v<T>, bool>
-		operator == (const Vector3<T>& a, const Vector3<T>& b)
+	static constexpr bool operator == (const Vector3<T>& a, const Vector3<T>& b)
 	{
-		return a.x == b.x && a.y == b.y && a.z == b.z;
+		return
+			Math::equals(a.x, b.x) &&
+			Math::equals(a.y, b.y) &&
+			Math::equals(a.z, b.z);
 	}
 
 	template<typename T>
-	static std::enable_if_t<std::is_integral_v<T>, bool>
-		operator != (const Vector3<T>& a, const Vector3<T>& b)
+	static constexpr bool operator != (const Vector3<T>& a, const Vector3<T>& b)
 	{
-		return a.x != b.x || a.y != b.y || a.z != b.z;
+		return !(a == b);
 	}
 
 	template<typename T>
-	static Vector3<T> operator + (const Vector3<T>& a, const Vector3<T>& b)
+	static constexpr Vector3<T> operator + (const Vector3<T>& a, const Vector3<T>& b)
 	{
 		return Vector3<T>(a.x + b.x, a.y + b.y, a.z + b.z);
 	}
 
 	template<typename T>
-	static Vector3<T> operator - (const Vector3<T>& a, const Vector3<T>& b)
+	static constexpr Vector3<T> operator - (const Vector3<T>& a, const Vector3<T>& b)
 	{
 		return Vector3<T>(a.x - b.x, a.y - b.y, a.z - b.z);
 	}
 
 	template<typename T>
-	static Vector3<T> operator * (const Vector3<T>& a, const Vector3<T>& b)
+	static constexpr Vector3<T> operator * (const Vector3<T>& a, const Vector3<T>& b)
 	{
 		return Vector3<T>(a.x * b.x, a.y * b.y, a.z * b.z);
+	}
+
+	template<typename T>
+	static constexpr Vector3<T> operator * (const Vector3<T>& a, T value)
+	{
+		return Vector3<T>(a.x * value, a.y * value, a.z * value);
+	}
+
+	template<typename T>
+	static constexpr Vector3<T> operator / (const Vector3<T>& a, T value)
+	{
+		return Vector3<T>(a.x / value, a.y / value, a.z / value);
 	}
 
 	// CONST /////////////////////////////////////////////////////////////////////

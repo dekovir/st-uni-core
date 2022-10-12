@@ -1,5 +1,5 @@
 #include "unicore/Resource.hpp"
-#include "unicore/Hash.hpp"
+#include "unicore/math/Hash.hpp"
 namespace unicore
 {
 	ResourceOptionsTag::ResourceOptionsTag(StringView text)

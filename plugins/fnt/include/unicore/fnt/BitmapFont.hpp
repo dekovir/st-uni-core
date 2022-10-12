@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/Font.hpp"
-#include "unicore/Rect.hpp"
+#include "unicore/math/Rect.hpp"
 
 namespace unicore
 {

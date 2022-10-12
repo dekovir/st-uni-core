@@ -1,6 +1,5 @@
 #pragma once
-#include "unicore/Defs.hpp"
-#include "unicore/Hash.hpp"
+#include "unicore/math/Hash.hpp"
 #include <chrono>
 
 namespace unicore

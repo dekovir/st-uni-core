@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/app/SDLCore.hpp"
+#include "unicore/math/Random.hpp"
 #include "unicore/Console.hpp"
-#include "unicore/Random.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/Sprite.hpp"
 #include "unicore/SpriteBatch.hpp"

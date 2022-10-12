@@ -1,7 +1,7 @@
 #pragma once
-#include "unicore/Index.hpp"
-#include "unicore/Vector2.hpp"
 #include "unicore/Object.hpp"
+#include "unicore/Index.hpp"
+#include "unicore/math/Vector2.hpp"
 
 namespace unicore
 {

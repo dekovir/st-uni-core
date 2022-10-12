@@ -1,7 +1,7 @@
 #pragma once
-#include "unicore/Math.hpp"
-#include "unicore/Hash.hpp"
-#include "unicore/Random.hpp"
+#include "unicore/math/Math.hpp"
+#include "unicore/math/Hash.hpp"
+#include "unicore/math/Random.hpp"
 #include "unicore/PixelFormat.hpp"
 
 namespace unicore

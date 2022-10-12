@@ -1,11 +1,11 @@
 #pragma once
 #include "unicore/EnumFlag.hpp"
-#include "unicore/Rect.hpp"
-#include "unicore/Vector3.hpp"
+#include "unicore/math/Rect.hpp"
+#include "unicore/math/Vector3.hpp"
+#include "unicore/math/Matrix4.hpp"
 #include "unicore/Color3.hpp"
 #include "unicore/Color4.hpp"
 #include "unicore/Vertex.hpp"
-#include "unicore/Matrix4.hpp"
 
 namespace unicore
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/Module.hpp"
-#include "unicore/Rect.hpp"
+#include "unicore/math/Rect.hpp"
 
 namespace unicore
 {

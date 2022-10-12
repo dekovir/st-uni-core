@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Vector3.hpp"
+#include "unicore/math/Vector3.hpp"
 
 namespace unicore
 {

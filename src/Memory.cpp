@@ -1,6 +1,6 @@
 #include "unicore/Memory.hpp"
 #include "unicore/Logger.hpp"
-#include "unicore/Math.hpp"
+#include "unicore/math/Math.hpp"
 
 namespace unicore
 {

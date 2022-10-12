@@ -1,9 +1,9 @@
 #pragma once
 #include "Vertex.hpp"
-#include "unicore/Rect.hpp"
+#include "unicore/math/Rect.hpp"
+#include "unicore/math/Transform2.hpp"
 #include "unicore/Color4.hpp"
 #include "unicore/TextBlock.hpp"
-#include "unicore/Transform2.hpp"
 
 namespace unicore
 {

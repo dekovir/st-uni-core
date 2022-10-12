@@ -1,4 +1,4 @@
-#include "unicore/Random.hpp"
+#include "unicore/math/Random.hpp"
 
 namespace unicore
 {

@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/EnumFlag.hpp"
 #include "unicore/Module.hpp"
-#include "unicore/Vector2.hpp"
+#include "unicore/math/Vector2.hpp"
 
 namespace unicore
 {

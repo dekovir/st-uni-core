@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/Font.hpp"
 #if defined(UNICORE_USE_STB_TRUETYPE)
-#include "unicore/Rect.hpp"
+#include "unicore/math/Rect.hpp"
 #include <stb_truetype.h>
 
 namespace unicore

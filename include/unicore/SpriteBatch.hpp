@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Rect.hpp"
+#include "unicore/math/Rect.hpp"
 #include "unicore/Vertex.hpp"
 #include "unicore/TextBlock.hpp"
 

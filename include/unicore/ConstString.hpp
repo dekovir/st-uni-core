@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "unicore/Hash.hpp"
+#include "unicore/math/Hash.hpp"
 
 namespace unicore
 {

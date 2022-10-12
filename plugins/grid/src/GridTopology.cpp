@@ -1,5 +1,5 @@
 #include "unicore/grid/GridTopology.hpp"
-#include "unicore/Math.hpp"
+#include "unicore/math/Math.hpp"
 
 namespace unicore
 {

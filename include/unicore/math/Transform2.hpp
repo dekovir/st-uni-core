@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Matrix2.hpp"
+#include "unicore/math/Matrix2.hpp"
 
 namespace unicore
 {

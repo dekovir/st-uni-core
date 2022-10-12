@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Rect.hpp"
+#include "unicore/math/Rect.hpp"
 #include "unicore/File.hpp"
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
