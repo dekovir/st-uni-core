@@ -1,7 +1,8 @@
 #pragma once
-#include "unicore/Path.hpp"
+#include "unicore/Object.hpp"
+#include "unicore/io/Path.hpp"
+#include "unicore/io/Logger.hpp"
 #include "unicore/Resource.hpp"
-#include "unicore/Logger.hpp"
 
 namespace unicore
 {

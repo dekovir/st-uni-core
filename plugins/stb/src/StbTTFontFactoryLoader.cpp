@@ -1,6 +1,6 @@
 #include "unicore/stb/StbTTFontFactoryLoader.hpp"
 #if defined(UNICORE_USE_STB_TRUETYPE)
-#include "unicore/File.hpp"
+#include "unicore/io/File.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore

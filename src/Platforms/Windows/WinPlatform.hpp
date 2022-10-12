@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
-#include "unicore/FileSystem.hpp"
+#include "unicore/io/FileSystem.hpp"
 #include "WinLogger.hpp"
 
 #if defined(UNICORE_USE_SDL2)

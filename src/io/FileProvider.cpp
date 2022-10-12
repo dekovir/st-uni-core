@@ -1,6 +1,6 @@
-#include "unicore/FileProvider.hpp"
+#include "unicore/io/FileProvider.hpp"
 #include "unicore/Memory.hpp"
-#include "unicore/File.hpp"
+#include "unicore/io/File.hpp"
 #include "unicore/StringHelper.hpp"
 
 namespace unicore

@@ -1,4 +1,4 @@
-#include "unicore/Path.hpp"
+#include "unicore/io/Path.hpp"
 #include <cwctype>
 #include <algorithm>
 #if defined (UNICORE_PLATFORM_WINDOWS)
@@ -6,7 +6,7 @@
 #endif
 #include "unicore/Unicode.hpp"
 #include "unicore/StringHelper.hpp"
-#include "unicore/Logger.hpp"
+#include "unicore/io/Logger.hpp"
 
 namespace unicore
 {

@@ -1,6 +1,6 @@
 #include "PosixError.hpp"
 #if defined(UNICORE_PLATFORM_POSIX)
-#include "unicore/Logger.hpp"
+#include "unicore/io/Logger.hpp"
 
 namespace unicore
 {

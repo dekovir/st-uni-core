@@ -4,7 +4,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include "unicore/Unicode.hpp"
-#include "unicore/Logger.hpp"
+#include "unicore/io/Logger.hpp"
 #include "PosixError.hpp"
 #include "PosixFile.hpp"
 

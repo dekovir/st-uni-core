@@ -1,4 +1,4 @@
-#include "unicore/MemoryFile.hpp"
+#include "unicore/io/MemoryFile.hpp"
 #include "unicore/math/Math.hpp"
 
 namespace unicore

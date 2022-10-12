@@ -1,5 +1,5 @@
 #include "unicore/Platform.hpp"
-#include "unicore/Logger.hpp"
+#include "unicore/io/Logger.hpp"
 
 #if defined(UNICORE_USE_SDL2)
 #	include "Platforms/SDL2/SDL2Platform.hpp"

@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/ResourceLoader.hpp"
-#include "unicore/File.hpp"
-#include "unicore/FileProvider.hpp"
+#include "unicore/io/File.hpp"
+#include "unicore/io/FileProvider.hpp"
 
 namespace unicore
 {

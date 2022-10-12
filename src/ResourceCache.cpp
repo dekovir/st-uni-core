@@ -1,7 +1,7 @@
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Memory.hpp"
-#include "unicore/Logger.hpp"
-#include "unicore/FileProvider.hpp"
+#include "unicore/io/Logger.hpp"
+#include "unicore/io/FileProvider.hpp"
 #include "unicore/RendererResource.hpp"
 #include "unicore/ResourceLoader.hpp"
 

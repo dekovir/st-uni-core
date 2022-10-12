@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/Module.hpp"
-#include "unicore/FileProvider.hpp"
+#include "unicore/io/FileProvider.hpp"
 
 namespace unicore
 {

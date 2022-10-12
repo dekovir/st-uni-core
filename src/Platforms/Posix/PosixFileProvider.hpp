@@ -1,7 +1,6 @@
 #pragma once
-#include "unicore/FileProvider.hpp"
+#include "unicore/io/FileProvider.hpp"
 #if defined(UNICORE_PLATFORM_POSIX)
-#include "unicore/Logger.hpp"
 
 namespace unicore
 {

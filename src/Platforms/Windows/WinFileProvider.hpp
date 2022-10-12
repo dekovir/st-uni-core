@@ -1,7 +1,7 @@
 #pragma once
-#include "unicore/FileProvider.hpp"
+#include "unicore/io/FileProvider.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
-#include "unicore/Logger.hpp"
+#include "unicore/io/Logger.hpp"
 #include "WinDefs.hpp"
 
 namespace unicore

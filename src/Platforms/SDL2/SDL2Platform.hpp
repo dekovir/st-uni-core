@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
-#include "unicore/FileSystem.hpp"
+#include "unicore/io/FileSystem.hpp"
 #include "SDL2Time.hpp"
 #include "SDL2Input.hpp"
 #include "SDL2Display.hpp"

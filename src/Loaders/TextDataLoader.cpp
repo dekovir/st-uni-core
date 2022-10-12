@@ -1,5 +1,5 @@
 #include "unicore/loaders/TextDataLoader.hpp"
-#include "unicore/File.hpp"
+#include "unicore/io/File.hpp"
 #include "unicore/ResourceCache.hpp"
 
 namespace unicore

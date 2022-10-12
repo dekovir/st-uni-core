@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/FileProvider.hpp"
+#include "unicore/io/FileProvider.hpp"
 #include "unicore/szip/SZipFileData.hpp"
 
 namespace unicore

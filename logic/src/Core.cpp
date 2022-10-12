@@ -3,7 +3,7 @@
 #include "unicore/Input.hpp"
 #include "unicore/Plugin.hpp"
 #include "unicore/TimeSpan.hpp"
-#include "unicore/FileSystem.hpp"
+#include "unicore/io/FileSystem.hpp"
 #include "unicore/loaders/FileLoader.hpp"
 
 namespace unicore

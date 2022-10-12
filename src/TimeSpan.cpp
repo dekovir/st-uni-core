@@ -1,5 +1,5 @@
 #include "unicore/TimeSpan.hpp"
-#include "unicore/Logger.hpp"
+#include "unicore/io/Logger.hpp"
 
 namespace unicore
 {

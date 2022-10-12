@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/Module.hpp"
 #include "unicore/EnumFlag.hpp"
-#include "unicore/Path.hpp"
+#include "unicore/io/Path.hpp"
 #include "unicore/Resource.hpp"
 
 namespace unicore
