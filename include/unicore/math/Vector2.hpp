@@ -161,8 +161,8 @@ namespace unicore
 		}
 	};
 
-	typedef Vector2<float> Vector2f;
-	typedef Vector2<int>   Vector2i;
+	typedef Vector2<Float> Vector2f;
+	typedef Vector2<Int>   Vector2i;
 
 	static_assert(sizeof(Vector2f) == sizeof(float) * 2);
 

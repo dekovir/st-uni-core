@@ -1,6 +1,6 @@
 #include "unicore/RendererOGL.hpp"
 
-namespace unicore
+namespace unicore::ogl1
 {
 	void RendererOGL::begin(RenderMode mode)
 	{
