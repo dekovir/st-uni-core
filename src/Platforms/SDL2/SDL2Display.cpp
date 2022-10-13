@@ -35,12 +35,12 @@ namespace unicore
 		SDL_SetWindowData(_handle, window_data_name, this);
 		update_mode();
 
-		_platform.add_listener(this);
+		_platform.sdl_looper.add_listener(this);
 	}
 
 	SDL2Display::~SDL2Display()
 	{
-		_platform.remove_listener(this);
+		_platform.sdl_looper.remove_listener(this);
 		SDL_DestroyWindow(_handle);
 	}
 

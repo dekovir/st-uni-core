@@ -42,7 +42,7 @@ namespace unicore
 
 	void Core::update()
 	{
-		platform.poll_events();
+		platform.update();
 
 		if (time.delta() > TimeSpanConst::Zero)
 			on_update();

@@ -1,5 +1,6 @@
 #include "UnicoreMain.hpp"
 #include "unicore/app/RendererCore.hpp"
+
 #if defined(UNICORE_USE_SDL2_MAIN)
 #	include <SDL_main.h>
 #endif
@@ -43,7 +44,7 @@ namespace unicore
 
 	bool state_running()
 	{
-		return g_state->platform->running();
+		return g_state->platform->looper.running();
 	}
 
 	void state_frame()

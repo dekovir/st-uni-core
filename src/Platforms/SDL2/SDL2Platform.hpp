@@ -2,6 +2,7 @@
 #include "unicore/Platform.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include "unicore/io/FileSystem.hpp"
+#include "SDL2Looper.hpp"
 #include "SDL2Time.hpp"
 #include "SDL2Input.hpp"
 #include "SDL2Display.hpp"
@@ -22,13 +23,9 @@ namespace unicore
 
 		Unique<Display> create_display(const DisplaySettings& settings) override;
 
-		UC_NODISCARD bool running() const override;
-		void quit() override;
+		SDL2Looper sdl_looper;
 
-		void poll_events() override;
-
-		void add_listener(SDL2EventListener* listener);
-		void remove_listener(SDL2EventListener* listener);
+		void update() override;
 
 	protected:
 #if defined(UNICORE_PLATFORM_WINDOWS)
@@ -45,11 +42,7 @@ namespace unicore
 		ProxyLogger _file_system_logger;
 		FileSystem _file_system;
 
-		bool _running = true;
-
 		Vector2i _native_size = VectorConst2i::Zero;
-
-		Set<SDL2EventListener*> _listeners;
 
 		void update_native_size();
 	};

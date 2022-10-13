@@ -5,6 +5,7 @@
 #include "WinLogger.hpp"
 
 #if defined(UNICORE_USE_SDL2)
+#include "Platforms/SDL2/SDL2Looper.hpp"
 #include "Platforms/SDL2/SDL2Time.hpp"
 #include "Platforms/SDL2/SDL2Input.hpp"
 #endif
@@ -17,19 +18,16 @@ namespace unicore
 	public:
 		WinPlatform();
 
-		UC_NODISCARD bool running() const override;
-		void quit() override;
-
-		void poll_events() override;
+		void update() override;
 
 	protected:
 		WinLogger _logger;
 		ProxyLogger _input_logger;
 
 #if defined(UNICORE_USE_SDL2)
+		SDL2Looper _looper;
 		SDL2Time _time;
 		SDL2Input _input;
-		bool _running = true;
 #endif
 
 		ProxyLogger _file_system_logger;

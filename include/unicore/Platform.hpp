@@ -3,6 +3,7 @@
 #include "unicore/io/Logger.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/Display.hpp"
+#include "unicore/Looper.hpp"
 
 namespace unicore
 {
@@ -16,6 +17,7 @@ namespace unicore
 	public:
 		struct Settings
 		{
+			Looper& looper;
 			Logger& logger;
 			Time& time;
 			Input& input;
@@ -24,6 +26,7 @@ namespace unicore
 
 		explicit Platform(const Settings& settings);
 
+		Looper& looper;
 		Logger& logger;
 		Time& time;
 		Input& input;
@@ -32,14 +35,11 @@ namespace unicore
 		ProxyLogger resources_logger;
 		ResourceCache resources;
 
+		virtual void update();
+
 		UC_NODISCARD virtual const Vector2i& native_size() const = 0;
 
 		virtual Unique<Display> create_display(const DisplaySettings& settings) = 0;
-
-		UC_NODISCARD virtual bool running() const = 0;
-		virtual void quit() = 0;
-
-		virtual void poll_events() = 0;
 
 		static Unique<Platform> create();
 	};

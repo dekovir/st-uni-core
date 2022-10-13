@@ -12,13 +12,19 @@
 namespace unicore
 {
 	Platform::Platform(const Settings& settings)
-		: logger(settings.logger)
+		: looper(settings.looper)
+		, logger(settings.logger)
 		, time(settings.time)
 		, input(settings.input)
 		, file_system(settings.file_system)
 		, resources_logger("[Cache] ", logger)
 		, resources(resources_logger)
 	{
+	}
+
+	void Platform::update()
+	{
+		looper.poll_events();
 	}
 
 	Unique<Platform> Platform::create()

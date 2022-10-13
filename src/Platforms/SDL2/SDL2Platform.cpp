@@ -10,7 +10,7 @@
 namespace unicore
 {
 	SDL2Platform::SDL2Platform()
-		: Platform({ _logger, _time, _input, _file_system })
+		: Platform({ sdl_looper, _logger, _time, _input, _file_system })
 		, _input_logger("[Input] ", _logger)
 		, _input(_input_logger)
 		, _file_system_logger("[FS] ", _logger)
@@ -71,47 +71,12 @@ namespace unicore
 		return std::make_unique<SDL2Display>(*this, settings);
 	}
 
-	bool SDL2Platform::running() const
+	void SDL2Platform::update()
 	{
-		return _running;
-	}
-
-	void SDL2Platform::quit()
-	{
-		_running = false;
-	}
-
-	void SDL2Platform::poll_events()
-	{
-		SDL_Event evt;
-		while (SDL_PollEvent(&evt))
-		{
-			switch (evt.type)
-			{
-			case SDL_QUIT:
-				_running = false;
-				break;
-			}
-
-			for (const auto listener : _listeners)
-			{
-				if (listener->on_event(evt))
-					break;
-			}
-		}
+		Platform::update();
 
 		_time.update();
 		_input.update();
-	}
-
-	void SDL2Platform::add_listener(SDL2EventListener* listener)
-	{
-		_listeners.insert(listener);
-	}
-
-	void SDL2Platform::remove_listener(SDL2EventListener* listener)
-	{
-		_listeners.erase(listener);
 	}
 
 	void SDL2Platform::update_native_size()
