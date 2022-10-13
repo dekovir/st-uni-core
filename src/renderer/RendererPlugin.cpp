@@ -1,4 +1,4 @@
-#include "unicore/plugins/RendererPlugin.hpp"
+#include "unicore/renderer/RendererPlugin.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/renderer/TextureLoader.hpp"
 #include "unicore/renderer/SolidSizeLoader.hpp"

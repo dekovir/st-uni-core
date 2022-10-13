@@ -3,9 +3,9 @@
 
 namespace unicore
 {
-	class PlatformPlugin : public Plugin
+	class ResourcePlugin : public Plugin
 	{
-		UC_OBJECT(PlatformPlugin, Plugin)
+		UC_OBJECT(ResourcePlugin, Plugin)
 	public:
 		void register_plugin(const ModuleContext& context) override;
 	};

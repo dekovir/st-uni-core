@@ -1,11 +1,11 @@
-#include "unicore/plugins/PlatformPlugin.hpp"
+#include "unicore/resource/ResourcePlugin.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/resource/BinaryDataLoader.hpp"
 #include "unicore/resource/TextDataLoader.hpp"
 
 namespace unicore
 {
-	void PlatformPlugin::register_plugin(const ModuleContext& context)
+	void ResourcePlugin::register_plugin(const ModuleContext& context)
 	{
 		Plugin::register_plugin(context);
 

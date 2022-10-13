@@ -1,4 +1,4 @@
-#include "unicore/plugins/SurfacePlugin.hpp"
+#include "unicore/renderer/SurfacePlugin.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/renderer/SolidSizeLoader.hpp"
 #include "unicore/renderer/SpriteListTileSetLoader.hpp"
