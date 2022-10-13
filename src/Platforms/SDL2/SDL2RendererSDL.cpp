@@ -153,7 +153,7 @@ namespace unicore
 		return _target;
 	}
 
-	bool SDL2RendererSDL::begin_scene()
+	bool SDL2RendererSDL::begin_frame()
 	{
 		if (_display.size() != _size)
 		{
@@ -170,7 +170,7 @@ namespace unicore
 		return true;
 	}
 
-	void SDL2RendererSDL::end_scene()
+	void SDL2RendererSDL::end_frame()
 	{
 		SDL_RenderPresent(_renderer);
 	}

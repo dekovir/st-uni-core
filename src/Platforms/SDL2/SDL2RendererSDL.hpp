@@ -29,8 +29,8 @@ namespace unicore
 		bool set_target(const Shared<TargetTexture>& texture) override;
 		UC_NODISCARD const Shared<TargetTexture>& get_target() const override;
 
-		bool begin_scene() override;
-		void end_scene() override;
+		bool begin_frame() override;
+		void end_frame() override;
 
 		void clear(const Color4b& color) override;
 

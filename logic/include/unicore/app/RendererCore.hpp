@@ -5,17 +5,42 @@
 
 namespace unicore
 {
+	class FPSCounter
+	{
+	public:
+		UC_NODISCARD constexpr int current() const { return _current; }
+
+		void update(const TimeSpan& delta)
+		{
+			_time += delta;
+			if (_time >= TimeSpanConst::OneSecond)
+			{
+				_current = _counter;
+
+				_counter = 0;
+				_time -= TimeSpanConst::OneSecond;
+			}
+		}
+
+		void frame() { _counter++; }
+
+	protected:
+		int _current = 0;
+		int _counter = 0;
+		TimeSpan _time = TimeSpanConst::Zero;
+	};
+
 	class RendererCore : public DisplayCore
 	{
 		ProxyLogger _renderer_logger;
 	public:
-		using RendererFactory = std::function<Renderer&(Logger& logger, Display& display)>;
+		using RendererFactory = std::function<Renderer& (Logger& logger, Display& display)>;
 
 		Renderer& renderer;
 
 		explicit RendererCore(const DisplayCoreSettings& settings, const RendererFactory& renderer_factory);
 
-		UC_NODISCARD constexpr int fps() const { return _fps_current; }
+		UC_NODISCARD constexpr int fps() const { return _fps_counter.current(); }
 
 		void update() override;
 
@@ -23,12 +48,9 @@ namespace unicore
 		virtual void frame();
 
 	protected:
-		virtual void on_draw() = 0;
+		FPSCounter _fps_counter;
 
-	private:
-		int _fps_current = 0;
-		int _fps_counter = 0;
-		TimeSpan _fps_time = TimeSpanConst::Zero;
+		virtual void on_draw() = 0;
 	};
 
 	template<typename RendererType,
@@ -36,7 +58,7 @@ namespace unicore
 	class RendererCoreT : public RendererCore
 	{
 	public:
-		using RendererFactoryT = std::function<RendererType&(Logger& logger, Display& display)>;
+		using RendererFactoryT = std::function<RendererType& (Logger& logger, Display& display)>;
 
 		RendererType& renderer;
 

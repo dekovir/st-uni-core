@@ -27,11 +27,12 @@ namespace unicore
 			Optional<Recti> rect = std::nullopt) = 0;
 
 		virtual Shared<TargetTexture> create_target_texture(const Vector2i& size) = 0;
+
 		virtual bool set_target(const Shared<TargetTexture>& texture) = 0;
 		UC_NODISCARD virtual const Shared<TargetTexture>& get_target() const = 0;
 
-		virtual bool begin_scene() = 0;
-		virtual void end_scene() = 0;
+		virtual bool begin_frame() = 0;
+		virtual void end_frame() = 0;
 
 	protected:
 		Logger& _logger;

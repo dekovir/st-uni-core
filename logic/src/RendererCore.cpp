@@ -15,23 +15,16 @@ namespace unicore
 	{
 		DisplayCore::update();
 
-		_fps_time += time.delta();
-		if (_fps_time >= TimeSpanConst::OneSecond)
-		{
-			_fps_current = _fps_counter;
-
-			_fps_counter = 0;
-			_fps_time -= TimeSpanConst::OneSecond;
-		}
+		_fps_counter.update(time.delta());
 	}
 
 	void RendererCore::draw()
 	{
-		_fps_counter++;
-		if (renderer.begin_scene())
+		if (renderer.begin_frame())
 		{
 			on_draw();
-			renderer.end_scene();
+			renderer.end_frame();
+			_fps_counter.frame();
 		}
 	}
 

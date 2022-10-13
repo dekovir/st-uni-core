@@ -9,8 +9,11 @@ namespace unicore
 
 		RendererSDL& create_renderer(Logger& logger, Display& display)
 		{
+			if (renderer) return *renderer;
+
+			renderer = RendererSDL::create(logger, display);
 			if (!renderer)
-				renderer = RendererSDL::create(logger, display);
+				UC_LOG_ERROR(logger) << "Failed to create RendererSDL";
 
 			return *renderer;
 		}
