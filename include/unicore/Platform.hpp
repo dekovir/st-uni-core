@@ -37,7 +37,7 @@ namespace unicore
 
 		virtual void update();
 
-		UC_NODISCARD virtual const Vector2i& native_size() const = 0;
+		UC_NODISCARD virtual Vector2i native_size() const = 0;
 
 		virtual Unique<Display> create_display(const DisplaySettings& settings) = 0;
 

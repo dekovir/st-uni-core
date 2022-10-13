@@ -7,9 +7,9 @@ namespace unicore
 {
 	static const char* window_data_name = "user_data";
 
-	SDL2Display::SDL2Display(SDL2Platform& platform, const DisplaySettings& settings)
+	SDL2Display::SDL2Display(SDL2Looper& looper, const DisplaySettings& settings)
 		: ParentType(settings)
-		, _platform(platform)
+		, _looper(looper)
 		, _handle(nullptr)
 	{
 		SDL_Init(SDL_INIT_VIDEO);
@@ -35,12 +35,12 @@ namespace unicore
 		SDL_SetWindowData(_handle, window_data_name, this);
 		update_mode();
 
-		_platform.sdl_looper.add_listener(this);
+		_looper.add_listener(this);
 	}
 
 	SDL2Display::~SDL2Display()
 	{
-		_platform.sdl_looper.remove_listener(this);
+		_looper.remove_listener(this);
 		SDL_DestroyWindow(_handle);
 	}
 
@@ -166,7 +166,15 @@ namespace unicore
 		if (mode.fullscreen)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-			mode.window_size = _platform.native_size();
+
+			SDL_DisplayMode display_mode;
+			if (SDL2Utils::get_desktop_native_mode(display_mode))
+				mode.window_size = { display_mode.w, display_mode.h };
+			else
+			{
+				UC_LOG_ERROR(_logger) << "Failed to get desktop display mode";
+				mode.window_size = {0, 0};
+			}
 			mode.window_flags = DisplayWindowFlags::Zero;
 		}
 		else

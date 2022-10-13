@@ -7,6 +7,7 @@
 #include "Platforms/SDL2/SDL2Looper.hpp"
 #include "Platforms/SDL2/SDL2Time.hpp"
 #include "Platforms/SDL2/SDL2Input.hpp"
+#include "Platforms/SDL2/SDL2Display.hpp"
 #endif
 
 namespace unicore
@@ -18,6 +19,9 @@ namespace unicore
 		LinuxPlatform();
 
 		void update() override;
+
+		UC_NODISCARD Vector2i native_size() const override;
+		Unique<Display> create_display(const DisplaySettings& settings) override;
 
 	protected:
 		PrintLogger _logger;

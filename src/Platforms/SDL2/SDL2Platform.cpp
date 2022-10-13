@@ -10,7 +10,7 @@
 namespace unicore
 {
 	SDL2Platform::SDL2Platform()
-		: Platform({ sdl_looper, _logger, _time, _input, _file_system })
+		: Platform({ _looper, _logger, _time, _input, _file_system })
 		, _input_logger("[Input] ", _logger)
 		, _input(_input_logger)
 		, _file_system_logger("[FS] ", _logger)
@@ -23,8 +23,6 @@ namespace unicore
 		SDL_GetVersion(&version);
 		UC_LOG_INFO(_logger) << "SDL version "
 			<< version.major << "." << version.minor << "." << version.minor;
-
-		update_native_size();
 
 		const auto display_count = SDL_GetNumVideoDisplays();
 		if (display_count >= 1)
@@ -66,9 +64,19 @@ namespace unicore
 #endif
 	}
 
+	Vector2i SDL2Platform::native_size() const
+	{
+		SDL_DisplayMode mode;
+		if (SDL_GetDesktopDisplayMode(0, &mode) == 0)
+		{
+			return{ mode.w, mode.h };
+		}
+		return { 0, 0 };
+	}
+
 	Unique<Display> SDL2Platform::create_display(const DisplaySettings& settings)
 	{
-		return std::make_unique<SDL2Display>(*this, settings);
+		return std::make_unique<SDL2Display>(_looper, settings);
 	}
 
 	void SDL2Platform::update()
@@ -77,21 +85,6 @@ namespace unicore
 
 		_time.update();
 		_input.update();
-	}
-
-	void SDL2Platform::update_native_size()
-	{
-		SDL_DisplayMode mode;
-		if (SDL_GetDesktopDisplayMode(0, &mode) == 0)
-		{
-			_native_size.x = mode.w;
-			_native_size.y = mode.h;
-		}
-		else
-		{
-			_native_size.set(0, 0);
-			UC_LOG_ERROR(_logger) << SDL_GetError();
-		}
 	}
 }
 #endif

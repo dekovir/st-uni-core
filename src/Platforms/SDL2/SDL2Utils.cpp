@@ -70,6 +70,11 @@ namespace unicore
 		context->hidden.unknown.data1 = handle;
 	}
 
+	bool SDL2Utils::get_desktop_native_mode(SDL_DisplayMode& mode)
+	{
+		return SDL_GetDesktopDisplayMode(0, &mode) == 0;
+	}
+
 	SDL_RWops* SDL2Utils::from_stream(ReadFile& stream)
 	{
 		SDL_RWops* c = SDL_AllocRW();

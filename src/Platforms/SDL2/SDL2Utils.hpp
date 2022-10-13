@@ -28,6 +28,8 @@ namespace unicore
 
 	namespace SDL2Utils
 	{
+		extern bool get_desktop_native_mode(SDL_DisplayMode& mode);
+
 		extern SDL_RWops* from_stream(ReadFile& stream);
 		extern SDL_RWops* from_stream(const Shared<ReadFile>& stream);
 

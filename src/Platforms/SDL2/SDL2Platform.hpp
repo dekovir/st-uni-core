@@ -19,15 +19,15 @@ namespace unicore
 	public:
 		SDL2Platform();
 
-		UC_NODISCARD const Vector2i& native_size() const override { return _native_size; }
+		UC_NODISCARD Vector2i native_size() const override;
 
 		Unique<Display> create_display(const DisplaySettings& settings) override;
-
-		SDL2Looper sdl_looper;
 
 		void update() override;
 
 	protected:
+		SDL2Looper _looper;
+
 #if defined(UNICORE_PLATFORM_WINDOWS)
 		WinLogger _logger;
 #else
@@ -41,10 +41,6 @@ namespace unicore
 
 		ProxyLogger _file_system_logger;
 		FileSystem _file_system;
-
-		Vector2i _native_size = VectorConst2i::Zero;
-
-		void update_native_size();
 	};
 }
 #endif

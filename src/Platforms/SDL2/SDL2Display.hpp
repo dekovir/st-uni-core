@@ -5,14 +5,14 @@
 
 namespace unicore
 {
-	class SDL2Platform;
+	class SDL2Looper;
 
 	class SDL2Display : public Display, public SDL2EventListener
 	{
 		UC_OBJECT(SDL2Display, Display)
 	public:
 
-		SDL2Display(SDL2Platform& platform, const DisplaySettings& settings);
+		SDL2Display(SDL2Looper& looper, const DisplaySettings& settings);
 		~SDL2Display() override;
 
 		UC_NODISCARD const DisplayMode& get_mode() const override { return _mode; }
@@ -27,7 +27,7 @@ namespace unicore
 		bool on_event(const SDL_Event& evt) override;
 
 	protected:
-		SDL2Platform& _platform;
+		SDL2Looper& _looper;
 		SDL_Window* _handle;
 		DisplayMode _mode;
 
