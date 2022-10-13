@@ -14,7 +14,7 @@ namespace unicore
 	static std::vector<SDL_Vertex> s_vertices;
 
 	SDL2RendererSDL::SDL2RendererSDL(Logger& logger, SDL2Display& display)
-		: ParentType(logger)
+		: _logger(logger)
 		, _display(display)
 		, _scale(VectorConst2f::One)
 		, _logical_size(VectorConst2i::Zero)
@@ -442,7 +442,7 @@ namespace unicore
 
 	bool SDL2RendererSDL::copy_ex(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Recti>& dst_rect,
-		Degrees angle, const Optional<Vector2i>& center, SDLRenderFlipFlags flip)
+		Degrees angle, const Optional<Vector2i>& center, sdl2::RenderFlip flip)
 	{
 		if (const auto tex = std::dynamic_pointer_cast<SDL2BaseTexture>(texture))
 		{
@@ -471,7 +471,7 @@ namespace unicore
 
 	bool SDL2RendererSDL::copy_ex_f(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect,
-		Degrees angle, const Optional<Vector2f>& center, SDLRenderFlipFlags flip)
+		Degrees angle, const Optional<Vector2f>& center, sdl2::RenderFlip flip)
 	{
 		if (const auto tex = std::dynamic_pointer_cast<SDL2BaseTexture>(texture))
 		{
@@ -555,12 +555,12 @@ namespace unicore
 		return tex;
 	}
 
-	SDL_RendererFlip SDL2RendererSDL::convert_flip(SDLRenderFlipFlags flags)
+	SDL_RendererFlip SDL2RendererSDL::convert_flip(sdl2::RenderFlip flags)
 	{
 		int value = SDL_FLIP_NONE;
-		if (flags.has(SDLRenderFlip::Horizontal))
+		if (flags.has(sdl2::FlipBit::Horizontal))
 			value |= SDL_FLIP_HORIZONTAL;
-		if (flags.has(SDLRenderFlip::Vertical))
+		if (flags.has(sdl2::FlipBit::Vertical))
 			value |= SDL_FLIP_VERTICAL;
 		return static_cast<SDL_RendererFlip>(value);
 	}

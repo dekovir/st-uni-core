@@ -1,10 +1,10 @@
 #pragma once
 #include "unicore/app/RendererCore.hpp"
-#include "unicore/RendererSDL.hpp"
+#include "unicore/renderer/sdl2/Pipeline.hpp"
 
 namespace unicore
 {
-	class SDLCore : public RendererCoreT<RendererSDL>
+	class SDLCore : public RendererCoreT<sdl2::Pipeline>
 	{
 	public:
 		explicit SDLCore(const DisplayCoreSettings& settings);

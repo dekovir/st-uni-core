@@ -90,7 +90,7 @@ namespace unicore
 
 #if !defined(UNICORE_PLATFORM_WEB)
 		if (input.keyboard().down(KeyCode::Escape))
-			platform.quit();
+			platform.looper.quit();
 
 		if (
 			input.keyboard().down_changed(KeyCode::Enter) &&

@@ -1,6 +1,5 @@
 #include "unicore/Graphics2D.hpp"
 #include "unicore/Font.hpp"
-#include "unicore/RendererSDL.hpp"
 #include "unicore/Shapes.hpp"
 
 namespace unicore
@@ -9,7 +8,7 @@ namespace unicore
 	static List<VertexColor2> s_verts;
 	static List<VertexColorQuad2> s_quads;
 
-	void Graphics2D::render(RendererSDL& renderer) const
+	void Graphics2D::render(sdl2::PipelineRender& renderer) const
 	{
 		for (const auto& batch : _batches)
 		{

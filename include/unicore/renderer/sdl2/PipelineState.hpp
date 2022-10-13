@@ -20,8 +20,5 @@ namespace unicore::sdl2
 
 		virtual void set_clip(const Optional<Recti>& rect) = 0;
 		UC_NODISCARD virtual const Optional<Recti>& get_clip() const = 0;
-
-		virtual void set_draw_color(const Color4b& color) = 0;
-		UC_NODISCARD virtual const Color4b& get_draw_color() const = 0;
 	};
 }

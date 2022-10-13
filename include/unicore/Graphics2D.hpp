@@ -4,11 +4,11 @@
 #include "unicore/math/Transform2.hpp"
 #include "unicore/Color4.hpp"
 #include "unicore/TextBlock.hpp"
+#include "unicore/renderer/sdl2/PipelineRender.hpp"
 
 namespace unicore
 {
 	class GeometryFont;
-	class RendererSDL;
 
 	//enum class GraphicsLineCap2D
 	//{
@@ -39,7 +39,7 @@ namespace unicore
 
 		Transform2 transform;
 
-		void render(RendererSDL& renderer) const;
+		void render(sdl2::PipelineRender& renderer) const;
 
 		Graphics2D& clear();
 		Graphics2D& flush();

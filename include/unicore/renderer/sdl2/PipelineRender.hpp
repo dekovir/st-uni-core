@@ -19,6 +19,9 @@ namespace unicore::sdl2
 	public:
 		virtual ~PipelineRender() = default;
 
+		virtual void set_draw_color(const Color4b& color) = 0;
+		UC_NODISCARD virtual const Color4b& get_draw_color() const = 0;
+
 		// DRAW POINTS
 		virtual void draw_point(const Vector2i& p) = 0;
 		virtual void draw_point_f(const Vector2f& p) = 0;

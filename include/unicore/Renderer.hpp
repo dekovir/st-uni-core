@@ -15,8 +15,6 @@ namespace unicore
 	{
 		UC_OBJECT(Renderer, Module)
 	public:
-		explicit Renderer(Logger& logger);
-
 		UC_NODISCARD virtual const Vector2i& screen_size() const = 0;
 		UC_NODISCARD virtual uint32_t draw_calls() const = 0;
 
@@ -33,8 +31,5 @@ namespace unicore
 
 		virtual bool begin_frame() = 0;
 		virtual void end_frame() = 0;
-
-	protected:
-		Logger& _logger;
 	};
 }

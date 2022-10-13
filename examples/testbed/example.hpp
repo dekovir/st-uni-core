@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/Object.hpp"
-#include "unicore/RendererSDL.hpp"
+#include "unicore/renderer/sdl2/Pipeline.hpp"
 
 namespace unicore
 {
@@ -9,7 +9,6 @@ namespace unicore
 	class Random;
 	class Time;
 	class Input;
-	class RendererSDL;
 	class IResourceCache;
 
 	class Font;
@@ -20,7 +19,7 @@ namespace unicore
 		Random& random;
 		Time& time;
 		Input& input;
-		RendererSDL& renderer;
+		sdl2::Pipeline& renderer;
 		Platform& platform;
 		Shared<Font> font;
 	};
@@ -33,7 +32,7 @@ namespace unicore
 		Random& random;
 		Time& time;
 		Input& input;
-		RendererSDL& renderer;
+		sdl2::Pipeline& renderer;
 		Platform& platform;
 
 		explicit Example(const ExampleContext& context);

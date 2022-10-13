@@ -2,6 +2,7 @@
 #include "unicore/math/Rect.hpp"
 #include "unicore/Vertex.hpp"
 #include "unicore/TextBlock.hpp"
+#include "unicore/renderer/sdl2/PipelineRender.hpp"
 
 namespace unicore
 {
@@ -9,7 +10,6 @@ namespace unicore
 	class Sprite;
 	class Font;
 	class Transform2;
-	class RendererSDL;
 
 	class SpriteBatch : public Object
 	{
@@ -17,7 +17,7 @@ namespace unicore
 	public:
 		SpriteBatch() = default;
 
-		void render(RendererSDL& renderer) const;
+		void render(sdl2::PipelineRender& renderer) const;
 
 		SpriteBatch& clear();
 		SpriteBatch& flush();

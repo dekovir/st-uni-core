@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/RendererSDL.hpp"
+#include "unicore/renderer/sdl2/Pipeline.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include "unicore/Surface.hpp"
 #include "unicore/Texture.hpp"
@@ -7,12 +7,12 @@
 
 namespace unicore
 {
+	class Display;
 	class SDL2Display;
 	class SDL2TargetTexture;
 
-	class SDL2RendererSDL : public RendererSDL
+	class SDL2RendererSDL : public sdl2::Pipeline
 	{
-		UC_OBJECT(SDL2RendererSDL, RendererSDL)
 	public:
 		SDL2RendererSDL(Logger& logger, SDL2Display& display);
 		~SDL2RendererSDL() override;
@@ -90,15 +90,16 @@ namespace unicore
 
 		bool copy_ex(const Shared<Texture>& texture,
 			const Optional<Recti>& src_rect, const Optional<Recti>& dst_rect,
-			Degrees angle, const Optional<Vector2i>& center, SDLRenderFlipFlags flip) override;
+			Degrees angle, const Optional<Vector2i>& center, sdl2::RenderFlip flip) override;
 
 		bool copy_ex_f(const Shared<Texture>& texture,
 			const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect,
-			Degrees angle, const Optional<Vector2f>& center, SDLRenderFlipFlags flip) override;
+			Degrees angle, const Optional<Vector2f>& center, sdl2::RenderFlip flip) override;
 
 		static Unique<SDL2RendererSDL> create(Logger& logger, Display& display);
 
 	protected:
+		Logger& _logger;
 		SDL2Display& _display;
 		SDL_Renderer* _renderer;
 		Vector2i _size = VectorConst2i::Zero;
@@ -119,7 +120,7 @@ namespace unicore
 
 		UC_NODISCARD SDL_Texture* create_texture(const Vector2i& size, SDL_TextureAccess access) const;
 
-		static SDL_RendererFlip convert_flip(SDLRenderFlipFlags flags);
+		static SDL_RendererFlip convert_flip(sdl2::RenderFlip flags);
 	};
 }
 

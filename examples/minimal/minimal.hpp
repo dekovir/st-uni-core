@@ -2,7 +2,6 @@
 #include "unicore/app/SDLCore.hpp"
 #include "unicore/Graphics2D.hpp"
 #include "unicore/SpriteBatch.hpp"
-#include "unicore/RendererSDL.hpp"
 
 namespace unicore
 {

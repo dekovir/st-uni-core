@@ -1,17 +1,23 @@
 #include "unicore/app/SDLCore.hpp"
+#include "Platforms/SDL2/SDL2RendererSDL.hpp"
 
 namespace unicore
 {
 	// TODO: Refactor this
 	namespace details
 	{
-		Unique<RendererSDL> renderer;
+		Unique<sdl2::Pipeline> renderer;
 
-		RendererSDL& create_renderer(Logger& logger, Display& display)
+		sdl2::Pipeline& create_renderer(Logger& logger, Display& display)
 		{
 			if (renderer) return *renderer;
 
-			renderer = RendererSDL::create(logger, display);
+#if defined(UNICORE_USE_SDL2)
+			renderer = SDL2RendererSDL::create(logger, display);
+#else
+			UC_STATIC_ASSERT_ALWAYS("Unimplemented platform");
+#endif
+
 			if (!renderer)
 				UC_LOG_ERROR(logger) << "Failed to create RendererSDL";
 

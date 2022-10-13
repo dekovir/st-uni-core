@@ -3,7 +3,6 @@
 #include "unicore/Texture.hpp"
 #include "unicore/Font.hpp"
 #include "unicore/Sprite.hpp"
-#include "unicore/RendererSDL.hpp"
 
 namespace unicore
 {
@@ -17,7 +16,7 @@ namespace unicore
 		to.col = from.col;
 	}
 
-	void SpriteBatch::render(RendererSDL& renderer) const
+	void SpriteBatch::render(sdl2::PipelineRender& renderer) const
 	{
 		for (const auto& batch : _batches)
 		{

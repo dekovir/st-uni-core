@@ -7,7 +7,6 @@
 #include "unicore/Unicode.hpp"
 #include "unicore/TimeSpan.hpp"
 #include "unicore/BinaryData.hpp"
-#include "unicore/RendererSDL.hpp"
 #include "unicore/ResourceCache.hpp"
 #include "unicore/wasm/WasmEnvironment.hpp"
 #include "unicore/wasm/WasmModule.hpp"
@@ -193,7 +192,7 @@ namespace unicore
 	{
 #if !defined(UNICORE_PLATFORM_WEB)
 		if (input.keyboard().down(KeyCode::Escape))
-			platform.quit();
+			platform.looper.quit();
 #endif
 
 		_sprite_batch.clear();
