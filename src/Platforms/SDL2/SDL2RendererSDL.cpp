@@ -1,7 +1,6 @@
 #include "SDL2RendererSDL.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include "SDL2Texture.hpp"
-#include "SDL2Loaders.hpp"
 #include "SDL2Display.hpp"
 
 namespace unicore
