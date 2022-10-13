@@ -4,6 +4,18 @@
 
 namespace unicore
 {
+	SDL2Looper::SDL2Looper(Logger& logger)
+		: _logger(logger)
+	{
+		SDL_SetMainReady();
+		SDL_Init(SDL_INIT_EVENTS);
+
+		SDL_version version;
+		SDL_GetVersion(&version);
+		UC_LOG_INFO(_logger) << "SDL version "
+			<< version.major << "." << version.minor << "." << version.minor;
+	}
+
 	void SDL2Looper::quit()
 	{
 		_running = false;

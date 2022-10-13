@@ -5,9 +5,13 @@
 
 namespace unicore
 {
+	class Logger;
+
 	class SDL2Looper : public Looper
 	{
 	public:
+		explicit SDL2Looper(Logger& logger);
+
 		UC_NODISCARD bool running() const override { return _running; }
 
 		void quit() override;
@@ -17,6 +21,7 @@ namespace unicore
 		void remove_listener(SDL2EventListener* listener);
 
 	protected:
+		Logger& _logger;
 		bool _running = true;
 		Set<SDL2EventListener*> _listeners;
 	};

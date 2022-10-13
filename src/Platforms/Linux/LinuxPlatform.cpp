@@ -7,6 +7,7 @@ namespace unicore
 	LinuxPlatform::LinuxPlatform()
 		: Platform({ _looper, _logger, _time, _input, _file_system })
 		, _input_logger("[Input] ", _logger)
+		, _looper(_logger)
 		, _input(_input_logger)
 		, _file_system_logger("[FS] ", _logger)
 		, _file_system(_file_system_logger)

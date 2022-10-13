@@ -26,7 +26,6 @@ namespace unicore
 		void update() override;
 
 	protected:
-		SDL2Looper _looper;
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
 		WinLogger _logger;
@@ -36,6 +35,7 @@ namespace unicore
 
 		ProxyLogger _input_logger;
 
+		SDL2Looper _looper;
 		SDL2Time _time;
 		SDL2Input _input;
 
