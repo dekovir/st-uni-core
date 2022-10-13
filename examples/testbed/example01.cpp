@@ -1,10 +1,10 @@
 #include "example01.hpp"
 #include "unicore/math/Transform2.hpp"
 #include "unicore/Time.hpp"
-#include "unicore/Font.hpp"
-#include "unicore/Color3.hpp"
 #include "unicore/Shapes.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/renderer/Font.hpp"
+#include "unicore/renderer/Color3.hpp"
 
 namespace unicore
 {

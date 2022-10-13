@@ -10,6 +10,7 @@ namespace unicore
 		Platform& platform;
 	};
 
+	// TODO: Rename to Application/App
 	class Core
 	{
 		ProxyLogger _logger;

@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Font.hpp"
+#include "unicore/renderer/Font.hpp"
 #if defined(UNICORE_USE_STB_EASY_FONT)
 
 namespace unicore

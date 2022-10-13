@@ -1,8 +1,8 @@
 #pragma once
 #include "unicore/Memory.hpp"
 #include "unicore/Buffer2.hpp"
-#include "unicore/Color4.hpp"
 #include "unicore/Resource.hpp"
+#include "unicore/renderer/Color4.hpp"
 
 namespace unicore
 {

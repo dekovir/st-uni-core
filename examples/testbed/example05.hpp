@@ -2,9 +2,9 @@
 #include "example.hpp"
 #if defined(UNICORE_USE_GRID)
 #include "unicore/math/Transform2.hpp"
-#include "unicore/Sprite.hpp"
-#include "unicore/SpriteBatch.hpp"
-#include "unicore/Graphics2D.hpp"
+#include "unicore/renderer/Sprite.hpp"
+#include "unicore/renderer/SpriteBatch.hpp"
+#include "unicore/renderer/Graphics2D.hpp"
 #include "unicore/grid/GridMap.hpp"
 
 namespace unicore

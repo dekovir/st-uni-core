@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/app/SDLCore.hpp"
-#include "unicore/SpriteBatch.hpp"
+#include "unicore/renderer/SpriteBatch.hpp"
 #include "example.hpp"
 
 namespace unicore

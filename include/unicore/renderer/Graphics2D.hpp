@@ -2,8 +2,8 @@
 #include "Vertex.hpp"
 #include "unicore/math/Rect.hpp"
 #include "unicore/math/Transform2.hpp"
-#include "unicore/Color4.hpp"
 #include "unicore/TextBlock.hpp"
+#include "unicore/renderer/Color4.hpp"
 #include "unicore/renderer/sdl2/PipelineRender.hpp"
 
 namespace unicore

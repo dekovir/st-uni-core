@@ -1,5 +1,5 @@
 #include "unicore/TextBlock.hpp"
-#include "unicore/Font.hpp"
+#include "unicore/renderer/Font.hpp"
 
 namespace unicore
 {

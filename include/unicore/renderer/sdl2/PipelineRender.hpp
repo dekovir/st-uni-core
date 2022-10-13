@@ -2,8 +2,8 @@
 #include "unicore/EnumFlag.hpp"
 #include "unicore/math/Rect.hpp"
 #include "unicore/math/Vector2.hpp"
-#include "unicore/Vertex.hpp"
-#include "unicore/Texture.hpp"
+#include "unicore/renderer/Vertex.hpp"
+#include "unicore/renderer/Texture.hpp"
 
 namespace unicore::sdl2
 {

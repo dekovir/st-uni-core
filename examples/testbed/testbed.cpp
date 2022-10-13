@@ -2,9 +2,9 @@
 #include "UnicoreMain.hpp"
 #include "InitPlugins.hpp"
 #include "unicore/Input.hpp"
-#include "unicore/Surface.hpp"
-#include "unicore/Font.hpp"
 #include "unicore/io/FileProvider.hpp"
+#include "unicore/renderer/Surface.hpp"
+#include "unicore/renderer/Font.hpp"
 #include "unicore/loaders/FileLoader.hpp"
 
 namespace unicore

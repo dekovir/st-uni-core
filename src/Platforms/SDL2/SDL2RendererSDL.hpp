@@ -1,8 +1,8 @@
 #pragma once
 #include "unicore/renderer/sdl2/Pipeline.hpp"
 #if defined(UNICORE_USE_SDL2)
-#include "unicore/Surface.hpp"
-#include "unicore/Texture.hpp"
+#include "unicore/renderer/Surface.hpp"
+#include "unicore/renderer/Texture.hpp"
 #include <SDL.h>
 
 namespace unicore

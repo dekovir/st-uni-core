@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/app/SDLCore.hpp"
-#include "unicore/Graphics2D.hpp"
-#include "unicore/SpriteBatch.hpp"
+#include "unicore/renderer/Graphics2D.hpp"
+#include "unicore/renderer/SpriteBatch.hpp"
 
 namespace unicore
 {

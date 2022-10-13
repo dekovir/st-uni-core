@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Surface.hpp"
+#include "unicore/renderer/Surface.hpp"
 #if defined(UNICORE_USE_STB_IMAGE)
 #include "unicore/ResourceLoader.hpp"
 

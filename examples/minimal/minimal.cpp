@@ -3,9 +3,9 @@
 #include "InitPlugins.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
-#include "unicore/Canvas.hpp"
-#include "unicore/Surface.hpp"
-#include "unicore/Texture.hpp"
+#include "unicore/renderer/Canvas.hpp"
+#include "unicore/renderer/Surface.hpp"
+#include "unicore/renderer/Texture.hpp"
 namespace unicore
 {
 	constexpr Vector2i WindowSize = Vector2i(800, 600);

@@ -1,10 +1,10 @@
 #include "example02.hpp"
 #include "unicore/Time.hpp"
 #include "unicore/Input.hpp"
-#include "unicore/Texture.hpp"
-#include "unicore/Surface.hpp"
 #include "unicore/StringBuilder.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/renderer/Texture.hpp"
+#include "unicore/renderer/Surface.hpp"
 
 namespace unicore
 {

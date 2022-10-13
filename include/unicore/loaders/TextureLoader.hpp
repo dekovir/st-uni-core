@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/ResourceLoader.hpp"
-#include "unicore/Surface.hpp"
-#include "unicore/Texture.hpp"
+#include "unicore/renderer/Surface.hpp"
+#include "unicore/renderer/Texture.hpp"
 
 namespace unicore
 {

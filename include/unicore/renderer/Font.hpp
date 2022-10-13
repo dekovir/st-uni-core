@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include "unicore/Resource.hpp"
-#include "unicore/Vertex.hpp"
-#include "unicore/Texture.hpp"
 #include "unicore/ConstString.hpp"
 #include "unicore/ResourceLoader.hpp"
+#include "unicore/renderer/Vertex.hpp"
+#include "unicore/renderer/Texture.hpp"
 
 namespace unicore
 {

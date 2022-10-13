@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/math/Rect.hpp"
-#include "unicore/Vertex.hpp"
 #include "unicore/TextBlock.hpp"
+#include "unicore/renderer/Vertex.hpp"
 #include "unicore/renderer/sdl2/PipelineRender.hpp"
 
 namespace unicore

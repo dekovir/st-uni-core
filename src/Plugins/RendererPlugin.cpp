@@ -1,9 +1,9 @@
 #include "unicore/plugins/RendererPlugin.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "unicore/Renderer.hpp"
 #include "unicore/loaders/TextureLoader.hpp"
 #include "unicore/loaders/SolidSizeLoader.hpp"
 #include "unicore/loaders/TTFontLoader.hpp"
+#include "unicore/renderer/Renderer.hpp"
 
 namespace unicore
 {

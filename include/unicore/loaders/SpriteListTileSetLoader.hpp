@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/ResourceLoader.hpp"
-#include "unicore/Sprite.hpp"
+#include "unicore/renderer/Sprite.hpp"
 
 namespace unicore
 {

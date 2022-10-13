@@ -2,9 +2,9 @@
 #include "unicore/app/SDLCore.hpp"
 #include "unicore/math/Random.hpp"
 #include "unicore/Console.hpp"
-#include "unicore/Font.hpp"
-#include "unicore/Sprite.hpp"
-#include "unicore/SpriteBatch.hpp"
+#include "unicore/renderer/Font.hpp"
+#include "unicore/renderer/Sprite.hpp"
+#include "unicore/renderer/SpriteBatch.hpp"
 
 namespace unicore
 {

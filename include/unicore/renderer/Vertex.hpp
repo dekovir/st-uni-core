@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/math/Vector2.hpp"
 #include "unicore/math/Vector3.hpp"
-#include "unicore/Color4.hpp"
+#include "unicore/renderer/Color4.hpp"
 
 namespace unicore
 {

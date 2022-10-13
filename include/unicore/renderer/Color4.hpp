@@ -2,7 +2,7 @@
 #include "unicore/math/Math.hpp"
 #include "unicore/math/Hash.hpp"
 #include "unicore/math/Random.hpp"
-#include "unicore/PixelFormat.hpp"
+#include "unicore/renderer/PixelFormat.hpp"
 
 namespace unicore
 {

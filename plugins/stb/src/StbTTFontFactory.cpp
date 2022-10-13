@@ -2,9 +2,9 @@
 #if defined(UNICORE_USE_STB_TRUETYPE)
 #include "unicore/io/Logger.hpp"
 #include "unicore/BinaryData.hpp"
-#include "unicore/Canvas.hpp"
-#include "unicore/Surface.hpp"
-#include "unicore/Renderer.hpp"
+#include "unicore/renderer/Canvas.hpp"
+#include "unicore/renderer/Surface.hpp"
+#include "unicore/renderer/Renderer.hpp"
 #include "unicore/stb/StbRectPack.hpp"
 #include "unicore/stb/StbTTFont.hpp"
 

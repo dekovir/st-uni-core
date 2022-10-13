@@ -1,7 +1,7 @@
 #include "unicore/imgui/ImGuiRender.hpp"
 #include "unicore/io/Logger.hpp"
-#include "unicore/Surface.hpp"
-#include "unicore/Texture.hpp"
+#include "unicore/renderer/Surface.hpp"
+#include "unicore/renderer/Texture.hpp"
 
 namespace unicore
 {

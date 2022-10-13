@@ -1,7 +1,7 @@
 #include "unicore/loaders/TTFontLoader.hpp"
 #include "unicore/Memory.hpp"
-#include "unicore/Renderer.hpp"
 #include "unicore/ResourceCache.hpp"
+#include "unicore/renderer/Renderer.hpp"
 
 namespace unicore
 {

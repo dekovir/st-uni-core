@@ -1,6 +1,6 @@
 #include "unicore/loaders/TextureLoader.hpp"
 #include "unicore/ResourceCache.hpp"
-#include "unicore/Renderer.hpp"
+#include "unicore/renderer/Renderer.hpp"
 
 namespace unicore
 {

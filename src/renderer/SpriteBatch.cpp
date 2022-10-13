@@ -1,8 +1,8 @@
-#include "unicore/SpriteBatch.hpp"
+#include "unicore/renderer/SpriteBatch.hpp"
 #include "unicore/math/Transform2.hpp"
-#include "unicore/Texture.hpp"
-#include "unicore/Font.hpp"
-#include "unicore/Sprite.hpp"
+#include "unicore/renderer/Font.hpp"
+#include "unicore/renderer/Texture.hpp"
+#include "unicore/renderer/Sprite.hpp"
 
 namespace unicore
 {

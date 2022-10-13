@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Texture.hpp"
+#include "unicore/renderer/Texture.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include "SDL2Utils.hpp"
 

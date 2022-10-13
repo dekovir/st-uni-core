@@ -1,15 +1,12 @@
 #pragma once
 #include "unicore/Module.hpp"
 #include "unicore/math/Rect.hpp"
+#include "unicore/renderer/Texture.hpp"
 
 namespace unicore
 {
 	class Logger;
 	class Surface;
-
-	class Texture;
-	class DynamicTexture;
-	class TargetTexture;
 
 	class Renderer : public Module
 	{

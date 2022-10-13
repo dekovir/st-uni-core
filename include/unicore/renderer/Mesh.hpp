@@ -1,7 +1,6 @@
 #pragma once
-#include "unicore/Defs.hpp"
-#include "unicore/Vertex.hpp"
-#include "unicore/Texture.hpp"
+#include "unicore/renderer/Vertex.hpp"
+#include "unicore/renderer/Texture.hpp"
 
 namespace unicore
 {
