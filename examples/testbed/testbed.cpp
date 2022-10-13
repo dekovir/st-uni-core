@@ -5,7 +5,7 @@
 #include "unicore/platform/Input.hpp"
 #include "unicore/renderer/Surface.hpp"
 #include "unicore/renderer/Font.hpp"
-#include "unicore/loaders/FileLoader.hpp"
+#include "unicore/io/FileLoader.hpp"
 
 namespace unicore
 {

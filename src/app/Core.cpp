@@ -4,7 +4,7 @@
 #include "unicore/platform/Input.hpp"
 #include "unicore/platform/Plugin.hpp"
 #include "unicore/io/FileSystem.hpp"
-#include "unicore/loaders/FileLoader.hpp"
+#include "unicore/io/FileLoader.hpp"
 
 namespace unicore
 {

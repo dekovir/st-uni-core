@@ -1,4 +1,4 @@
-#include "unicore/loaders/FileLoader.hpp"
+#include "unicore/io/FileLoader.hpp"
 
 namespace unicore
 {

@@ -1,7 +1,7 @@
 #include "unicore/plugins/PlatformPlugin.hpp"
 #include "unicore/resource/ResourceCache.hpp"
-#include "unicore/loaders/BinaryDataLoader.hpp"
-#include "unicore/loaders/TextDataLoader.hpp"
+#include "unicore/resource/BinaryDataLoader.hpp"
+#include "unicore/resource/TextDataLoader.hpp"
 
 namespace unicore
 {

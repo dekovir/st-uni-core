@@ -1,4 +1,4 @@
-#include "unicore/loaders/TTFontLoader.hpp"
+#include "unicore/renderer/TTFontLoader.hpp"
 #include "unicore/system/Memory.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/renderer/Renderer.hpp"

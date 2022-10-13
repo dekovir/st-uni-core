@@ -1,7 +1,7 @@
 #include "unicore/plugins/SurfacePlugin.hpp"
 #include "unicore/resource/ResourceCache.hpp"
-#include "unicore/loaders/SolidSizeLoader.hpp"
-#include "unicore/loaders/SpriteListTileSetLoader.hpp"
+#include "unicore/renderer/SolidSizeLoader.hpp"
+#include "unicore/renderer/SpriteListTileSetLoader.hpp"
 
 namespace unicore
 {

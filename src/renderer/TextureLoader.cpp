@@ -1,4 +1,4 @@
-#include "unicore/loaders/TextureLoader.hpp"
+#include "unicore/renderer/TextureLoader.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/renderer/Renderer.hpp"
 

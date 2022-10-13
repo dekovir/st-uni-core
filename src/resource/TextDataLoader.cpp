@@ -1,4 +1,4 @@
-#include "unicore/loaders/TextDataLoader.hpp"
+#include "unicore/resource/TextDataLoader.hpp"
 #include "unicore/io/File.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 
