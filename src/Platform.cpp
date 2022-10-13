@@ -1,9 +1,7 @@
 #include "unicore/Platform.hpp"
 #include "unicore/io/Logger.hpp"
 
-#if defined(UNICORE_USE_SDL2)
-#	include "Platforms/SDL2/SDL2Platform.hpp"
-#elif defined(UNICORE_PLATFORM_WINDOWS)
+#if defined(UNICORE_PLATFORM_WINDOWS)
 #	include "Platforms/Windows/WinPlatform.hpp"
 #elif defined(UNICORE_PLATFORM_LINUX)
 #	include "Platforms/Linux/LinuxPlatform.hpp"
@@ -29,11 +27,8 @@ namespace unicore
 
 	Unique<Platform> Platform::create()
 	{
-#if defined(UNICORE_USE_SDL2)
-		return make_unique<SDL2Platform>();
-#elif defined(UNICORE_PLATFORM_WINDOWS)
+#if defined(UNICORE_PLATFORM_WINDOWS)
 		return make_unique<WinPlatform>();
-		//#elif defined(UNICORE_PLATFORM_EMSCRIPTEN)
 #elif defined(UNICORE_PLATFORM_LINUX)
 		return make_unique<LinuxPlatform>();
 #else
