@@ -1,7 +1,7 @@
 #include "unicore/stb/StbTTFontFactory.hpp"
 #if defined(UNICORE_USE_STB_TRUETYPE)
 #include "unicore/io/Logger.hpp"
-#include "unicore/BinaryData.hpp"
+#include "unicore/resource/BinaryData.hpp"
 #include "unicore/renderer/Canvas.hpp"
 #include "unicore/renderer/Surface.hpp"
 #include "unicore/renderer/Renderer.hpp"

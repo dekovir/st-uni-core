@@ -1,6 +1,6 @@
 #pragma once
-#include "unicore/Object.hpp"
-#include "unicore/Index.hpp"
+#include "unicore/system/Object.hpp"
+#include "unicore/system/Index.hpp"
 #include "unicore/math/Vector2.hpp"
 
 namespace unicore

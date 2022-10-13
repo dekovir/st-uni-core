@@ -1,5 +1,5 @@
 #include "unicore/szip/SZipFileProvider.hpp"
-#include "unicore/Unicode.hpp"
+#include "unicore/system/Unicode.hpp"
 #include "unicore/io/Logger.hpp"
 #include "unicore/io/MemoryFile.hpp"
 #include "unicore/szip/SZipUtils.hpp"

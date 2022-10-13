@@ -1,7 +1,7 @@
 #include "unicore/io/FileProvider.hpp"
-#include "unicore/Memory.hpp"
+#include "unicore/system/Memory.hpp"
+#include "unicore/system/StringHelper.hpp"
 #include "unicore/io/File.hpp"
-#include "unicore/StringHelper.hpp"
 
 namespace unicore
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Resource.hpp"
+#include "unicore/resource/Resource.hpp"
 #include "unicore/math/Rect.hpp"
 
 namespace unicore

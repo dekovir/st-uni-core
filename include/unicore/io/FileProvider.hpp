@@ -1,9 +1,9 @@
 #pragma once
-#include "unicore/Resource.hpp"
-#include "unicore/EnumFlag.hpp"
+#include "unicore/resource/Resource.hpp"
+#include "unicore/system/EnumFlag.hpp"
+#include "unicore/system/Containers.hpp"
+#include "unicore/system/DateTime.hpp"
 #include "unicore/io/Path.hpp"
-#include "unicore/Containers.hpp"
-#include "unicore/DateTime.hpp"
 
 namespace unicore
 {

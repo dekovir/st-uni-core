@@ -1,6 +1,6 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/TimeSpan.hpp"
+#include "unicore/system/TimeSpan.hpp"
 #include "unicore/renderer/SpriteBatch.hpp"
 
 namespace unicore

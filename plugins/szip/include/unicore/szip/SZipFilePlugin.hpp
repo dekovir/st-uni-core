@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Plugin.hpp"
+#include "unicore/platform/Plugin.hpp"
 
 namespace unicore
 {

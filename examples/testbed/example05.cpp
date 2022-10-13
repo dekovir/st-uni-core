@@ -1,7 +1,7 @@
 #include "example05.hpp"
 #if defined(UNICORE_USE_GRID)
-#include "unicore/Input.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
+#include "unicore/platform/Input.hpp"
 #include "unicore/renderer/Font.hpp"
 #include "unicore/renderer/Canvas.hpp"
 #include "unicore/renderer/Surface.hpp"

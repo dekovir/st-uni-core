@@ -1,5 +1,5 @@
 #include "example03.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 
 namespace unicore
 {

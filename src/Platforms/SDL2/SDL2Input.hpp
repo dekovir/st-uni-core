@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Input.hpp"
+#include "unicore/platform/Input.hpp"
 #if defined(UNICORE_USE_SDL2)
 
 namespace unicore

@@ -1,7 +1,7 @@
 #pragma once
-#include "unicore/Memory.hpp"
-#include "unicore/Buffer2.hpp"
-#include "unicore/Resource.hpp"
+#include "unicore/system/Memory.hpp"
+#include "unicore/system/Buffer2.hpp"
+#include "unicore/resource/Resource.hpp"
 #include "unicore/renderer/Color4.hpp"
 
 namespace unicore

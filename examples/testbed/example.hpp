@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Object.hpp"
+#include "unicore/system/Object.hpp"
 #include "unicore/renderer/sdl2/Pipeline.hpp"
 
 namespace unicore

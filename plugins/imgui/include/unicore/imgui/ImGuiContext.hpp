@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/imgui/ImGuiRender.hpp"
-#include "unicore/Time.hpp"
-#include "unicore/Input.hpp"
+#include "unicore/platform/Time.hpp"
+#include "unicore/platform/Input.hpp"
 
 namespace unicore
 {

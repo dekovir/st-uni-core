@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/EnumFlag.hpp"
+#include "unicore/system/EnumFlag.hpp"
 #include "unicore/math/Rect.hpp"
 #include "unicore/math/Vector2.hpp"
 #include "unicore/renderer/Vertex.hpp"

@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include "unicore/Unicode.hpp"
+#include "unicore/system/Unicode.hpp"
 #include "unicore/io/Logger.hpp"
 #include "PosixError.hpp"
 #include "PosixFile.hpp"

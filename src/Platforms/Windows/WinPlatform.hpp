@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Platform.hpp"
+#include "unicore/platform/Platform.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #include "unicore/io/FileSystem.hpp"
 #include "WinLogger.hpp"

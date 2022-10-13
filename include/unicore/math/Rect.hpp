@@ -2,7 +2,7 @@
 #include "unicore/math/Hash.hpp"
 #include "unicore/math/Range.hpp"
 #include "unicore/math/Vector2.hpp"
-#include "unicore/StringBuilder.hpp"
+#include "unicore/system/StringBuilder.hpp"
 
 namespace unicore
 {

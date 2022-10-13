@@ -1,5 +1,6 @@
 #include "SDL2Looper.hpp"
 #if defined(UNICORE_USE_SDL2)
+#include "unicore/io/Logger.hpp"
 #include "SDL2Utils.hpp"
 
 namespace unicore

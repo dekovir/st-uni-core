@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "unicore/Resource.hpp"
-#include "unicore/ConstString.hpp"
-#include "unicore/ResourceLoader.hpp"
+#include "unicore/resource/Resource.hpp"
+#include "unicore/system/ConstString.hpp"
+#include "unicore/resource/ResourceLoader.hpp"
 #include "unicore/renderer/Vertex.hpp"
 #include "unicore/renderer/Texture.hpp"
 

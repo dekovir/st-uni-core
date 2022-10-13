@@ -1,5 +1,5 @@
 #include "unicore/szip/SZipUtils.hpp"
-#include "unicore/Memory.hpp"
+#include "unicore/system/Memory.hpp"
 
 namespace unicore
 {

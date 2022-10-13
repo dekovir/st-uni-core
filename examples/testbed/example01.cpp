@@ -1,8 +1,8 @@
 #include "example01.hpp"
 #include "unicore/math/Transform2.hpp"
-#include "unicore/Time.hpp"
-#include "unicore/Shapes.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/math/Shapes.hpp"
+#include "unicore/resource/ResourceCache.hpp"
+#include "unicore/platform/Time.hpp"
 #include "unicore/renderer/Font.hpp"
 #include "unicore/renderer/Color3.hpp"
 

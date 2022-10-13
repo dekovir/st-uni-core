@@ -4,8 +4,8 @@
 #if defined (UNICORE_PLATFORM_WINDOWS)
 #	include <Shlwapi.h>
 #endif
-#include "unicore/Unicode.hpp"
-#include "unicore/StringHelper.hpp"
+#include "unicore/system/Unicode.hpp"
+#include "unicore/system/StringHelper.hpp"
 #include "unicore/io/Logger.hpp"
 
 namespace unicore

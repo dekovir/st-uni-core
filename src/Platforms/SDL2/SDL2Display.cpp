@@ -1,5 +1,6 @@
 #include "SDL2Display.hpp"
 #if defined(UNICORE_USE_SDL2)
+#include "unicore/io/Logger.hpp"
 #include <SDL_syswm.h>
 #include "SDL2Looper.hpp"
 
@@ -8,7 +9,7 @@ namespace unicore
 	static const char* window_data_name = "user_data";
 
 	SDL2Display::SDL2Display(SDL2Looper& looper, const DisplaySettings& settings)
-		: ParentType(settings)
+		: _logger(settings.logger)
 		, _looper(looper)
 		, _handle(nullptr)
 	{

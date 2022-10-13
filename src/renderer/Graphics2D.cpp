@@ -1,5 +1,5 @@
 #include "unicore/renderer/Graphics2D.hpp"
-#include "unicore/Shapes.hpp"
+#include "unicore/math/Shapes.hpp"
 #include "unicore/renderer/Font.hpp"
 
 namespace unicore

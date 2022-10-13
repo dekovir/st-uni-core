@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Platform.hpp"
+#include "unicore/platform/Platform.hpp"
 
 namespace unicore
 {

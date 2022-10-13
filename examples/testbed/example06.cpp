@@ -1,7 +1,7 @@
 ﻿#include "example06.hpp"
-#include "unicore/Input.hpp"
+#include "unicore/resource/ResourceCache.hpp"
+#include "unicore/platform/Input.hpp"
 #include "unicore/renderer/Font.hpp"
-#include "unicore/ResourceCache.hpp"
 #include "unicore/stb/StbTTFont.hpp"
 
 namespace unicore

@@ -1,6 +1,6 @@
 #include "unicore/fnt/DekovirFontLoader.hpp"
-#include "unicore/TextData.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/TextData.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 #include "unicore/xml/XMLData.hpp"
 
 namespace unicore

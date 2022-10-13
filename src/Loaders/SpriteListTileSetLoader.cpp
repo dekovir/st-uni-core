@@ -1,6 +1,6 @@
 #include "unicore/loaders/SpriteListTileSetLoader.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 #include "unicore/renderer/Texture.hpp"
-#include "unicore/ResourceCache.hpp"
 
 namespace unicore
 {

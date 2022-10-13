@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/renderer/Surface.hpp"
 #if defined(UNICORE_USE_STB_IMAGE)
-#include "unicore/ResourceLoader.hpp"
+#include "unicore/resource/ResourceLoader.hpp"
 
 namespace unicore
 {

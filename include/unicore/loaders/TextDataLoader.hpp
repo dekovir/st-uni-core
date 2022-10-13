@@ -1,6 +1,6 @@
 #pragma once
-#include "unicore/TextData.hpp"
-#include "unicore/ResourceLoader.hpp"
+#include "unicore/resource/ResourceLoader.hpp"
+#include "unicore/resource/TextData.hpp"
 
 namespace unicore
 {

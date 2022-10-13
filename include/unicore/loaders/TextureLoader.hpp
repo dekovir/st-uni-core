@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/ResourceLoader.hpp"
+#include "unicore/resource/ResourceLoader.hpp"
 #include "unicore/renderer/Surface.hpp"
 #include "unicore/renderer/Texture.hpp"
 

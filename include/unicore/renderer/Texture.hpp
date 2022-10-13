@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/RendererResource.hpp"
+#include "unicore/resource/RendererResource.hpp"
 #include "unicore/math/Vector2.hpp"
 
 namespace unicore

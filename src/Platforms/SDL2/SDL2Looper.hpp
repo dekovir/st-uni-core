@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Looper.hpp"
+#include "unicore/platform/Looper.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include "SDL2Utils.hpp"
 

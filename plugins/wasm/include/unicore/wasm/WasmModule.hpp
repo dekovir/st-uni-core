@@ -1,8 +1,7 @@
 #pragma once
 #include "unicore/wasm/WasmDefs.hpp"
-#include "unicore/BinaryData.hpp"
 #include "unicore/io/Logger.hpp"
-#include "unicore/Resource.hpp"
+#include "unicore/resource/BinaryData.hpp"
 
 namespace unicore
 {

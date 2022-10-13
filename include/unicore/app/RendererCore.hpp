@@ -1,10 +1,11 @@
 #pragma once
 #include "unicore/app/DisplayCore.hpp"
-#include "unicore/TimeSpan.hpp"
+#include "unicore/system/TimeSpan.hpp"
 #include "unicore/renderer/Renderer.hpp"
 
 namespace unicore
 {
+	// TODO: Move to separate file
 	class FPSCounter
 	{
 	public:

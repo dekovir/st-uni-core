@@ -1,7 +1,7 @@
 #pragma once
-#include "unicore/Module.hpp"
-#include "unicore/Debug.hpp"
-#include "unicore/StringBuilder.hpp"
+#include "unicore/system/Object.hpp"
+#include "unicore/system/Debug.hpp"
+#include "unicore/system/StringBuilder.hpp"
 
 namespace unicore
 {

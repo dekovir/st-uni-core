@@ -2,7 +2,7 @@
 #include "unicore/math/Rect.hpp"
 #if defined(UNICORE_USE_STB_RECT_PACK)
 #include <stb_rect_pack.h>
-#include "unicore/EnumFlag.hpp"
+#include "unicore/system/EnumFlag.hpp"
 
 namespace unicore
 {

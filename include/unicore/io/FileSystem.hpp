@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Module.hpp"
+#include "unicore/platform/Module.hpp"
 #include "unicore/io/FileProvider.hpp"
 
 namespace unicore

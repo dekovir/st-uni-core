@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/wasm/WasmFunction.hpp"
-#include "unicore/Memory.hpp"
+#include "unicore/system/Memory.hpp"
 
 namespace unicore
 {

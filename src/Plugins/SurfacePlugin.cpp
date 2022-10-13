@@ -1,5 +1,5 @@
 #include "unicore/plugins/SurfacePlugin.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 #include "unicore/loaders/SolidSizeLoader.hpp"
 #include "unicore/loaders/SpriteListTileSetLoader.hpp"
 

@@ -1,6 +1,6 @@
 #include "unicore/io/File.hpp"
-#include "unicore/Memory.hpp"
-#include "unicore/BinaryData.hpp"
+#include "unicore/system/Memory.hpp"
+#include "unicore/resource/BinaryData.hpp"
 
 namespace unicore
 {

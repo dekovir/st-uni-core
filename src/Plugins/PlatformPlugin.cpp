@@ -1,5 +1,5 @@
 #include "unicore/plugins/PlatformPlugin.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 #include "unicore/loaders/BinaryDataLoader.hpp"
 #include "unicore/loaders/TextDataLoader.hpp"
 

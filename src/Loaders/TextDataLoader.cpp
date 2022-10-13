@@ -1,6 +1,6 @@
 #include "unicore/loaders/TextDataLoader.hpp"
 #include "unicore/io/File.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 
 namespace unicore
 {

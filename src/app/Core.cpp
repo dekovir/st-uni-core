@@ -1,8 +1,8 @@
 #include "unicore/app/Core.hpp"
-#include "unicore/Time.hpp"
-#include "unicore/Input.hpp"
-#include "unicore/Plugin.hpp"
-#include "unicore/TimeSpan.hpp"
+#include "unicore/system/TimeSpan.hpp"
+#include "unicore/platform/Time.hpp"
+#include "unicore/platform/Input.hpp"
+#include "unicore/platform/Plugin.hpp"
 #include "unicore/io/FileSystem.hpp"
 #include "unicore/loaders/FileLoader.hpp"
 

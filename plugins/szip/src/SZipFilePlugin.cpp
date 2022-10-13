@@ -1,5 +1,5 @@
 #include "unicore/szip/SZipFilePlugin.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 #include "unicore/szip/SZipFileProviderLoader.hpp"
 
 namespace unicore

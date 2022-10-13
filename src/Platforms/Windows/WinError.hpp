@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Debug.hpp"
+#include "unicore/system/Debug.hpp"
 #if defined(UNICORE_PLATFORM_WINDOWS)
 #include "WinDefs.hpp"
 

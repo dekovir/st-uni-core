@@ -1,8 +1,8 @@
 #include "example02.hpp"
-#include "unicore/Time.hpp"
-#include "unicore/Input.hpp"
-#include "unicore/StringBuilder.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/system/StringBuilder.hpp"
+#include "unicore/resource/ResourceCache.hpp"
+#include "unicore/platform/Time.hpp"
+#include "unicore/platform/Input.hpp"
 #include "unicore/renderer/Texture.hpp"
 #include "unicore/renderer/Surface.hpp"
 

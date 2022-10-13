@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Module.hpp"
+#include "unicore/platform/Module.hpp"
 #include "unicore/math/Rect.hpp"
 #include "unicore/renderer/Texture.hpp"
 

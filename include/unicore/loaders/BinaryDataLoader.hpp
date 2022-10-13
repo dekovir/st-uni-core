@@ -1,6 +1,6 @@
 #pragma once
-#include "unicore/BinaryData.hpp"
-#include "unicore/ResourceLoader.hpp"
+#include "unicore/resource/BinaryData.hpp"
+#include "unicore/resource/ResourceLoader.hpp"
 
 namespace unicore
 {

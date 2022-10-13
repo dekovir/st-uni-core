@@ -1,7 +1,7 @@
 #include "unicore/stb/StbSurfaceLoader.hpp"
 #if defined(UNICORE_USE_STB_IMAGE)
 #include "unicore/io/File.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 

@@ -1,7 +1,7 @@
 #include "unicore/stb/StbEasyFont.hpp"
 #if defined(UNICORE_USE_STB_EASY_FONT)
 #include <stb_easy_font.h>
-#include "unicore/Unicode.hpp"
+#include "unicore/system/Unicode.hpp"
 
 namespace unicore
 {

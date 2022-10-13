@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Display.hpp"
+#include "unicore/platform/Display.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include "SDL2Utils.hpp"
 
@@ -11,7 +11,6 @@ namespace unicore
 	{
 		UC_OBJECT(SDL2Display, Display)
 	public:
-
 		SDL2Display(SDL2Looper& looper, const DisplaySettings& settings);
 		~SDL2Display() override;
 
@@ -27,6 +26,7 @@ namespace unicore
 		bool on_event(const SDL_Event& evt) override;
 
 	protected:
+		Logger& _logger;
 		SDL2Looper& _looper;
 		SDL_Window* _handle;
 		DisplayMode _mode;

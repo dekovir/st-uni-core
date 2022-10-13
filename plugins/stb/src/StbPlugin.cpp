@@ -1,5 +1,5 @@
 #include "unicore/stb/StbPlugin.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 #include "unicore/renderer/Renderer.hpp"
 #include "unicore/stb/StbEasyFontLoader.hpp"
 #include "unicore/stb/StbSurfaceLoader.hpp"
