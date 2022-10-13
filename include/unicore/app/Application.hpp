@@ -10,13 +10,12 @@ namespace unicore
 		Platform& platform;
 	};
 
-	// TODO: Rename to Application/App
-	class Core
+	class Application
 	{
 		ProxyLogger _logger;
 	public:
-		explicit Core(const CoreSettings& settings);
-		virtual ~Core();
+		explicit Application(const CoreSettings& settings);
+		virtual ~Application();
 
 		Platform& platform;
 		Logger& logger;

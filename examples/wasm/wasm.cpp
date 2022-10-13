@@ -49,7 +49,7 @@ namespace unicore
 		Optional<WasmFunction> _draw;
 	};
 
-	static MyCore* s_example = nullptr;
+	static MyApp* s_example = nullptr;
 	static Shared<State> s_state;
 	static TimeSpan s_state_time = TimeSpanConst::Zero;
 
@@ -119,8 +119,8 @@ namespace unicore
 		s_example->_sprite_count++;
 	}
 
-	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore(create_settings(settings, "Wasm"))
+	MyApp::MyApp(const CoreSettings& settings)
+		: SDLApplication(create_settings(settings, "Wasm"))
 		, _console(80, 20)
 	{
 		UC_LOG_INFO(logger) << "Starting";
@@ -130,13 +130,13 @@ namespace unicore
 		init_plugins(*this);
 	}
 
-	MyCore::~MyCore()
+	MyApp::~MyApp()
 	{
 		s_example = nullptr;
 		s_state = nullptr;
 	}
 
-	void MyCore::on_init()
+	void MyApp::on_init()
 	{
 		_font = resources.load<Font>("font_004.fnt"_path);
 		if (auto tex = resources.load<Texture>("zazaka.png"_path))
@@ -188,7 +188,7 @@ namespace unicore
 		resources.unload_unused();
 	}
 
-	void MyCore::on_update()
+	void MyApp::on_update()
 	{
 #if !defined(UNICORE_PLATFORM_WEB)
 		if (input.keyboard().down(KeyCode::Escape))
@@ -255,12 +255,12 @@ namespace unicore
 		_sprite_batch.flush();
 	}
 
-	void MyCore::on_draw()
+	void MyApp::on_draw()
 	{
 		renderer.clear(ColorConst4b::Black);
 
 		_sprite_batch.render(renderer);
 	}
 
-	UNICORE_MAIN_CORE(MyCore);
+	UNICORE_MAIN_CORE(MyApp);
 }

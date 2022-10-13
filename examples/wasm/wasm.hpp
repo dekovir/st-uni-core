@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/app/SDLCore.hpp"
+#include "unicore/app/SDLApplication.hpp"
 #include "unicore/math/Random.hpp"
 #include "unicore/system/Console.hpp"
 #include "unicore/renderer/Font.hpp"
@@ -12,11 +12,11 @@ namespace unicore
 	class WasmRuntime;
 	class WasmModule;
 
-	class MyCore : public SDLCore
+	class MyApp : public SDLApplication
 	{
 	public:
-		explicit MyCore(const CoreSettings& settings);
-		~MyCore() override;
+		explicit MyApp(const CoreSettings& settings);
+		~MyApp() override;
 
 		//protected:
 		Shared<Font> _font;

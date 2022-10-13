@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/app/SDLCore.hpp"
+#include "unicore/app/SDLApplication.hpp"
 #include "unicore/renderer/Graphics2D.hpp"
 #include "unicore/renderer/SpriteBatch.hpp"
 
@@ -21,10 +21,10 @@ namespace unicore
 		void update(const Vector2i& size, float delta);
 	};
 
-	class MyCore : public SDLCore
+	class MyApp : public SDLApplication
 	{
 	public:
-		explicit MyCore(const CoreSettings& settings);
+		explicit MyApp(const CoreSettings& settings);
 
 	protected:
 		Shared<Texture> _tex;

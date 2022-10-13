@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/app/Core.hpp"
+#include "unicore/app/Application.hpp"
 
 namespace unicore
 {
@@ -10,11 +10,11 @@ namespace unicore
 		DisplaySettings display;
 	};
 
-	class DisplayCore : public Core
+	class DisplayApplication : public Application
 	{
 	public:
-		explicit DisplayCore(const DisplayCoreSettings& settings);
-		~DisplayCore() override;
+		explicit DisplayApplication(const DisplayCoreSettings& settings);
+		~DisplayApplication() override;
 
 		Display& display;
 

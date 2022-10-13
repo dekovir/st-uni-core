@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/app/SDLCore.hpp"
+#include "unicore/app/SDLApplication.hpp"
 #include "unicore/renderer/SpriteBatch.hpp"
 #include "example.hpp"
 
@@ -7,10 +7,10 @@ namespace unicore
 {
 	class ReadFileProvider;
 
-	class MyCore : public SDLCore
+	class MyApp : public SDLApplication
 	{
 	public:
-		explicit MyCore(const CoreSettings& settings);
+		explicit MyApp(const CoreSettings& settings);
 
 	protected:
 		Shared<Example> _example;

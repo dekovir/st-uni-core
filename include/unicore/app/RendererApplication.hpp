@@ -1,37 +1,12 @@
 #pragma once
-#include "unicore/app/DisplayCore.hpp"
+#include "unicore/app/DisplayApplication.hpp"
 #include "unicore/system/TimeSpan.hpp"
+#include "unicore/renderer/FPSCounter.hpp"
 #include "unicore/renderer/Renderer.hpp"
 
 namespace unicore
 {
-	// TODO: Move to separate file
-	class FPSCounter
-	{
-	public:
-		UC_NODISCARD constexpr int current() const { return _current; }
-
-		void update(const TimeSpan& delta)
-		{
-			_time += delta;
-			if (_time >= TimeSpanConst::OneSecond)
-			{
-				_current = _counter;
-
-				_counter = 0;
-				_time -= TimeSpanConst::OneSecond;
-			}
-		}
-
-		void frame() { _counter++; }
-
-	protected:
-		int _current = 0;
-		int _counter = 0;
-		TimeSpan _time = TimeSpanConst::Zero;
-	};
-
-	class RendererCore : public DisplayCore
+	class RendererApplication : public DisplayApplication
 	{
 		ProxyLogger _renderer_logger;
 	public:
@@ -39,7 +14,7 @@ namespace unicore
 
 		Renderer& renderer;
 
-		explicit RendererCore(const DisplayCoreSettings& settings, const RendererFactory& renderer_factory);
+		explicit RendererApplication(const DisplayCoreSettings& settings, const RendererFactory& renderer_factory);
 
 		UC_NODISCARD constexpr int fps() const { return _fps_counter.current(); }
 
@@ -56,7 +31,7 @@ namespace unicore
 
 	template<typename RendererType,
 		std::enable_if_t<std::is_base_of_v<Renderer, RendererType>>* = nullptr>
-	class RendererCoreT : public RendererCore
+	class RendererCoreT : public RendererApplication
 	{
 	public:
 		using RendererFactoryT = std::function<RendererType& (Logger& logger, Display& display)>;
@@ -64,8 +39,8 @@ namespace unicore
 		RendererType& renderer;
 
 		explicit RendererCoreT(const DisplayCoreSettings& settings, const RendererFactoryT& renderer_factory)
-			: RendererCore(settings, renderer_factory)
-			, renderer(static_cast<RendererType&>(RendererCore::renderer))
+			: RendererApplication(settings, renderer_factory)
+			, renderer(static_cast<RendererType&>(RendererApplication::renderer))
 		{
 		}
 	};

@@ -31,13 +31,13 @@ namespace unicore
 		angle += angle_speed * delta;
 	}
 
-	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore(create_settings(settings, "Minimal", { false, WindowSize, WindowFlags }))
+	MyApp::MyApp(const CoreSettings& settings)
+		: SDLApplication(create_settings(settings, "Minimal", { false, WindowSize, WindowFlags }))
 	{
 		init_plugins(*this);
 	}
 
-	void MyCore::on_init()
+	void MyApp::on_init()
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
@@ -84,7 +84,7 @@ namespace unicore
 		_tex = renderer.create_texture(circle);
 	}
 
-	void MyCore::on_update()
+	void MyApp::on_update()
 	{
 		const auto screen_size = renderer.screen_size();
 
@@ -146,7 +146,7 @@ namespace unicore
 		_sprite_batch.flush();
 	}
 
-	void MyCore::on_draw()
+	void MyApp::on_draw()
 	{
 		renderer.clear(ColorConst4b::Black);
 
@@ -155,7 +155,7 @@ namespace unicore
 		_sprite_batch.render(renderer);
 	}
 
-	void MyCore::spawn_entity(const Vector2f& position, const Vector2i& size)
+	void MyApp::spawn_entity(const Vector2f& position, const Vector2i& size)
 	{
 		Entity entity;
 		entity.center = position;
@@ -174,7 +174,7 @@ namespace unicore
 		_entites.push_back(entity);
 	}
 
-	void MyCore::spawn_entities(unsigned count)
+	void MyApp::spawn_entities(unsigned count)
 	{
 		if (!_tex) return;
 
@@ -191,5 +191,5 @@ namespace unicore
 		}
 	}
 
-	UNICORE_MAIN_CORE(MyCore);
+	UNICORE_MAIN_CORE(MyApp);
 }

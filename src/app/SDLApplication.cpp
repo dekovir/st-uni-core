@@ -1,4 +1,4 @@
-#include "unicore/app/SDLCore.hpp"
+#include "unicore/app/SDLApplication.hpp"
 #include "Platforms/SDL2/SDL2RendererSDL.hpp"
 
 namespace unicore
@@ -25,12 +25,12 @@ namespace unicore
 		}
 	}
 
-	SDLCore::SDLCore(const DisplayCoreSettings& settings)
+	SDLApplication::SDLApplication(const DisplayCoreSettings& settings)
 		: RendererCoreT(settings, &details::create_renderer)
 	{
 	}
 
-	SDLCore::~SDLCore()
+	SDLApplication::~SDLApplication()
 	{
 		// TODO: Implement delete logic
 		//details::renderer = nullptr;

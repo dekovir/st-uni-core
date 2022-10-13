@@ -1,4 +1,4 @@
-#include "unicore/app/Core.hpp"
+#include "unicore/app/Application.hpp"
 #include "unicore/system/TimeSpan.hpp"
 #include "unicore/platform/Time.hpp"
 #include "unicore/platform/Input.hpp"
@@ -8,8 +8,8 @@
 
 namespace unicore
 {
-	Core::Core(const CoreSettings& settings)
-		: _logger("[Core] ", settings.platform.logger)
+	Application::Application(const CoreSettings& settings)
+		: _logger("[App] ", settings.platform.logger)
 		, platform(settings.platform)
 		, logger(_logger)
 		, time(platform.time)
@@ -23,12 +23,12 @@ namespace unicore
 		_modules.add(resources);
 	}
 
-	Core::~Core()
+	Application::~Application()
 	{
 		_modules.unregister_all();
 	}
 
-	void Core::init()
+	void Application::init()
 	{
 		_modules.register_all({ &logger, _modules });
 
@@ -40,7 +40,7 @@ namespace unicore
 		on_init();
 	}
 
-	void Core::update()
+	void Application::update()
 	{
 		platform.update();
 
@@ -48,7 +48,7 @@ namespace unicore
 			on_update();
 	}
 
-	void Core::add_plugin(Unique<Plugin>&& plugin)
+	void Application::add_plugin(Unique<Plugin>&& plugin)
 	{
 		_plugins.push_back(std::move(plugin));
 		UC_LOG_DEBUG(_logger) << "Add " << _plugins.back()->type();

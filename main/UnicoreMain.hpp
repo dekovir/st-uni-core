@@ -1,11 +1,11 @@
 #pragma once
-#include "unicore/app/Core.hpp"
+#include "unicore/app/Application.hpp"
 
 namespace unicore
 {
-	extern Unique<Core> create_main_core(const CoreSettings& settings);
+	extern Unique<Application> create_main_core(const CoreSettings& settings);
 }
 
 #define UNICORE_MAIN_CORE(CoreType) \
-	Unique<Core> create_main_core(const CoreSettings& settings) \
+	Unique<Application> create_main_core(const CoreSettings& settings) \
 	{ return make_unique<CoreType>(settings); }

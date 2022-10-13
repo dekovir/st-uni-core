@@ -11,15 +11,15 @@ namespace unicore
 {
 	constexpr DisplayWindowFlags WindowFlags = DisplayWindowFlag::Resizable;
 
-	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore(create_settings(settings, "Testbed"))
+	MyApp::MyApp(const CoreSettings& settings)
+		: SDLApplication(create_settings(settings, "Testbed"))
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
 		init_plugins(*this);
 	}
 
-	void MyCore::on_init()
+	void MyApp::on_init()
 	{
 #if 1
 		_archive = resources.load<ReadFileProvider>("negative.7z"_path);
@@ -34,7 +34,7 @@ namespace unicore
 		set_example(0);
 	}
 
-	void MyCore::on_update()
+	void MyApp::on_update()
 	{
 #if !defined(UNICORE_PLATFORM_WEB)
 		if (input.keyboard().down(KeyCode::Escape))
@@ -96,7 +96,7 @@ namespace unicore
 		}
 	}
 
-	void MyCore::on_draw()
+	void MyApp::on_draw()
 	{
 		renderer.clear(ColorConst4b::Black);
 
@@ -108,7 +108,7 @@ namespace unicore
 		_draw_calls = renderer.draw_calls();
 	}
 
-	void MyCore::set_example(int index)
+	void MyApp::set_example(int index)
 	{
 		if (_example_index == index) return;
 
@@ -130,5 +130,5 @@ namespace unicore
 		//resources.dump_used();
 	}
 
-	UNICORE_MAIN_CORE(MyCore);
+	UNICORE_MAIN_CORE(MyApp);
 }

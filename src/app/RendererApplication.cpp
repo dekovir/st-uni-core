@@ -1,24 +1,24 @@
-#include "unicore/app/RendererCore.hpp"
+#include "unicore/app/RendererApplication.hpp"
 #include "unicore/platform/Time.hpp"
 
 namespace unicore
 {
-	RendererCore::RendererCore(const DisplayCoreSettings& settings, const RendererFactory& renderer_factory)
-		: DisplayCore(settings)
+	RendererApplication::RendererApplication(const DisplayCoreSettings& settings, const RendererFactory& renderer_factory)
+		: DisplayApplication(settings)
 		, _renderer_logger("[Renderer] ", platform.logger)
 		, renderer(renderer_factory(_renderer_logger, display))
 	{
 		_modules.add(renderer);
 	}
 
-	void RendererCore::update()
+	void RendererApplication::update()
 	{
-		DisplayCore::update();
+		DisplayApplication::update();
 
 		_fps_counter.update(time.delta());
 	}
 
-	void RendererCore::draw()
+	void RendererApplication::draw()
 	{
 		if (renderer.begin_frame())
 		{
@@ -28,7 +28,7 @@ namespace unicore
 		}
 	}
 
-	void RendererCore::frame()
+	void RendererApplication::frame()
 	{
 		update();
 		draw();

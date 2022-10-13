@@ -1,7 +1,7 @@
 #pragma once
-#include "unicore/app/Core.hpp"
+#include "unicore/app/Application.hpp"
 
 namespace unicore
 {
-	extern void init_plugins(Core& core);
+	extern void init_plugins(Application& app);
 }

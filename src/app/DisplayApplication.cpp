@@ -1,4 +1,4 @@
-#include "unicore/app/DisplayCore.hpp"
+#include "unicore/app/DisplayApplication.hpp"
 #include "unicore/platform/Input.hpp"
 
 namespace unicore
@@ -15,18 +15,18 @@ namespace unicore
 		}
 	}
 
-	DisplayCore::DisplayCore(const DisplayCoreSettings& settings)
-		: Core(settings)
+	DisplayApplication::DisplayApplication(const DisplayCoreSettings& settings)
+		: Application(settings)
 		, display(internal::create_display(platform, settings.display))
 	{
 	}
 
-	DisplayCore::~DisplayCore()
+	DisplayApplication::~DisplayApplication()
 	{
 		internal::display = nullptr;
 	}
 
-	DisplayCoreSettings DisplayCore::create_settings(
+	DisplayCoreSettings DisplayApplication::create_settings(
 		const CoreSettings& settings, StringView title, DisplayMode mode)
 	{
 		static ProxyLogger logger("[Display] ", settings.platform.logger);
