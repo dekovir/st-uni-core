@@ -16,7 +16,7 @@ namespace unicore
 			switch (batch.type)
 			{
 			case BatchType::Point:
-				renderer.draw_points_f(&_points[batch.start], batch.count);
+				renderer.draw_pointsf(&_points[batch.start], batch.count);
 				break;
 
 			case BatchType::Line:
@@ -24,7 +24,7 @@ namespace unicore
 				{
 					const auto& p0 = _points[batch.start + i + 0];
 					const auto& p1 = _points[batch.start + i + 1];
-					renderer.draw_line_f(p0, p1);
+					renderer.draw_linef(p0, p1);
 				}
 				break;
 
@@ -35,7 +35,7 @@ namespace unicore
 					const auto& p0 = _points[batch.start + i + 0];
 					const auto& p1 = _points[batch.start + i + 1];
 					const Rectf r(p0, p1);
-					renderer.draw_rect_f(r, batch.type == BatchType::RectFilled);
+					renderer.draw_rectf(r, batch.type == BatchType::RectFilled);
 				}
 				break;
 
@@ -46,7 +46,7 @@ namespace unicore
 					s_verts[i].pos = _points[batch.start + i];
 					s_verts[i].col = batch.color;
 				}
-				renderer.draw_triangles(s_verts.data(), batch.count);
+				renderer.draw_trianglesf(s_verts.data(), batch.count);
 				break;
 
 			default:

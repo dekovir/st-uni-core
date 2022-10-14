@@ -1,8 +1,8 @@
 #pragma once
-#include "unicore/EnumFlag.hpp"
+#include "unicore/system/EnumFlag.hpp"
 #include "unicore/math/Rect.hpp"
-#include "unicore/Color4.hpp"
-#include "unicore/Texture.hpp"
+#include "unicore/renderer/Color4.hpp"
+#include "unicore/renderer/Texture.hpp"
 #include "unicore/renderer/ogl1/PipelineState.hpp"
 #include "unicore/renderer/ogl1/Geometry.hpp"
 

@@ -72,7 +72,7 @@ namespace unicore
 		for (unsigned i = 0; i < 360; i += 15)
 		{
 			const auto pos = Vector2i(0, radius_outer).rotate(Degrees(static_cast<float>(i)));
-			canvas.draw_line(center, center + pos, ColorConst4b::White);
+			canvas.draw_linei(center, center + pos, ColorConst4b::White);
 		}
 
 		constexpr auto step = radius_outer / 8;

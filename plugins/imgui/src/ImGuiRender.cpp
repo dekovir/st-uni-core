@@ -132,7 +132,7 @@ namespace unicore
 					}
 
 					const auto tex = static_cast<Texture*>(pcmd->GetTexID());
-					_render.draw_triangles(s_verts.data(), s_verts.size(), tex);
+					_render.draw_trianglesf(s_verts.data(), s_verts.size(), tex);
 				}
 			}
 		}

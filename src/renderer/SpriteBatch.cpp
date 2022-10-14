@@ -20,7 +20,7 @@ namespace unicore
 	{
 		for (const auto& batch : _batches)
 		{
-			renderer.draw_triangles(&_vertices[batch.start],
+			renderer.draw_trianglesf(&_vertices[batch.start],
 				batch.count, batch.texture.get());
 		}
 	}

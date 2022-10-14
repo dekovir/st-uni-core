@@ -1,7 +1,7 @@
 #pragma once
-#include "unicore/Color3.hpp"
-#include "unicore/Color4.hpp"
-#include "unicore/Vertex.hpp"
+#include "unicore/renderer/Color3.hpp"
+#include "unicore/renderer/Color4.hpp"
+#include "unicore/renderer/Vertex.hpp"
 #include "unicore/renderer/ogl1/MatrixStack.hpp"
 
 namespace unicore::ogl1

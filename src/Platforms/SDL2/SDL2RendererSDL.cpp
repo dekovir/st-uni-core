@@ -241,26 +241,26 @@ namespace unicore
 	}
 
 	// DRAW POINTS ////////////////////////////////////////////////////////////////
-	void SDL2RendererSDL::draw_point(const Vector2i& p)
+	void SDL2RendererSDL::draw_pointi(const Vector2i& p)
 	{
 		SDL_RenderDrawPoint(_renderer, p.x, p.y);
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_point_f(const Vector2f& p)
+	void SDL2RendererSDL::draw_pointf(const Vector2f& p)
 	{
 		SDL_RenderDrawPointF(_renderer, p.x, p.y);
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_points(const Vector2i* points, unsigned count)
+	void SDL2RendererSDL::draw_pointsi(const Vector2i* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points);
 		SDL_RenderDrawPoints(_renderer, s_points.data(), static_cast<int>(count));
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_points_f(const Vector2f* points, unsigned count)
+	void SDL2RendererSDL::draw_pointsf(const Vector2f* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points_f);
 		SDL_RenderDrawPointsF(_renderer, s_points_f.data(), static_cast<int>(count));
@@ -268,26 +268,26 @@ namespace unicore
 	}
 
 	// DRAW LINES /////////////////////////////////////////////////////////////////
-	void SDL2RendererSDL::draw_line(const Vector2i& p1, const Vector2i& p2)
+	void SDL2RendererSDL::draw_linei(const Vector2i& p1, const Vector2i& p2)
 	{
 		SDL_RenderDrawLine(_renderer, p1.x, p1.y, p2.x, p2.y);
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_line_f(const Vector2f& p1, const Vector2f& p2)
+	void SDL2RendererSDL::draw_linef(const Vector2f& p1, const Vector2f& p2)
 	{
 		SDL_RenderDrawLineF(_renderer, p1.x, p1.y, p2.x, p2.y);
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_poly_line(const Vector2i* points, unsigned count)
+	void SDL2RendererSDL::draw_poly_linei(const Vector2i* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points);
 		SDL_RenderDrawLines(_renderer, s_points.data(), static_cast<int>(count));
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_poly_line_f(const Vector2f* points, unsigned count)
+	void SDL2RendererSDL::draw_poly_linef(const Vector2f* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points_f);
 		SDL_RenderDrawLinesF(_renderer, s_points_f.data(), static_cast<int>(count));
@@ -295,7 +295,7 @@ namespace unicore
 	}
 
 	// DRAW RECTS /////////////////////////////////////////////////////////////////
-	void SDL2RendererSDL::draw_rect(const Recti& rect, bool filled)
+	void SDL2RendererSDL::draw_recti(const Recti& rect, bool filled)
 	{
 		SDL_Rect sdl_rect;
 		SDL2Utils::convert(rect, sdl_rect);
@@ -304,7 +304,7 @@ namespace unicore
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_rect_f(const Rectf& rect, bool filled)
+	void SDL2RendererSDL::draw_rectf(const Rectf& rect, bool filled)
 	{
 		SDL_FRect sdl_rect;
 		SDL2Utils::convert(rect, sdl_rect);
@@ -313,7 +313,7 @@ namespace unicore
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_rects(const Recti* rects, unsigned count, bool filled)
+	void SDL2RendererSDL::draw_rectsi(const Recti* rects, unsigned count, bool filled)
 	{
 		SDL2Utils::convert(rects, count, s_rects);
 		if (!filled)
@@ -323,7 +323,7 @@ namespace unicore
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_rects_f(const Rectf* rects, unsigned count, bool filled)
+	void SDL2RendererSDL::draw_rectsf(const Rectf* rects, unsigned count, bool filled)
 	{
 		SDL2Utils::convert(rects, count, s_rects_f);
 		if (!filled)
@@ -334,7 +334,7 @@ namespace unicore
 	}
 
 	// DRAW TRIANGLES /////////////////////////////////////////////////////////////
-	void SDL2RendererSDL::draw_triangles(
+	void SDL2RendererSDL::draw_trianglesf(
 		const VertexColor2* vertices, unsigned num_vertices)
 	{
 		s_vertices.resize(num_vertices);
@@ -362,7 +362,7 @@ namespace unicore
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_triangles(const VertexTexColor2* vertices,
+	void SDL2RendererSDL::draw_trianglesf(const VertexTexColor2* vertices,
 		unsigned num_vertices, const Texture* texture)
 	{
 		const auto tex = dynamic_cast<const SDL2BaseTexture*>(texture);
@@ -396,7 +396,7 @@ namespace unicore
 	}
 
 	// COPY TEXTURE ///////////////////////////////////////////////////////////////
-	bool SDL2RendererSDL::copy(const Shared<Texture>& texture,
+	bool SDL2RendererSDL::copyi(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Recti>& dst_rect)
 	{
 		if (const auto tex = std::dynamic_pointer_cast<SDL2BaseTexture>(texture))
@@ -418,7 +418,7 @@ namespace unicore
 		return false;
 	}
 
-	bool SDL2RendererSDL::copy_f(const Shared<Texture>& texture,
+	bool SDL2RendererSDL::copyf(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect)
 	{
 		if (const auto tex = std::dynamic_pointer_cast<SDL2BaseTexture>(texture))
@@ -441,7 +441,7 @@ namespace unicore
 		return false;
 	}
 
-	bool SDL2RendererSDL::copy_ex(const Shared<Texture>& texture,
+	bool SDL2RendererSDL::copy_exi(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Recti>& dst_rect,
 		Degrees angle, const Optional<Vector2i>& center, sdl2::RenderFlip flip)
 	{
@@ -470,7 +470,7 @@ namespace unicore
 		return false;
 	}
 
-	bool SDL2RendererSDL::copy_ex_f(const Shared<Texture>& texture,
+	bool SDL2RendererSDL::copy_exf(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect,
 		Degrees angle, const Optional<Vector2f>& center, sdl2::RenderFlip flip)
 	{
