@@ -1,5 +1,4 @@
 #include "unicore/renderer/SpriteBatch.hpp"
-#include "unicore/math/Transform2.hpp"
 #include "unicore/renderer/Font.hpp"
 #include "unicore/renderer/Texture.hpp"
 #include "unicore/renderer/Sprite.hpp"
@@ -327,7 +326,7 @@ namespace unicore
 	}
 
 	SpriteBatch& SpriteBatch::print(const Shared<Font>& font,
-		const Transform2& tr, StringView32 text, const Color4b& color)
+		const Transform2f& tr, StringView32 text, const Color4b& color)
 	{
 		if (const auto textured = std::dynamic_pointer_cast<TexturedFont>(font))
 		{

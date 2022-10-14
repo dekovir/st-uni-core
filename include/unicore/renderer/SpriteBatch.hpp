@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/math/Rect.hpp"
+#include "unicore/math/Transform2.hpp"
 #include "unicore/system/TextBlock.hpp"
 #include "unicore/renderer/Vertex.hpp"
 #include "unicore/renderer/sdl2/PipelineRender.hpp"
@@ -9,7 +10,6 @@ namespace unicore
 	class Texture;
 	class Sprite;
 	class Font;
-	class Transform2;
 
 	class SpriteBatch : public Object
 	{
@@ -72,7 +72,7 @@ namespace unicore
 		SpriteBatch& print(const Shared<Font>& font, const Vector2f& pos,
 			StringView32 text, const Color4b& color = ColorConst4b::White);
 
-		SpriteBatch& print(const Shared<Font>& font, const Transform2& tr,
+		SpriteBatch& print(const Shared<Font>& font, const Transform2f& tr,
 			StringView32 text, const Color4b& color = ColorConst4b::White);
 
 		SpriteBatch& print(const TextBlock& block, const Vector2f& pos,

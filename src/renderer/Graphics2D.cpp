@@ -84,29 +84,29 @@ namespace unicore
 
 	Graphics2D& Graphics2D::move(const Vector2f& move)
 	{
-		transform *= Transform2::moved(move);
+		transform *= Transform2f::moved(move);
 		return *this;
 	}
 
 	Graphics2D& Graphics2D::rotate(Radians angle)
 	{
-		transform *= Transform2::rotated(angle);
+		transform *= Transform2f::rotated(angle);
 		return *this;
 	}
 
 	Graphics2D& Graphics2D::scale(const Vector2f& value)
 	{
-		transform *= Transform2::scaled(value);
+		transform *= Transform2f::scaled(value);
 		return *this;
 	}
 
 	Graphics2D& Graphics2D::scale(Float value)
 	{
-		transform *= Transform2::scaled(value);
+		transform *= Transform2f::scaled(value);
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::set_transform(const Transform2& tr)
+	Graphics2D& Graphics2D::set_transform(const Transform2f& tr)
 	{
 		transform = tr;
 		return *this;

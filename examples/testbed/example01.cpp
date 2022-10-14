@@ -130,7 +130,7 @@ namespace unicore
 		const auto& size = renderer.screen_size();
 		const auto center = size.cast<Float>() / 2.f;
 
-		Transform2 tr;
+		Transform2f tr;
 		tr.move = size.cast<float>() / 2.f;
 		tr.angle = _angle;
 		tr.scale.x = 1 + .5f * Math::sin(static_cast<float>(time.elapsed().total_seconds()));

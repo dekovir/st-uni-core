@@ -31,7 +31,7 @@ namespace unicore
 
 		RectangleTopology _topology;
 		GridMap<CellType> _map;
-		Transform2 _tr;
+		Transform2f _tr;
 
 		Graphics2D _graphics;
 		SpriteBatch _sprite_batch;

@@ -259,12 +259,3 @@ namespace unicore
 		return make(value.x, value.y);
 	}
 }
-
-template<typename T>
-struct std::hash<unicore::Vector2<T>>
-{
-	std::size_t operator()(const unicore::Vector2<T>& value) const noexcept
-	{
-		return std::hash<T>{}(value.x) ^ std::hash<T>{}(value.y << 2);
-	}
-};

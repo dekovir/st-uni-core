@@ -37,7 +37,7 @@ namespace unicore
 	public:
 		Graphics2D() = default;
 
-		Transform2 transform;
+		Transform2f transform;
 
 		void render(sdl2::PipelineRender& renderer) const;
 
@@ -49,7 +49,7 @@ namespace unicore
 		Graphics2D& scale(const Vector2f& value);
 		Graphics2D& scale(Float value);
 
-		Graphics2D& set_transform(const Transform2& tr);
+		Graphics2D& set_transform(const Transform2f& tr);
 		Graphics2D& reset_transform();
 
 		Graphics2D& set_color(const Color4b& color);
