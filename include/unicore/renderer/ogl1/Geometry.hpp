@@ -1,6 +1,7 @@
 #pragma once
 #include "unicore/renderer/Color3.hpp"
 #include "unicore/renderer/Color4.hpp"
+#include "unicore/renderer/Texture.hpp"
 #include "unicore/renderer/Vertex.hpp"
 #include "unicore/renderer/ogl1/MatrixStack.hpp"
 
@@ -22,6 +23,8 @@ namespace unicore::ogl1
 	public:
 		virtual void begin(RenderMode mode) = 0;
 		virtual void end() = 0;
+
+		virtual void bind_texture(const Shared<Texture>& texture) = 0;
 
 		// VERTEX ////////////////////////////////////////////////////////////////////
 		virtual void vertex2i(Int x, Int y) = 0;
@@ -75,5 +78,60 @@ namespace unicore::ogl1
 		virtual void color3f(const Color3f& value) { color4f(value.r, value.g, value.b, 1); }
 		// TODO: Replace with span
 		virtual void color3fv(const Float* v) { color4f(v[0], v[1], v[2], 1); }
+
+		// VERTEX ////////////////////////////////////////////////////////////////////
+		virtual void vertex_color2f(const VertexColor2& v)
+		{
+			color4b(v.col);
+			vertex2f(v.pos);
+		}
+
+		// TODO: Replace with span
+		virtual void vertex_color2fv(const VertexColor2* v, size_t num_verts)
+		{
+			for (size_t i = 0; i < num_verts; i++)
+				vertex_color2f(v[i]);
+		}
+
+		virtual void vertex_color3f(const VertexColor3& v)
+		{
+			color4b(v.col);
+			vertex3f(v.pos);
+		}
+
+		// TODO: Replace with span
+		virtual void vertex_color3fv(const VertexColor3* v, size_t num_verts)
+		{
+			for (size_t i = 0; i < num_verts; i++)
+				vertex_color3f(v[i]);
+		}
+
+		virtual void vertex_tex_color2f(const VertexTexColor2& v)
+		{
+			color4b(v.col);
+			tex_coord2f(v.uv);
+			vertex2f(v.pos);
+		}
+
+		// TODO: Replace with span
+		virtual void vertex_tex_color2fv(const VertexTexColor2* v, size_t num_verts)
+		{
+			for (size_t i = 0; i < num_verts; i++)
+				vertex_tex_color2f(v[i]);
+		}
+
+		virtual void vertex_tex_color3f(const VertexTexColor3& v)
+		{
+			color4b(v.col);
+			tex_coord2f(v.uv);
+			vertex3f(v.pos);
+		}
+
+		// TODO: Replace with span
+		virtual void vertex_tex_color3fv(const VertexTexColor3* v, size_t num_verts)
+		{
+			for (size_t i = 0; i < num_verts; i++)
+				vertex_tex_color3f(v[i]);
+		}
 	};
 }

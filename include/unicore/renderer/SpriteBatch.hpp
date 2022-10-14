@@ -4,6 +4,7 @@
 #include "unicore/system/TextBlock.hpp"
 #include "unicore/renderer/Vertex.hpp"
 #include "unicore/renderer/sdl2/PipelineRender.hpp"
+#include "unicore/renderer/ogl1/Geometry.hpp"
 
 namespace unicore
 {
@@ -18,6 +19,7 @@ namespace unicore
 		SpriteBatch() = default;
 
 		void render(sdl2::PipelineRender& renderer) const;
+		void render(ogl1::Geometry& renderer) const;
 
 		SpriteBatch& clear();
 		SpriteBatch& flush();

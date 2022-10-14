@@ -24,6 +24,19 @@ namespace unicore
 		}
 	}
 
+	void SpriteBatch::render(ogl1::Geometry& renderer) const
+	{
+		renderer.begin(ogl1::RenderMode::Triangles);
+
+		for (const auto& batch : _batches)
+		{
+			renderer.bind_texture(batch.texture);
+			renderer.vertex_tex_color2fv(&_vertices[batch.start], batch.count);
+		}
+
+		renderer.end();
+	}
+
 	SpriteBatch& SpriteBatch::clear()
 	{
 		_batches.clear();

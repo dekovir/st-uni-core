@@ -2,7 +2,6 @@
 #include "unicore/system/EnumFlag.hpp"
 #include "unicore/math/Rect.hpp"
 #include "unicore/renderer/Color4.hpp"
-#include "unicore/renderer/Texture.hpp"
 #include "unicore/renderer/ogl1/PipelineState.hpp"
 #include "unicore/renderer/ogl1/Geometry.hpp"
 
@@ -32,8 +31,6 @@ namespace unicore::ogl1
 
 		virtual void viewport(Int x, Int y, Int width, Int height) = 0;
 		virtual void viewport(const Recti& rect) { viewport(rect.x, rect.y, rect.w, rect.h); }
-
-		virtual void bind_texture(const Shared<Texture>& texture) = 0;
 
 		virtual void draw_elements(RenderMode mode, size_t count, const UInt16* indices) = 0;
 	};
