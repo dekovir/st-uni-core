@@ -5,20 +5,20 @@
 
 namespace unicore
 {
-	// VertexBase /////////////////////////////////////////////////////////////////
+	// VertexPosition /////////////////////////////////////////////////////////////
 	template<typename TPos>
-	struct VertexBase
+	struct VertexPosition
 	{
 		TPos pos;
 
-		constexpr VertexBase() = default;
-		constexpr VertexBase(const TPos& pos_) : pos(pos_) {}
+		constexpr VertexPosition() = default;
+		constexpr VertexPosition(const TPos& pos_) : pos(pos_) {}
 
-		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexBase);
+		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexPosition);
 	};
 
-	using VertexBase2f = VertexBase<Vector2f>;
-	using VertexBase3f = VertexBase<Vector3f>;
+	using VertexBase2f = VertexPosition<Vector2f>;
+	using VertexBase3f = VertexPosition<Vector3f>;
 
 	// VertexColor ////////////////////////////////////////////////////////////////
 	template<typename TPos, typename TColor>
@@ -116,6 +116,95 @@ namespace unicore
 
 	using VertexColorTexture2f = VertexColorTexture<Vector2f, Vector2f, Color4b>;
 	using VertexColorTexture3f = VertexColorTexture<Vector3f, Vector2f, Color4b>;
+
+	// VertexNormalColor //////////////////////////////////////////////////////////
+	template<typename TPos, typename TNormal, typename TColor>
+	struct VertexNormalColor
+	{
+		TPos pos;
+		TNormal normal;
+		TColor color;
+
+		constexpr VertexNormalColor() = default;
+
+		explicit constexpr VertexNormalColor(const TPos& pos_)
+			: pos(pos_), normal({}), color({})
+		{}
+
+		constexpr VertexNormalColor(const TPos& pos_, const TNormal& normal_)
+			: pos(pos_), normal(normal_), color({})
+		{}
+
+		constexpr VertexNormalColor(const TPos& pos_, const TNormal& normal_, const TColor& color_)
+			: pos(pos_), normal(normal_), color(color_)
+		{}
+
+		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexNormalColor);
+	};
+
+	using VertexNormalColor2f = VertexNormalColor<Vector2f, Vector2f, Color4b>;
+	using VertexNormalColor3f = VertexNormalColor<Vector3f, Vector3f, Color4b>;
+
+	// VertexNormalTexture ///////////////////////////////////////////////////////
+	template<typename TPos, typename TNormal, typename TTexture>
+	struct VertexNormalTexture
+	{
+		TPos pos;
+		TNormal normal;
+		TTexture uv;
+
+		constexpr VertexNormalTexture() = default;
+
+		explicit constexpr VertexNormalTexture(const TPos& pos_)
+			: pos(pos_), normal({}), uv({})
+		{}
+
+		constexpr VertexNormalTexture(const TPos& pos_, const TNormal& normal_)
+			: pos(pos_), normal(normal_), uv({})
+		{}
+
+		constexpr VertexNormalTexture(const TPos& pos_, const TNormal& normal_, const TTexture& uv_)
+			: pos(pos_), normal(normal_), uv(uv_)
+		{}
+
+		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexNormalTexture);
+	};
+
+	using VertexNormalTexture2f = VertexNormalTexture<Vector2f, Vector2f, Vector2f>;
+	using VertexNormalTexture3f = VertexNormalTexture<Vector3f, Vector3f, Vector2f>;
+
+	// VertexNormalColorTexture //////////////////////////////////////////////////////////
+	template<typename TPos, typename TNormal, typename TColor, typename TTexture>
+	struct VertexNormalColorTexture
+	{
+		TPos pos;
+		TNormal normal;
+		TColor color;
+		TTexture uv;
+
+		constexpr VertexNormalColorTexture() = default;
+
+		explicit constexpr VertexNormalColorTexture(const TPos& pos_)
+			: pos(pos_), normal({}), color({}), uv({})
+		{}
+
+		constexpr VertexNormalColorTexture(const TPos& pos_, const TNormal& normal_)
+			: pos(pos_), normal(normal_), color({}), uv({})
+		{}
+
+		constexpr VertexNormalColorTexture(const TPos& pos_, const TNormal& normal_, const TColor& color_)
+			: pos(pos_), normal(normal_), color(color_), uv({})
+		{}
+
+		constexpr VertexNormalColorTexture(const TPos& pos_, const TNormal& normal_, const TColor& color_, const TTexture& uv_)
+			: pos(pos_), normal(normal_), color(color_), uv(uv_)
+		{}
+
+		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexNormalColorTexture);
+	};
+
+	using VertexNormalColorTexture2f = VertexNormalColorTexture<Vector2f, Vector2f, Color4b, Vector2f>;
+	using VertexNormalColorTexture3f = VertexNormalColorTexture<Vector3f, Vector3f, Color4b, Vector2f>;
 
 	// QUAD ///////////////////////////////////////////////////////////////////////
 	template<typename TVertex>
