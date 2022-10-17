@@ -14,7 +14,11 @@ namespace unicore
 		UC_NODISCARD virtual float get_height() const = 0;
 
 		UC_NODISCARD virtual float calc_width(StringView32 text) const = 0;
-		UC_NODISCARD virtual Vector2f calc_size(StringView32 text) const;
+
+		UC_NODISCARD virtual Vector2f calc_size(StringView32 text) const
+		{
+			return { calc_width(text), get_height() };
+		}
 	};
 
 	class GeometryFont : public Font
