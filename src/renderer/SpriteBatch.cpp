@@ -5,11 +5,11 @@
 
 namespace unicore
 {
-	static VertexTexColor2 s_quad[4];
-	static List<VertexColorQuad2> s_quad_list;
-	static Dictionary<Shared<Texture>, List<VertexTexColorQuad2>> s_quad_dict;
+	static VertexColorTexture2f s_quad[4];
+	static List<QuadColor2f> s_quad_list;
+	static Dictionary<Shared<Texture>, List<QuadColorTexture2f>> s_quad_dict;
 
-	static void convert(const VertexColor2& from, VertexTexColor2& to)
+	static void convert(const VertexColor2f& from, VertexColorTexture2f& to)
 	{
 		to.pos = from.pos;
 		to.col = from.col;
@@ -61,7 +61,7 @@ namespace unicore
 
 	// DRAW TRIANGLE /////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::draw_tri(
-		const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2,
+		const VertexColorTexture2f& v0, const VertexColorTexture2f& v1, const VertexColorTexture2f& v2,
 		const Shared<Texture>& texture)
 	{
 		set_texture(texture);
@@ -74,7 +74,7 @@ namespace unicore
 		return *this;
 	}
 
-	SpriteBatch& SpriteBatch::draw_tri(const VertexTexColor2* arr,
+	SpriteBatch& SpriteBatch::draw_tri(const VertexColorTexture2f* arr,
 		const Shared<Texture>& texture)
 	{
 		set_texture(texture);
@@ -89,8 +89,8 @@ namespace unicore
 
 	// DRAW QUAD /////////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::draw_quad(
-		const VertexTexColor2& v0, const VertexTexColor2& v1,
-		const VertexTexColor2& v2, const VertexTexColor2& v3,
+		const VertexColorTexture2f& v0, const VertexColorTexture2f& v1,
+		const VertexColorTexture2f& v2, const VertexColorTexture2f& v3,
 		const Shared<Texture>& texture)
 	{
 		set_texture(texture);
@@ -107,7 +107,7 @@ namespace unicore
 		return *this;
 	}
 
-	SpriteBatch& SpriteBatch::draw_quad(const VertexTexColor2* arr,
+	SpriteBatch& SpriteBatch::draw_quad(const VertexColorTexture2f* arr,
 		const Shared<Texture>& texture)
 	{
 		set_texture(texture);
@@ -138,17 +138,17 @@ namespace unicore
 		if (uv.has_value())
 		{
 			const auto r = uv.value();
-			s_quad[0].uv = Vector2f(r.x, r.y);
-			s_quad[1].uv = Vector2f(r.x + r.w, r.y);
-			s_quad[2].uv = Vector2f(r.x + r.w, r.y + r.h);
-			s_quad[3].uv = Vector2f(r.x, r.y + r.h);
+			s_quad[0].tex = Vector2f(r.x, r.y);
+			s_quad[1].tex = Vector2f(r.x + r.w, r.y);
+			s_quad[2].tex = Vector2f(r.x + r.w, r.y + r.h);
+			s_quad[3].tex = Vector2f(r.x, r.y + r.h);
 		}
 		else
 		{
-			s_quad[0].uv = Vector2f(0, 0);
-			s_quad[1].uv = Vector2f(1, 0);
-			s_quad[2].uv = Vector2f(1, 1);
-			s_quad[3].uv = Vector2f(0, 1);
+			s_quad[0].tex = Vector2f(0, 0);
+			s_quad[1].tex = Vector2f(1, 0);
+			s_quad[2].tex = Vector2f(1, 1);
+			s_quad[3].tex = Vector2f(0, 1);
 		}
 
 		s_quad[0].col = color;
@@ -168,10 +168,10 @@ namespace unicore
 			calc_quad_position(center, texture->size(),
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 
-			s_quad[0].uv = Vector2f(0, 0);
-			s_quad[1].uv = Vector2f(1, 0);
-			s_quad[2].uv = Vector2f(1, 1);
-			s_quad[3].uv = Vector2f(0, 1);
+			s_quad[0].tex = Vector2f(0, 0);
+			s_quad[1].tex = Vector2f(1, 0);
+			s_quad[2].tex = Vector2f(1, 1);
+			s_quad[3].tex = Vector2f(0, 1);
 
 			s_quad[0].col = color;
 			s_quad[1].col = color;
@@ -192,7 +192,7 @@ namespace unicore
 			calc_quad_position(center, texture->size(),
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 			calc_quad_uv(texture->size(), part,
-				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+				s_quad[0].tex, s_quad[1].tex, s_quad[2].tex, s_quad[3].tex);
 
 			s_quad[0].col = color;
 			s_quad[1].col = color;
@@ -214,10 +214,10 @@ namespace unicore
 			calc_quad_position(center, texture->size(), angle, scale,
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 
-			s_quad[0].uv = Vector2f(0, 0);
-			s_quad[1].uv = Vector2f(1, 0);
-			s_quad[2].uv = Vector2f(1, 1);
-			s_quad[3].uv = Vector2f(0, 1);
+			s_quad[0].tex = Vector2f(0, 0);
+			s_quad[1].tex = Vector2f(1, 0);
+			s_quad[2].tex = Vector2f(1, 1);
+			s_quad[3].tex = Vector2f(0, 1);
 
 			s_quad[0].col = color;
 			s_quad[1].col = color;
@@ -240,7 +240,7 @@ namespace unicore
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 
 			calc_quad_uv(texture->size(), part,
-				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+				s_quad[0].tex, s_quad[1].tex, s_quad[2].tex, s_quad[3].tex);
 
 			s_quad[0].col = color;
 			s_quad[1].col = color;
@@ -265,7 +265,7 @@ namespace unicore
 			calc_quad_position(center, rect.size(),
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 			calc_quad_uv(texture->size(), rect,
-				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+				s_quad[0].tex, s_quad[1].tex, s_quad[2].tex, s_quad[3].tex);
 
 			s_quad[0].col = color;
 			s_quad[1].col = color;
@@ -290,7 +290,7 @@ namespace unicore
 			calc_quad_position(center, rect.size(), angle, scale,
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 			calc_quad_uv(texture->size(), rect,
-				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+				s_quad[0].tex, s_quad[1].tex, s_quad[2].tex, s_quad[3].tex);
 
 			s_quad[0].col = color;
 			s_quad[1].col = color;

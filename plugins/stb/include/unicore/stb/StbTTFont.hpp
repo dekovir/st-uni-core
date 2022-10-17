@@ -39,7 +39,7 @@ namespace unicore
 		Shared<Texture> get_char_print_info(uint32_t code, Vector2f& pos, Rectf* rect, Rectf* uv_rect) const;
 
 		void generate(const Vector2f& position, StringView32 text, const Color4b& color,
-			Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict) override;
+			Dictionary<Shared<Texture>, List<QuadColorTexture2f>>& quad_dict) override;
 
 	protected:
 		const CharInfo _infos;

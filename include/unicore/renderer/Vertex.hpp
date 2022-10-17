@@ -5,12 +5,22 @@
 
 namespace unicore
 {
-	template<typename TVertex>
-	struct Quad
+	// VertexBase /////////////////////////////////////////////////////////////////
+	template<typename TPos>
+	struct VertexBase
 	{
-		TVertex v[4];
+		TPos pos;
+
+		constexpr VertexBase() = default;
+		constexpr VertexBase(const TPos& pos_) : pos(pos_) {}
+
+		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexBase);
 	};
 
+	using VertexBase2f = VertexBase<Vector2f>;
+	using VertexBase3f = VertexBase<Vector3f>;
+
+	// VertexColor ////////////////////////////////////////////////////////////////
 	template<typename TPos, typename TColor>
 	struct VertexColor
 	{
@@ -19,38 +29,104 @@ namespace unicore
 
 		constexpr VertexColor() = default;
 
+		explicit constexpr VertexColor(const TPos& pos_)
+			: pos(pos_), col({})
+		{}
+
 		constexpr VertexColor(const TPos& pos_, const TColor& color_)
 			: pos(pos_), col(color_)
 		{}
+
+		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexColor);
 	};
 
-	using VertexColor2 = VertexColor<Vector2f, Color4b>;
-	using VertexColor3 = VertexColor<Vector3f, Color4b>;
+	using VertexColor2f = VertexColor<Vector2f, Color4b>;
+	using VertexColor3f = VertexColor<Vector3f, Color4b>;
 
-	using VertexColorQuad2 = Quad<VertexColor2>;
-	using VertexColorQuad3 = Quad<VertexColor3>;
-
-	template<typename TPos, typename TTexCoords, typename TColor>
-	struct VertexTexColor
+	// VertexColor ////////////////////////////////////////////////////////////////
+	template<typename TPos, typename TTex>
+	struct VertexTexture
 	{
 		TPos pos;
-		TTexCoords uv;
-		TColor col;
+		TTex tex;
 
-		constexpr VertexTexColor() = default;
+		constexpr VertexTexture() = default;
 
-		constexpr VertexTexColor(const TPos& pos_, const TColor& color_)
-			: pos(pos_), uv({}), col(color_)
+		explicit constexpr VertexTexture(const TPos& pos_)
+			: pos(pos_), tex({})
 		{}
 
-		constexpr VertexTexColor(const TPos& pos_, const TTexCoords& uv_, const TColor& color_)
-			: pos(pos_), uv(uv_), col(color_)
+		constexpr VertexTexture(const TPos& pos_, const TTex& tex_)
+			: pos(pos_), tex(tex_)
 		{}
+
+		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexTexture);
 	};
 
-	using VertexTexColor2 = VertexTexColor<Vector2f, Vector2f, Color4b>;
-	using VertexTexColor3 = VertexTexColor<Vector3f, Vector2f, Color4b>;
+	using VertexTexture2f = VertexTexture<Vector2f, Vector2f>;
+	using VertexTexture3f = VertexTexture<Vector3f, Vector2f>;
 
-	using VertexTexColorQuad2 = Quad<VertexTexColor2>;
-	using VertexTexColorQuad3 = Quad<VertexTexColor3>;
+	// VertexNormal ///////////////////////////////////////////////////////////////
+	template<typename TPos, typename TNormal>
+	struct VertexNormal
+	{
+		TPos pos;
+		TNormal normal;
+
+		constexpr VertexNormal() = default;
+
+		explicit constexpr VertexNormal(const TPos& pos_)
+			: pos(pos_), normal({})
+		{}
+
+		constexpr VertexNormal(const TPos& pos_, const TNormal& normal_)
+			: pos(pos_), normal(normal_)
+		{}
+
+		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexNormal);
+	};
+
+	using VertexNormal2f = VertexNormal<Vector2f, Vector2f>;
+	using VertexNormal3f = VertexNormal<Vector3f, Vector3f>;
+
+	// VertexColorTexture /////////////////////////////////////////////////////////
+	template<typename TPos, typename TTexCoords, typename TColor>
+	struct VertexColorTexture
+	{
+		TPos pos;
+		TColor col;
+		TTexCoords tex;
+
+		constexpr VertexColorTexture() = default;
+
+		explicit constexpr VertexColorTexture(const TPos& pos_)
+			: pos(pos_), col({}), tex({})
+		{}
+
+		constexpr VertexColorTexture(const TPos& pos_, const TColor& color_)
+			: pos(pos_), col(color_), tex({})
+		{}
+
+		constexpr VertexColorTexture(const TPos& pos_, const TColor& color_, const TTexCoords& uv_)
+			: pos(pos_), col(color_), tex(uv_)
+		{}
+
+		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexColorTexture);
+	};
+
+	using VertexColorTexture2f = VertexColorTexture<Vector2f, Vector2f, Color4b>;
+	using VertexColorTexture3f = VertexColorTexture<Vector3f, Vector2f, Color4b>;
+
+	// QUAD ///////////////////////////////////////////////////////////////////////
+	template<typename TVertex>
+	struct Quad
+	{
+		TVertex v[4];
+	};
+
+	using QuadColor2f = Quad<VertexColor2f>;
+	using QuadColor3f = Quad<VertexColor3f>;
+
+	using QuadColorTexture2f = Quad<VertexColorTexture2f>;
+	using QuadColorTexture3f = Quad<VertexColorTexture3f>;
 }

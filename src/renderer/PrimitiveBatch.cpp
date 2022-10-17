@@ -5,8 +5,8 @@
 namespace unicore
 {
 	static List<Vector2f> s_points;
-	static List<VertexColor2> s_verts;
-	static List<VertexColorQuad2> s_quads;
+	static List<VertexColor2f> s_verts;
+	static List<QuadColor2f> s_quads;
 
 	void PrimitiveBatch::render(sdl2::PipelineRender& renderer) const
 	{
@@ -395,7 +395,7 @@ namespace unicore
 		return *this;
 	}
 
-	PrimitiveBatch& PrimitiveBatch::draw_quad(const VertexColorQuad2& quad)
+	PrimitiveBatch& PrimitiveBatch::draw_quad(const QuadColor2f& quad)
 	{
 		set_type(BatchType::Triangles);
 

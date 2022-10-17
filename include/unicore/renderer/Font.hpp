@@ -22,7 +22,7 @@ namespace unicore
 		UC_OBJECT(GeometryFont, Font)
 	public:
 		virtual size_t generate(const Vector2f& position, StringView32 text,
-			const Color4b& color, List<VertexColorQuad2>& quad_list) const = 0;
+			const Color4b& color, List<QuadColor2f>& quad_list) const = 0;
 	};
 
 	class TexturedFont : public Font
@@ -30,7 +30,7 @@ namespace unicore
 		UC_OBJECT(TexturedFont, Font)
 	public:
 		virtual void generate(const Vector2f& position, StringView32 text, const Color4b& color,
-			Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict) = 0;
+			Dictionary<Shared<Texture>, List<QuadColorTexture2f>>& quad_dict) = 0;
 	};
 
 	class TTFontOptions : public ResourceOptions

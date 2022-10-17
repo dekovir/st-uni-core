@@ -74,7 +74,7 @@ namespace unicore
 
 		PrimitiveBatch& draw_triangle(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2);
 		PrimitiveBatch& draw_quad(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2, const Vector2f& p3);
-		PrimitiveBatch& draw_quad(const VertexColorQuad2& quad);
+		PrimitiveBatch& draw_quad(const QuadColor2f& quad);
 
 		PrimitiveBatch& draw_convex_poly(const List<Vector2f>& points);
 

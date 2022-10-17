@@ -26,19 +26,19 @@ namespace unicore
 
 		// TRIANGLE
 		SpriteBatch& draw_tri(
-			const VertexTexColor2& v0, const VertexTexColor2& v1, const VertexTexColor2& v2,
+			const VertexColorTexture2f& v0, const VertexColorTexture2f& v1, const VertexColorTexture2f& v2,
 			const Shared<Texture>& texture = nullptr);
 
-		SpriteBatch& draw_tri(const VertexTexColor2* arr,
+		SpriteBatch& draw_tri(const VertexColorTexture2f* arr,
 			const Shared<Texture>& texture = nullptr);
 
 		// QUAD
 		SpriteBatch& draw_quad(
-			const VertexTexColor2& v0, const VertexTexColor2& v1,
-			const VertexTexColor2& v2, const VertexTexColor2& v3,
+			const VertexColorTexture2f& v0, const VertexColorTexture2f& v1,
+			const VertexColorTexture2f& v2, const VertexColorTexture2f& v3,
 			const Shared<Texture>& texture = nullptr);
 
-		SpriteBatch& draw_quad(const VertexTexColor2* arr,
+		SpriteBatch& draw_quad(const VertexColorTexture2f* arr,
 			const Shared<Texture>& texture = nullptr);
 
 		// RECT
@@ -91,7 +91,7 @@ namespace unicore
 			UInt32 count = 0;
 		};
 
-		List<VertexTexColor2> _vertices;
+		List<VertexColorTexture2f> _vertices;
 		List<Batch> _batches;
 		Batch _current;
 

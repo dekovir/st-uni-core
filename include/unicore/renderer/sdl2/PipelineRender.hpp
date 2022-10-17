@@ -52,11 +52,11 @@ namespace unicore::sdl2
 		// TRIANGLES /////////////////////////////////////////////////////////////////
 		// TODO: Replace with span
 		virtual void draw_trianglesf(
-			const VertexColor2* vertices, unsigned num_vertices) = 0;
+			const VertexColor2f* vertices, unsigned num_vertices) = 0;
 
 		// TODO: Replace with span
 		virtual void draw_trianglesf(
-		const VertexTexColor2* vertices, unsigned num_vertices,
+		const VertexColorTexture2f* vertices, unsigned num_vertices,
 			const Texture* texture = nullptr) = 0;
 
 		// COPY //////////////////////////////////////////////////////////////////////

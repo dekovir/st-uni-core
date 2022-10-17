@@ -335,7 +335,7 @@ namespace unicore
 
 	// DRAW TRIANGLES /////////////////////////////////////////////////////////////
 	void SDL2RendererSDL::draw_trianglesf(
-		const VertexColor2* vertices, unsigned num_vertices)
+		const VertexColor2f* vertices, unsigned num_vertices)
 	{
 		s_vertices.resize(num_vertices);
 		for (size_t i = 0; i < num_vertices; i++)
@@ -362,7 +362,7 @@ namespace unicore
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_trianglesf(const VertexTexColor2* vertices,
+	void SDL2RendererSDL::draw_trianglesf(const VertexColorTexture2f* vertices,
 		unsigned num_vertices, const Texture* texture)
 	{
 		const auto tex = dynamic_cast<const SDL2BaseTexture*>(texture);
@@ -376,8 +376,8 @@ namespace unicore
 
 			position.x = vertex.pos.x;
 			position.y = vertex.pos.y;
-			uv.x = vertex.uv.x;
-			uv.y = vertex.uv.y;
+			uv.x = vertex.tex.x;
+			uv.y = vertex.tex.y;
 			color.r = vertex.col.r;
 			color.g = vertex.col.g;
 			color.b = vertex.col.b;

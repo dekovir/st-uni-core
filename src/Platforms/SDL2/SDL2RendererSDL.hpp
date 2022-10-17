@@ -73,10 +73,10 @@ namespace unicore
 
 		// TRIANGLES /////////////////////////////////////////////////////////////////
 		void draw_trianglesf(
-			const VertexColor2* vertices, unsigned num_vertices) override;
+			const VertexColor2f* vertices, unsigned num_vertices) override;
 
 		void draw_trianglesf(
-			const VertexTexColor2* vertices, unsigned num_vertices,
+			const VertexColorTexture2f* vertices, unsigned num_vertices,
 			const Texture* texture = nullptr) override;
 
 		// COPY //////////////////////////////////////////////////////////////////////

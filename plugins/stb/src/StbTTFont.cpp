@@ -84,7 +84,7 @@ namespace unicore
 
 	void StbTTFont::generate(
 		const Vector2f& position, StringView32 text, const Color4b& color,
-		Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict)
+		Dictionary<Shared<Texture>, List<QuadColorTexture2f>>& quad_dict)
 	{
 		Vector2f cur = position;
 		for (const auto c : text)
@@ -92,7 +92,7 @@ namespace unicore
 			Rectf rect, uv;
 			if (auto tex = get_char_print_info(c, cur, &rect, &uv))
 			{
-				VertexTexColorQuad2 quad;
+				QuadColorTexture2f quad;
 				rect.y += _height;
 
 				const float x1 = rect.min_x();
@@ -106,19 +106,19 @@ namespace unicore
 				const float ty2 = uv.max_y();
 
 				quad.v[0].pos.set(x1, y1);
-				quad.v[0].uv.set(tx1, ty1);
+				quad.v[0].tex.set(tx1, ty1);
 				quad.v[0].col = color;
 
 				quad.v[1].pos.set(x2, y1);
-				quad.v[1].uv.set(tx2, ty1);
+				quad.v[1].tex.set(tx2, ty1);
 				quad.v[1].col = color;
 
 				quad.v[2].pos.set(x2, y2);
-				quad.v[2].uv.set(tx2, ty2);
+				quad.v[2].tex.set(tx2, ty2);
 				quad.v[2].col = color;
 
 				quad.v[3].pos.set(x1, y2);
-				quad.v[3].uv.set(tx1, ty2);
+				quad.v[3].tex.set(tx1, ty2);
 				quad.v[3].col = color;
 
 				quad_dict[tex].push_back(quad);

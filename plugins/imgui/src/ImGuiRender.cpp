@@ -114,7 +114,7 @@ namespace unicore
 
 					_render.set_clip(r);
 
-					static List<VertexTexColor2> s_verts;
+					static List<VertexColorTexture2f> s_verts;
 
 					s_verts.resize(pcmd->ElemCount);
 					for (unsigned i = 0; i < pcmd->ElemCount; i++)
@@ -122,11 +122,11 @@ namespace unicore
 						const auto index = idx_buffer[pcmd->IdxOffset + i];
 						const auto& [pos, uv, col] = vtx_buffer[pcmd->VtxOffset + index];
 
-						VertexTexColor2 vertex;
+						VertexColorTexture2f vertex;
 						vertex.pos.x = pos.x;
 						vertex.pos.y = pos.y;
-						vertex.uv.x = uv.x;
-						vertex.uv.y = uv.y;
+						vertex.tex.x = uv.x;
+						vertex.tex.y = uv.y;
 						vertex.col = Color4b::from_format(pixel_format_abgr, col);
 						s_verts[i] = vertex;
 					}

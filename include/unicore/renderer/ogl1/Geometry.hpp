@@ -80,55 +80,55 @@ namespace unicore::ogl1
 		virtual void color3fv(const Float* v) { color4f(v[0], v[1], v[2], 1); }
 
 		// VERTEX ////////////////////////////////////////////////////////////////////
-		virtual void vertex_color2f(const VertexColor2& v)
+		virtual void vertex_color2f(const VertexColor2f& v)
 		{
 			color4b(v.col);
 			vertex2f(v.pos);
 		}
 
 		// TODO: Replace with span
-		virtual void vertex_color2fv(const VertexColor2* v, size_t num_verts)
+		virtual void vertex_color2fv(const VertexColor2f* v, size_t num_verts)
 		{
 			for (size_t i = 0; i < num_verts; i++)
 				vertex_color2f(v[i]);
 		}
 
-		virtual void vertex_color3f(const VertexColor3& v)
+		virtual void vertex_color3f(const VertexColor3f& v)
 		{
 			color4b(v.col);
 			vertex3f(v.pos);
 		}
 
 		// TODO: Replace with span
-		virtual void vertex_color3fv(const VertexColor3* v, size_t num_verts)
+		virtual void vertex_color3fv(const VertexColor3f* v, size_t num_verts)
 		{
 			for (size_t i = 0; i < num_verts; i++)
 				vertex_color3f(v[i]);
 		}
 
-		virtual void vertex_tex_color2f(const VertexTexColor2& v)
+		virtual void vertex_tex_color2f(const VertexColorTexture2f& v)
 		{
 			color4b(v.col);
-			tex_coord2f(v.uv);
+			tex_coord2f(v.tex);
 			vertex2f(v.pos);
 		}
 
 		// TODO: Replace with span
-		virtual void vertex_tex_color2fv(const VertexTexColor2* v, size_t num_verts)
+		virtual void vertex_tex_color2fv(const VertexColorTexture2f* v, size_t num_verts)
 		{
 			for (size_t i = 0; i < num_verts; i++)
 				vertex_tex_color2f(v[i]);
 		}
 
-		virtual void vertex_tex_color3f(const VertexTexColor3& v)
+		virtual void vertex_tex_color3f(const VertexColorTexture3f& v)
 		{
 			color4b(v.col);
-			tex_coord2f(v.uv);
+			tex_coord2f(v.tex);
 			vertex3f(v.pos);
 		}
 
 		// TODO: Replace with span
-		virtual void vertex_tex_color3fv(const VertexTexColor3* v, size_t num_verts)
+		virtual void vertex_tex_color3fv(const VertexColorTexture3f* v, size_t num_verts)
 		{
 			for (size_t i = 0; i < num_verts; i++)
 				vertex_tex_color3f(v[i]);

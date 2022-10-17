@@ -44,7 +44,7 @@ namespace unicore
 			Vector2f& pos, Rectf* rect, Rectf* uv_rect) const;
 
 		void generate(const Vector2f& position, StringView32 text, const Color4b& color,
-			Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict) override;
+			Dictionary<Shared<Texture>, List<QuadColorTexture2f>>& quad_dict) override;
 
 	protected:
 		const List<Shared<Texture>> _pages;
@@ -54,6 +54,6 @@ namespace unicore
 		const uint8_t _space_width = 0;
 
 		Shared<Texture> print_char(Char32 code, Vector2f& pos,
-			const Color4b& color, VertexTexColorQuad2& quad) const;
+			const Color4b& color, QuadColorTexture2f& quad) const;
 	};
 }

@@ -19,5 +19,5 @@ namespace unicore
 		}
 	};
 
-	using Mesh2 = Mesh<VertexTexColor2>;
+	using Mesh2 = Mesh<VertexColorTexture2f>;
 }
