@@ -138,17 +138,17 @@ namespace unicore
 		if (uv.has_value())
 		{
 			const auto r = uv.value();
-			s_quad[0].tex = Vector2f(r.x, r.y);
-			s_quad[1].tex = Vector2f(r.x + r.w, r.y);
-			s_quad[2].tex = Vector2f(r.x + r.w, r.y + r.h);
-			s_quad[3].tex = Vector2f(r.x, r.y + r.h);
+			s_quad[0].uv = Vector2f(r.x, r.y);
+			s_quad[1].uv = Vector2f(r.x + r.w, r.y);
+			s_quad[2].uv = Vector2f(r.x + r.w, r.y + r.h);
+			s_quad[3].uv = Vector2f(r.x, r.y + r.h);
 		}
 		else
 		{
-			s_quad[0].tex = Vector2f(0, 0);
-			s_quad[1].tex = Vector2f(1, 0);
-			s_quad[2].tex = Vector2f(1, 1);
-			s_quad[3].tex = Vector2f(0, 1);
+			s_quad[0].uv = Vector2f(0, 0);
+			s_quad[1].uv = Vector2f(1, 0);
+			s_quad[2].uv = Vector2f(1, 1);
+			s_quad[3].uv = Vector2f(0, 1);
 		}
 
 		s_quad[0].col = color;
@@ -161,63 +161,15 @@ namespace unicore
 
 	// DRAW TEXTURE ///////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
-		const Vector2f& center, const Color4b& color)
+		const Vector2f& center, const Color4b& color, SpriteBatchEffect effect)
 	{
 		if (texture)
 		{
 			calc_quad_position(center, texture->size(),
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 
-			s_quad[0].tex = Vector2f(0, 0);
-			s_quad[1].tex = Vector2f(1, 0);
-			s_quad[2].tex = Vector2f(1, 1);
-			s_quad[3].tex = Vector2f(0, 1);
-
-			s_quad[0].col = color;
-			s_quad[1].col = color;
-			s_quad[2].col = color;
-			s_quad[3].col = color;
-
-			return draw_quad(s_quad, texture);
-		}
-
-		return *this;
-	}
-
-	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
-		const Vector2f& center, const Recti& part, const Color4b& color)
-	{
-		if (texture)
-		{
-			calc_quad_position(center, texture->size(),
-				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
-			calc_quad_uv(texture->size(), part,
-				s_quad[0].tex, s_quad[1].tex, s_quad[2].tex, s_quad[3].tex);
-
-			s_quad[0].col = color;
-			s_quad[1].col = color;
-			s_quad[2].col = color;
-			s_quad[3].col = color;
-
-			return draw_quad(s_quad, texture);
-		}
-
-		return *this;
-	}
-
-	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
-		const Vector2f& center, const Radians& angle,
-		const Vector2f& scale, const Color4b& color)
-	{
-		if (texture)
-		{
-			calc_quad_position(center, texture->size(), angle, scale,
-				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
-
-			s_quad[0].tex = Vector2f(0, 0);
-			s_quad[1].tex = Vector2f(1, 0);
-			s_quad[2].tex = Vector2f(1, 1);
-			s_quad[3].tex = Vector2f(0, 1);
+			calc_quad_uv(effect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
 
 			s_quad[0].col = color;
 			s_quad[1].col = color;
@@ -232,15 +184,60 @@ namespace unicore
 
 	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
 		const Vector2f& center, const Recti& part,
-		const Radians& angle, const Vector2f& scale, const Color4b& color)
+		const Color4b& color, SpriteBatchEffect effect)
+	{
+		if (texture)
+		{
+			calc_quad_position(center, texture->size(),
+				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
+			calc_quad_uv(texture->size(), part, effect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+
+			s_quad[0].col = color;
+			s_quad[1].col = color;
+			s_quad[2].col = color;
+			s_quad[3].col = color;
+
+			return draw_quad(s_quad, texture);
+		}
+
+		return *this;
+	}
+
+	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
+		const Vector2f& center, const Radians& angle, const Vector2f& scale,
+		const Color4b& color, SpriteBatchEffect effect)
 	{
 		if (texture)
 		{
 			calc_quad_position(center, texture->size(), angle, scale,
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 
-			calc_quad_uv(texture->size(), part,
-				s_quad[0].tex, s_quad[1].tex, s_quad[2].tex, s_quad[3].tex);
+			calc_quad_uv(effect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+
+			s_quad[0].col = color;
+			s_quad[1].col = color;
+			s_quad[2].col = color;
+			s_quad[3].col = color;
+
+			return draw_quad(s_quad, texture);
+		}
+
+		return *this;
+	}
+
+	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
+		const Vector2f& center, const Recti& part, const Radians& angle,
+		const Vector2f& scale, const Color4b& color, SpriteBatchEffect effect)
+	{
+		if (texture)
+		{
+			calc_quad_position(center, texture->size(), angle, scale,
+				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
+
+			calc_quad_uv(texture->size(), part, effect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
 
 			s_quad[0].col = color;
 			s_quad[1].col = color;
@@ -255,7 +252,7 @@ namespace unicore
 
 	// DRAW SPRITE ////////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::draw(const Shared<Sprite>& sprite,
-		const Vector2f& center, const Color4b& color)
+		const Vector2f& center, const Color4b& color, SpriteBatchEffect effect)
 	{
 		if (sprite)
 		{
@@ -264,8 +261,8 @@ namespace unicore
 
 			calc_quad_position(center, rect.size(),
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
-			calc_quad_uv(texture->size(), rect,
-				s_quad[0].tex, s_quad[1].tex, s_quad[2].tex, s_quad[3].tex);
+			calc_quad_uv(texture->size(), rect, effect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
 
 			s_quad[0].col = color;
 			s_quad[1].col = color;
@@ -279,8 +276,8 @@ namespace unicore
 	}
 
 	SpriteBatch& SpriteBatch::draw(const Shared<Sprite>& sprite,
-		const Vector2f& center, const Radians& angle,
-		const Vector2f& scale, const Color4b& color)
+		const Vector2f& center, const Radians& angle, const Vector2f& scale,
+		const Color4b& color, SpriteBatchEffect effect)
 	{
 		if (sprite)
 		{
@@ -289,8 +286,8 @@ namespace unicore
 
 			calc_quad_position(center, rect.size(), angle, scale,
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
-			calc_quad_uv(texture->size(), rect,
-				s_quad[0].tex, s_quad[1].tex, s_quad[2].tex, s_quad[3].tex);
+			calc_quad_uv(texture->size(), rect, effect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
 
 			s_quad[0].col = color;
 			s_quad[1].col = color;
@@ -453,20 +450,44 @@ namespace unicore
 		p3 = center + rotate_and_scale(-hx, +hy, a_cos, a_sin, scale.x, scale.y);
 	}
 
-	void SpriteBatch::calc_quad_uv(const Vector2i& size, const Recti& rect,
+	void SpriteBatch::calc_quad_uv(SpriteBatchEffect effect,
+		Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3)
+	{
+		const auto [x0, x1] =
+			effect == SpriteBatchEffect::FlipHorizontal || effect == SpriteBatchEffect::FlipBoth
+			? std::make_pair(1.f, 0.f) : std::make_pair(0.f, 1.f);
+		const auto [y0, y1] =
+			effect == SpriteBatchEffect::FlipVertical || effect == SpriteBatchEffect::FlipBoth
+			? std::make_pair(1.f, 0.f) : std::make_pair(0.f, 1.f);
+
+		p0 = Vector2f(x0, y0);
+		p1 = Vector2f(x1, y0);
+		p2 = Vector2f(x1, y1);
+		p3 = Vector2f(x0, y1);
+	}
+
+	void SpriteBatch::calc_quad_uv(
+		const Vector2i& size, const Recti& rect, SpriteBatchEffect effect,
 		Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3)
 	{
 		const auto w = static_cast<float>(size.x);
 		const auto h = static_cast<float>(size.y);
 
-		const float tx1 = static_cast<float>(rect.x) / w;
-		const float ty1 = static_cast<float>(rect.y) / h;
-		const float tx2 = tx1 + static_cast<float>(rect.w) / w;
-		const float ty2 = ty1 + static_cast<float>(rect.h) / h;
+		const float tex_x0 = static_cast<float>(rect.x) / w;
+		const float tex_y0 = static_cast<float>(rect.y) / h;
+		const float tex_x1 = tex_x0 + static_cast<float>(rect.w) / w;
+		const float tex_y1 = tex_y0 + static_cast<float>(rect.h) / h;
 
-		p0.set(tx1, ty1);
-		p1.set(tx2, ty1);
-		p2.set(tx2, ty2);
-		p3.set(tx1, ty2);
+		const auto [x0, x1] =
+			effect == SpriteBatchEffect::FlipHorizontal || effect == SpriteBatchEffect::FlipBoth
+			? std::make_pair(tex_x1, tex_x0) : std::make_pair(tex_x0, tex_x1);
+		const auto [y0, y1] =
+			effect == SpriteBatchEffect::FlipVertical || effect == SpriteBatchEffect::FlipBoth
+			? std::make_pair(tex_y1, tex_y0) : std::make_pair(tex_y0, tex_y1);
+
+		p0 = Vector2f(x0, y0);
+		p1 = Vector2f(x1, y0);
+		p2 = Vector2f(x1, y1);
+		p3 = Vector2f(x0, y1);
 	}
 }

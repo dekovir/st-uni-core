@@ -109,7 +109,7 @@ namespace unicore::ogl1
 		virtual void vertex_tex_color2f(const VertexColorTexture2f& v)
 		{
 			color4b(v.col);
-			tex_coord2f(v.tex);
+			tex_coord2f(v.uv);
 			vertex2f(v.pos);
 		}
 
@@ -123,7 +123,7 @@ namespace unicore::ogl1
 		virtual void vertex_tex_color3f(const VertexColorTexture3f& v)
 		{
 			color4b(v.col);
-			tex_coord2f(v.tex);
+			tex_coord2f(v.uv);
 			vertex3f(v.pos);
 		}
 

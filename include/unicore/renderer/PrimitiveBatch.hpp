@@ -24,7 +24,7 @@ namespace unicore
 	//	Round,
 	//};
 
-	struct GraphicsLineStyle2D
+	struct PrimitiveBatchLineStyle
 	{
 		float width = 1;
 		float alignment = 0.5f;
@@ -62,7 +62,7 @@ namespace unicore
 
 		PrimitiveBatch& draw_poly_line(const List<Vector2f>& points, bool closed = false);
 
-		PrimitiveBatch& draw_path(const List<Vector2f>& points, const GraphicsLineStyle2D& style, bool closed = false);
+		PrimitiveBatch& draw_path(const List<Vector2f>& points, const PrimitiveBatchLineStyle& style, bool closed = false);
 
 		PrimitiveBatch& draw_rect(const Recti& rect, bool filled = false);
 		PrimitiveBatch& draw_rect(const Rectf& rect, bool filled = false);

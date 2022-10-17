@@ -17,8 +17,8 @@ namespace unicore
 		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexPosition);
 	};
 
-	using VertexBase2f = VertexPosition<Vector2f>;
-	using VertexBase3f = VertexPosition<Vector3f>;
+	using VertexPosition2f = VertexPosition<Vector2f>;
+	using VertexPosition3f = VertexPosition<Vector3f>;
 
 	// VertexColor ////////////////////////////////////////////////////////////////
 	template<typename TPos, typename TColor>
@@ -95,20 +95,20 @@ namespace unicore
 	{
 		TPos pos;
 		TColor col;
-		TTexCoords tex;
+		TTexCoords uv;
 
 		constexpr VertexColorTexture() = default;
 
 		explicit constexpr VertexColorTexture(const TPos& pos_)
-			: pos(pos_), col({}), tex({})
+			: pos(pos_), col({}), uv({})
 		{}
 
 		constexpr VertexColorTexture(const TPos& pos_, const TColor& color_)
-			: pos(pos_), col(color_), tex({})
+			: pos(pos_), col(color_), uv({})
 		{}
 
 		constexpr VertexColorTexture(const TPos& pos_, const TColor& color_, const TTexCoords& uv_)
-			: pos(pos_), col(color_), tex(uv_)
+			: pos(pos_), col(color_), uv(uv_)
 		{}
 
 		UC_TYPE_DEFAULT_DTOR_MOVE_COPY(VertexColorTexture);

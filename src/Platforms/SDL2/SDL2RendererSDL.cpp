@@ -376,8 +376,8 @@ namespace unicore
 
 			position.x = vertex.pos.x;
 			position.y = vertex.pos.y;
-			uv.x = vertex.tex.x;
-			uv.y = vertex.tex.y;
+			uv.x = vertex.uv.x;
+			uv.y = vertex.uv.y;
 			color.r = vertex.col.r;
 			color.g = vertex.col.g;
 			color.b = vertex.col.b;

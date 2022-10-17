@@ -12,6 +12,14 @@ namespace unicore
 	class Sprite;
 	class Font;
 
+	enum class SpriteBatchEffect
+	{
+		None,
+		FlipHorizontal,
+		FlipVertical,
+		FlipBoth,
+	};
+
 	class SpriteBatch : public Object
 	{
 		UC_OBJECT(SpriteBatch, Object)
@@ -48,27 +56,33 @@ namespace unicore
 			const Optional<Rectf>& uv = std::nullopt);
 
 		// TEXTURE
-		SpriteBatch& draw(const Shared<Texture>& texture,
-			const Vector2f& center, const Color4b& color = ColorConst4b::White);
+		SpriteBatch& draw(const Shared<Texture>& texture, const Vector2f& center,
+			const Color4b& color = ColorConst4b::White,
+			SpriteBatchEffect effect = SpriteBatchEffect::None);
+
+		SpriteBatch& draw(const Shared<Texture>& texture, const Vector2f& center,
+			const Recti& part, const Color4b& color = ColorConst4b::White,
+			SpriteBatchEffect effect = SpriteBatchEffect::None);
 
 		SpriteBatch& draw(const Shared<Texture>& texture,
-			const Vector2f& center, const Recti& part, const Color4b& color = ColorConst4b::White);
-
-		SpriteBatch& draw(const Shared<Texture>& texture,
-			const Vector2f& center, const Radians& angle,
-			const Vector2f& scale, const Color4b& color = ColorConst4b::White);
+			const Vector2f& center, const Radians& angle, const Vector2f& scale,
+			const Color4b& color = ColorConst4b::White,
+			SpriteBatchEffect effect = SpriteBatchEffect::None);
 
 		SpriteBatch& draw(const Shared<Texture>& texture,
 			const Vector2f& center, const Recti& part, const Radians& angle,
-			const Vector2f& scale, const Color4b& color = ColorConst4b::White);
+			const Vector2f& scale, const Color4b& color = ColorConst4b::White,
+			SpriteBatchEffect effect = SpriteBatchEffect::None);
 
 		// SPRITE
-		SpriteBatch& draw(const Shared<Sprite>& sprite,
-			const Vector2f& center, const Color4b& color = ColorConst4b::White);
+		SpriteBatch& draw(const Shared<Sprite>& sprite, const Vector2f& center,
+			const Color4b& color = ColorConst4b::White,
+			SpriteBatchEffect effect = SpriteBatchEffect::None);
 
-		SpriteBatch& draw(const Shared<Sprite>& sprite,
-			const Vector2f& center, const Radians& angle,
-			const Vector2f& scale, const Color4b& color = ColorConst4b::White);
+		SpriteBatch& draw(const Shared<Sprite>& sprite, const Vector2f& center,
+			const Radians& angle, const Vector2f& scale,
+			const Color4b& color = ColorConst4b::White,
+			SpriteBatchEffect effect = SpriteBatchEffect::None);
 
 		// FONT
 		SpriteBatch& print(const Shared<Font>& font, const Vector2f& pos,
@@ -104,7 +118,11 @@ namespace unicore
 			const Radians& angle, const Vector2f& scale,
 			Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3);
 
-		static void calc_quad_uv(const Vector2i& size, const Recti& rect,
+		static void calc_quad_uv(SpriteBatchEffect effect,
+			Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3);
+
+		static void calc_quad_uv(
+			const Vector2i& size, const Recti& rect, SpriteBatchEffect effect,
 			Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3);
 	};
 }

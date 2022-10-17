@@ -125,8 +125,8 @@ namespace unicore
 						VertexColorTexture2f vertex;
 						vertex.pos.x = pos.x;
 						vertex.pos.y = pos.y;
-						vertex.tex.x = uv.x;
-						vertex.tex.y = uv.y;
+						vertex.uv.x = uv.x;
+						vertex.uv.y = uv.y;
 						vertex.col = Color4b::from_format(pixel_format_abgr, col);
 						s_verts[i] = vertex;
 					}

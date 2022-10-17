@@ -228,7 +228,7 @@ namespace unicore
 	}
 
 	static void draw_path_segment(PrimitiveBatch& graphics, const List<Vector2f>& points,
-		const GraphicsLineStyle2D& style, const List<PathEdge>& path, unsigned index, bool closed)
+		const PrimitiveBatchLineStyle& style, const List<PathEdge>& path, unsigned index, bool closed)
 	{
 		auto& edge = path[index];
 		const auto p0 = points[edge.i0];
@@ -275,7 +275,7 @@ namespace unicore
 		//graphics.draw_line(p1, p1_edge);
 	}
 
-	PrimitiveBatch& PrimitiveBatch::draw_path(const List<Vector2f>& points, const GraphicsLineStyle2D& style, bool closed)
+	PrimitiveBatch& PrimitiveBatch::draw_path(const List<Vector2f>& points, const PrimitiveBatchLineStyle& style, bool closed)
 	{
 		if (points.size() >= 2)
 		{
