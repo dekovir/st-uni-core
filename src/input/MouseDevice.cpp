@@ -1,4 +1,4 @@
-#include "unicore/platform/MouseDevice.hpp"
+#include "unicore/input/MouseDevice.hpp"
 
 namespace unicore
 {

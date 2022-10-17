@@ -1,7 +1,7 @@
 #pragma once
 #include "unicore/platform/Module.hpp"
-#include "unicore/platform/MouseDevice.hpp"
-#include "unicore/platform/KeyboardDevice.hpp"
+#include "unicore/input/MouseDevice.hpp"
+#include "unicore/input/KeyboardDevice.hpp"
 
 namespace unicore
 {

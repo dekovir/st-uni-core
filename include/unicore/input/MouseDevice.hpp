@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/platform/InputDevice.hpp"
+#include "unicore/input/InputDevice.hpp"
 #include "unicore/math/Vector2.hpp"
 
 namespace unicore

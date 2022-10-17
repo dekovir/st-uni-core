@@ -269,6 +269,10 @@ namespace unicore
 	~Type() = default; \
 	UC_TYPE_DEFAULT_MOVE_COPY(Type)
 
+#define UC_TYPE_DELETE_DTOR_MOVE_COPY(Type) \
+	~Type() = delete; \
+	UC_TYPE_DELETE_MOVE_COPY(Type)
+
 #define UNICODE_STRING_BUILDER_FORMAT(Type) \
 	StringBuilder& operator << (StringBuilder& builder, Type value)
 

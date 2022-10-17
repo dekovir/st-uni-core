@@ -1,4 +1,4 @@
-#include "unicore/platform/KeyboardDevice.hpp"
+#include "unicore/input/KeyboardDevice.hpp"
 
 namespace unicore
 {

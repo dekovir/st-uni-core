@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/system/EnumFlag.hpp"
-#include "unicore/platform/InputDevice.hpp"
+#include "unicore/input/InputDevice.hpp"
 
 namespace unicore
 {
