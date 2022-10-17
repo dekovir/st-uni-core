@@ -1,4 +1,4 @@
-#include "SDL2RendererSDL.hpp"
+#include "SDL2Renderer.hpp"
 #if defined(UNICORE_USE_SDL2)
 #include "unicore/io/Logger.hpp"
 #include "SDL2Texture.hpp"
@@ -14,7 +14,7 @@ namespace unicore
 
 	static std::vector<SDL_Vertex> s_vertices;
 
-	SDL2RendererSDL::SDL2RendererSDL(Logger& logger, SDL2Display& display)
+	SDL2Renderer::SDL2Renderer(Logger& logger, SDL2Display& display)
 		: _logger(logger)
 		, _display(display)
 		, _scale(VectorConst2f::One)
@@ -40,12 +40,12 @@ namespace unicore
 		update_logical_size();
 	}
 
-	SDL2RendererSDL::~SDL2RendererSDL()
+	SDL2Renderer::~SDL2Renderer()
 	{
 		SDL_DestroyRenderer(_renderer);
 	}
 
-	Shared<Texture> SDL2RendererSDL::create_texture(Surface& surface)
+	Shared<Texture> SDL2Renderer::create_texture(Surface& surface)
 	{
 		auto& size = surface.size();
 		// TODO: Implement different formats
@@ -72,7 +72,7 @@ namespace unicore
 #endif
 	}
 
-	Shared<DynamicTexture> SDL2RendererSDL::create_dynamic_texture(const Vector2i& size)
+	Shared<DynamicTexture> SDL2Renderer::create_dynamic_texture(const Vector2i& size)
 	{
 		auto tex = create_texture(size, SDL_TEXTUREACCESS_STREAMING);
 		if (!tex)
@@ -84,7 +84,7 @@ namespace unicore
 		return make_shared<SDL2DynamicTexture>(tex);
 	}
 
-	bool SDL2RendererSDL::update_texture(DynamicTexture& texture, Surface& surface, Optional<Recti> rect)
+	bool SDL2Renderer::update_texture(DynamicTexture& texture, Surface& surface, Optional<Recti> rect)
 	{
 		if (const auto tex = dynamic_cast<SDL2DynamicTexture*>(&texture))
 		{
@@ -118,7 +118,7 @@ namespace unicore
 		return false;
 	}
 
-	Shared<TargetTexture> SDL2RendererSDL::create_target_texture(const Vector2i& size)
+	Shared<TargetTexture> SDL2Renderer::create_target_texture(const Vector2i& size)
 	{
 		auto tex = create_texture(size, SDL_TEXTUREACCESS_STREAMING);
 		if (!tex)
@@ -130,7 +130,7 @@ namespace unicore
 		return make_shared<SDL2TargetTexture>(tex);
 	}
 
-	bool SDL2RendererSDL::set_target(const Shared<TargetTexture>& texture)
+	bool SDL2Renderer::set_target(const Shared<TargetTexture>& texture)
 	{
 		if (const auto tex = std::dynamic_pointer_cast<SDL2TargetTexture>(texture))
 		{
@@ -148,12 +148,12 @@ namespace unicore
 		return false;
 	}
 
-	const Shared<TargetTexture>& SDL2RendererSDL::get_target() const
+	const Shared<TargetTexture>& SDL2Renderer::get_target() const
 	{
 		return _target;
 	}
 
-	bool SDL2RendererSDL::begin_frame()
+	bool SDL2Renderer::begin_frame()
 	{
 		if (_display.size() != _size)
 		{
@@ -170,12 +170,12 @@ namespace unicore
 		return true;
 	}
 
-	void SDL2RendererSDL::end_frame()
+	void SDL2Renderer::end_frame()
 	{
 		SDL_RenderPresent(_renderer);
 	}
 
-	void SDL2RendererSDL::clear(const Color4b& color)
+	void SDL2Renderer::clear(const Color4b& color)
 	{
 		SDL_SetRenderDrawColor(_renderer,
 			color.r, color.g, color.b, color.a);
@@ -183,7 +183,7 @@ namespace unicore
 	}
 
 	// STATES /////////////////////////////////////////////////////////////////////
-	void SDL2RendererSDL::set_viewport(const Optional<Recti>& rect)
+	void SDL2Renderer::set_viewport(const Optional<Recti>& rect)
 	{
 		_viewport = rect;
 		if (_viewport.has_value())
@@ -201,7 +201,7 @@ namespace unicore
 		update_logical_size();
 	}
 
-	void SDL2RendererSDL::set_scale(const Vector2f& value)
+	void SDL2Renderer::set_scale(const Vector2f& value)
 	{
 		_scale = value;
 		SDL_RenderSetScale(_renderer, _scale.x, _scale.y);
@@ -210,7 +210,7 @@ namespace unicore
 		update_logical_size();
 	}
 
-	void SDL2RendererSDL::set_logical_size(const Vector2i& size)
+	void SDL2Renderer::set_logical_size(const Vector2i& size)
 	{
 		_logical_size = size;
 		SDL_RenderSetLogicalSize(_renderer, _logical_size.x, _logical_size.y);
@@ -219,7 +219,7 @@ namespace unicore
 		update_viewport();
 	}
 
-	void SDL2RendererSDL::set_clip(const Optional<Recti>& clip_rect)
+	void SDL2Renderer::set_clip(const Optional<Recti>& clip_rect)
 	{
 		_clip_rect = clip_rect;
 		if (_clip_rect.has_value())
@@ -234,33 +234,33 @@ namespace unicore
 		}
 	}
 
-	void SDL2RendererSDL::set_draw_color(const Color4b& color)
+	void SDL2Renderer::set_draw_color(const Color4b& color)
 	{
 		_color = color;
 		SDL_SetRenderDrawColor(_renderer, _color.r, _color.g, _color.b, _color.a);
 	}
 
 	// DRAW POINTS ////////////////////////////////////////////////////////////////
-	void SDL2RendererSDL::draw_pointi(const Vector2i& p)
+	void SDL2Renderer::draw_pointi(const Vector2i& p)
 	{
 		SDL_RenderDrawPoint(_renderer, p.x, p.y);
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_pointf(const Vector2f& p)
+	void SDL2Renderer::draw_pointf(const Vector2f& p)
 	{
 		SDL_RenderDrawPointF(_renderer, p.x, p.y);
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_pointsi(const Vector2i* points, unsigned count)
+	void SDL2Renderer::draw_pointsi(const Vector2i* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points);
 		SDL_RenderDrawPoints(_renderer, s_points.data(), static_cast<int>(count));
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_pointsf(const Vector2f* points, unsigned count)
+	void SDL2Renderer::draw_pointsf(const Vector2f* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points_f);
 		SDL_RenderDrawPointsF(_renderer, s_points_f.data(), static_cast<int>(count));
@@ -268,26 +268,26 @@ namespace unicore
 	}
 
 	// DRAW LINES /////////////////////////////////////////////////////////////////
-	void SDL2RendererSDL::draw_linei(const Vector2i& p1, const Vector2i& p2)
+	void SDL2Renderer::draw_linei(const Vector2i& p1, const Vector2i& p2)
 	{
 		SDL_RenderDrawLine(_renderer, p1.x, p1.y, p2.x, p2.y);
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_linef(const Vector2f& p1, const Vector2f& p2)
+	void SDL2Renderer::draw_linef(const Vector2f& p1, const Vector2f& p2)
 	{
 		SDL_RenderDrawLineF(_renderer, p1.x, p1.y, p2.x, p2.y);
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_poly_linei(const Vector2i* points, unsigned count)
+	void SDL2Renderer::draw_poly_linei(const Vector2i* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points);
 		SDL_RenderDrawLines(_renderer, s_points.data(), static_cast<int>(count));
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_poly_linef(const Vector2f* points, unsigned count)
+	void SDL2Renderer::draw_poly_linef(const Vector2f* points, unsigned count)
 	{
 		SDL2Utils::convert(points, count, s_points_f);
 		SDL_RenderDrawLinesF(_renderer, s_points_f.data(), static_cast<int>(count));
@@ -295,7 +295,7 @@ namespace unicore
 	}
 
 	// DRAW RECTS /////////////////////////////////////////////////////////////////
-	void SDL2RendererSDL::draw_recti(const Recti& rect, bool filled)
+	void SDL2Renderer::draw_recti(const Recti& rect, bool filled)
 	{
 		SDL_Rect sdl_rect;
 		SDL2Utils::convert(rect, sdl_rect);
@@ -304,7 +304,7 @@ namespace unicore
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_rectf(const Rectf& rect, bool filled)
+	void SDL2Renderer::draw_rectf(const Rectf& rect, bool filled)
 	{
 		SDL_FRect sdl_rect;
 		SDL2Utils::convert(rect, sdl_rect);
@@ -313,7 +313,7 @@ namespace unicore
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_rectsi(const Recti* rects, unsigned count, bool filled)
+	void SDL2Renderer::draw_rectsi(const Recti* rects, unsigned count, bool filled)
 	{
 		SDL2Utils::convert(rects, count, s_rects);
 		if (!filled)
@@ -323,7 +323,7 @@ namespace unicore
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_rectsf(const Rectf* rects, unsigned count, bool filled)
+	void SDL2Renderer::draw_rectsf(const Rectf* rects, unsigned count, bool filled)
 	{
 		SDL2Utils::convert(rects, count, s_rects_f);
 		if (!filled)
@@ -334,7 +334,7 @@ namespace unicore
 	}
 
 	// DRAW TRIANGLES /////////////////////////////////////////////////////////////
-	void SDL2RendererSDL::draw_trianglesf(
+	void SDL2Renderer::draw_trianglesf(
 		const VertexColor2f* vertices, unsigned num_vertices)
 	{
 		s_vertices.resize(num_vertices);
@@ -362,7 +362,7 @@ namespace unicore
 		_draw_calls++;
 	}
 
-	void SDL2RendererSDL::draw_trianglesf(const VertexColorTexture2f* vertices,
+	void SDL2Renderer::draw_trianglesf(const VertexColorTexture2f* vertices,
 		unsigned num_vertices, const Texture* texture)
 	{
 		const auto tex = dynamic_cast<const SDL2BaseTexture*>(texture);
@@ -396,7 +396,7 @@ namespace unicore
 	}
 
 	// COPY TEXTURE ///////////////////////////////////////////////////////////////
-	bool SDL2RendererSDL::copyi(const Shared<Texture>& texture,
+	bool SDL2Renderer::copyi(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Recti>& dst_rect)
 	{
 		if (const auto tex = std::dynamic_pointer_cast<SDL2BaseTexture>(texture))
@@ -418,7 +418,7 @@ namespace unicore
 		return false;
 	}
 
-	bool SDL2RendererSDL::copyf(const Shared<Texture>& texture,
+	bool SDL2Renderer::copyf(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect)
 	{
 		if (const auto tex = std::dynamic_pointer_cast<SDL2BaseTexture>(texture))
@@ -441,7 +441,7 @@ namespace unicore
 		return false;
 	}
 
-	bool SDL2RendererSDL::copy_exi(const Shared<Texture>& texture,
+	bool SDL2Renderer::copy_exi(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Recti>& dst_rect,
 		Degrees angle, const Optional<Vector2i>& center, sdl2::RenderFlip flip)
 	{
@@ -470,7 +470,7 @@ namespace unicore
 		return false;
 	}
 
-	bool SDL2RendererSDL::copy_exf(const Shared<Texture>& texture,
+	bool SDL2Renderer::copy_exf(const Shared<Texture>& texture,
 		const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect,
 		Degrees angle, const Optional<Vector2f>& center, sdl2::RenderFlip flip)
 	{
@@ -500,7 +500,7 @@ namespace unicore
 		return false;
 	}
 
-	Unique<SDL2RendererSDL> SDL2RendererSDL::create(Logger& logger, Display& display)
+	Unique<SDL2Renderer> SDL2Renderer::create(Logger& logger, Display& display)
 	{
 		const auto sdl_display = dynamic_cast<SDL2Display*>(&display);
 		if (!sdl_display)
@@ -509,21 +509,21 @@ namespace unicore
 			return nullptr;
 		}
 
-		return std::make_unique<SDL2RendererSDL>(logger, *sdl_display);
+		return std::make_unique<SDL2Renderer>(logger, *sdl_display);
 	}
 
 	// PROTECTED //////////////////////////////////////////////////////////////////
-	void SDL2RendererSDL::update_size()
+	void SDL2Renderer::update_size()
 	{
 		SDL_GetRendererOutputSize(_renderer, &_size.x, &_size.y);
 	}
 
-	void SDL2RendererSDL::update_scale()
+	void SDL2Renderer::update_scale()
 	{
 		SDL_RenderGetScale(_renderer, &_scale.x, &_scale.y);
 	}
 
-	void SDL2RendererSDL::update_viewport()
+	void SDL2Renderer::update_viewport()
 	{
 		SDL_Rect r;
 		SDL_RenderGetViewport(_renderer, &r);
@@ -537,12 +537,12 @@ namespace unicore
 		}
 	}
 
-	void SDL2RendererSDL::update_logical_size()
+	void SDL2Renderer::update_logical_size()
 	{
 		SDL_RenderGetLogicalSize(_renderer, &_logical_size.x, &_logical_size.y);
 	}
 
-	SDL_Texture* SDL2RendererSDL::create_texture(const Vector2i& size, SDL_TextureAccess access) const
+	SDL_Texture* SDL2Renderer::create_texture(const Vector2i& size, SDL_TextureAccess access) const
 	{
 		const auto tex = SDL_CreateTexture(_renderer,
 			SDL_PIXELFORMAT_ABGR8888, access, size.x, size.y);
@@ -556,7 +556,7 @@ namespace unicore
 		return tex;
 	}
 
-	SDL_RendererFlip SDL2RendererSDL::convert_flip(sdl2::RenderFlip flags)
+	SDL_RendererFlip SDL2Renderer::convert_flip(sdl2::RenderFlip flags)
 	{
 		int value = SDL_FLIP_NONE;
 		if (flags.has(sdl2::FlipBit::Horizontal))

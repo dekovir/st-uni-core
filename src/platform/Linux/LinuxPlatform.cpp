@@ -1,6 +1,6 @@
 #include "LinuxPlatform.hpp"
 #if defined(UNICORE_PLATFORM_LINUX)
-#include "Platforms/Posix/PosixFileProvider.hpp"
+#include "platform/Posix/PosixFileProvider.hpp"
 
 namespace unicore
 {

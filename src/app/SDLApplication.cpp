@@ -1,5 +1,5 @@
 #include "unicore/app/SDLApplication.hpp"
-#include "Platforms/SDL2/SDL2RendererSDL.hpp"
+#include "platform/SDL2/SDL2Renderer.hpp"
 
 namespace unicore
 {
@@ -13,7 +13,7 @@ namespace unicore
 			if (renderer) return *renderer;
 
 #if defined(UNICORE_USE_SDL2)
-			renderer = SDL2RendererSDL::create(logger, display);
+			renderer = SDL2Renderer::create(logger, display);
 #else
 			UC_STATIC_ASSERT_ALWAYS("Unimplemented platform");
 #endif

@@ -261,6 +261,10 @@ namespace unicore
 	UC_TYPE_DEFAULT_MOVE(Type); \
 	UC_TYPE_DEFAULT_COPY(Type)
 
+#define UC_TYPE_DELETE_MOVE_COPY(Type) \
+	UC_TYPE_DELETE_MOVE(Type); \
+	UC_TYPE_DELETE_COPY(Type)
+
 #define UC_TYPE_DEFAULT_DTOR_MOVE_COPY(Type) \
 	~Type() = default; \
 	UC_TYPE_DEFAULT_MOVE_COPY(Type)

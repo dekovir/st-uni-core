@@ -2,9 +2,9 @@
 #include "unicore/io/Logger.hpp"
 
 #if defined(UNICORE_PLATFORM_WINDOWS)
-#	include "Platforms/Windows/WinPlatform.hpp"
+#	include "platform/Windows/WinPlatform.hpp"
 #elif defined(UNICORE_PLATFORM_LINUX)
-#	include "Platforms/Linux/LinuxPlatform.hpp"
+#	include "platform/Linux/LinuxPlatform.hpp"
 #endif
 
 namespace unicore

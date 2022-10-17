@@ -11,11 +11,13 @@ namespace unicore
 	class SDL2Display;
 	class SDL2TargetTexture;
 
-	class SDL2RendererSDL : public sdl2::Pipeline
+	class SDL2Renderer : public sdl2::Pipeline
 	{
 	public:
-		SDL2RendererSDL(Logger& logger, SDL2Display& display);
-		~SDL2RendererSDL() override;
+		SDL2Renderer(Logger& logger, SDL2Display& display);
+		~SDL2Renderer() override;
+
+		UC_TYPE_DELETE_MOVE_COPY(SDL2Renderer);
 
 		UC_NODISCARD const Vector2i& screen_size() const override { return _size; }
 		UC_NODISCARD uint32_t draw_calls() const override { return _draw_calls; }
@@ -94,7 +96,7 @@ namespace unicore
 			const Optional<Recti>& src_rect, const Optional<Rectf>& dst_rect,
 			Degrees angle, const Optional<Vector2f>& center, sdl2::RenderFlip flip) override;
 
-		static Unique<SDL2RendererSDL> create(Logger& logger, Display& display);
+		static Unique<SDL2Renderer> create(Logger& logger, Display& display);
 
 	protected:
 		Logger& _logger;

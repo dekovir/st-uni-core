@@ -5,10 +5,10 @@
 #include "WinLogger.hpp"
 
 #if defined(UNICORE_USE_SDL2)
-#include "Platforms/SDL2/SDL2Looper.hpp"
-#include "Platforms/SDL2/SDL2Time.hpp"
-#include "Platforms/SDL2/SDL2Input.hpp"
-#include "Platforms/SDL2/SDL2Display.hpp"
+#include "platform/SDL2/SDL2Looper.hpp"
+#include "platform/SDL2/SDL2Time.hpp"
+#include "platform/SDL2/SDL2Input.hpp"
+#include "platform/SDL2/SDL2Display.hpp"
 #endif
 
 namespace unicore
