@@ -250,6 +250,52 @@ namespace unicore
 		return *this;
 	}
 
+	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
+		const Vector2f& center, const Transform2f& tr,
+		const Color4b& color, SpriteBatchEffect effect)
+	{
+		if (texture)
+		{
+			calc_quad_position(center, texture->size(), tr,
+				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
+
+			calc_quad_uv(effect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+
+			s_quad[0].col = color;
+			s_quad[1].col = color;
+			s_quad[2].col = color;
+			s_quad[3].col = color;
+
+			return draw_quad(s_quad, texture);
+		}
+
+		return *this;
+	}
+
+	SpriteBatch& SpriteBatch::draw(const Shared<Texture>& texture,
+		const Vector2f& center, const Transform2f& tr,
+		const Recti& part, const Color4b& color, SpriteBatchEffect effect)
+	{
+		if (texture)
+		{
+			calc_quad_position(center, texture->size(), tr,
+				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
+
+			calc_quad_uv(texture->size(), part, effect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+
+			s_quad[0].col = color;
+			s_quad[1].col = color;
+			s_quad[2].col = color;
+			s_quad[3].col = color;
+
+			return draw_quad(s_quad, texture);
+		}
+
+		return *this;
+	}
+
 	// DRAW SPRITE ////////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::draw(const Shared<Sprite>& sprite,
 		const Vector2f& center, const Color4b& color, SpriteBatchEffect effect)
@@ -448,6 +494,12 @@ namespace unicore
 		p1 = center + rotate_and_scale(+hx, -hy, a_cos, a_sin, scale.x, scale.y);
 		p2 = center + rotate_and_scale(+hx, +hy, a_cos, a_sin, scale.x, scale.y);
 		p3 = center + rotate_and_scale(-hx, +hy, a_cos, a_sin, scale.x, scale.y);
+	}
+
+	void SpriteBatch::calc_quad_position(
+		const Vector2f& center, const Vector2i& size, const Transform2f& tr,
+		Vector2f& p0, Vector2f& p1, Vector2f& p2, Vector2f& p3)
+	{
 	}
 
 	void SpriteBatch::calc_quad_uv(SpriteBatchEffect effect,
