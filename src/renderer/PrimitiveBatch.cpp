@@ -1,5 +1,5 @@
-#include "unicore/renderer/Graphics2D.hpp"
-#include "unicore/math/Shapes.hpp"
+#include "unicore/renderer/PrimitiveBatch.hpp"
+#include "unicore/math/ShapePrimitive.hpp"
 #include "unicore/renderer/Font.hpp"
 
 namespace unicore
@@ -8,7 +8,7 @@ namespace unicore
 	static List<VertexColor2> s_verts;
 	static List<VertexColorQuad2> s_quads;
 
-	void Graphics2D::render(sdl2::PipelineRender& renderer) const
+	void PrimitiveBatch::render(sdl2::PipelineRender& renderer) const
 	{
 		for (const auto& batch : _batches)
 		{
@@ -56,7 +56,7 @@ namespace unicore
 		}
 	}
 
-	Graphics2D& Graphics2D::clear()
+	PrimitiveBatch& PrimitiveBatch::clear()
 	{
 		transform.clear();
 
@@ -67,7 +67,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::flush()
+	PrimitiveBatch& PrimitiveBatch::flush()
 	{
 		if (_current.count > 0)
 		{
@@ -82,43 +82,43 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::move(const Vector2f& move)
+	PrimitiveBatch& PrimitiveBatch::move(const Vector2f& move)
 	{
 		transform *= Transform2f::moved(move);
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::rotate(Radians angle)
+	PrimitiveBatch& PrimitiveBatch::rotate(Radians angle)
 	{
 		transform *= Transform2f::rotated(angle);
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::scale(const Vector2f& value)
+	PrimitiveBatch& PrimitiveBatch::scale(const Vector2f& value)
 	{
 		transform *= Transform2f::scaled(value);
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::scale(Float value)
+	PrimitiveBatch& PrimitiveBatch::scale(Float value)
 	{
 		transform *= Transform2f::scaled(value);
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::set_transform(const Transform2f& tr)
+	PrimitiveBatch& PrimitiveBatch::set_transform(const Transform2f& tr)
 	{
 		transform = tr;
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::reset_transform()
+	PrimitiveBatch& PrimitiveBatch::reset_transform()
 	{
 		transform.clear();
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::set_color(const Color4b& color)
+	PrimitiveBatch& PrimitiveBatch::set_color(const Color4b& color)
 	{
 		if (_current.color != color)
 		{
@@ -128,7 +128,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_point(const Vector2i& p)
+	PrimitiveBatch& PrimitiveBatch::draw_point(const Vector2i& p)
 	{
 		set_type(BatchType::Point);
 
@@ -138,7 +138,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_point(const Vector2f& p)
+	PrimitiveBatch& PrimitiveBatch::draw_point(const Vector2f& p)
 	{
 		set_type(BatchType::Point);
 
@@ -148,7 +148,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_line(const Vector2i& p0, const Vector2i& p1)
+	PrimitiveBatch& PrimitiveBatch::draw_line(const Vector2i& p0, const Vector2i& p1)
 	{
 		set_type(BatchType::Line);
 
@@ -159,7 +159,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_line(const Vector2f& p0, const Vector2f& p1)
+	PrimitiveBatch& PrimitiveBatch::draw_line(const Vector2f& p0, const Vector2f& p1)
 	{
 		set_type(BatchType::Line);
 
@@ -170,7 +170,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_poly_line(const List<Vector2f>& points, bool closed)
+	PrimitiveBatch& PrimitiveBatch::draw_poly_line(const List<Vector2f>& points, bool closed)
 	{
 		if (points.size() > 1)
 		{
@@ -227,7 +227,7 @@ namespace unicore
 		return index;
 	}
 
-	static void draw_path_segment(Graphics2D& graphics, const List<Vector2f>& points,
+	static void draw_path_segment(PrimitiveBatch& graphics, const List<Vector2f>& points,
 		const GraphicsLineStyle2D& style, const List<PathEdge>& path, unsigned index, bool closed)
 	{
 		auto& edge = path[index];
@@ -275,7 +275,7 @@ namespace unicore
 		//graphics.draw_line(p1, p1_edge);
 	}
 
-	Graphics2D& Graphics2D::draw_path(const List<Vector2f>& points, const GraphicsLineStyle2D& style, bool closed)
+	PrimitiveBatch& PrimitiveBatch::draw_path(const List<Vector2f>& points, const GraphicsLineStyle2D& style, bool closed)
 	{
 		if (points.size() >= 2)
 		{
@@ -294,7 +294,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_rect(const Recti& rect, bool filled)
+	PrimitiveBatch& PrimitiveBatch::draw_rect(const Recti& rect, bool filled)
 	{
 		set_type(filled ? BatchType::RectFilled : BatchType::Rect);
 
@@ -310,7 +310,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_rect(const Rectf& rect, bool filled)
+	PrimitiveBatch& PrimitiveBatch::draw_rect(const Rectf& rect, bool filled)
 	{
 		set_type(filled ? BatchType::RectFilled : BatchType::Rect);
 
@@ -326,35 +326,35 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_circle(const Vector2f& center, float radius, bool filled, unsigned segments)
+	PrimitiveBatch& PrimitiveBatch::draw_circle(const Vector2f& center, float radius, bool filled, unsigned segments)
 	{
 		if (radius == 0)
 			return draw_point(center);
 
 		s_points.clear();
-		Shapes::gen_circle(s_points, center, radius, segments);
+		ShapePrimitive::create_circle(s_points, center, radius, segments);
 
 		return !filled
 			? draw_poly_line(s_points, true)
 			: draw_convex_poly(s_points);
 	}
 
-	Graphics2D& Graphics2D::draw_ellipse(const Vector2f& center, const Vector2f& radius, bool filled, unsigned segments)
+	PrimitiveBatch& PrimitiveBatch::draw_ellipse(const Vector2f& center, const Vector2f& radius, bool filled, unsigned segments)
 	{
 		s_points.clear();
-		Shapes::gen_ellipse(s_points, center, radius, segments);
+		ShapePrimitive::create_ellipse(s_points, center, radius, segments);
 
 		return !filled
 			? draw_poly_line(s_points, true)
 			: draw_convex_poly(s_points);
 	}
 
-	Graphics2D& Graphics2D::draw_star(const Vector2f& center, unsigned count, float radius, bool filled)
+	PrimitiveBatch& PrimitiveBatch::draw_star(const Vector2f& center, unsigned count, float radius, bool filled)
 	{
 		if (count >= 2)
 		{
 			s_points.clear();
-			Shapes::gen_star(s_points, center, count, radius);
+			ShapePrimitive::create_star(s_points, center, count, radius);
 
 			if (filled)
 				s_points.insert(s_points.begin(), center);
@@ -367,7 +367,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_triangle(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2)
+	PrimitiveBatch& PrimitiveBatch::draw_triangle(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2)
 	{
 		set_type(BatchType::Triangles);
 
@@ -379,7 +379,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_quad(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2, const Vector2f& p3)
+	PrimitiveBatch& PrimitiveBatch::draw_quad(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2, const Vector2f& p3)
 	{
 		set_type(BatchType::Triangles);
 
@@ -395,7 +395,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_quad(const VertexColorQuad2& quad)
+	PrimitiveBatch& PrimitiveBatch::draw_quad(const VertexColorQuad2& quad)
 	{
 		set_type(BatchType::Triangles);
 
@@ -410,7 +410,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_convex_poly(const List<Vector2f>& points)
+	PrimitiveBatch& PrimitiveBatch::draw_convex_poly(const List<Vector2f>& points)
 	{
 		for (unsigned i = 0; i + 2 < points.size(); i += 1)
 			draw_triangle(points[0], points[i + 1], points[i + 2]);
@@ -418,8 +418,8 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_grid(const Vector2i& count, const Vector2f& step,
-		const Action<Graphics2D&, const Vector2f&>& draw_func, const Vector2f& offset)
+	PrimitiveBatch& PrimitiveBatch::draw_grid(const Vector2i& count, const Vector2f& step,
+		const Action<PrimitiveBatch&, const Vector2f&>& draw_func, const Vector2f& offset)
 	{
 		for (auto y = 0; y < count.y; y++)
 			for (auto x = 0; x < count.x; x++)
@@ -431,7 +431,7 @@ namespace unicore
 		return *this;
 	}
 
-	Graphics2D& Graphics2D::draw_text(const GeometryFont& font,
+	PrimitiveBatch& PrimitiveBatch::draw_text(const GeometryFont& font,
 		const Vector2f& position, StringView32 text, TextAlign align)
 	{
 		if (align == TextAlign::TopLeft)
@@ -460,7 +460,7 @@ namespace unicore
 	}
 
 	// ============================================================================
-	void Graphics2D::set_type(BatchType type)
+	void PrimitiveBatch::set_type(BatchType type)
 	{
 		if (_current.type != type)
 		{

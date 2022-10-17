@@ -36,6 +36,22 @@ namespace unicore
 	} \
 	UC_NODISCARD bool equals(const ThisType& other) const
 
+#define UC_OBJECT_DEFAULT_MOVE() \
+	ThisType(ThisType&&) = default; \
+	ThisType& operator= (ThisType&&) = default
+
+#define UC_OBJECT_DELETE_MOVE() \
+	ThisType(ThisType&&) = delete; \
+	ThisType& operator= (ThisType&&) = delete
+
+#define UC_OBJECT_DEFAULT_COPY() \
+	ThisType(ThisType const&) = default; \
+	ThisType& operator= (ThisType const&) = default
+
+#define UC_OBJECT_DELETE_COPY() \
+	ThisType(ThisType const&) = delete; \
+	ThisType& operator= (ThisType const&) = delete
+
 	class Object
 	{
 		UC_OBJECT_BASE(Object, Object)

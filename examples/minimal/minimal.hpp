@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/app/SDLApplication.hpp"
-#include "unicore/renderer/Graphics2D.hpp"
+#include "unicore/renderer/PrimitiveBatch.hpp"
 #include "unicore/renderer/SpriteBatch.hpp"
 
 namespace unicore
@@ -31,7 +31,7 @@ namespace unicore
 		DefaultRandom _random;
 		List<Entity> _entites;
 
-		Graphics2D _graphics;
+		PrimitiveBatch _graphics;
 		SpriteBatch _sprite_batch;
 
 		TimeSpan _add_time = TimeSpanConst::Zero;

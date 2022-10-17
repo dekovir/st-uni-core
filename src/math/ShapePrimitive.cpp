@@ -1,8 +1,8 @@
-#include "unicore/math/Shapes.hpp"
+#include "unicore/math/ShapePrimitive.hpp"
 
-namespace unicore::Shapes
+namespace unicore
 {
-	void gen_rect(List<Vector2f>& points, const Rectf& rect)
+	void ShapePrimitive::create_rect(List<Vector2f>& points, const Rectf& rect)
 	{
 		points.emplace_back(rect.x, rect.y);
 		points.emplace_back(rect.x + rect.w, rect.y);
@@ -10,14 +10,14 @@ namespace unicore::Shapes
 		points.emplace_back(rect.x, rect.y + rect.h);
 	}
 
-	List<Vector2f> gen_rect(const Rectf& rect)
+	List<Vector2f> ShapePrimitive::create_rect(const Rectf& rect)
 	{
 		List<Vector2f> points;
-		gen_rect(points, rect);
+		create_rect(points, rect);
 		return points;
 	}
 
-	void gen_circle(List<Vector2f>& points, const Vector2f& center, float radius, unsigned segments)
+	void ShapePrimitive::create_circle(List<Vector2f>& points, const Vector2f& center, float radius, unsigned segments)
 	{
 		if (radius == 0)
 			return;
@@ -38,14 +38,14 @@ namespace unicore::Shapes
 		}
 	}
 
-	List<Vector2f> gen_circle(const Vector2f& center, float radius, unsigned segments)
+	List<Vector2f> ShapePrimitive::create_circle(const Vector2f& center, float radius, unsigned segments)
 	{
 		List<Vector2f> points;
-		gen_circle(points, center, radius, segments);
+		create_circle(points, center, radius, segments);
 		return points;
 	}
 
-	void gen_ellipse(List<Vector2f>& points, const Vector2f& center, const Vector2f& radius, unsigned segments)
+	void ShapePrimitive::create_ellipse(List<Vector2f>& points, const Vector2f& center, const Vector2f& radius, unsigned segments)
 	{
 		if (segments == 0)
 		{
@@ -64,14 +64,14 @@ namespace unicore::Shapes
 		}
 	}
 
-	List<Vector2f> gen_ellipse(const Vector2f& center, const Vector2f& radius, unsigned segments)
+	List<Vector2f> ShapePrimitive::create_ellipse(const Vector2f& center, const Vector2f& radius, unsigned segments)
 	{
 		List<Vector2f> points;
-		gen_ellipse(points, center, radius, segments);
+		create_ellipse(points, center, radius, segments);
 		return points;
 	}
 
-	void gen_star(List<Vector2f>& points, const Vector2f& center, unsigned count, float radius, float radius_inner)
+	void ShapePrimitive::create_star(List<Vector2f>& points, const Vector2f& center, unsigned count, float radius, float radius_inner)
 	{
 		if (count >= 2)
 		{
@@ -95,10 +95,10 @@ namespace unicore::Shapes
 		}
 	}
 
-	List<Vector2f> gen_star(const Vector2f& center, unsigned count, float radius, float radius_inner)
+	List<Vector2f> ShapePrimitive::create_star(const Vector2f& center, unsigned count, float radius, float radius_inner)
 	{
 		List<Vector2f> points;
-		gen_star(points, center, count, radius, radius_inner);
+		create_star(points, center, count, radius, radius_inner);
 		return points;
 	}
 }

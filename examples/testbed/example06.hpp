@@ -1,7 +1,7 @@
 #pragma once
 #include "example.hpp"
 #include "unicore/renderer/SpriteBatch.hpp"
-#include "unicore/renderer/Graphics2D.hpp"
+#include "unicore/renderer/PrimitiveBatch.hpp"
 
 namespace unicore
 {
@@ -23,7 +23,7 @@ namespace unicore
 
 	protected:
 		Shared<Font> _font;
-		Graphics2D _graphics;
+		PrimitiveBatch _graphics;
 		SpriteBatch _sprite_batch;
 	};
 }
