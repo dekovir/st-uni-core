@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Defs.hpp"
+#include "unicore/system/StringBuilder.hpp"
 
 namespace unicore
 {
@@ -176,4 +176,10 @@ namespace unicore
 //		return static_cast<std::underlying_type_t<TEnum>>(color) == value; }
 
 #define UNICORE_ENUM_FLAGS(TFlag, TName) using TName = EnumFlag<TFlag>
+
+	template<typename T>
+	extern UNICODE_STRING_BUILDER_FORMAT(const EnumFlag<T>)
+	{
+		return builder << "Flag(0x" << StringHelper::to_hex(value.value()) << ")";
+	}
 }
