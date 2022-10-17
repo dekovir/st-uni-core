@@ -346,6 +346,31 @@ namespace unicore
 		return *this;
 	}
 
+	SpriteBatch& SpriteBatch::draw(const Shared<Sprite>& sprite,
+		const Vector2f& center, const Transform2f& tr,
+		const Color4b& color, SpriteBatchEffect effect)
+	{
+		if (sprite)
+		{
+			auto& rect = sprite->rect();
+			auto& texture = sprite->texture();
+
+			calc_quad_position(center, rect.size(), tr,
+				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
+			calc_quad_uv(texture->size(), rect, effect,
+				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
+
+			s_quad[0].col = color;
+			s_quad[1].col = color;
+			s_quad[2].col = color;
+			s_quad[3].col = color;
+
+			return draw_quad(s_quad, texture);
+		}
+
+		return *this;
+	}
+
 	// DRAW FONT /////////////////////////////////////////////////////////////////
 	SpriteBatch& SpriteBatch::print(const Shared<Font>& font,
 		const Vector2f& pos, StringView32 text, const Color4b& color)

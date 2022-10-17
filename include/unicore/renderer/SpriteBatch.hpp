@@ -94,6 +94,10 @@ namespace unicore
 			const Color4b& color = ColorConst4b::White,
 			SpriteBatchEffect effect = SpriteBatchEffect::None);
 
+		SpriteBatch& draw(const Shared<Sprite>& sprite, const Vector2f& center,
+			const Transform2f& tr, const Color4b& color = ColorConst4b::White,
+			SpriteBatchEffect effect = SpriteBatchEffect::None);
+
 		// FONT
 		SpriteBatch& print(const Shared<Font>& font, const Vector2f& pos,
 			StringView32 text, const Color4b& color = ColorConst4b::White);
