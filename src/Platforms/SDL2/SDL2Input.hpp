@@ -19,19 +19,17 @@ namespace unicore
 	{
 		UC_OBJECT(SDL2MouseDevice, MouseDevice)
 	public:
-		UC_NODISCARD ButtonState state(uint8_t button) const override;
+		UC_NODISCARD Bool button(uint8_t button) const override;
 
 		UC_NODISCARD const Vector2i& position() const override { return _position; }
-		UC_NODISCARD const Vector2i& delta() const override { return _delta; }
 		UC_NODISCARD const Vector2i& wheel() const override { return _wheel; }
 
 		void reset() override;
 		void update() override;
 
 	protected:
-		Bitset<3> _cur = { false }, _prev = { false };
+		Bitset<3> _buttons = { false };
 		Vector2i _position = VectorConst2i::Zero;
-		Vector2i _delta = VectorConst2i::Zero;
 		Vector2i _wheel = VectorConst2i::Zero;
 	};
 
@@ -39,15 +37,15 @@ namespace unicore
 	{
 		UC_OBJECT(SDL2KeyboardDevice, KeyboardDevice)
 	public:
-		UC_NODISCARD ButtonState state(KeyCode code) const override;
+		UC_NODISCARD Bool key(KeyCode code) const override;
 		UC_NODISCARD KeyModFlags mods() const override;
 
 		void reset() override;
 		void update() override;
 
 	protected:
-		Bitset<static_cast<size_t>(KeyCode::MaxKeyCode)> _prev = { false }, _cur = { false };
-		KeyModFlags _key_mod;
+		Bitset<static_cast<size_t>(KeyCode::MaxKeyCode)> _state = { false };
+		KeyModFlags _mods;
 	};
 
 	class SDL2Input : public Input
@@ -56,8 +54,8 @@ namespace unicore
 	public:
 		explicit SDL2Input(Logger& logger);
 
-		UC_NODISCARD const MouseDevice& mouse() const override { return _mouse; }
-		UC_NODISCARD const KeyboardDevice& keyboard() const override { return _keyboard; }
+		UC_NODISCARD const MouseDeviceState& mouse() const override;
+		UC_NODISCARD const KeyboardDeviceState& keyboard() const override;
 
 		void reset();
 		void update();
@@ -65,6 +63,9 @@ namespace unicore
 		Logger& _logger;
 		SDL2MouseDevice _mouse;
 		SDL2KeyboardDevice _keyboard;
+
+		MouseDeviceState _mouse_state;
+		KeyboardDeviceState _keyboard_state;
 	};
 }
 #endif

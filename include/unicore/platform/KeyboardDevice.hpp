@@ -139,7 +139,7 @@ namespace unicore
 		Enter = Return,
 	};
 
-	enum class KeyMod : uint16_t
+	enum class KeyMod : uint8_t
 	{
 		SystemLeft = 1 << 0,
 		SystemRight = 1 << 1,
@@ -152,7 +152,15 @@ namespace unicore
 	};
 	UNICORE_ENUM_FLAGS(KeyMod, KeyModFlags);
 
-	enum class KeyModCombine
+	namespace KeyModConst
+	{
+		static constexpr KeyModFlags System = KeyMod::ShiftLeft | KeyMod::SystemRight;
+		static constexpr KeyModFlags Shift = KeyMod::ShiftLeft | KeyMod::ShiftRight;
+		static constexpr KeyModFlags Control = KeyMod::ControlLeft | KeyMod::ControlRight;
+		static constexpr KeyModFlags Alt = KeyMod::AltLeft | KeyMod::AltRight;
+	}
+
+	enum class KeyModCombine : uint8_t
 	{
 		System,
 		Shift,
@@ -166,14 +174,37 @@ namespace unicore
 	public:
 		UC_NODISCARD InputDeviceType device_type() const override { return InputDeviceType::Keyboard; }
 
-		UC_NODISCARD virtual ButtonState state(KeyCode code) const = 0;
+		UC_NODISCARD virtual Bool key(KeyCode code) const = 0;
+		UC_NODISCARD virtual KeyModFlags mods() const = 0;
+	};
+
+	class KeyboardDeviceState : public InputDeviceState<KeyboardDevice>
+	{
+	public:
+		static constexpr size_t KeyCount = static_cast<size_t>(KeyCode::MaxKeyCode);
+
+		explicit KeyboardDeviceState(KeyboardDevice& device);
+
+		void reset() override;
+		void update() override;
+
+		UC_NODISCARD ButtonState state(KeyCode code) const;
 
 		UC_NODISCARD bool up(KeyCode code) const { return state(code) == ButtonState::Up; }
 		UC_NODISCARD bool down(KeyCode code) const { return state(code) == ButtonState::Down; }
 		UC_NODISCARD bool up_changed(KeyCode code) const { return state(code) == ButtonState::UpChanged; }
 		UC_NODISCARD bool down_changed(KeyCode code) const { return state(code) == ButtonState::DownChanged; }
 
-		UC_NODISCARD virtual KeyModFlags mods() const = 0;
-		UC_NODISCARD virtual bool mods(KeyModCombine mod) const;
+		UC_NODISCARD KeyModFlags mods() const;
+		UC_NODISCARD bool mods(KeyModCombine mod) const;
+
+	protected:
+		struct State
+		{
+			Bitset<KeyCount> keys;
+			KeyModFlags mods;
+		};
+
+		State _prev, _current;
 	};
 }

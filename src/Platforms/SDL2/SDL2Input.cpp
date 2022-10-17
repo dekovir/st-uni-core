@@ -122,66 +122,48 @@ namespace unicore
 			{SDL_SCANCODE_RGUI, KeyCode::SystemRight},
 	};
 
-	SDL2Input::SDL2Input(Logger& logger)
-		: _logger(logger)
-	{
-		SDL_InitSubSystem(SDL_INIT_EVENTS);
-	}
-
 	// SDL2MouseDevice ///////////////////////////////////////////////////////////
-	ButtonState SDL2MouseDevice::state(uint8_t button) const
+	Bool SDL2MouseDevice::button(uint8_t button) const
 	{
-		return button < _prev.size() ? get_state(_prev[button], _cur[button]) : ButtonState::Up;
+		return button < _buttons.size() ? _buttons[button] : false;
 	}
 
 	void SDL2MouseDevice::reset()
 	{
-		_cur.reset();
-		_prev.reset();
-
+		_buttons.reset();
 		_position = VectorConst2i::Zero;
-		_delta = VectorConst2i::Zero;
 		_wheel = VectorConst2i::Zero;
 	}
 
 	void SDL2MouseDevice::update()
 	{
-		int x, y;
-		const auto mouse_buttons = SDL_GetMouseState(&x, &y);
-
-		_delta.set(x - _position.x, y - _position.y);
-		_position.set(x, y);
-
-		_prev = _cur;
-		for (unsigned i = 0; i < _cur.size(); i++)
-			_cur[i] = (mouse_buttons & SDL_BUTTON(i + 1)) != 0;
+		const auto mouse_buttons = SDL_GetMouseState(&_position.x, &_position.y);
+		for (unsigned i = 0; i < _buttons.size(); i++)
+			_buttons[i] = (mouse_buttons & SDL_BUTTON(i + 1)) != 0;
 	}
 
 	// SDL2KeyboardDevice ////////////////////////////////////////////////////////
-	ButtonState SDL2KeyboardDevice::state(KeyCode code) const
+	Bool SDL2KeyboardDevice::key(KeyCode code) const
 	{
 		const int index = static_cast<int>(code);
-		return get_state(_prev[index], _cur[index]);
+		return _state[index];
 	}
 
 	KeyModFlags SDL2KeyboardDevice::mods() const
 	{
-		return _key_mod;
+		return _mods;
 	}
 
 	void SDL2KeyboardDevice::reset()
 	{
-		_prev.reset();
-		_cur.reset();
-
-		_key_mod = KeyModFlags::Zero;
+		_state.reset();
+		_mods = KeyModFlags::Zero;
 	}
 
 	void SDL2KeyboardDevice::update()
 	{
 		// Keyboard State
-		_prev = _cur;
-		_cur.reset();
+		_state.reset();
 		int keys_num;
 		const auto key_state = SDL_GetKeyboardState(&keys_num);
 		for (auto i = 0; i < keys_num; i++)
@@ -191,7 +173,7 @@ namespace unicore
 				const auto scancode = static_cast<SDL_Scancode>(i);
 				const auto it = s_key_bindings.find(scancode);
 				if (it != s_key_bindings.end())
-					_cur[static_cast<int>(it->second)] = true;
+					_state[static_cast<int>(it->second)] = true;
 				//else
 				//{
 				//	const auto key_name = SDL_GetScancodeName(scancode);
@@ -202,29 +184,54 @@ namespace unicore
 
 		// Keyboard Modifiers
 		const auto key_mod = SDL_GetModState();
-		_key_mod.set(KeyMod::ShiftLeft, key_mod & KMOD_LSHIFT);
-		_key_mod.set(KeyMod::ShiftRight, key_mod & KMOD_LSHIFT);
+		_mods.set(KeyMod::ShiftLeft, key_mod & KMOD_LSHIFT);
+		_mods.set(KeyMod::ShiftRight, key_mod & KMOD_LSHIFT);
 
-		_key_mod.set(KeyMod::AltLeft, key_mod & KMOD_LALT);
-		_key_mod.set(KeyMod::AltRight, key_mod & KMOD_RALT);
+		_mods.set(KeyMod::AltLeft, key_mod & KMOD_LALT);
+		_mods.set(KeyMod::AltRight, key_mod & KMOD_RALT);
 
-		_key_mod.set(KeyMod::ControlLeft, key_mod & KMOD_LCTRL);
-		_key_mod.set(KeyMod::ControlRight, key_mod & KMOD_RCTRL);
+		_mods.set(KeyMod::ControlLeft, key_mod & KMOD_LCTRL);
+		_mods.set(KeyMod::ControlRight, key_mod & KMOD_RCTRL);
 
-		_key_mod.set(KeyMod::SystemLeft, key_mod & KMOD_LGUI);
-		_key_mod.set(KeyMod::SystemRight, key_mod & KMOD_RGUI);
+		_mods.set(KeyMod::SystemLeft, key_mod & KMOD_LGUI);
+		_mods.set(KeyMod::SystemRight, key_mod & KMOD_RGUI);
+	}
+
+	// SDL2Input //////////////////////////////////////////////////////////////////
+	SDL2Input::SDL2Input(Logger& logger)
+		: _logger(logger)
+		, _mouse_state(_mouse)
+		, _keyboard_state(_keyboard)
+	{
+		SDL_InitSubSystem(SDL_INIT_EVENTS);
+	}
+
+	const MouseDeviceState& SDL2Input::mouse() const
+	{
+		return _mouse_state;
+	}
+
+	const KeyboardDeviceState& SDL2Input::keyboard() const
+	{
+		return _keyboard_state;
 	}
 
 	void SDL2Input::reset()
 	{
 		_mouse.reset();
 		_keyboard.reset();
+
+		_mouse_state.reset();
+		_keyboard_state.reset();
 	}
 
 	void SDL2Input::update()
 	{
 		_mouse.update();
 		_keyboard.update();
+
+		_mouse_state.update();
+		_keyboard_state.update();
 	}
 }
 #endif

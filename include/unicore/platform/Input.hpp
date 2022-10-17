@@ -9,7 +9,7 @@ namespace unicore
 	{
 		UC_OBJECT(Input, Module)
 	public:
-		UC_NODISCARD virtual const MouseDevice& mouse() const = 0;
-		UC_NODISCARD virtual const KeyboardDevice& keyboard() const = 0;
+		UC_NODISCARD virtual const MouseDeviceState& mouse() const = 0;
+		UC_NODISCARD virtual const KeyboardDeviceState& keyboard() const = 0;
 	};
 }
