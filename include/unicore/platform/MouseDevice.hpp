@@ -43,6 +43,10 @@ namespace unicore
 		void reset() override;
 		void update() override;
 
+		UC_NODISCARD const Vector2i& position() const { return _current.position; }
+		UC_NODISCARD const Vector2i& wheel() const { return _current.wheel; };
+		UC_NODISCARD const Vector2i& delta() const { return _delta; }
+
 		UC_NODISCARD ButtonState state(uint8_t button) const;
 		UC_NODISCARD ButtonState state(MouseButton button = MouseButton::Left) const;
 
@@ -55,10 +59,6 @@ namespace unicore
 		UC_NODISCARD bool down(MouseButton button = MouseButton::Left) const { return state(button) == ButtonState::Down; }
 		UC_NODISCARD bool up_changed(MouseButton button = MouseButton::Left) const { return state(button) == ButtonState::UpChanged; }
 		UC_NODISCARD bool down_changed(MouseButton button = MouseButton::Left) const { return state(button) == ButtonState::DownChanged; }
-
-		UC_NODISCARD const Vector2i& position() const { return _current.position; }
-		UC_NODISCARD const Vector2i& wheel() const { return _current.wheel; };
-		UC_NODISCARD const Vector2i& delta() const { return _delta; }
 
 	protected:
 		struct State

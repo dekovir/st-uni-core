@@ -23,12 +23,6 @@ namespace unicore
 			_current.keys[i] = _device.key(static_cast<KeyCode>(i));
 	}
 
-	ButtonState KeyboardDeviceState::state(KeyCode code) const
-	{
-		const auto index = static_cast<unsigned>(code);
-		return get_state(_prev.keys[index], _current.keys[index]);
-	}
-
 	KeyModFlags KeyboardDeviceState::mods() const
 	{
 		return _current.mods;
@@ -53,5 +47,11 @@ namespace unicore
 
 		UC_ASSERT_ALWAYS_MSG("Unknown flag");
 		return false;
+	}
+
+	ButtonState KeyboardDeviceState::state(KeyCode code) const
+	{
+		const auto index = static_cast<unsigned>(code);
+		return get_state(_prev.keys[index], _current.keys[index]);
 	}
 }

@@ -188,15 +188,15 @@ namespace unicore
 		void reset() override;
 		void update() override;
 
+		UC_NODISCARD KeyModFlags mods() const;
+		UC_NODISCARD bool mods(KeyModCombine mod) const;
+
 		UC_NODISCARD ButtonState state(KeyCode code) const;
 
 		UC_NODISCARD bool up(KeyCode code) const { return state(code) == ButtonState::Up; }
 		UC_NODISCARD bool down(KeyCode code) const { return state(code) == ButtonState::Down; }
 		UC_NODISCARD bool up_changed(KeyCode code) const { return state(code) == ButtonState::UpChanged; }
 		UC_NODISCARD bool down_changed(KeyCode code) const { return state(code) == ButtonState::DownChanged; }
-
-		UC_NODISCARD KeyModFlags mods() const;
-		UC_NODISCARD bool mods(KeyModCombine mod) const;
 
 	protected:
 		struct State
