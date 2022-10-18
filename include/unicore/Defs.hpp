@@ -85,6 +85,7 @@ namespace unicore
 
 	using Int = int;
 	using UInt = unsigned int;
+	using IntPtr = intptr_t;
 
 	using Int8 = int8_t;
 	using Int16 = int16_t;

@@ -13,7 +13,7 @@ namespace unicore
 		explicit MyApp(const CoreSettings& settings);
 
 	protected:
-		Shared<Example> _example;
+		Unique<Example> _example;
 		int _example_index = -1;
 
 		Shared<Font> _font;
@@ -28,6 +28,8 @@ namespace unicore
 		void on_init() override;
 		void on_update() override;
 		void on_draw() override;
+
+		void on_drop_file(const Path& path) override;
 
 		void set_example(int index);
 	};

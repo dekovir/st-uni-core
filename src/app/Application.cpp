@@ -37,6 +37,9 @@ namespace unicore
 
 		resources.add_loader(std::make_shared<ReadFileLoader>(file_system));
 
+		platform.looper.on_drop_file().add([this](const Path& path) { on_drop_file(path); });
+		//platform.looper.on_drop_file() += std::bind(&Application::on_drop_file, this, std::placeholders::_1);
+
 		on_init();
 	}
 

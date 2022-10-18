@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/system/Object.hpp"
+#include "unicore/io/Path.hpp"
 #include "unicore/renderer/sdl2/Pipeline.hpp"
 
 namespace unicore
@@ -27,7 +28,6 @@ namespace unicore
 	class Example : public Object
 	{
 	public:
-		const ExampleContext& context;
 		Logger& logger;
 		Random& random;
 		Time& time;
@@ -42,9 +42,11 @@ namespace unicore
 		virtual void draw() const = 0;
 
 		virtual void get_text(List<String32>& lines) {}
+
+		virtual void on_drop_file(const Path& path) {}
 	};
 
-	using ExampleFactory = std::function<Shared<Example>(const ExampleContext& context)>;
+	using ExampleFactory = std::function<Unique<Example>(const ExampleContext& context)>;
 
 	struct ExampleInfo
 	{
@@ -79,5 +81,5 @@ namespace unicore
 
 #define UC_EXAMPLE_REGISTER(type, title) \
 	static const ExampleAutoRegister s_example_register(title, [](const ExampleContext& context) \
-		{ return std::make_shared<type>(context); })
+		{ return std::make_unique<type>(context); })
 }

@@ -108,13 +108,19 @@ namespace unicore
 		_draw_calls = renderer.draw_calls();
 	}
 
+	void MyApp::on_drop_file(const Path& path)
+	{
+		if (_example)
+			_example->on_drop_file(path);
+	}
+
 	void MyApp::set_example(int index)
 	{
 		if (_example_index == index) return;
 
 		auto& info = ExampleCatalog::get_all()[index];
 
-		const auto example = info.factory({ logger, _random, time, input, renderer, platform, _font });
+		auto example = info.factory({ logger, _random, time, input, renderer, platform, _font });
 		if (!example)
 		{
 			UC_LOG_ERROR(logger) << "Failed to create example " << info.title << ":" << index;
@@ -122,10 +128,10 @@ namespace unicore
 		}
 
 		_example_index = index;
-		_example = example;
+		_example = std::move(example);
 		UC_LOG_INFO(logger) << "Set example " << index << ": " << info.title;
 
-		example->load(resources);
+		_example->load(resources);
 		resources.unload_unused();
 		//resources.dump_used();
 	}

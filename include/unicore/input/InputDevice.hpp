@@ -7,6 +7,7 @@ namespace unicore
 	{
 		Mouse,
 		Keyboard,
+		Touch,
 	};
 
 	class InputDevice : public Object

@@ -40,6 +40,8 @@ namespace unicore
 		virtual void on_init() = 0;
 		virtual void on_update() = 0;
 
+		virtual void on_drop_file(const Path& path) {}
+
 		ModuleContainer _modules;
 
 	private:

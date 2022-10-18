@@ -2,6 +2,7 @@
 #include "unicore/platform/Module.hpp"
 #include "unicore/input/MouseDevice.hpp"
 #include "unicore/input/KeyboardDevice.hpp"
+#include "unicore/input/TouchDevice.hpp"
 
 namespace unicore
 {
@@ -11,5 +12,6 @@ namespace unicore
 	public:
 		UC_NODISCARD virtual const MouseDeviceState& mouse() const = 0;
 		UC_NODISCARD virtual const KeyboardDeviceState& keyboard() const = 0;
+		UC_NODISCARD virtual const TouchDeviceState& touch() const = 0;
 	};
 }

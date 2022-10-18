@@ -197,11 +197,39 @@ namespace unicore
 		_mods.set(KeyMod::SystemRight, key_mod & KMOD_RGUI);
 	}
 
+	// SDL2TouchDevice ////////////////////////////////////////////////////////////
+	void SDL2TouchDevice::reset()
+	{
+		_fingers.clear();
+	}
+
+	void SDL2TouchDevice::update()
+	{
+		_fingers.clear();
+
+		const int num_touch_devices = SDL_GetNumTouchDevices();
+		for (int device_index = 0; device_index < num_touch_devices; device_index++)
+		{
+			const SDL_TouchID touch_id = SDL_GetTouchDevice(device_index);
+			if (touch_id == 0) continue;
+
+			const int num_touch_fingers = SDL_GetNumTouchFingers(touch_id);
+			for (int finger_index = 0; finger_index < num_touch_fingers; finger_index++)
+			{
+				const SDL_Finger* finger = SDL_GetTouchFinger(touch_id, finger_index);
+				if (finger == nullptr) continue;
+
+				_fingers.push_back({ static_cast<IntPtr>(finger->id), {0, 0} });
+			}
+		}
+	}
+
 	// SDL2Input //////////////////////////////////////////////////////////////////
 	SDL2Input::SDL2Input(Logger& logger)
 		: _logger(logger)
 		, _mouse_state(_mouse)
 		, _keyboard_state(_keyboard)
+		, _touch_state(_touch)
 	{
 		SDL_InitSubSystem(SDL_INIT_EVENTS);
 	}
@@ -216,22 +244,31 @@ namespace unicore
 		return _keyboard_state;
 	}
 
+	const TouchDeviceState& SDL2Input::touch() const
+	{
+		return _touch_state;
+	}
+
 	void SDL2Input::reset()
 	{
 		_mouse.reset();
 		_keyboard.reset();
+		_touch.reset();
 
 		_mouse_state.reset();
 		_keyboard_state.reset();
+		_touch_state.reset();
 	}
 
 	void SDL2Input::update()
 	{
 		_mouse.update();
 		_keyboard.update();
+		_touch.update();
 
 		_mouse_state.update();
 		_keyboard_state.update();
+		_touch_state.update();
 	}
 }
 #endif

@@ -48,6 +48,18 @@ namespace unicore
 		KeyModFlags _mods;
 	};
 
+	class SDL2TouchDevice : public TouchDevice, SDL2InputDevice
+	{
+	public:
+		void reset() override;
+		void update() override;
+
+		UC_NODISCARD const List<TouchFinger>& fingers() const override { return _fingers; }
+
+	protected:
+		List<TouchFinger> _fingers;
+	};
+
 	class SDL2Input : public Input
 	{
 		UC_OBJECT(SDL2Input, Input)
@@ -56,6 +68,7 @@ namespace unicore
 
 		UC_NODISCARD const MouseDeviceState& mouse() const override;
 		UC_NODISCARD const KeyboardDeviceState& keyboard() const override;
+		UC_NODISCARD const TouchDeviceState& touch() const override;
 
 		void reset();
 		void update();
@@ -63,9 +76,11 @@ namespace unicore
 		Logger& _logger;
 		SDL2MouseDevice _mouse;
 		SDL2KeyboardDevice _keyboard;
+		SDL2TouchDevice _touch;
 
 		MouseDeviceState _mouse_state;
 		KeyboardDeviceState _keyboard_state;
+		TouchDeviceState _touch_state;
 	};
 }
 #endif

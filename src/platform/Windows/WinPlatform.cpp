@@ -13,7 +13,7 @@ namespace unicore
 		, _file_system_logger("[FS] ", _logger)
 		, _file_system(_file_system_logger)
 	{
-		file_system.add_read(std::make_shared<WinFileProvider>(_file_system_logger));
+		file_system.add_read(std::make_shared<WinFileProvider>(_file_system_logger, Path::Empty));
 	}
 
 	void WinPlatform::update()

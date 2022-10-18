@@ -123,7 +123,8 @@ namespace unicore
 				}
 			}
 
-			if (auto resource = loader->load({ *this, path, options, logger }))
+			const ResourceLoader::Context context = { *this, path, options, logger };
+			if (auto resource = loader->load(context))
 			{
 				UC_LOG_DEBUG(_logger) << "Loaded " << resource->type()
 					<< FromPath(path) << WithOptions(options) << " by " << loader->type()

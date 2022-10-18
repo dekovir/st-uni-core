@@ -32,6 +32,13 @@ namespace unicore
 			case SDL_QUIT:
 				_running = false;
 				break;
+
+			case SDL_DROPFILE:
+				Path path(evt.drop.file);
+				UC_LOG_DEBUG(_logger) << "Drop file: " << path;
+				SDL_free(evt.drop.file);
+				_event_drop_file.invoke(path);
+				break;
 			}
 
 			for (const auto listener : _listeners)

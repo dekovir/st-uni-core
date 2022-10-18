@@ -32,6 +32,8 @@ namespace unicore
 
 		void get_text(List<String32>& lines) override;
 
+		void on_drop_file(const Path& path) override;
+
 	protected:
 		Shared<Texture> _tex;
 
