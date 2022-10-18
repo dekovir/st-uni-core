@@ -42,6 +42,7 @@ namespace unicore
 		virtual void draw() const = 0;
 
 		virtual void get_text(List<String32>& lines) {}
+		virtual void get_comment(String32& comment) {}
 
 		virtual void on_drop_file(const Path& path) {}
 	};

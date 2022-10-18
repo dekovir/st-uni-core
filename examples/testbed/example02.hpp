@@ -31,6 +31,7 @@ namespace unicore
 		void draw() const override;
 
 		void get_text(List<String32>& lines) override;
+		void get_comment(String32& comment) override;
 
 		void on_drop_file(const Path& path) override;
 

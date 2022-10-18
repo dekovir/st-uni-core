@@ -73,6 +73,9 @@ namespace unicore
 		_lines.clear();
 		_example->get_text(_lines);
 
+		String32 comment;
+		_example->get_comment(comment);
+
 		if (_font)
 		{
 			const float height = _font->get_height();
@@ -91,6 +94,9 @@ namespace unicore
 				_sprite_batch
 					.print(_font, { 250, height * (i + 1) }, _lines[i]);
 			}
+
+			if (!comment.empty())
+				_sprite_batch.print(_font, {0, screen_size.y - height}, comment);
 
 			_sprite_batch.flush();
 		}

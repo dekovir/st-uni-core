@@ -92,6 +92,11 @@ namespace unicore
 		lines.push_back(StringBuilder::format(U"Count: {}", _entites.size()));
 	}
 
+	void Example02::get_comment(String32& comment)
+	{
+		comment = U"You can drop images to window";
+	}
+
 	void Example02::on_drop_file(const Path& path)
 	{
 		if (const auto tex = platform.resources.load<Texture>(path))
