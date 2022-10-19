@@ -6,6 +6,7 @@
 #include "unicore/renderer/Surface.hpp"
 #include "unicore/renderer/Font.hpp"
 #include "unicore/io/FileLoader.hpp"
+#include "unicore/ui/UITemplate.hpp"
 
 namespace unicore
 {
@@ -18,6 +19,9 @@ namespace unicore
 
 		init_plugins(*this);
 	}
+
+	static constexpr auto code1 = U"My name is <strong>::name::</strong>, <em>::age::</em> years old";
+	static constexpr auto code2 = U"<table>::foreach users::<tr><td>::name::</td><td>::age::</td></tr>::end::</table>";
 
 	void MyApp::on_init()
 	{
@@ -32,6 +36,9 @@ namespace unicore
 		_font = resources.load<Font>("ubuntu.regular.ttf"_path);
 
 		set_example(0);
+
+		const auto tmp1 = Template(code1);
+		UC_LOG_DEBUG(logger) << "Template output: " << tmp1.execute({ {U"name", U"Mark"}, {U"age", 30} });
 	}
 
 	void MyApp::on_update()
@@ -96,7 +103,7 @@ namespace unicore
 			}
 
 			if (!comment.empty())
-				_sprite_batch.print(_font, {0, screen_size.y - height}, comment);
+				_sprite_batch.print(_font, { 0, screen_size.y - height }, comment);
 
 			_sprite_batch.flush();
 		}

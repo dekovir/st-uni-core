@@ -76,7 +76,17 @@ namespace unicore
 			builder.append(delim);
 			builder.append(text);
 			builder.append(delim);
-			return Unicode::to<Char16>(StringView(builder.data));
+			return Unicode::to_utf16(StringView(builder.data));
+		}
+
+		static String32 quoted(StringView32 text, Char32 delim = '\"')
+		{
+			// TODO: Optimize (Rewrite without Unicode methods)
+			StringBuilder builder;
+			builder.append(delim);
+			builder.append(text);
+			builder.append(delim);
+			return Unicode::to_utf32(StringView(builder.data));
 		}
 
 	protected:

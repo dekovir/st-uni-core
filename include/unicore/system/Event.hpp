@@ -14,9 +14,28 @@ namespace unicore
 			_actions.push_back(action);
 		}
 
+		bool remove(const ActionType& action)
+		{
+			//for (unsigned i = 0; i < _actions.size(); i++)
+			//{
+			//	if (_actions[i] == action)
+			//	{
+			//		_actions.erase(_actions.begin() + i);
+			//		return true;
+			//	}
+			//}
+			return false;
+		}
+
 		PublicEvent& operator+=(const ActionType& action)
 		{
 			add(action);
+			return *this;
+		}
+
+		PublicEvent& operator-=(const ActionType& action)
+		{
+			remove(action);
 			return *this;
 		}
 
