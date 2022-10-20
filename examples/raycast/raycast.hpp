@@ -1,17 +1,17 @@
 #pragma once
-#include "unicore/app/SDLCore.hpp"
-#include "unicore/Graphics2D.hpp"
-#include "unicore/SpriteBatch.hpp"
+#include "unicore/app/SDLApplication.hpp"
+#include "unicore/renderer/PrimitiveBatch.hpp"
+#include "unicore/renderer/SpriteBatch.hpp"
 
 namespace unicore
 {
-	class MyCore : public SDLCore
+	class MyCore : public SDLApplication
 	{
 	public:
 		explicit MyCore(const CoreSettings& settings);
 
 	protected:
-		Graphics2D _graphics;
+		PrimitiveBatch _graphics;
 		SpriteBatch _sprite_batch;
 
 		void on_init() override;

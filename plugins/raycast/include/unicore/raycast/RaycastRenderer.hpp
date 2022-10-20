@@ -1,6 +1,6 @@
 #pragma once
-#include "unicore/Object.hpp"
-#include "unicore/Buffer2.hpp"
+#include "unicore/system/Object.hpp"
+#include "unicore/system/Buffer2.hpp"
 
 namespace unicore
 {

@@ -1,7 +1,7 @@
 #include "raycast.hpp"
 #include "UnicoreMain.hpp"
 #include "InitPlugins.hpp"
-#include "unicore/Input.hpp"
+#include "unicore/platform/Input.hpp"
 
 namespace unicore
 {
@@ -9,7 +9,7 @@ namespace unicore
 	constexpr DisplayWindowFlags WindowFlags = DisplayWindowFlag::Resizable;
 
 	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore(create_settings(settings, "Raycast", { false, WindowSize, WindowFlags }))
+		: SDLApplication(create_settings(settings, "Raycast", { false, WindowSize, WindowFlags }))
 	{
 		init_plugins(*this);
 	}
@@ -25,7 +25,7 @@ namespace unicore
 
 #if !defined(UNICORE_PLATFORM_WEB)
 		if (input.keyboard().down(KeyCode::Escape))
-			platform.quit();
+			platform.looper.quit();
 
 		if (
 			input.keyboard().down_changed(KeyCode::Enter) &&
