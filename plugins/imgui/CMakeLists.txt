@@ -1,8 +1,12 @@
 # imgui ########################################################################
 set(IMGUI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/imgui")
-file(GLOB IMGUI_SRC "${IMGUI_DIR}/*.h" "${IMGUI_DIR}/*.cpp")
+file(GLOB IMGUI_SRC 
+	"${IMGUI_DIR}/*.h" "${IMGUI_DIR}/*.cpp"
+	"${IMGUI_DIR}/misc/cpp/*.h" "${IMGUI_DIR}/misc/cpp/*.cpp"
+)
+
 add_library(imgui STATIC ${IMGUI_SRC})
-target_include_directories(imgui PUBLIC ${IMGUI_DIR})
+target_include_directories(imgui PUBLIC "${IMGUI_DIR}" "${IMGUI_DIR}/misc/cpp")
 set_target_properties(imgui PROPERTIES FOLDER "Libs")
 
 # unicore-imgui ################################################################

@@ -10,7 +10,9 @@ namespace unicore
 	static constexpr auto UINodeIndexInvalid = UINodeIndex(std::numeric_limits<UInt32>::max());
 
 	using UIAttributeValue = Variant<
-		Int, Int64, Double, String, String32,
+		String, String32,
+		Int, Int64,
+		Float, Double,
 		Vector2i, Vector2f, Recti, Rectf>;
 
 	enum class UIAttributeType
@@ -19,6 +21,7 @@ namespace unicore
 		Name,
 		//Style,
 		Text,
+		Value,
 	};
 
 	using UIAttributes = Dictionary<UIAttributeType, UIAttributeValue>;
@@ -29,6 +32,7 @@ namespace unicore
 	{
 		OnLoad,
 		OnClick,
+		OnChange,
 	};
 	using UINodeActions = Dictionary<UIActionType, UIAction>;
 
@@ -39,6 +43,8 @@ namespace unicore
 		Group,
 		Text,
 		Button,
+		Input,
+		Slider,
 	};
 
 	class UIDocument;
@@ -71,14 +77,23 @@ namespace unicore
 
 		UINode create_node(UINodeType type);
 
-		UC_NODISCARD bool try_get_string(UIAttributeType type, String& value) const;
-		UC_NODISCARD bool try_get_string32(UIAttributeType type, String32& value) const;
+		// GET ATTRIBUTE /////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_float(UIAttributeType type, Float& value) const;
+		UC_NODISCARD Float get_float(UIAttributeType type, Float default_value = 0) const;
 
+		UC_NODISCARD bool try_get_double(UIAttributeType type, Double& value) const;
+		UC_NODISCARD Double get_double(UIAttributeType type, Double default_value = 0) const;
+
+		UC_NODISCARD bool try_get_string(UIAttributeType type, String& value) const;
 		UC_NODISCARD String get_string(UIAttributeType type, StringView default_value = "") const;
+
+		UC_NODISCARD bool try_get_string32(UIAttributeType type, String32& value) const;
 		UC_NODISCARD String32 get_string32(UIAttributeType type, StringView32 default_value = U"") const;
 
 	private:
 		UIDocument& _document;
 		UINodeIndex _index;
 	};
+
+	extern UNICODE_STRING_BUILDER_FORMAT(const UINodeIndex&);
 }

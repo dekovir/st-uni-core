@@ -26,15 +26,36 @@ namespace unicore
 
 		_inventory = std::make_shared<Inventory>(16);
 
-		_document = std::make_shared<UIDocument>();
+		_document = std::make_shared<UIDocument>(&_context_logger);
 		_view = std::make_shared<UIViewImGui>(_context, _context_logger);
 		_view->set_document(_document);
 
 		_document->create_node(UINodeType::Text, UINodeIndexInvalid,
 			{ {UIAttributeType::Text, "Sample text"} });
+
+		_document->create_node(UINodeType::Input, UINodeIndexInvalid,
+			{
+				{UIAttributeType::Text, "string"},
+				{UIAttributeType::Value, "quick brown fox"}
+			});
+
+		_document->create_node(UINodeType::Slider, UINodeIndexInvalid,
+			{
+				{UIAttributeType::Text, "float"},
+				{UIAttributeType::Value, .5}
+			});
+
+		const auto group = _document->create_node(UINodeType::Group, UINodeIndexInvalid);
+
 		_document->create_node(UINodeType::Button, UINodeIndexInvalid,
 			{ {UIAttributeType::Text, "Button"} },
-			{ {UIActionType::OnClick, [this]() {static int i = 0; UC_LOG_INFO(logger) << "click " << i++; }} });
+			{ {UIActionType::OnClick, [this, group]()
+			{
+				static int index = 1;
+				auto text = StringBuilder::format("Item {}", index++);
+				_document->create_node(UINodeType::Text, group,
+					{ {UIAttributeType::Text, text} });
+			}} });
 	}
 
 	void MyApp::on_update()

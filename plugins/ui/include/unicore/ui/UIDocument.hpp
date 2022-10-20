@@ -7,16 +7,16 @@ namespace unicore
 	enum class UIEventType
 	{
 		ActionCall,
+		ValueChanged,
 	};
+
+	using UIEventValue = Variant<UIActionType, Double, String, String32>;
 
 	struct UIEvent
 	{
 		UINode node;
 		UIEventType type;
-		union
-		{
-			UIActionType action;
-		};
+		UIEventValue value;
 	};
 
 	class UIDocument
@@ -25,6 +25,8 @@ namespace unicore
 		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttributeType, const Optional<UIAttributeValue>&);
 		UC_OBJECT_EVENT(set_action, const UINode&, UIActionType, const Optional<UIAction>&);
 	public:
+		explicit UIDocument(Logger* logger = nullptr);
+
 		size_t get_root_nodes(List<UINode>& nodes);
 		UC_NODISCARD List<UINode> get_root_nodes();
 
@@ -59,6 +61,7 @@ namespace unicore
 		UC_NODISCARD const UINodeActions& get_node_actions(UINodeIndex index) const;
 
 	protected:
+		Logger* _logger;
 		UINodeIndex _root_index = UINodeIndexInvalid;
 
 		struct NodeInfo

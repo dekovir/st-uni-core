@@ -15,6 +15,7 @@ namespace unicore
 	protected:
 		Logger& _logger;
 		ImGuiContext& _context;
+		List<UIEvent> _update_events;
 
 		void on_create_node(const UINode& node) override;
 
@@ -25,5 +26,7 @@ namespace unicore
 			UIActionType type, const Optional<UIAction>& value) override;
 
 		void render_node(const UINode& node);
+
+		static String make_id(UINodeIndex index);
 	};
 }

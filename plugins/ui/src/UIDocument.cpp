@@ -1,7 +1,13 @@
 #include "unicore/ui/UIDocument.hpp"
+#include "unicore/io/Logger.hpp"
 
 namespace unicore
 {
+	UIDocument::UIDocument(Logger* logger)
+		: _logger(logger)
+	{
+	}
+
 	size_t UIDocument::get_root_nodes(List<UINode>& nodes)
 	{
 		List<UINodeIndex> indices;
@@ -25,8 +31,17 @@ namespace unicore
 		switch (evt.type)
 		{
 		case UIEventType::ActionCall:
-			if (const auto action = evt.node.get_action(evt.action); action.has_value())
-				action.value()();
+			if (const auto ptr = std::get_if<UIActionType>(&evt.value))
+			{
+				const auto type = *ptr;
+				if (const auto action = evt.node.get_action(type); action.has_value())
+					action.value()();
+			}
+			break;
+
+		case UIEventType::ValueChanged:
+			UC_LOG_DEBUG(_logger) << "Value at " << evt.node.index()
+				<< " changed to " << std::get<Double>(evt.value);
 			break;
 		}
 	}

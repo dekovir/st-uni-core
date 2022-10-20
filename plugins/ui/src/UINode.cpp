@@ -99,10 +99,61 @@ namespace unicore
 		return { _document, child_index };
 	}
 
+	bool UINode::try_get_float(UIAttributeType type, Float& value) const
+	{
+		if (const auto result = get_attribute(type); result.has_value())
+		{
+			if (const auto ptr = std::get_if<Float>(&result.value()))
+			{
+				value = *ptr;
+				return true;
+			}
+
+			if (const auto ptr = std::get_if<Double>(&result.value()))
+			{
+				value = static_cast<Float>(*ptr);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	Float UINode::get_float(UIAttributeType type, Float default_value) const
+	{
+		Float value;
+		return try_get_float(type, value) ? value : default_value;
+	}
+
+	bool UINode::try_get_double(UIAttributeType type, Double& value) const
+	{
+		if (const auto result = get_attribute(type); result.has_value())
+		{
+			if (const auto ptr = std::get_if<Float>(&result.value()))
+			{
+				value = *ptr;
+				return true;
+			}
+
+			if (const auto ptr = std::get_if<Double>(&result.value()))
+			{
+				value = *ptr;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	Double UINode::get_double(UIAttributeType type, Double default_value) const
+	{
+		Double value;
+		return try_get_double(type, value) ? value : default_value;
+	}
+
 	bool UINode::try_get_string(UIAttributeType type, String& value) const
 	{
-		const auto result = get_attribute(type);
-		if (result.has_value())
+		if (const auto result = get_attribute(type); result.has_value())
 		{
 			if (const auto str = std::get_if<String>(&result.value()))
 			{
@@ -120,10 +171,15 @@ namespace unicore
 		return false;
 	}
 
+	String UINode::get_string(UIAttributeType type, StringView default_value) const
+	{
+		String str;
+		return try_get_string(type, str) ? str : String(default_value);
+	}
+
 	bool UINode::try_get_string32(UIAttributeType type, String32& value) const
 	{
-		const auto result = get_attribute(type);
-		if (result.has_value())
+		if (const auto result = get_attribute(type); result.has_value())
 		{
 			if (const auto str = std::get_if<String32>(&result.value()))
 			{
@@ -141,15 +197,14 @@ namespace unicore
 		return false;
 	}
 
-	String UINode::get_string(UIAttributeType type, StringView default_value) const
-	{
-		String str;
-		return try_get_string(type, str) ? str : String(default_value);
-	}
-
 	String32 UINode::get_string32(UIAttributeType type, StringView32 default_value) const
 	{
 		String32 str;
 		return try_get_string32(type, str) ? str : String32(default_value);
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const UINodeIndex&)
+	{
+		return builder << "I(" << value.value << ")";
 	}
 }
