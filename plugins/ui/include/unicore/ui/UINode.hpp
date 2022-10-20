@@ -22,6 +22,8 @@ namespace unicore
 		//Style,
 		Text,
 		Value,
+		MinValue,
+		MaxValue,
 	};
 
 	using UIAttributes = Dictionary<UIAttributeType, UIAttributeValue>;

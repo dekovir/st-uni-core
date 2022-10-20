@@ -49,11 +49,8 @@ namespace unicore
 		node.get_children(children);
 
 		const auto& attributes = node.attributes();
-		Optional<UIAttributeValue> value;
-
-		String id, str, label;
+		String id, str;
 		String32 str32;
-		Float value_f;
 
 		switch (type)
 		{
@@ -95,18 +92,26 @@ namespace unicore
 			break;
 
 		case UINodeType::Input:
-			label = node.get_string(UIAttributeType::Text);
+		{
+			const auto label = node.get_string(UIAttributeType::Text);
 			str = node.get_string(UIAttributeType::Value);
 			if (ImGui::InputText(label.c_str(), &str))
 				_update_events.push_back({ node, UIEventType::ValueChanged, str });
-			break;
+		}
+		break;
 
 		case UINodeType::Slider:
-			label = node.get_string(UIAttributeType::Text);
-			value_f = node.get_float(UIAttributeType::Value);
-			if (ImGui::SliderFloat(label.c_str(), &value_f, 0.0f, 1.0f))
-				_update_events.push_back({ node, UIEventType::ValueChanged, value_f });
-			break;
+		{
+			const auto label = node.get_string(UIAttributeType::Text);
+			const auto value_min = node.get_float(UIAttributeType::MinValue, 0);
+			const auto value_max = node.get_float(UIAttributeType::MaxValue, 1);
+
+			auto value = node.get_float(UIAttributeType::Value);
+
+			if (ImGui::SliderFloat(label.c_str(), &value, value_min, value_max))
+				_update_events.push_back({ node, UIEventType::ValueChanged, value });
+		}
+		break;
 		}
 	}
 

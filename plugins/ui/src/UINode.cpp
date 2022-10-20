@@ -103,6 +103,18 @@ namespace unicore
 	{
 		if (const auto result = get_attribute(type); result.has_value())
 		{
+			if (const auto ptr = std::get_if<Int>(&result.value()))
+			{
+				value = *ptr;
+				return true;
+			}
+
+			if (const auto ptr = std::get_if<Int64>(&result.value()))
+			{
+				value = static_cast<Float>(*ptr);
+				return true;
+			}
+
 			if (const auto ptr = std::get_if<Float>(&result.value()))
 			{
 				value = *ptr;
@@ -129,6 +141,18 @@ namespace unicore
 	{
 		if (const auto result = get_attribute(type); result.has_value())
 		{
+			if (const auto ptr = std::get_if<Int>(&result.value()))
+			{
+				value = *ptr;
+				return true;
+			}
+
+			if (const auto ptr = std::get_if<Int64>(&result.value()))
+			{
+				value = static_cast<Float>(*ptr);
+				return true;
+			}
+
 			if (const auto ptr = std::get_if<Float>(&result.value()))
 			{
 				value = *ptr;

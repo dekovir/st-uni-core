@@ -42,7 +42,8 @@ namespace unicore
 		_document->create_node(UINodeType::Slider, UINodeIndexInvalid,
 			{
 				{UIAttributeType::Text, "float"},
-				{UIAttributeType::Value, .5}
+				{UIAttributeType::MaxValue, 100},
+				{UIAttributeType::Value, 50}
 			});
 
 		const auto group = _document->create_node(UINodeType::Group, UINodeIndexInvalid);
