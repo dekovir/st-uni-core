@@ -1,5 +1,5 @@
 #include "unicore/fnt/FNTPlugin.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 #include "unicore/fnt/DekovirFontLoader.hpp"
 
 namespace unicore

@@ -1,25 +1,25 @@
 #include "testbed.hpp"
 #include "UnicoreMain.hpp"
 #include "InitPlugins.hpp"
-#include "unicore/Input.hpp"
-#include "unicore/Surface.hpp"
-#include "unicore/Font.hpp"
-#include "unicore/FileProvider.hpp"
-#include "unicore/loaders/FileLoader.hpp"
+#include "unicore/io/FileProvider.hpp"
+#include "unicore/platform/Input.hpp"
+#include "unicore/renderer/Surface.hpp"
+#include "unicore/renderer/Font.hpp"
+#include "unicore/io/FileLoader.hpp"
 
 namespace unicore
 {
 	constexpr DisplayWindowFlags WindowFlags = DisplayWindowFlag::Resizable;
 
-	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore(create_settings(settings, "Testbed"))
+	MyApp::MyApp(const CoreSettings& settings)
+		: SDLApplication(create_settings(settings, "Testbed"))
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
 		init_plugins(*this);
 	}
 
-	void MyCore::on_init()
+	void MyApp::on_init()
 	{
 #if 1
 		_archive = resources.load<ReadFileProvider>("negative.7z"_path);
@@ -34,11 +34,11 @@ namespace unicore
 		set_example(0);
 	}
 
-	void MyCore::on_update()
+	void MyApp::on_update()
 	{
 #if !defined(UNICORE_PLATFORM_WEB)
 		if (input.keyboard().down(KeyCode::Escape))
-			platform.quit();
+			platform.looper.quit();
 
 		if (
 			input.keyboard().down_changed(KeyCode::Enter) &&
@@ -73,6 +73,9 @@ namespace unicore
 		_lines.clear();
 		_example->get_text(_lines);
 
+		String32 comment;
+		_example->get_comment(comment);
+
 		if (_font)
 		{
 			const float height = _font->get_height();
@@ -92,11 +95,14 @@ namespace unicore
 					.print(_font, { 250, height * (i + 1) }, _lines[i]);
 			}
 
+			if (!comment.empty())
+				_sprite_batch.print(_font, {0, screen_size.y - height}, comment);
+
 			_sprite_batch.flush();
 		}
 	}
 
-	void MyCore::on_draw()
+	void MyApp::on_draw()
 	{
 		renderer.clear(ColorConst4b::Black);
 
@@ -108,13 +114,19 @@ namespace unicore
 		_draw_calls = renderer.draw_calls();
 	}
 
-	void MyCore::set_example(int index)
+	void MyApp::on_drop_file(const Path& path)
+	{
+		if (_example)
+			_example->on_drop_file(path);
+	}
+
+	void MyApp::set_example(int index)
 	{
 		if (_example_index == index) return;
 
 		auto& info = ExampleCatalog::get_all()[index];
 
-		const auto example = info.factory({ logger, _random, time, input, renderer, platform, _font });
+		auto example = info.factory({ logger, _random, time, input, renderer, platform, _font });
 		if (!example)
 		{
 			UC_LOG_ERROR(logger) << "Failed to create example " << info.title << ":" << index;
@@ -122,13 +134,13 @@ namespace unicore
 		}
 
 		_example_index = index;
-		_example = example;
+		_example = std::move(example);
 		UC_LOG_INFO(logger) << "Set example " << index << ": " << info.title;
 
-		example->load(resources);
+		_example->load(resources);
 		resources.unload_unused();
 		//resources.dump_used();
 	}
 
-	UNICORE_MAIN_CORE(MyCore);
+	UNICORE_MAIN_CORE(MyApp);
 }

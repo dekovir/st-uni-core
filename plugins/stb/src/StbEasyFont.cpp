@@ -1,7 +1,7 @@
 #include "unicore/stb/StbEasyFont.hpp"
 #if defined(UNICORE_USE_STB_EASY_FONT)
 #include <stb_easy_font.h>
-#include "unicore/Unicode.hpp"
+#include "unicore/system/Unicode.hpp"
 
 namespace unicore
 {
@@ -33,7 +33,7 @@ namespace unicore
 	}
 
 	size_t StbEasyFont::generate(const Vector2f& position, StringView32 text,
-		const Color4b& color, List<VertexColorQuad2>& quad_list) const
+		const Color4b& color, List<QuadColor2f>& quad_list) const
 	{
 		const auto str = Unicode::to_utf8(text);
 		const auto num_quads = stb_easy_font_print(
@@ -42,7 +42,7 @@ namespace unicore
 
 		for (auto i = 0; i < num_quads; i++)
 		{
-			VertexColorQuad2 quad;
+			QuadColor2f quad;
 			quad.v[0] = { position + s_quads[i * 4 + 0].pos, color };
 			quad.v[1] = { position + s_quads[i * 4 + 1].pos, color };
 			quad.v[2] = { position + s_quads[i * 4 + 2].pos, color };

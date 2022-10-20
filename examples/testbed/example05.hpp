@@ -1,10 +1,10 @@
 #pragma once
 #include "example.hpp"
 #if defined(UNICORE_USE_GRID)
-#include "unicore/Transform2.hpp"
-#include "unicore/Sprite.hpp"
-#include "unicore/SpriteBatch.hpp"
-#include "unicore/Graphics2D.hpp"
+#include "unicore/math/Transform2.hpp"
+#include "unicore/renderer/Sprite.hpp"
+#include "unicore/renderer/SpriteBatch.hpp"
+#include "unicore/renderer/PrimitiveBatch.hpp"
 #include "unicore/grid/GridMap.hpp"
 
 namespace unicore
@@ -31,9 +31,9 @@ namespace unicore
 
 		RectangleTopology _topology;
 		GridMap<CellType> _map;
-		Transform2 _tr;
+		Transform2f _tr;
 
-		Graphics2D _graphics;
+		PrimitiveBatch _graphics;
 		SpriteBatch _sprite_batch;
 	};
 }

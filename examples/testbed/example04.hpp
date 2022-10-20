@@ -1,6 +1,6 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/SpriteBatch.hpp"
+#include "unicore/renderer/SpriteBatch.hpp"
 
 namespace unicore
 {

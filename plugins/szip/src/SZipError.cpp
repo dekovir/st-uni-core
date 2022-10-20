@@ -1,5 +1,5 @@
 #include "unicore/szip/SZipError.hpp"
-#include "unicore/StringBuilder.hpp"
+#include "unicore/system/StringBuilder.hpp"
 
 namespace unicore
 {

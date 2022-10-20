@@ -1,8 +1,7 @@
 #include "unicore/imgui/ImGuiRender.hpp"
-#include "unicore/Logger.hpp"
-#include "unicore/Surface.hpp"
-#include "unicore/Texture.hpp"
-#include "unicore/RendererSDL.hpp"
+#include "unicore/io/Logger.hpp"
+#include "unicore/renderer/Surface.hpp"
+#include "unicore/renderer/Texture.hpp"
 
 namespace unicore
 {
@@ -33,7 +32,7 @@ namespace unicore
 		}
 	}
 
-	ImGuiRender2D::ImGuiRender2D(RendererSDL& render, Logger& logger)
+	ImGuiRender2D::ImGuiRender2D(sdl2::Pipeline& render, Logger& logger)
 		: ImGuiRender(logger), _render(render)
 	{
 	}
@@ -115,7 +114,7 @@ namespace unicore
 
 					_render.set_clip(r);
 
-					static List<VertexTexColor2> s_verts;
+					static List<VertexColorTexture2f> s_verts;
 
 					s_verts.resize(pcmd->ElemCount);
 					for (unsigned i = 0; i < pcmd->ElemCount; i++)
@@ -123,7 +122,7 @@ namespace unicore
 						const auto index = idx_buffer[pcmd->IdxOffset + i];
 						const auto& [pos, uv, col] = vtx_buffer[pcmd->VtxOffset + index];
 
-						VertexTexColor2 vertex;
+						VertexColorTexture2f vertex;
 						vertex.pos.x = pos.x;
 						vertex.pos.y = pos.y;
 						vertex.uv.x = uv.x;
@@ -133,7 +132,7 @@ namespace unicore
 					}
 
 					const auto tex = static_cast<Texture*>(pcmd->GetTexID());
-					_render.draw_triangles(s_verts.data(), s_verts.size(), tex);
+					_render.draw_trianglesf(s_verts.data(), s_verts.size(), tex);
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 #include "unicore/wasm/WasmModule.hpp"
-#include "unicore/Logger.hpp"
+#include "unicore/io/Logger.hpp"
 #include "unicore/wasm/WasmRuntime.hpp"
 
 namespace unicore

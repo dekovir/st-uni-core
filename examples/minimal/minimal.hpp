@@ -1,8 +1,7 @@
 #pragma once
-#include "unicore/app/SDLCore.hpp"
-#include "unicore/Graphics2D.hpp"
-#include "unicore/SpriteBatch.hpp"
-#include "unicore/RendererSDL.hpp"
+#include "unicore/app/SDLApplication.hpp"
+#include "unicore/renderer/PrimitiveBatch.hpp"
+#include "unicore/renderer/SpriteBatch.hpp"
 
 namespace unicore
 {
@@ -22,17 +21,17 @@ namespace unicore
 		void update(const Vector2i& size, float delta);
 	};
 
-	class MyCore : public SDLCore
+	class MyApp : public SDLApplication
 	{
 	public:
-		explicit MyCore(const CoreSettings& settings);
+		explicit MyApp(const CoreSettings& settings);
 
 	protected:
 		Shared<Texture> _tex;
 		DefaultRandom _random;
 		List<Entity> _entites;
 
-		Graphics2D _graphics;
+		PrimitiveBatch _graphics;
 		SpriteBatch _sprite_batch;
 
 		TimeSpan _add_time = TimeSpanConst::Zero;

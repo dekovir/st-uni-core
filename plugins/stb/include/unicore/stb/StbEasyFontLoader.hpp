@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/ResourceLoader.hpp"
+#include "unicore/resource/ResourceLoader.hpp"
 #if defined(UNICORE_USE_STB_EASY_FONT)
 #include "unicore/stb/StbEasyFont.hpp"
 

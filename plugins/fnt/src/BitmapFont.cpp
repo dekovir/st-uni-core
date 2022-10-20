@@ -105,13 +105,13 @@ namespace unicore
 
 	void BitmapFont::generate(
 		const Vector2f& position, StringView32 text, const Color4b& color,
-		Dictionary<Shared<Texture>, List<VertexTexColorQuad2>>& quad_dict)
+		Dictionary<Shared<Texture>, List<QuadColorTexture2f>>& quad_dict)
 	{
 		Vector2f cur = position;
 		for (size_t i = 0; i < text.size(); i++)
 		{
 			const auto c = text[i];
-			VertexTexColorQuad2 quad;
+			QuadColorTexture2f quad;
 			if (auto tex = print_char(c, cur, color, quad))
 			{
 				quad_dict[tex].push_back(quad);
@@ -122,7 +122,7 @@ namespace unicore
 	}
 
 	Shared<Texture> BitmapFont::print_char(Char32 code, Vector2f& pos,
-		const Color4b& color, VertexTexColorQuad2& quad) const
+		const Color4b& color, QuadColorTexture2f& quad) const
 	{
 		Rectf rect, uv;
 		if (auto tex = get_char_print_info(code, pos, &rect, &uv))

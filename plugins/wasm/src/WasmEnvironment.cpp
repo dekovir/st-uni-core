@@ -1,5 +1,5 @@
 #include "unicore/wasm/WasmEnvironment.hpp"
-#include "unicore/Logger.hpp"
+#include "unicore/io/Logger.hpp"
 #include "unicore/wasm/WasmRuntime.hpp"
 #include "unicore/wasm/WasmModule.hpp"
 

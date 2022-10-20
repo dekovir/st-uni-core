@@ -1,5 +1,6 @@
 #include "UnicoreMain.hpp"
-#include "unicore/app/RendererCore.hpp"
+#include "unicore/app/RendererApplication.hpp"
+
 #if defined(UNICORE_USE_SDL2_MAIN)
 #	include <SDL_main.h>
 #endif
@@ -10,13 +11,13 @@ namespace unicore
 	{
 	public:
 		Unique<Platform> platform;
-		Unique<Core> core;
-		RendererCore* core_render = nullptr;
+		Unique<Application> app;
+		RendererApplication* core_render = nullptr;
 
 		State()
 			: platform(Platform::create())
-			, core(create_main_core({ *platform }))
-			, core_render(dynamic_cast<RendererCore*>(core.get()))
+			, app(create_main_core({ *platform }))
+			, core_render(dynamic_cast<RendererApplication*>(app.get()))
 		{
 		}
 
@@ -24,7 +25,7 @@ namespace unicore
 		{
 			if (core_render)
 				core_render->frame();
-			else core->update();
+			else app->update();
 		}
 	};
 
@@ -33,7 +34,7 @@ namespace unicore
 	void state_init()
 	{
 		g_state = new State();
-		g_state->core->init();
+		g_state->app->init();
 	}
 
 	void state_done()
@@ -43,7 +44,7 @@ namespace unicore
 
 	bool state_running()
 	{
-		return g_state->platform->running();
+		return g_state->platform->looper.running();
 	}
 
 	void state_frame()

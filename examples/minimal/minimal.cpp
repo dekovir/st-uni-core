@@ -1,11 +1,11 @@
 #include "minimal.hpp"
 #include "UnicoreMain.hpp"
 #include "InitPlugins.hpp"
-#include "unicore/Time.hpp"
-#include "unicore/Input.hpp"
-#include "unicore/Canvas.hpp"
-#include "unicore/Surface.hpp"
-#include "unicore/Texture.hpp"
+#include "unicore/platform/Time.hpp"
+#include "unicore/platform/Input.hpp"
+#include "unicore/renderer/Canvas.hpp"
+#include "unicore/renderer/Surface.hpp"
+#include "unicore/renderer/Texture.hpp"
 namespace unicore
 {
 	constexpr Vector2i WindowSize = Vector2i(800, 600);
@@ -31,13 +31,13 @@ namespace unicore
 		angle += angle_speed * delta;
 	}
 
-	MyCore::MyCore(const CoreSettings& settings)
-		: SDLCore(create_settings(settings, "Minimal", { false, WindowSize, WindowFlags }))
+	MyApp::MyApp(const CoreSettings& settings)
+		: SDLApplication(create_settings(settings, "Minimal", { false, WindowSize, WindowFlags }))
 	{
 		init_plugins(*this);
 	}
 
-	void MyCore::on_init()
+	void MyApp::on_init()
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
@@ -72,7 +72,7 @@ namespace unicore
 		for (unsigned i = 0; i < 360; i += 15)
 		{
 			const auto pos = Vector2i(0, radius_outer).rotate(Degrees(static_cast<float>(i)));
-			canvas.draw_line(center, center + pos, ColorConst4b::White);
+			canvas.draw_linei(center, center + pos, ColorConst4b::White);
 		}
 
 		constexpr auto step = radius_outer / 8;
@@ -84,13 +84,13 @@ namespace unicore
 		_tex = renderer.create_texture(circle);
 	}
 
-	void MyCore::on_update()
+	void MyApp::on_update()
 	{
 		const auto screen_size = renderer.screen_size();
 
 #if !defined(UNICORE_PLATFORM_WEB)
 		if (input.keyboard().down(KeyCode::Escape))
-			platform.quit();
+			platform.looper.quit();
 
 		if (
 			input.keyboard().down_changed(KeyCode::Enter) &&
@@ -146,7 +146,7 @@ namespace unicore
 		_sprite_batch.flush();
 	}
 
-	void MyCore::on_draw()
+	void MyApp::on_draw()
 	{
 		renderer.clear(ColorConst4b::Black);
 
@@ -155,7 +155,7 @@ namespace unicore
 		_sprite_batch.render(renderer);
 	}
 
-	void MyCore::spawn_entity(const Vector2f& position, const Vector2i& size)
+	void MyApp::spawn_entity(const Vector2f& position, const Vector2i& size)
 	{
 		Entity entity;
 		entity.center = position;
@@ -174,7 +174,7 @@ namespace unicore
 		_entites.push_back(entity);
 	}
 
-	void MyCore::spawn_entities(unsigned count)
+	void MyApp::spawn_entities(unsigned count)
 	{
 		if (!_tex) return;
 
@@ -191,5 +191,5 @@ namespace unicore
 		}
 	}
 
-	UNICORE_MAIN_CORE(MyCore);
+	UNICORE_MAIN_CORE(MyApp);
 }

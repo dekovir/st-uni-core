@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Font.hpp"
+#include "unicore/renderer/Font.hpp"
 #if defined(UNICORE_USE_STB_EASY_FONT)
 
 namespace unicore
@@ -17,7 +17,7 @@ namespace unicore
 		UC_NODISCARD float calc_width(StringView32 text) const override;
 
 		size_t generate(const Vector2f& position, StringView32 text,
-			const Color4b& color, List<VertexColorQuad2>& quad_list) const override;
+			const Color4b& color, List<QuadColor2f>& quad_list) const override;
 
 	protected:
 		const float _height;

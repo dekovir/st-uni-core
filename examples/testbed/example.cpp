@@ -5,8 +5,7 @@ namespace unicore
 	List<ExampleInfo> ExampleCatalog::_examples;
 
 	Example::Example(const ExampleContext& context)
-		: context(context)
-		, logger(context.logger)
+		: logger(context.logger)
 		, random(context.random)
 		, time(context.time)
 		, input(context.input)

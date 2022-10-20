@@ -1,6 +1,6 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/Graphics2D.hpp"
+#include "unicore/renderer/PrimitiveBatch.hpp"
 
 namespace unicore
 {
@@ -18,7 +18,7 @@ namespace unicore
 
 	protected:
 		Shared<GeometryFont> _font;
-		Graphics2D _graphics;
+		PrimitiveBatch _graphics;
 		Radians _angle;
 	};
 }

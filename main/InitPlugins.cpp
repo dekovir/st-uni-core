@@ -1,7 +1,7 @@
 #include "InitPlugins.hpp"
-#include "unicore/plugins/PlatformPlugin.hpp"
-#include "unicore/plugins/SurfacePlugin.hpp"
-#include "unicore/plugins/RendererPlugin.hpp"
+#include "unicore/resource/ResourcePlugin.hpp"
+#include "unicore/renderer/SurfacePlugin.hpp"
+#include "unicore/renderer/RendererPlugin.hpp"
 
 #if defined(UNICORE_USE_FNT)
 #include "unicore/fnt/FNTPlugin.hpp"
@@ -33,38 +33,38 @@
 
 namespace unicore
 {
-	void init_plugins(Core& core)
+	void init_plugins(Application& app)
 	{
-		core.create_plugin<PlatformPlugin>();
-		core.create_plugin<SurfacePlugin>();
-		core.create_plugin<RendererPlugin>();
+		app.create_plugin<ResourcePlugin>();
+		app.create_plugin<SurfacePlugin>();
+		app.create_plugin<RendererPlugin>();
 
 #if defined(UNICORE_USE_FNT)
-		core.create_plugin<FNTPlugin>();
+		app.create_plugin<FNTPlugin>();
 #endif
 
 #if defined(UNICORE_USE_GRID)
-		core.create_plugin<GridPlugin>();
+		app.create_plugin<GridPlugin>();
 #endif
 
 #if defined(UNICORE_USE_IMGUI)
-		core.create_plugin<ImGuiPlugin>();
+		app.create_plugin<ImGuiPlugin>();
 #endif
 
 #if defined(UNICORE_USE_STB)
-		core.create_plugin<StbPlugin>();
+		app.create_plugin<StbPlugin>();
 #endif
 
 #if defined(UNICORE_USE_7ZIP)
-		core.create_plugin<SZipFilePlugin>();
+		app.create_plugin<SZipFilePlugin>();
 #endif
 
 #if defined(UNICORE_USE_WASM)
-		core.create_plugin<WasmPlugin>();
+		app.create_plugin<WasmPlugin>();
 #endif
 
 #if defined(UNICORE_USE_XML)
-		core.create_plugin<XMLPlugin>();
+		app.create_plugin<XMLPlugin>();
 #endif
 	}
 }

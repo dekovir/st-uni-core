@@ -6,10 +6,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 
-#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-
-# OPTIONS ######################################################################
-
 # PROJECT ######################################################################
 project(UniCore)
 
@@ -91,25 +87,9 @@ endif()
 # PLUGINS ######################################################################
 add_subdirectory(${PLUGINS_DIR})
 
-
-# APP ##########################################################################
-add_subdirectory(${PROJECT_DIR}/logic)
-
 # MAIN #########################################################################
 set(MAIN_DIR "${PROJECT_DIR}/main")
-file(GLOB MAIN_SRC "${MAIN_DIR}/UnicoreMain.*")
-file(GLOB PLUGINS_SRC "${MAIN_DIR}/InitPlugins.*")
-
-add_library(unicore-main STATIC ${MAIN_SRC})
-unicore_group_sources_by_folder(unicore-main)
-target_include_directories(unicore-main PUBLIC "${MAIN_DIR}")
-target_link_libraries(unicore-main PUBLIC unicore-app)
-set_target_properties(unicore-main PROPERTIES FOLDER "UniCore")
-
-if (NOT EMSCRIPTEN)
-	target_link_libraries(unicore-main PRIVATE SDL2main)
-	target_compile_definitions(unicore-main PUBLIC UNICORE_USE_SDL2_MAIN)
-endif()
+file(GLOB MAIN_SRC "${MAIN_DIR}/*.cpp" "${MAIN_DIR}/*.hpp")
 
 # FUNCTIONS ####################################################################
 function(unicore_init_executable target_name)
@@ -134,8 +114,14 @@ function(unicore_init_executable target_name)
 	endif()
 
 	unicore_init_target(${target_name})
-	target_sources(${target_name} PUBLIC ${PLUGINS_SRC})
-	target_link_libraries(${target_name} PRIVATE unicore-app unicore-main)
+	target_link_libraries(${target_name} PRIVATE unicore)
+	target_sources(${target_name} PUBLIC ${MAIN_SRC})
+	target_include_directories(${target_name} PUBLIC "${MAIN_DIR}")
+
+	if (NOT EMSCRIPTEN)
+		target_link_libraries(${target_name} PRIVATE SDL2main)
+		target_compile_definitions(${target_name} PUBLIC UNICORE_USE_SDL2_MAIN)
+	endif()
 
 	if (MSVC)
 		set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${target_name})

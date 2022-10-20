@@ -1,6 +1,6 @@
 #include "unicore/wasm/WasmRuntime.hpp"
 #include <m3_env.h>
-#include "unicore/Logger.hpp"
+#include "unicore/io/Logger.hpp"
 #include "unicore/wasm/WasmModule.hpp"
 
 namespace unicore

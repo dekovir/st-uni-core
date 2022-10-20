@@ -85,6 +85,7 @@ namespace unicore
 
 	using Int = int;
 	using UInt = unsigned int;
+	using IntPtr = intptr_t;
 
 	using Int8 = int8_t;
 	using Int16 = int16_t;
@@ -240,6 +241,38 @@ namespace unicore
 	class Logger;
 	class StringBuilder;
 }
+
+#define UC_TYPE_DEFAULT_MOVE(Type) \
+	Type(Type&&) noexcept = default; \
+	Type& operator= (Type&&) noexcept = default
+
+#define UC_TYPE_DELETE_MOVE(Type) \
+	Type(Type&&) = delete; \
+	Type& operator= (Type&&) = delete
+
+#define UC_TYPE_DEFAULT_COPY(Type) \
+	Type(Type const&) noexcept = default; \
+	Type& operator= (Type const&) noexcept = default
+
+#define UC_TYPE_DELETE_COPY(Type) \
+	Type(Type const&) = delete; \
+	Type& operator= (Type const&) = delete
+
+#define UC_TYPE_DEFAULT_MOVE_COPY(Type) \
+	UC_TYPE_DEFAULT_MOVE(Type); \
+	UC_TYPE_DEFAULT_COPY(Type)
+
+#define UC_TYPE_DELETE_MOVE_COPY(Type) \
+	UC_TYPE_DELETE_MOVE(Type); \
+	UC_TYPE_DELETE_COPY(Type)
+
+#define UC_TYPE_DEFAULT_DTOR_MOVE_COPY(Type) \
+	~Type() = default; \
+	UC_TYPE_DEFAULT_MOVE_COPY(Type)
+
+#define UC_TYPE_DELETE_DTOR_MOVE_COPY(Type) \
+	~Type() = delete; \
+	UC_TYPE_DELETE_MOVE_COPY(Type)
 
 #define UNICODE_STRING_BUILDER_FORMAT(Type) \
 	StringBuilder& operator << (StringBuilder& builder, Type value)

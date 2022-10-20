@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/Debug.hpp"
+#include "unicore/system/Debug.hpp"
 #include <7z.h>
 
 namespace unicore

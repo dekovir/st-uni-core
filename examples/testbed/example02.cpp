@@ -1,10 +1,11 @@
 #include "example02.hpp"
-#include "unicore/Time.hpp"
-#include "unicore/Input.hpp"
-#include "unicore/Texture.hpp"
-#include "unicore/Surface.hpp"
-#include "unicore/StringBuilder.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/system/StringBuilder.hpp"
+#include "unicore/resource/ResourceCache.hpp"
+#include "unicore/platform/Time.hpp"
+#include "unicore/platform/Input.hpp"
+#include "unicore/platform/Platform.hpp"
+#include "unicore/renderer/Texture.hpp"
+#include "unicore/renderer/Surface.hpp"
 
 namespace unicore
 {
@@ -89,6 +90,17 @@ namespace unicore
 	void Example02::get_text(List<String32>& lines)
 	{
 		lines.push_back(StringBuilder::format(U"Count: {}", _entites.size()));
+	}
+
+	void Example02::get_comment(String32& comment)
+	{
+		comment = U"You can drop images to window";
+	}
+
+	void Example02::on_drop_file(const Path& path)
+	{
+		if (const auto tex = platform.resources.load<Texture>(path))
+			_tex = tex;
 	}
 
 	void Example02::spawn_entity(const Vector2f& position, const Vector2i& size)

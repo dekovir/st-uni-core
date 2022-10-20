@@ -1,14 +1,14 @@
 #include "example01.hpp"
-#include "unicore/Time.hpp"
-#include "unicore/Font.hpp"
-#include "unicore/Color3.hpp"
-#include "unicore/Shapes.hpp"
-#include "unicore/Transform2.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/math/Transform2.hpp"
+#include "unicore/math/ShapePrimitive.hpp"
+#include "unicore/resource/ResourceCache.hpp"
+#include "unicore/platform/Time.hpp"
+#include "unicore/renderer/Font.hpp"
+#include "unicore/renderer/Color3.hpp"
 
 namespace unicore
 {
-	UC_EXAMPLE_REGISTER(Example01, "Graphics2D");
+	UC_EXAMPLE_REGISTER(Example01, "PrimitiveBatch");
 
 	template<typename ColorType>
 	struct ColorChannel
@@ -130,13 +130,13 @@ namespace unicore
 		const auto& size = renderer.screen_size();
 		const auto center = size.cast<Float>() / 2.f;
 
-		Transform2 tr;
+		Transform2f tr;
 		tr.move = size.cast<float>() / 2.f;
 		tr.angle = _angle;
 		tr.scale.x = 1 + .5f * Math::sin(static_cast<float>(time.elapsed().total_seconds()));
 
-		const auto rect_points = Shapes::gen_rect({ 100, 800, 100, 100 });
-		const auto ellipse_points = Shapes::gen_ellipse({ 900, 900 }, { 80, 50 });
+		const auto rect_points = ShapePrimitive::create_rect({ 100, 800, 100, 100 });
+		const auto ellipse_points = ShapePrimitive::create_ellipse({ 900, 900 }, { 80, 50 });
 
 		_graphics
 			.clear()
@@ -150,7 +150,7 @@ namespace unicore
 			// point grid
 			.move({ 200, 200 })
 			.rotate(45_deg)
-			.draw_grid({ 10, 10 }, { 10, 10 }, [](Graphics2D& graphics, const Vector2f& pos)
+			.draw_grid({ 10, 10 }, { 10, 10 }, [](PrimitiveBatch& graphics, const Vector2f& pos)
 				{ graphics.draw_point(Vector2f{ pos.x - 50, pos.y - 50 }); })
 			.reset_transform()
 			// shapes

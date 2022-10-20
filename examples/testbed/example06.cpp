@@ -1,7 +1,7 @@
 ﻿#include "example06.hpp"
-#include "unicore/Input.hpp"
-#include "unicore/Font.hpp"
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
+#include "unicore/platform/Input.hpp"
+#include "unicore/renderer/Font.hpp"
 #include "unicore/stb/StbTTFont.hpp"
 
 namespace unicore
@@ -47,7 +47,7 @@ namespace unicore
 		}
 
 		_sprite_batch.print({ _font, text, TextAlign::Center }, center_screen);
-		_sprite_batch.print(_font, Transform2({ 200, 600 }, 45_rad, { 2, 2 }), U"Transformed text");
+		_sprite_batch.print(_font, Transform2f({ 200, 600 }, 45_rad, { 2, 2 }), U"Transformed text");
 		_sprite_batch.print(_font, { 100, 100 }, U"Привет мир!");
 		_sprite_batch.flush();
 	}

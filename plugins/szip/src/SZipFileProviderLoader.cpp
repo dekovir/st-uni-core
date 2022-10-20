@@ -1,6 +1,6 @@
 #include "unicore/szip/SZipFileProviderLoader.hpp"
 #include <7zCrc.h>
-#include "unicore/ResourceCache.hpp"
+#include "unicore/resource/ResourceCache.hpp"
 #include "unicore/szip/SZipFileProvider.hpp"
 #include "unicore/szip/SZipUtils.hpp"
 #include "unicore/szip/SZipError.hpp"
