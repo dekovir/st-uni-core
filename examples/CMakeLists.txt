@@ -1,6 +1,7 @@
 # OPTIONS ######################################################################
 option(UNICORE_EXAMPLES_ALL "Add all examples projects" OFF)
 option(UNICORE_EXAMPLE_MINIMAL "Add Minimal project" ${UNICORE_EXAMPLES_ALL})
+option(UNICORE_EXAMPLE_UI "Add ui example project" ${UNICORE_EXAMPLES_ALL})
 option(UNICORE_EXAMPLE_WASM "Add wasm example project" ${UNICORE_EXAMPLES_ALL})
 option(UNICORE_TESTBED "Add Testbed project" ${UNICORE_EXAMPLES_ALL})
 
@@ -12,6 +13,25 @@ if (UNICORE_EXAMPLE_MINIMAL)
 	add_executable(minimal "${EXAMPLE_MINIMAL_SRC}")
 	unicore_init_executable(minimal)
 	set_target_properties(minimal PROPERTIES FOLDER "Examples")
+endif()
+
+# EXAMPLE_UI ###################################################################
+if (UNICORE_EXAMPLE_UI)
+	set(EXAMPLE_UI_DIR "${EXAMPLES_DIR}/ui")
+	file(GLOB EXAMPLE_UI_SRC "${EXAMPLE_UI_DIR}/*.cpp" "${EXAMPLE_UI_DIR}/*.hpp")
+
+	add_executable(ui "${EXAMPLE_UI_SRC}")
+	unicore_init_executable(ui)
+	unicore_init_assets(ui "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+	set_target_properties(ui PROPERTIES FOLDER "Examples")
+
+	unciore_link_fnt(ui)
+	unciore_link_grid(ui)
+	unciore_link_imgui(ui)
+	unciore_link_stb(ui)
+	unciore_link_szip(ui)
+	unciore_link_ui(ui)
+	unciore_link_xml(ui)
 endif()
 
 # EXAMPLE_WASM #################################################################

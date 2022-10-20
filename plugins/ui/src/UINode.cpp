@@ -1,69 +1,155 @@
 #include "unicore/ui/UINode.hpp"
+#include "unicore/ui/UIDocument.hpp"
+#include "unicore/system/Unicode.hpp"
 
 namespace unicore
 {
-	UINode::UINode(UINodeType type, const Weak<UINode>& parent)
-		: _type(type), _parent(parent)
+	UINode::UINode(UIDocument& document, const UINodeIndex& index)
+		: _document(document)
+		, _index(index)
 	{
 	}
 
-	void UINode::set_attribute(StringView name, const Optional<UIAttributeValue>& value)
+	UINodeType UINode::type() const
 	{
-		// TODO: Convert to lower
-		const auto key = String(name);
-		if (value.has_value())
-			_attributes[key] = value.value();
-		else
-		{
-			const auto it = _attributes.find(key);
-			if (it != _attributes.end())
-				_attributes.erase(it);
-		}
-		// callback
+		return _document.get_node_type(_index);
 	}
 
-	Optional<UIAttributeValue> UINode::get_attribute(StringView name) const
+	Optional<UINode> UINode::parent() const
 	{
-		// TODO: Convert to lower
-		const auto key = String(name);
-		const auto it = _attributes.find(key);
-		if (it != _attributes.end())
+		const auto parent = _document.get_node_parent(_index);
+		if (parent != UINodeIndexInvalid)
+			return UINode(_document, parent);
+		return std::nullopt;
+	}
+
+	const UIAttributes& UINode::attributes() const
+	{
+		return _document.get_node_attributes(_index);
+	}
+
+	const UINodeActions& UINode::actions() const
+	{
+		return _document.get_node_actions(_index);
+	}
+
+	void UINode::set_attribute(UIAttributeType type, const Optional<UIAttributeValue>& value)
+	{
+		_document.set_node_attribute(_index, type, value);
+	}
+
+	Optional<UIAttributeValue> UINode::get_attribute(UIAttributeType type) const
+	{
+		return _document.get_node_attribute(_index, type);
+	}
+
+	void UINode::set_action(UIActionType type, const Optional<UIAction>& value)
+	{
+		_document.set_node_action(_index, type, value);
+	}
+
+	Optional<UIAction> UINode::get_action(UIActionType type) const
+	{
+		auto& actions = _document.get_node_actions(_index);
+		if (const auto it = actions.find(type); it != actions.end())
 			return it->second;
 
 		return std::nullopt;
 	}
 
-	void UINode::set_action(StringView name, const Optional<UINodeActionValue>& value)
+	size_t UINode::get_children(List<UINode>& children) const
 	{
-		// TODO: Convert to lower
-		const auto key = String(name);
-		if (value.has_value())
-			_actions[key] = value.value();
-		else
+		auto& indices = _document.get_node_children(_index);
+		if (!indices.empty())
 		{
-			const auto it = _actions.find(key);
-			if (it != _actions.end())
-				_actions.erase(it);
+			for (auto index : indices)
+				children.push_back(UINode(_document, index));
+			return indices.size();
 		}
-		// callback
+
+		return 0;
 	}
 
-	Optional<UINodeActionValue> UINode::get_action(StringView name) const
+	List<UINode> UINode::get_children() const
 	{
-		// TODO: Convert to lower
-		const auto key = String(name);
-		const auto it = _actions.find(key);
-		if (it != _actions.end())
-			return it->second;
+		List<UINode> list;
+		get_children(list);
+		return list;
+	}
 
+	Optional<UINode> UINode::get_next_sibling() const
+	{
+		const auto next_index = _document.get_node_next_sibling(_index);
+		if (next_index != UINodeIndexInvalid)
+			return UINode(_document, next_index);
 		return std::nullopt;
 	}
 
-	Shared<UINode> UINode::create_node(UINodeType type)
+	Optional<UINode> UINode::get_prev_sibling() const
 	{
-		auto node = std::make_shared<UINode>(type, shared_from_this());
-		_children.push_back(node);
-		_event_add_node.invoke(node);
-		return node;
+		const auto prev_index = _document.get_node_prev_sibling(_index);
+		if (prev_index != UINodeIndexInvalid)
+			return UINode(_document, prev_index);
+		return std::nullopt;
+	}
+
+	UINode UINode::create_node(UINodeType type)
+	{
+		const auto child_index = _document.create_node(type, _index);
+		return { _document, child_index };
+	}
+
+	bool UINode::try_get_string(UIAttributeType type, String& value) const
+	{
+		const auto result = get_attribute(type);
+		if (result.has_value())
+		{
+			if (const auto str = std::get_if<String>(&result.value()))
+			{
+				value = *str;
+				return true;
+			}
+
+			if (const auto str = std::get_if<String32>(&result.value()))
+			{
+				value = Unicode::to_utf8(*str);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool UINode::try_get_string32(UIAttributeType type, String32& value) const
+	{
+		const auto result = get_attribute(type);
+		if (result.has_value())
+		{
+			if (const auto str = std::get_if<String32>(&result.value()))
+			{
+				value = *str;
+				return true;
+			}
+
+			if (const auto str = std::get_if<String>(&result.value()))
+			{
+				value = Unicode::to_utf32(*str);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	String UINode::get_string(UIAttributeType type, StringView default_value) const
+	{
+		String str;
+		return try_get_string(type, str) ? str : String(default_value);
+	}
+
+	String32 UINode::get_string32(UIAttributeType type, StringView32 default_value) const
+	{
+		String32 str;
+		return try_get_string32(type, str) ? str : String32(default_value);
 	}
 }

@@ -9,6 +9,8 @@ namespace unicore
 	public:
 		using ActionType = Action<Args...>;
 
+		UC_NODISCARD bool empty() const { return _actions.empty(); }
+
 		void add(const ActionType& action)
 		{
 			_actions.push_back(action);

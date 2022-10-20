@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/system/Event.hpp"
+
 #include "unicore/system/Index.hpp"
 #include "unicore/math/Rect.hpp"
 
@@ -7,58 +7,78 @@ namespace unicore
 {
 	struct UINodeIndexTag {};
 	using UINodeIndex = Index<UInt32, UINodeIndexTag>;
+	static constexpr auto UINodeIndexInvalid = UINodeIndex(std::numeric_limits<UInt32>::max());
 
 	using UIAttributeValue = Variant<
-		Bool, Int, Int64, Double, String, String32,
+		Int, Int64, Double, String, String32,
 		Vector2i, Vector2f, Recti, Rectf>;
 
-	using UIAttributes = Dictionary<String, UIAttributeValue>;
+	enum class UIAttributeType
+	{
+		Uid,
+		Name,
+		//Style,
+		Text,
+	};
 
-	using UINodeActionValue = std::function<void()>;
-	using UINodeActions = Dictionary<String, UINodeActionValue>;
+	using UIAttributes = Dictionary<UIAttributeType, UIAttributeValue>;
+
+	using UIAction = std::function<void()>;
+
+	enum class UIActionType
+	{
+		OnLoad,
+		OnClick,
+	};
+	using UINodeActions = Dictionary<UIActionType, UIAction>;
 
 	enum class UINodeType
 	{
+		None,
+		Window,
 		Group,
 		Text,
 		Button,
 	};
 
-	struct UINodeConst
-	{
-		static constexpr StringView Text = "text";
+	class UIDocument;
 
-		static constexpr StringView OnLoad = "load";
-		static constexpr StringView OnClick = "click";
-	};
-
-	class UINode : protected std::enable_shared_from_this<UINode>
+	class UINode
 	{
-		UC_OBJECT_EVENT(add_node, const Shared<UINode>&);
-		UC_OBJECT_EVENT(remove_node, const Shared<UINode>&);
 	public:
-		explicit UINode(UINodeType type, const Weak<UINode>& parent = Weak<UINode>());
+		UINode(UIDocument& document, const UINodeIndex& index);
 
-		UC_NODISCARD UINodeType type() const { return _type; }
+		UC_NODISCARD UIDocument& document() const { return _document; }
+		UC_NODISCARD UINodeIndex index() const { return _index; }
 
-		UC_NODISCARD const UIAttributes& attributes() const { return _attributes; }
-		UC_NODISCARD const UINodeActions& actions() const { return _actions; }
+		UC_NODISCARD UINodeType type() const;
+		UC_NODISCARD Optional<UINode> parent() const;
 
-		void set_attribute(StringView name, const Optional<UIAttributeValue>& value);
-		UC_NODISCARD Optional<UIAttributeValue> get_attribute(StringView name) const;
+		UC_NODISCARD const UIAttributes& attributes() const;
+		UC_NODISCARD const UINodeActions& actions() const;
 
-		void set_action(StringView name, const Optional<UINodeActionValue>& value);
-		UC_NODISCARD Optional<UINodeActionValue> get_action(StringView name) const;
+		void set_attribute(UIAttributeType type, const Optional<UIAttributeValue>& value);
+		UC_NODISCARD Optional<UIAttributeValue> get_attribute(UIAttributeType type) const;
 
-		UC_NODISCARD const List<Shared<UINode>>& children() const { return _children; }
-		Shared<UINode> create_node(UINodeType type);
+		void set_action(UIActionType type, const Optional<UIAction>& value);
+		UC_NODISCARD Optional<UIAction> get_action(UIActionType type) const;
+
+		size_t get_children(List<UINode>& children) const;
+		UC_NODISCARD List<UINode> get_children() const;
+
+		UC_NODISCARD Optional<UINode> get_next_sibling() const;
+		UC_NODISCARD Optional<UINode> get_prev_sibling() const;
+
+		UINode create_node(UINodeType type);
+
+		UC_NODISCARD bool try_get_string(UIAttributeType type, String& value) const;
+		UC_NODISCARD bool try_get_string32(UIAttributeType type, String32& value) const;
+
+		UC_NODISCARD String get_string(UIAttributeType type, StringView default_value = "") const;
+		UC_NODISCARD String32 get_string32(UIAttributeType type, StringView32 default_value = U"") const;
 
 	private:
-		const UINodeType _type;
-		UIAttributes _attributes{};
-		UINodeActions _actions{};
-
-		Weak<UINode> _parent;
-		List<Shared<UINode>> _children;
+		UIDocument& _document;
+		UINodeIndex _index;
 	};
 }
