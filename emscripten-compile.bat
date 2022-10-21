@@ -8,7 +8,8 @@ cmake -S . -B build/Emscripten -G Ninja ^
 cmake --build build/Emscripten
 
 ls -sh1 build/emscripten/examples/minimal.*
-ls -sh1 build/emscripten/examples/wasm.*
 ls -sh1 build/emscripten/examples/testbed.*
+ls -sh1 build/emscripten/examples/ui.*
+ls -sh1 build/emscripten/examples/wasm.*
 
 pause 0
