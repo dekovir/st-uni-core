@@ -16,6 +16,7 @@ namespace unicore
 	{
 		UINode node;
 		UIEventType type;
+		// TODO: Replace to Variant
 		UIEventValue value;
 	};
 

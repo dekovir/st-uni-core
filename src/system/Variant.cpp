@@ -5,8 +5,7 @@ namespace unicore
 {
 	const Variant Variant::Empty;
 
-	Variant::Variant()
-		: _data(std::nullopt) {}
+	Variant::Variant() = default;
 
 	Variant::Variant(const Char* value) noexcept
 		: _data(String(value)) {}
@@ -32,6 +31,7 @@ namespace unicore
 	Variant::Variant(StringView32 value) noexcept
 		: _data(String32(value)) {}
 
+	// BOOL //////////////////////////////////////////////////////////////////////
 	bool Variant::try_get_bool(Bool& value) const
 	{
 		if (const auto ptr = std::get_if<Bool>(&_data))
@@ -39,6 +39,9 @@ namespace unicore
 			value = *ptr;
 			return true;
 		}
+
+		// TODO: Convert from integral?
+		// TODO: Convert from String? (true/false)
 
 		return false;
 	}
@@ -49,31 +52,20 @@ namespace unicore
 		return try_get_bool(value) ? value : default_value;
 	}
 
+	// INT ///////////////////////////////////////////////////////////////////////
 	bool Variant::try_get_int(Int& value) const
 	{
-		if (const auto ptr = std::get_if<Int>(&_data))
+		if (try_get_integral(value))
+			return true;
+
+		Float f;
+		if (try_get_floating_point(f))
 		{
-			value = *ptr;
+			value = static_cast<Int>(f);
 			return true;
 		}
 
-		if (const auto ptr = std::get_if<Int64>(&_data))
-		{
-			value = static_cast<Int>(*ptr);
-			return true;
-		}
-
-		if (const auto ptr = std::get_if<Float>(&_data))
-		{
-			value = static_cast<Int>(*ptr);
-			return true;
-		}
-
-		if (const auto ptr = std::get_if<Double>(&_data))
-		{
-			value = static_cast<Int>(*ptr);
-			return true;
-		}
+		// TODO: Convert from bool
 
 		return false;
 	}
@@ -84,31 +76,20 @@ namespace unicore
 		return try_get_int(value) ? value : default_value;
 	}
 
+	// INT64 /////////////////////////////////////////////////////////////////////
 	bool Variant::try_get_int64(Int64& value) const
 	{
-		if (const auto ptr = std::get_if<Int>(&_data))
+		if (try_get_integral(value))
+			return true;
+
+		Double d;
+		if (try_get_floating_point(d))
 		{
-			value = *ptr;
+			value = static_cast<Int64>(d);
 			return true;
 		}
 
-		if (const auto ptr = std::get_if<Int64>(&_data))
-		{
-			value = *ptr;
-			return true;
-		}
-
-		if (const auto ptr = std::get_if<Float>(&_data))
-		{
-			value = static_cast<Int64>(*ptr);
-			return true;
-		}
-
-		if (const auto ptr = std::get_if<Double>(&_data))
-		{
-			value = static_cast<Int64>(*ptr);
-			return true;
-		}
+		// TODO: Convert from bool
 
 		return false;
 	}
@@ -119,29 +100,16 @@ namespace unicore
 		return try_get_int64(value) ? value : default_value;
 	}
 
+	// FLOAT /////////////////////////////////////////////////////////////////////
 	bool Variant::try_get_float(Float& value) const
 	{
-		if (const auto ptr = std::get_if<Int>(&_data))
-		{
-			value = *ptr;
+		if (try_get_floating_point(value))
 			return true;
-		}
 
-		if (const auto ptr = std::get_if<Int64>(&_data))
+		Int64 i;
+		if (try_get_integral(i))
 		{
-			value = static_cast<Float>(*ptr);
-			return true;
-		}
-
-		if (const auto ptr = std::get_if<Float>(&_data))
-		{
-			value = *ptr;
-			return true;
-		}
-
-		if (const auto ptr = std::get_if<Double>(&_data))
-		{
-			value = static_cast<Float>(*ptr);
+			value = static_cast<Float>(i);
 			return true;
 		}
 
@@ -154,29 +122,16 @@ namespace unicore
 		return try_get_float(value) ? value : default_value;
 	}
 
+	// DOUBLE ////////////////////////////////////////////////////////////////////
 	bool Variant::try_get_double(Double& value) const
 	{
-		if (const auto ptr = std::get_if<Int>(&_data))
-		{
-			value = *ptr;
+		if (try_get_floating_point(value))
 			return true;
-		}
 
-		if (const auto ptr = std::get_if<Int64>(&_data))
+		Int64 i;
+		if (try_get_integral(i))
 		{
-			value = static_cast<Float>(*ptr);
-			return true;
-		}
-
-		if (const auto ptr = std::get_if<Float>(&_data))
-		{
-			value = *ptr;
-			return true;
-		}
-
-		if (const auto ptr = std::get_if<Double>(&_data))
-		{
-			value = *ptr;
+			value = static_cast<Double>(i);
 			return true;
 		}
 
@@ -189,6 +144,7 @@ namespace unicore
 		return try_get_double(value) ? value : default_value;
 	}
 
+	// STRING ////////////////////////////////////////////////////////////////////
 	bool Variant::try_get_string(String& value) const
 	{
 		if (const auto str = std::get_if<String>(&_data))
@@ -203,6 +159,10 @@ namespace unicore
 			return true;
 		}
 
+		// TODO: Convert from boolean?
+		// TODO: Convert from integral?
+		// TODO: Convert from floating point?
+
 		return false;
 	}
 
@@ -212,6 +172,7 @@ namespace unicore
 		return try_get_string(str) ? str : String(default_value);
 	}
 
+	// STRING32 //////////////////////////////////////////////////////////////////
 	bool Variant::try_get_string32(String32& value) const
 	{
 		if (const auto str = std::get_if<String32>(&_data))
@@ -226,6 +187,10 @@ namespace unicore
 			return true;
 		}
 
+		// TODO: Convert from boolean?
+		// TODO: Convert from integral?
+		// TODO: Convert from floating point?
+
 		return false;
 	}
 
@@ -233,5 +198,27 @@ namespace unicore
 	{
 		String32 str;
 		return try_get_string32(str) ? str : String32(default_value);
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const Variant&)
+	{
+		builder << "V(";
+
+		Bool b;
+		Int64 i64;
+		Double d;
+		String32 s32;
+
+		if (value.try_get_bool(b))
+			builder << b;
+		else if (value.try_get_int64(i64))
+			builder << i64;
+		else if (value.try_get_double(d))
+			builder << d;
+		else if (value.try_get_string32(s32))
+			builder << s32;
+		else builder << "<?>";
+
+		return builder << ")";
 	}
 }
