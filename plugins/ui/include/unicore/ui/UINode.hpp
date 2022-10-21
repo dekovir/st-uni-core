@@ -58,6 +58,7 @@ namespace unicore
 		UC_NODISCARD UIDocument& document() const { return _document; }
 		UC_NODISCARD UINodeIndex index() const { return _index; }
 
+		UC_NODISCARD Bool valid() const;
 		UC_NODISCARD UINodeType type() const;
 		UC_NODISCARD Optional<UINode> parent() const;
 
@@ -76,7 +77,8 @@ namespace unicore
 		UC_NODISCARD Optional<UINode> get_next_sibling() const;
 		UC_NODISCARD Optional<UINode> get_prev_sibling() const;
 
-		UINode create_node(UINodeType type);
+		UINode create_child(UINodeType type);
+		UINode create_sibling(UINodeType type);
 
 		// GET ATTRIBUTE /////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_float(UIAttributeType type, Float& value) const;

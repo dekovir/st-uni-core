@@ -41,6 +41,7 @@ namespace unicore
 			const UIAttributes& attributes = {},
 			const UINodeActions& actions = {});
 
+		UC_NODISCARD Bool is_node_valid(UINodeIndex index) const;
 		UC_NODISCARD UINodeType get_node_type(UINodeIndex index) const;
 		UC_NODISCARD UINodeIndex get_node_parent(UINodeIndex index) const;
 		UC_NODISCARD const List<UINodeIndex>& get_node_children(UINodeIndex index) const;

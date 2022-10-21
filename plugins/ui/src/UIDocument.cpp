@@ -92,6 +92,11 @@ namespace unicore
 		return index;
 	}
 
+	Bool UIDocument::is_node_valid(UINodeIndex index) const
+	{
+		return get_info(index) != nullptr;
+	}
+
 	UINodeType UIDocument::get_node_type(UINodeIndex index) const
 	{
 		const auto info = get_info(index);

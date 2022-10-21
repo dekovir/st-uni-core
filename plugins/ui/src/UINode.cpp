@@ -10,6 +10,11 @@ namespace unicore
 	{
 	}
 
+	Bool UINode::valid() const
+	{
+		return _document.is_node_valid(_index);
+	}
+
 	UINodeType UINode::type() const
 	{
 		return _document.get_node_type(_index);
@@ -93,9 +98,16 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	UINode UINode::create_node(UINodeType type)
+	UINode UINode::create_child(UINodeType type)
 	{
 		const auto child_index = _document.create_node(type, _index);
+		return { _document, child_index };
+	}
+
+	UINode UINode::create_sibling(UINodeType type)
+	{
+		const auto parent = _document.get_node_parent(_index);
+		const auto child_index = _document.create_node(type, parent);
 		return { _document, child_index };
 	}
 
