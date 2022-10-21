@@ -18,7 +18,7 @@ namespace unicore
 		return _rd();
 	}
 
-	float DefaultRandom::next_float()
+	float DefaultRandom::next_float_01()
 	{
 		// TODO: Check range
 		return static_cast <float> (next()) / static_cast <float> (std::random_device::max());

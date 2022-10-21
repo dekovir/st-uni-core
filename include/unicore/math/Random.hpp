@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/system/Object.hpp"
+#include "unicore/math/Range.hpp"
 #include <random>
 
 namespace unicore
@@ -9,7 +10,7 @@ namespace unicore
 		UC_OBJECT(Random, Object)
 	public:
 		virtual uint32_t next() = 0;
-		virtual float next_float() = 0;
+		virtual float next_float_01() = 0;
 
 		virtual uint32_t range(uint32_t count);
 		virtual bool boolean();
@@ -30,7 +31,13 @@ namespace unicore
 		float range(float min, float max)
 		{
 			const auto delta = max - min;
-			return next_float() * delta + min;
+			return next_float_01() * delta + min;
+		}
+
+		template<typename T>
+		UC_NODISCARD T range(const Range<T>& value) const
+		{
+			return range(value.min, value.max);
 		}
 
 		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
@@ -48,7 +55,7 @@ namespace unicore
 		DefaultRandom() = default;
 
 		uint32_t next() override;
-		float next_float() override;
+		float next_float_01() override;
 
 	protected:
 		std::random_device _rd;
