@@ -99,12 +99,14 @@ namespace unicore
 		if (const auto parent_info = get_info(parent))
 			parent_info->children.push_back(index);
 
+		if (const auto it = attributes.find(UIAttributeType::Uid); it != attributes.end())
+		{
+			String uid;
+			if (it->second.try_get_string(uid))
+				_id_dict[uid] = index;
+		}
+
 		const UINode node(*this, index);
-
-		String uid;
-		if (node.try_get_string(UIAttributeType::Uid, uid))
-			_id_dict[uid] = index;
-
 		_event_create_node.invoke(node);
 
 		return index;
@@ -178,14 +180,15 @@ namespace unicore
 	}
 
 	void UIDocument::set_node_attribute(UINodeIndex index,
-		UIAttributeType type, const Optional<UIAttributeValue>& value)
+		UIAttributeType type, const Optional<Variant>& value)
 	{
 		if (const auto info = get_info(index))
 		{
 			if (type == UIAttributeType::Uid && value.has_value())
 			{
-				if (const auto ptr = std::get_if<String>(&value.value()))
-					_id_dict[*ptr] = index;
+				String id;
+				if (value.value().try_get_string(id))
+					_id_dict[id] = index;
 			}
 
 			if (value.has_value())
@@ -205,7 +208,7 @@ namespace unicore
 		}
 	}
 
-	Optional<UIAttributeValue> UIDocument::get_node_attribute(
+	Optional<Variant> UIDocument::get_node_attribute(
 		UINodeIndex index, UIAttributeType type) const
 	{
 		if (const auto info = get_info(index))

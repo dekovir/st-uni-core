@@ -6,7 +6,7 @@ namespace unicore
 	class Pattern
 	{
 	public:
-		using ValueType = Variant<Int, Int64, Double, String, String32>;
+		using ValueType = StdVariant<Int, Int64, Double, String, String32>;
 		using DataType = Dictionary<String32, ValueType>;
 
 		explicit Pattern(StringView32 str, Logger* logger = nullptr);

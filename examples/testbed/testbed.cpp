@@ -6,6 +6,7 @@
 #include "unicore/renderer/Surface.hpp"
 #include "unicore/renderer/Font.hpp"
 #include "unicore/io/FileLoader.hpp"
+#include "unicore/system/Variant.hpp"
 
 namespace unicore
 {
@@ -26,6 +27,25 @@ namespace unicore
 		if (_archive)
 			resources.add_loader(std::make_shared<ReadFileLoader>(*_archive));
 #endif
+
+		const auto v_n = Variant();
+		const auto v_b = Variant(false);
+		const auto v_i = Variant(42);
+		const auto v_d = Variant(1.234);
+
+		const auto v_s0 = Variant("Test");
+		const auto v_s1 = Variant("Test"s);
+		const auto v_s2 = Variant("Test"sv);
+
+		const auto v_s3 = Variant(U"Test");
+		const auto v_s4 = Variant(U"Test"s);
+		const auto v_s5 = Variant(U"Test"sv);
+
+		const auto v_s6 = Variant(L"Test");
+		const auto v_s7 = Variant(L"Test"s);
+		const auto v_s8 = Variant(L"Test"sv);
+
+		const auto v_c = Variant(ColorConst4b::White);
 
 		//_font = resources.create<Font>(EmptyResourceOptions{});
 		//_font = resources.load<Font>(L"font_004.fnt"_path);

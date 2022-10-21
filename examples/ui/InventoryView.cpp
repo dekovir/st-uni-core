@@ -45,7 +45,7 @@ namespace unicore
 	}
 
 	void UIViewImGui::on_set_attribute(const UINode& node,
-		UIAttributeType type, const Optional<UIAttributeValue>& value)
+		UIAttributeType type, const Optional<Variant>& value)
 	{
 		UC_LOG_DEBUG(_logger) << "set_attribute " << node.index();
 
@@ -85,7 +85,7 @@ namespace unicore
 		case UINodeType::None: return;
 
 		case UINodeType::Window:
-			str = node.get_string(UIAttributeType::Value, "Window");
+			str = node.get_attribute(UIAttributeType::Value).get_string("Window");
 			if (ImGui::Begin(str.c_str()))
 			{
 				for (const auto& child : children)
@@ -106,20 +106,20 @@ namespace unicore
 			break;
 
 		case UINodeType::Text:
-			if (node.try_get_string(UIAttributeType::Value, str))
+			if (node.get_attribute(UIAttributeType::Value).try_get_string(str))
 				ImGui::Text("%s", str.c_str());
 			else ImGui::Text("No text");
 			break;
 
 		case UINodeType::Button:
-			str = node.get_string(UIAttributeType::Value);
+			str = node.get_attribute(UIAttributeType::Value).get_string();
 			if (ImGui::Button(str.c_str()))
 				_update_events.push_back({ node, UIEventType::ActionCall, UIActionType::OnClick });
 			break;
 
 		case UINodeType::Input:
 		{
-			str = node.get_string(UIAttributeType::Value);
+			str = node.get_attribute(UIAttributeType::Value).get_string();
 			if (ImGui::InputText(id.c_str(), &str))
 				_update_events.push_back({ node, UIEventType::ValueChanged, str });
 		}
@@ -127,10 +127,10 @@ namespace unicore
 
 		case UINodeType::Slider:
 		{
-			const auto value_min = node.get_float(UIAttributeType::MinValue, 0);
-			const auto value_max = node.get_float(UIAttributeType::MaxValue, 1);
+			const auto value_min = node.get_attribute(UIAttributeType::MinValue).get_float(0);
+			const auto value_max = node.get_attribute(UIAttributeType::MaxValue).get_float(1);
 
-			auto value = node.get_float(UIAttributeType::Value);
+			auto value = node.get_attribute(UIAttributeType::Value).get_float();
 
 			if (ImGui::SliderFloat(id.c_str(), &value, value_min, value_max))
 				_update_events.push_back({ node, UIEventType::ValueChanged, value });

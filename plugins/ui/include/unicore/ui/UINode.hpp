@@ -1,19 +1,12 @@
 #pragma once
-
 #include "unicore/system/Index.hpp"
-#include "unicore/math/Rect.hpp"
+#include "unicore/system/Variant.hpp"
 
 namespace unicore
 {
 	struct UINodeIndexTag {};
 	using UINodeIndex = Index<UInt32, UINodeIndexTag>;
 	static constexpr auto UINodeIndexInvalid = UINodeIndex(std::numeric_limits<UInt32>::max());
-
-	using UIAttributeValue = Variant<
-		String, String32,
-		Int, Int64,
-		Float, Double,
-		Vector2i, Vector2f, Recti, Rectf>;
 
 	enum class UIAttributeType
 	{
@@ -25,7 +18,7 @@ namespace unicore
 		MaxValue,
 	};
 
-	using UIAttributes = Dictionary<UIAttributeType, UIAttributeValue>;
+	using UIAttributes = Dictionary<UIAttributeType, Variant>;
 
 	using UIAction = std::function<void()>;
 
@@ -65,8 +58,8 @@ namespace unicore
 		UC_NODISCARD const UIAttributes& attributes() const;
 		UC_NODISCARD const UINodeActions& actions() const;
 
-		void set_attribute(UIAttributeType type, const Optional<UIAttributeValue>& value);
-		UC_NODISCARD Optional<UIAttributeValue> get_attribute(UIAttributeType type) const;
+		void set_attribute(UIAttributeType type, const Optional<Variant>& value);
+		UC_NODISCARD Variant get_attribute(UIAttributeType type) const;
 
 		void set_action(UIActionType type, const Optional<UIAction>& value);
 		UC_NODISCARD Optional<UIAction> get_action(UIActionType type) const;
@@ -79,19 +72,6 @@ namespace unicore
 
 		UINode create_child(UINodeType type);
 		UINode create_sibling(UINodeType type);
-
-		// GET ATTRIBUTE /////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_float(UIAttributeType type, Float& value) const;
-		UC_NODISCARD Float get_float(UIAttributeType type, Float default_value = 0) const;
-
-		UC_NODISCARD bool try_get_double(UIAttributeType type, Double& value) const;
-		UC_NODISCARD Double get_double(UIAttributeType type, Double default_value = 0) const;
-
-		UC_NODISCARD bool try_get_string(UIAttributeType type, String& value) const;
-		UC_NODISCARD String get_string(UIAttributeType type, StringView default_value = "") const;
-
-		UC_NODISCARD bool try_get_string32(UIAttributeType type, String32& value) const;
-		UC_NODISCARD String32 get_string32(UIAttributeType type, StringView32 default_value = U"") const;
 
 	private:
 		UIDocument& _document;

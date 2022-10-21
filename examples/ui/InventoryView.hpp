@@ -29,7 +29,7 @@ namespace unicore
 		void on_create_node(const UINode& node) override;
 
 		void on_set_attribute(const UINode& node,
-			UIAttributeType type, const Optional<UIAttributeValue>& value) override;
+			UIAttributeType type, const Optional<Variant>& value) override;
 
 		void on_set_action(const UINode& node,
 			UIActionType type, const Optional<UIAction>& value) override;

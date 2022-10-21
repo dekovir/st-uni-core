@@ -10,7 +10,7 @@ namespace unicore
 		ValueChanged,
 	};
 
-	using UIEventValue = Variant<UIActionType, Double, String, String32>;
+	using UIEventValue = StdVariant<UIActionType, Double, String, String32>;
 
 	struct UIEvent
 	{
@@ -22,7 +22,7 @@ namespace unicore
 	class UIDocument
 	{
 		UC_OBJECT_EVENT(create_node, const UINode&);
-		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttributeType, const Optional<UIAttributeValue>&);
+		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttributeType, const Optional<Variant>&);
 		UC_OBJECT_EVENT(set_action, const UINode&, UIActionType, const Optional<UIAction>&);
 	public:
 		explicit UIDocument(Logger* logger = nullptr);
@@ -53,9 +53,9 @@ namespace unicore
 		UC_NODISCARD UINodeIndex get_node_prev_sibling(UINodeIndex index) const;
 
 		void set_node_attribute(UINodeIndex index,
-			UIAttributeType type, const Optional<UIAttributeValue>& value);
+			UIAttributeType type, const Optional<Variant>& value);
 
-		UC_NODISCARD Optional<UIAttributeValue> get_node_attribute(
+		UC_NODISCARD Optional<Variant> get_node_attribute(
 			UINodeIndex index, UIAttributeType type) const;
 
 		UC_NODISCARD const UIAttributes& get_node_attributes(UINodeIndex index) const;

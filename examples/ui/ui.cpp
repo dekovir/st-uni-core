@@ -48,7 +48,7 @@ namespace unicore
 		{"max", UIAttributeType::MaxValue},
 	};
 
-	static UIAttributeValue parse_value(const char* str)
+	static Variant parse_value(const char* str)
 	{
 		char* end;
 		const auto d = strtod(str, &end);
