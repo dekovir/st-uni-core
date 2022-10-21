@@ -24,6 +24,17 @@ namespace unicore
 			_document->send_event(evt);
 	}
 
+	void UIViewImGui::on_rebuild()
+	{
+		_cached.clear();
+
+		if (_document)
+		{
+			for (const auto& node : _document->get_root_nodes())
+				on_create_node(node);
+		}
+	}
+
 	void UIViewImGui::on_create_node(const UINode& node)
 	{
 		UC_LOG_DEBUG(_logger) << "create_node " << node.index();

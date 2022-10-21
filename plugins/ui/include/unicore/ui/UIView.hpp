@@ -18,6 +18,7 @@ namespace unicore
 		const std::function<void(const UINode&, UIAttributeType, const Optional<UIAttributeValue>&)> _bind_set_attribute;
 		const std::function<void(const UINode&, UIActionType, const Optional<UIAction>&)> _bind_set_action;
 
+		virtual void on_rebuild() = 0;
 		virtual void on_create_node(const UINode& node) = 0;
 		virtual void on_set_attribute(const UINode& node, UIAttributeType type, const Optional<UIAttributeValue>& value) = 0;
 		virtual void on_set_action(const UINode& node, UIActionType type, const Optional<UIAction>& value) = 0;

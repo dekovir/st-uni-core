@@ -24,6 +24,8 @@ namespace unicore
 
 		Dictionary<UINodeIndex, CachedInfo> _cached;
 
+		void on_rebuild() override;
+
 		void on_create_node(const UINode& node) override;
 
 		void on_set_attribute(const UINode& node,

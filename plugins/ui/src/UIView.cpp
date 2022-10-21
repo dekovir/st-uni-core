@@ -29,5 +29,7 @@ namespace unicore
 			_document->on_set_attribute() += _bind_set_attribute;
 			_document->on_set_action() += _bind_set_action;
 		}
+
+		on_rebuild();
 	}
 }
