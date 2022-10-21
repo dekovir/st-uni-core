@@ -22,7 +22,7 @@ namespace unicore::StringHelper
 
 		std::reverse(str.begin(), str.end());
 
-		while (str[0] == '0')
+		while (str.size() > 1 && str[0] == '0')
 			str.erase(str.begin());
 
 		return str;

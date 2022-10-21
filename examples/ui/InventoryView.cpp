@@ -27,12 +27,21 @@ namespace unicore
 	void UIViewImGui::on_create_node(const UINode& node)
 	{
 		UC_LOG_DEBUG(_logger) << "create_node " << node.index();
+
+		//if (node.type() == UINodeType::Input)
+		//	_input_buffers[node.index()] = "";
 	}
 
 	void UIViewImGui::on_set_attribute(const UINode& node,
 		UIAttributeType type, const Optional<UIAttributeValue>& value)
 	{
 		UC_LOG_DEBUG(_logger) << "set_attribute " << node.index();
+
+		//if (node.type() == UINodeType::Input && type == UIAttributeType::Value)
+		//{
+		//	_input_buffers[node.index()] =
+		//		value.has_value() ? std::get<String>(value.value()) : "";
+		//}
 	}
 
 	void UIViewImGui::on_set_action(const UINode& node,
@@ -48,8 +57,8 @@ namespace unicore
 		List<UINode> children;
 		node.get_children(children);
 
-		const auto& attributes = node.attributes();
-		String id, str;
+		const auto id = make_id(node.index());
+		String str;
 		String32 str32;
 
 		switch (type)
@@ -57,7 +66,7 @@ namespace unicore
 		case UINodeType::None: return;
 
 		case UINodeType::Window:
-			str = node.get_string(UIAttributeType::Text, "Window");
+			str = node.get_string(UIAttributeType::Value, "Window");
 			if (ImGui::Begin(str.c_str()))
 			{
 				for (const auto& child : children)
@@ -67,7 +76,7 @@ namespace unicore
 			break;
 
 		case UINodeType::Group:
-			id = make_id(node.index());
+
 			if (ImGui::BeginChild(id.c_str()))
 			{
 				for (const auto& child : children)
@@ -78,7 +87,7 @@ namespace unicore
 			break;
 
 		case UINodeType::Text:
-			if (node.try_get_string(UIAttributeType::Text, str))
+			if (node.try_get_string(UIAttributeType::Value, str))
 			{
 				ImGui::Text("%s", str.c_str());
 			}
@@ -86,29 +95,27 @@ namespace unicore
 			break;
 
 		case UINodeType::Button:
-			str = node.get_string(UIAttributeType::Text);
+			str = node.get_string(UIAttributeType::Value);
 			if (ImGui::Button(str.c_str()))
 				_update_events.push_back({ node, UIEventType::ActionCall, UIActionType::OnClick });
 			break;
 
 		case UINodeType::Input:
 		{
-			const auto label = node.get_string(UIAttributeType::Text);
 			str = node.get_string(UIAttributeType::Value);
-			if (ImGui::InputText(label.c_str(), &str))
+			if (ImGui::InputText(id.c_str(), &str))
 				_update_events.push_back({ node, UIEventType::ValueChanged, str });
 		}
 		break;
 
 		case UINodeType::Slider:
 		{
-			const auto label = node.get_string(UIAttributeType::Text);
 			const auto value_min = node.get_float(UIAttributeType::MinValue, 0);
 			const auto value_max = node.get_float(UIAttributeType::MaxValue, 1);
 
 			auto value = node.get_float(UIAttributeType::Value);
 
-			if (ImGui::SliderFloat(label.c_str(), &value, value_min, value_max))
+			if (ImGui::SliderFloat(id.c_str(), &value, value_min, value_max))
 				_update_events.push_back({ node, UIEventType::ValueChanged, value });
 		}
 		break;
@@ -117,6 +124,6 @@ namespace unicore
 
 	String UIViewImGui::make_id(UINodeIndex index)
 	{
-		return StringHelper::to_hex(index.value);
+		return StringBuilder::format("##{}", StringHelper::to_hex(index.value));
 	}
 }

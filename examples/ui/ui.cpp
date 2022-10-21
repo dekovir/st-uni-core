@@ -31,17 +31,15 @@ namespace unicore
 		_view->set_document(_document);
 
 		_document->create_node(UINodeType::Text, UINodeIndexInvalid,
-			{ {UIAttributeType::Text, "Sample text"} });
+			{ {UIAttributeType::Value, "Sample text"} });
 
 		_document->create_node(UINodeType::Input, UINodeIndexInvalid,
 			{
-				{UIAttributeType::Text, "string"},
 				{UIAttributeType::Value, "quick brown fox"}
 			});
 
 		_document->create_node(UINodeType::Slider, UINodeIndexInvalid,
 			{
-				{UIAttributeType::Text, "float"},
 				{UIAttributeType::MaxValue, 100},
 				{UIAttributeType::Value, 50}
 			});
@@ -49,13 +47,13 @@ namespace unicore
 		const auto group = _document->create_node(UINodeType::Group, UINodeIndexInvalid);
 
 		_document->create_node(UINodeType::Button, UINodeIndexInvalid,
-			{ {UIAttributeType::Text, "Button"} },
+			{ {UIAttributeType::Value, "Button"} },
 			{ {UIActionType::OnClick, [this, group]()
 			{
 				static int index = 1;
 				auto text = StringBuilder::format("Item {}", index++);
 				_document->create_node(UINodeType::Text, group,
-					{ {UIAttributeType::Text, text} });
+					{ {UIAttributeType::Value, text} });
 			}} });
 	}
 

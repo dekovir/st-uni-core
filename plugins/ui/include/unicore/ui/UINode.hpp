@@ -20,7 +20,6 @@ namespace unicore
 		Uid,
 		Name,
 		//Style,
-		Text,
 		Value,
 		MinValue,
 		MaxValue,
