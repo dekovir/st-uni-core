@@ -1,8 +1,10 @@
 #include "ui.hpp"
 #include "UnicoreMain.hpp"
 #include "InitPlugins.hpp"
+#include "unicore/io/Logger.hpp"
 #include "unicore/platform/Time.hpp"
 #include "unicore/platform/Input.hpp"
+#include "unicore/xml/XMLData.hpp"
 
 namespace unicore
 {
@@ -18,6 +20,76 @@ namespace unicore
 		init_plugins(*this);
 	}
 
+	static const auto xml_text = R"(
+	<xml>
+		<text>Sample text</text>
+		<input>quick brown fox</input>
+		<slider max="100">50</slider>
+		<group id="group" />
+		<button id="add_item">Button</button>
+	</xml>
+	)";
+
+	static const Dictionary<StringView, UINodeType> s_tag_type =
+	{
+		{"window", UINodeType::Window},
+		{"group", UINodeType::Group},
+		{"text", UINodeType::Text},
+		{"button", UINodeType::Button},
+		{"input", UINodeType::Input},
+		{"slider", UINodeType::Slider},
+	};
+
+	static const Dictionary<StringView, UIAttributeType> s_attr_name =
+	{
+		{"id", UIAttributeType::Uid},
+		{"name", UIAttributeType::Name},
+		{"min", UIAttributeType::MinValue},
+		{"max", UIAttributeType::MaxValue},
+	};
+
+	static UIAttributeValue parse_value(const char* str)
+	{
+		char* end;
+		const auto d = strtod(str, &end);
+		if (end[0] == 0)
+			return d;
+
+		return str;
+	}
+
+	static void parse_node(const tinyxml2::XMLElement* node, UIDocument& doc, UINodeIndex parent)
+	{
+		const auto tag = StringView(node->Value());
+		const auto it = s_tag_type.find(tag);
+		if (it == s_tag_type.end())
+			return;
+
+		UIAttributes attributes;
+		// Fill attributes
+		if (const auto value = node->GetText(); value != nullptr)
+			attributes[UIAttributeType::Value] = parse_value(value);
+
+		for (const auto& [name, type] : s_attr_name)
+		{
+			if (const auto t = node->Attribute(name.data()); t != nullptr)
+				attributes[type] = parse_value(t);
+		}
+
+		const auto index = doc.create_node(it->second, parent, attributes);
+		for (auto child = node->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
+			parse_node(child, doc, index);
+	}
+
+	static void parse_xml(const XMLData& data, UIDocument& doc)
+	{
+		const auto root = data.doc.RootElement();
+		if (!root) return;
+
+		for (auto child = root->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
+			parse_node(child, doc, UINodeIndexInvalid);
+	}
+
 	void MyApp::on_init()
 	{
 		UC_LOG_INFO(logger) << "Starting";
@@ -30,6 +102,25 @@ namespace unicore
 		_view = std::make_shared<UIViewImGui>(_context, _context_logger);
 		_view->set_document(_document);
 
+#if 1
+		XMLData xml;
+		xml.doc.Parse(xml_text);
+		parse_xml(xml, *_document);
+
+		const auto group_id = _document->find_index_by_id("group");
+		const auto add_id = _document->find_index_by_id("add_item");
+		if (group_id != UINodeIndexInvalid && add_id != UINodeIndexInvalid)
+		{
+			_document->set_node_action(add_id, UIActionType::OnClick,
+				[this, group_id]()
+				{
+					static int index = 1;
+					auto text = StringBuilder::format("Item {}", index++);
+					_document->create_node(UINodeType::Text, group_id,
+						{ {UIAttributeType::Value, text} });
+				});
+		}
+#else
 		_document->create_node(UINodeType::Text, UINodeIndexInvalid,
 			{ {UIAttributeType::Value, "Sample text"} });
 
@@ -55,6 +146,7 @@ namespace unicore
 				_document->create_node(UINodeType::Text, group,
 					{ {UIAttributeType::Value, text} });
 			}} });
+#endif
 	}
 
 	void MyApp::on_update()

@@ -26,6 +26,22 @@ namespace unicore
 		return nodes;
 	}
 
+	UINodeIndex UIDocument::find_index_by_id(StringView id) const
+	{
+		// TODO: To lower
+		const String key(id);
+		const auto it = _id_dict.find(key);
+		return it != _id_dict.end() ? it->second : UINodeIndexInvalid;
+	}
+
+	Optional<UINode> UIDocument::find_node_by_id(StringView id)
+	{
+		if (const auto index = find_index_by_id(id); index != UINodeIndexInvalid)
+			return UINode(*this, index);
+
+		return std::nullopt;
+	}
+
 	void UIDocument::send_event(const UIEvent& evt)
 	{
 		switch (evt.type)
@@ -83,11 +99,13 @@ namespace unicore
 		if (const auto parent_info = get_info(parent))
 			parent_info->children.push_back(index);
 
-		if (!_event_create_node.empty())
-		{
-			const UINode node(*this, index);
-			_event_create_node.invoke(node);
-		}
+		const UINode node(*this, index);
+
+		String uid;
+		if (node.try_get_string(UIAttributeType::Uid, uid))
+			_id_dict[uid] = index;
+
+		_event_create_node.invoke(node);
 
 		return index;
 	}
@@ -164,6 +182,12 @@ namespace unicore
 	{
 		if (const auto info = get_info(index))
 		{
+			if (type == UIAttributeType::Uid && value.has_value())
+			{
+				if (const auto ptr = std::get_if<String>(&value.value()))
+					_id_dict[*ptr] = index;
+			}
+
 			if (value.has_value())
 				info->attributes[type] = value.value();
 			else

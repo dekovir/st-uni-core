@@ -30,6 +30,9 @@ namespace unicore
 		size_t get_root_nodes(List<UINode>& nodes);
 		UC_NODISCARD List<UINode> get_root_nodes();
 
+		UC_NODISCARD UINodeIndex find_index_by_id(StringView id) const;
+		UC_NODISCARD Optional<UINode> find_node_by_id(StringView id);
+
 		// EVENTS ////////////////////////////////////////////////////////////////////
 		void send_event(const UIEvent& evt);
 
@@ -64,6 +67,7 @@ namespace unicore
 	protected:
 		Logger* _logger;
 		UINodeIndex _root_index = UINodeIndexInvalid;
+		Dictionary<String, UINodeIndex> _id_dict;
 
 		struct NodeInfo
 		{
