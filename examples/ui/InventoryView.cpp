@@ -11,7 +11,7 @@ namespace unicore
 	{
 	}
 
-	void UIViewImGui::update()
+	void UIViewImGui::render()
 	{
 		if (!_document) return;
 
@@ -28,8 +28,9 @@ namespace unicore
 	{
 		UC_LOG_DEBUG(_logger) << "create_node " << node.index();
 
-		//if (node.type() == UINodeType::Input)
-		//	_input_buffers[node.index()] = "";
+		CachedInfo info;
+		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index().value));
+		_cached[node.index()] = info;
 	}
 
 	void UIViewImGui::on_set_attribute(const UINode& node,
@@ -52,12 +53,19 @@ namespace unicore
 
 	void UIViewImGui::render_node(const UINode& node)
 	{
+		auto cached_info = get_info(node.index());
+		if (!cached_info)
+		{
+			UC_ASSERT_ALWAYS_MSG("Invalid cache");
+			return;
+		}
+
 		const auto type = node.type();
+		const auto& id = cached_info->id;
 
 		List<UINode> children;
 		node.get_children(children);
 
-		const auto id = make_id(node.index());
 		String str;
 		String32 str32;
 
@@ -88,9 +96,7 @@ namespace unicore
 
 		case UINodeType::Text:
 			if (node.try_get_string(UIAttributeType::Value, str))
-			{
 				ImGui::Text("%s", str.c_str());
-			}
 			else ImGui::Text("No text");
 			break;
 
@@ -122,8 +128,9 @@ namespace unicore
 		}
 	}
 
-	String UIViewImGui::make_id(UINodeIndex index)
+	UIViewImGui::CachedInfo* UIViewImGui::get_info(UINodeIndex index)
 	{
-		return StringBuilder::format("##{}", StringHelper::to_hex(index.value));
+		const auto it = _cached.find(index);
+		return it != _cached.end() ? &it->second : nullptr;
 	}
 }

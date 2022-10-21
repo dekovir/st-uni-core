@@ -10,12 +10,19 @@ namespace unicore
 	public:
 		UIViewImGui(ImGuiContext& context, Logger& logger);
 
-		void update();
+		void render();
 
 	protected:
 		Logger& _logger;
 		ImGuiContext& _context;
 		List<UIEvent> _update_events;
+
+		struct CachedInfo
+		{
+			String id;
+		};
+
+		Dictionary<UINodeIndex, CachedInfo> _cached;
 
 		void on_create_node(const UINode& node) override;
 
@@ -27,6 +34,6 @@ namespace unicore
 
 		void render_node(const UINode& node);
 
-		static String make_id(UINodeIndex index);
+		UC_NODISCARD CachedInfo* get_info(UINodeIndex index);
 	};
 }

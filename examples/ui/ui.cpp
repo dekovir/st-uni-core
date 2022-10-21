@@ -81,7 +81,7 @@ namespace unicore
 		//static bool show_demo_window = true;
 		//ImGui::ShowDemoWindow(&show_demo_window);
 
-		_view->update();
+		_view->render();
 
 		_context.frame_end();
 	}
