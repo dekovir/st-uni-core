@@ -3,6 +3,7 @@
 #include "unicore/math/Vector3.hpp"
 #include "unicore/renderer/Color3.hpp"
 #include "unicore/renderer/Color4.hpp"
+#include "unicore/system/Object.hpp"
 
 namespace unicore
 {
@@ -14,7 +15,8 @@ namespace unicore
 			Float, Double,
 			String, String32,
 			Vector2i, Vector2f, Vector3i, Vector3f, Recti, Rectf,
-			Color3b, Color3f, Color4b, Color4f
+			Color3b, Color3f, Color4b, Color4f,
+			Shared<Object>
 		>;
 
 		Variant();
@@ -32,6 +34,9 @@ namespace unicore
 		template<typename T,
 			std::enable_if_t<std::is_constructible_v<DataType, T>>* = nullptr>
 		Variant(T value) noexcept : _data(value) {}
+
+		template<typename T, std::enable_if_t<std::is_base_of_v<Object, T>>* = nullptr>
+		Variant(const Shared<T>& object) noexcept : _data(object) {}
 
 		UC_NODISCARD const DataType& data() const { return _data; }
 
@@ -324,6 +329,26 @@ namespace unicore
 		// COLOR4F ///////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_color4f(Color4b& value) const { return try_get_color4(value); }
 		UC_NODISCARD Color4f get_color4f(const Color4f& default_value = ColorConst4f::Clear) const { return get_color4(default_value); }
+
+		// OBJECT ////////////////////////////////////////////////////////////////////
+		template<typename T, std::enable_if_t<std::is_base_of_v<Object, T>>* = nullptr>
+		bool try_get_object(Shared<T>& value)
+		{
+			if (const auto ptr = std::get_if<Shared<Object>>(&_data))
+			{
+				value = std::dynamic_pointer_cast<T>(*ptr);
+				return true;
+			}
+
+			return false;
+		}
+
+		template<typename T, std::enable_if_t<std::is_base_of_v<Object, T>>* = nullptr>
+		Shared<T>& get_object(const Shared<T>& default_value = nullptr)
+		{
+			Shared<T> value;
+			return try_get_object(value) ? value : default_value;
+		}
 
 		static const Variant Empty;
 
