@@ -85,10 +85,6 @@ namespace unicore
 		UC_NODISCARD Size get_node_actions(UINodeIndex index, UIActionDict& dict) const;
 
 	protected:
-		Logger* _logger;
-		List<UINodeIndex> _roots;
-		Dictionary<String, UINodeIndex> _id_dict;
-
 		struct NodeInfo
 		{
 			UINodeType type;
@@ -98,7 +94,11 @@ namespace unicore
 			UIActionDict actions;
 		};
 
+		Logger* _logger;
+		List<UINodeIndex> _roots;
 		List<NodeInfo> _nodes;
+
+		// TODO: Cache Uid values
 
 		NodeInfo* get_info(UINodeIndex index);
 		UC_NODISCARD const NodeInfo* get_info(UINodeIndex index) const;

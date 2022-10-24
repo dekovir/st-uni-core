@@ -13,9 +13,10 @@ namespace unicore
 	{
 		Uid, // Must be unique for UIDocument
 		Name,
-		//Style,
-		Layout,
 		Value,
+		Tooltip,
+		//Style,
+		Text,
 		MinValue,
 		MaxValue,
 	};
@@ -58,6 +59,7 @@ namespace unicore
 		Slider,
 		Toggle,
 		Tooltip,
+		Item,
 	};
 
 	class UIDocument;

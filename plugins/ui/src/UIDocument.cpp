@@ -26,10 +26,19 @@ namespace unicore
 	// FIND //////////////////////////////////////////////////////////////////////
 	UINodeIndex UIDocument::find_index_by_id(StringView id) const
 	{
-		// TODO: To lower
-		const String key(id);
-		const auto it = _id_dict.find(key);
-		return it != _id_dict.end() ? it->second : UINodeIndexInvalid;
+		for (unsigned i = 0; i < _nodes.size(); i++)
+		{
+			auto& info = _nodes[i];
+			auto it = info.attributes.find(UIAttributeType::Uid);
+			if (it != info.attributes.end())
+			{
+				String str;
+				if (it->second.try_get_string(str) && StringHelper::equals(id, str, true))
+					return UINodeIndex(i);
+			}
+		}
+
+		return UINodeIndexInvalid;
 	}
 
 	Optional<UINode> UIDocument::find_node_by_id(StringView id)
@@ -231,13 +240,6 @@ namespace unicore
 		if (const auto parent_info = get_info(parent))
 			parent_info->children.push_back(index);
 
-		if (const auto it = attributes.find(UIAttributeType::Uid); it != attributes.end())
-		{
-			String uid;
-			if (it->second.try_get_string(uid))
-				_id_dict[uid] = index;
-		}
-
 		if (parent == UINodeIndexInvalid)
 			_roots.push_back(index);
 
@@ -341,24 +343,10 @@ namespace unicore
 	{
 		if (const auto info = get_info(index))
 		{
-			// Remove previous value from cache
-			if (const auto it = info->attributes.find(UIAttributeType::Uid); it != info->attributes.end())
-			{
-				String id;
-				if (it->second.try_get_string(id))
-					_id_dict.erase(id);
-			}
-
 			if (value.has_value())
 			{
 				const auto& variant = value.value();
 				info->attributes[type] = variant;
-
-				// Add new value to cache
-				String id;
-				if (variant.try_get_string(id))
-					_id_dict[id] = index;
-				else UC_LOG_ERROR(_logger) << "Invalid variant value for name attribute " << variant;
 			}
 			else
 			{

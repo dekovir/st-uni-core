@@ -93,7 +93,9 @@ namespace unicore
 		case UINodeType::None: return false;
 
 		case UINodeType::Window:
-			str = cached_info->value.get_string("Window");
+			//bool_value = cached_info->value.get_bool();
+			str = node.get_attribute(UIAttributeType::Text).get_string();
+
 			if (ImGui::Begin(str.c_str()))
 			{
 				for (const auto& child : children)
@@ -103,8 +105,9 @@ namespace unicore
 			return true;
 
 		case UINodeType::Group:
+			render_node_header(node, same_line);
 			ImGui::BeginGroup();
-			switch (get_layout(node.get_attribute(UIAttributeType::Layout)))
+			switch (get_layout(cached_info->value))
 			{
 			case UILayout::Horizontal:
 				for (unsigned i = 0; i < children.size(); i++)
@@ -117,30 +120,33 @@ namespace unicore
 				break;
 			}
 			ImGui::EndGroup();
+			render_node_footer(node);
 			return true;
 
 		case UINodeType::Text:
-			if (same_line) ImGui::SameLine();
-			if (cached_info->value.try_get_string(str))
-				ImGui::Text("%s", str.c_str());
-			else ImGui::Text("No text");
+			str = node.get_attribute(UIAttributeType::Text).get_string();
+
+			render_node_header(node, same_line);
+			ImGui::Text("%s", str.c_str());
+			render_node_footer(node);
 			return true;
 
 		case UINodeType::Button:
-			str = cached_info->value.get_string();
-			if (same_line) ImGui::SameLine();
+			str = node.get_attribute(UIAttributeType::Text).get_string();
+
+			render_node_header(node, same_line);
 			if (ImGui::Button(str.c_str()))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+			render_node_footer(node);
 			return true;
 
 		case UINodeType::Input:
-		{
 			str = cached_info->value.get_string();
-			if (same_line) ImGui::SameLine();
+			render_node_header(node, same_line);
 			if (ImGui::InputText(id.c_str(), &str))
 				_update_events.push_back({ node, UIEventType::ValueChanged, str });
-		}
-		return true;
+			render_node_footer(node);
+			return true;
 
 		case UINodeType::Slider:
 		{
@@ -148,23 +154,25 @@ namespace unicore
 			const auto value_max = node.get_attribute(UIAttributeType::MaxValue).get_float(1);
 
 			auto value = cached_info->value.get_float();
-			if (same_line) ImGui::SameLine();
+			render_node_header(node, same_line);
 			if (ImGui::SliderFloat(id.c_str(), &value, value_min, value_max))
 			{
 				cached_info->value = value;
 				_update_events.push_back({ node, UIEventType::ValueChanged, value });
 			}
+			render_node_footer(node);
 		}
 		return true;
 
 		case UINodeType::Toggle:
 			bool_value = cached_info->value.get_bool();
-			if (same_line) ImGui::SameLine();
+			render_node_header(node, same_line);
 			if (ImGui::Checkbox(id.c_str(), &bool_value))
 			{
 				cached_info->value = bool_value;
 				_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
 			}
+			render_node_footer(node);
 			return true;
 
 		case UINodeType::Tooltip:
@@ -172,7 +180,7 @@ namespace unicore
 			{
 				ImGui::BeginTooltip();
 
-				str = cached_info->value.get_string();
+				str = node.get_attribute(UIAttributeType::Text).get_string();
 				if (!str.empty())
 					ImGui::Text("%s", str.c_str());
 
@@ -181,9 +189,38 @@ namespace unicore
 				ImGui::EndTooltip();
 			}
 			return false;
+
+		case UINodeType::Item:
+			bool_value = cached_info->value.get_bool();
+			str = node.get_attribute(UIAttributeType::Text).get_string();
+
+			render_node_header(node, same_line);
+			if (ImGui::Selectable(str.c_str(), bool_value))
+			{
+				cached_info->value = bool_value;
+				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+				_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
+			}
+			render_node_footer(node);
+			break;
 		}
 
 		return false;
+	}
+
+	void UIViewImGui::render_node_header(const UINode& node, Bool same_line)
+	{
+		if (same_line) ImGui::SameLine();
+	}
+
+	void UIViewImGui::render_node_footer(const UINode& node)
+	{
+		String tooltip;
+		if (node.get_attribute(UIAttributeType::Tooltip).try_get_string(tooltip))
+		{
+			if (ImGui::IsItemHovered())
+				ImGui::SetTooltip("%s", tooltip.c_str());
+		}
 	}
 
 	UIViewImGui::CachedInfo* UIViewImGui::get_info(UINodeIndex index)

@@ -37,6 +37,9 @@ namespace unicore
 
 		Bool render_node(const UINode& node, Bool same_line = false);
 
+		void render_node_header(const UINode& node, Bool same_line = false);
+		void render_node_footer(const UINode& node);
+
 		UC_NODISCARD CachedInfo* get_info(UINodeIndex index);
 	};
 }

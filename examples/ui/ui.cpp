@@ -23,18 +23,17 @@ namespace unicore
 	static const auto xml_text = R"(
 	<group>
 		<text>Sample text</text>
-		<group layout="2">
+		<group value="2" tooltip="Tooltip text">
 			<text>Input</text>
-			<input>quick brown fox</input>
+			<input value="quick brown fox" />
 		</group>
-			<tooltip>Tooltip</tooltip>
-		<group layout="2">
+		<group value="2">
 			<text>Slider</text>
-			<slider id="slider" max="100">50.50</slider>
+			<slider id="slider" value="50.50" max="100" />
 		</group>
-		<group layout="2">
+		<group value="2">
 			<text>Toggle</text>
-			<toggle>true</toggle>
+			<toggle value="true" />
 		</group>
 		<group id="group" />
 		<button id="add_item">Add item</button>
@@ -51,15 +50,17 @@ namespace unicore
 		{"slider", UINodeType::Slider},
 		{"toggle", UINodeType::Toggle},
 		{"tooltip", UINodeType::Tooltip},
+		{"item", UINodeType::Item},
 	};
 
 	static const Dictionary<StringView, UIAttributeType> s_attr_name =
 	{
 		{"id", UIAttributeType::Uid},
 		{"name", UIAttributeType::Name},
+		{"value", UIAttributeType::Value},
+		{"tooltip", UIAttributeType::Tooltip},
 		{"min", UIAttributeType::MinValue},
 		{"max", UIAttributeType::MaxValue},
-		{"layout", UIAttributeType::Layout},
 	};
 
 	static Variant parse_value(const char* str)
@@ -87,7 +88,7 @@ namespace unicore
 		UIAttributeDict attributes;
 		// Fill attributes
 		if (const auto value = node->GetText(); value != nullptr)
-			attributes[UIAttributeType::Value] = parse_value(value);
+			attributes[UIAttributeType::Text] = parse_value(value);
 
 		for (const auto& [name, type] : s_attr_name)
 		{
@@ -136,8 +137,8 @@ namespace unicore
 				{
 					static int index = 1;
 					auto text = StringBuilder::format("Item {}", index++);
-					_document->create_node(UINodeType::Text, group_id,
-						{ {UIAttributeType::Value, text} });
+					_document->create_node(UINodeType::Item, group_id,
+						{ {UIAttributeType::Text, text} });
 				});
 		}
 
