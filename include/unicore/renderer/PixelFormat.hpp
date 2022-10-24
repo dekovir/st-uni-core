@@ -50,12 +50,13 @@ namespace unicore
 		{
 			if constexpr (std::is_same_v<TIn, TOut>) return value;
 
-			if constexpr (std::is_floating_point_v<TIn> || std::is_floating_point_v<TOut>)
+			if constexpr (std::is_floating_point_v<TIn> && std::is_floating_point_v<TOut>)
 				return static_cast<TOut>(value);
 
-			if constexpr (std::is_integral_v<TIn> || std::is_integral_v<TOut>)
+			if constexpr (std::is_integral_v<TIn> && std::is_integral_v<TOut>)
 				return static_cast<TOut>(value);
 
+			// TODO: Optimize
 			const auto normalized = static_cast<Double>(value) / static_cast<Double>(color_limits<TIn>::max());
 			const auto converted = normalized * static_cast<Double>(color_limits<TOut>::max());
 			return static_cast<TOut>(converted);
