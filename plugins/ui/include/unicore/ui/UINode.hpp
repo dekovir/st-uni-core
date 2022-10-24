@@ -18,7 +18,7 @@ namespace unicore
 		MaxValue,
 	};
 
-	using UIAttributes = Dictionary<UIAttributeType, Variant>;
+	using UIAttributeDict = Dictionary<UIAttributeType, Variant>;
 
 	using UIAction = std::function<void()>;
 
@@ -28,7 +28,7 @@ namespace unicore
 		OnClick,
 		OnChange,
 	};
-	using UINodeActions = Dictionary<UIActionType, UIAction>;
+	using UIActionDict = Dictionary<UIActionType, UIAction>;
 
 	enum class UINodeType
 	{
@@ -55,8 +55,8 @@ namespace unicore
 		UC_NODISCARD UINodeType type() const;
 		UC_NODISCARD Optional<UINode> parent() const;
 
-		UC_NODISCARD const UIAttributes& attributes() const;
-		UC_NODISCARD const UINodeActions& actions() const;
+		UC_NODISCARD const UIAttributeDict& attributes() const;
+		UC_NODISCARD const UIActionDict& actions() const;
 
 		void set_attribute(UIAttributeType type, const Optional<Variant>& value);
 		UC_NODISCARD Variant get_attribute(UIAttributeType type) const;

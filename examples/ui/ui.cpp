@@ -65,7 +65,7 @@ namespace unicore
 		if (it == s_tag_type.end())
 			return;
 
-		UIAttributes attributes;
+		UIAttributeDict attributes;
 		// Fill attributes
 		if (const auto value = node->GetText(); value != nullptr)
 			attributes[UIAttributeType::Value] = parse_value(value);

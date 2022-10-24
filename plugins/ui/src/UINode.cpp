@@ -30,12 +30,12 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	const UIAttributes& UINode::attributes() const
+	const UIAttributeDict& UINode::attributes() const
 	{
 		return _document.get_node_attributes(_index);
 	}
 
-	const UINodeActions& UINode::actions() const
+	const UIActionDict& UINode::actions() const
 	{
 		return _document.get_node_actions(_index);
 	}

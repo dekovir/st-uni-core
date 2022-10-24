@@ -212,7 +212,7 @@ namespace unicore
 
 	// RAW INDEX /////////////////////////////////////////////////////////////////
 	UINodeIndex UIDocument::create_node(UINodeType type, UINodeIndex parent,
-		const UIAttributes& attributes, const UINodeActions& actions)
+		const UIAttributeDict& attributes, const UIActionDict& actions)
 	{
 		const auto index = UINodeIndex(_nodes.size());
 		_nodes.push_back({});
@@ -379,14 +379,14 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	const UIAttributes& UIDocument::get_node_attributes(UINodeIndex index) const
+	const UIAttributeDict& UIDocument::get_node_attributes(UINodeIndex index) const
 	{
-		static const UIAttributes s_empty{};
+		static const UIAttributeDict s_empty{};
 		const auto info = get_info(index);
 		return info ? info->attributes : s_empty;
 	}
 
-	Size UIDocument::get_node_attributes(UINodeIndex index, UIAttributes& dict) const
+	Size UIDocument::get_node_attributes(UINodeIndex index, UIAttributeDict& dict) const
 	{
 		if (const auto info = get_info(index))
 		{
@@ -422,14 +422,14 @@ namespace unicore
 		}
 	}
 
-	const UINodeActions& UIDocument::get_node_actions(UINodeIndex index) const
+	const UIActionDict& UIDocument::get_node_actions(UINodeIndex index) const
 	{
-		static const UINodeActions s_empty{};
+		static const UIActionDict s_empty{};
 		const auto info = get_info(index);
 		return info ? info->actions : s_empty;
 	}
 
-	Size UIDocument::get_node_actions(UINodeIndex index, UINodeActions& dict) const
+	Size UIDocument::get_node_actions(UINodeIndex index, UIActionDict& dict) const
 	{
 		if (const auto info = get_info(index))
 		{

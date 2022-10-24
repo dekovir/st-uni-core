@@ -58,8 +58,8 @@ namespace unicore
 
 		// RAW INDEX /////////////////////////////////////////////////////////////////
 		UINodeIndex create_node(UINodeType type, UINodeIndex parent,
-			const UIAttributes& attributes = {},
-			const UINodeActions& actions = {});
+			const UIAttributeDict& attributes = {},
+			const UIActionDict& actions = {});
 
 		UC_NODISCARD Bool is_node_valid(UINodeIndex index) const;
 		UC_NODISCARD UINodeType get_node_type(UINodeIndex index) const;
@@ -71,19 +71,21 @@ namespace unicore
 		UC_NODISCARD UINodeIndex get_node_next_sibling(UINodeIndex index) const;
 		UC_NODISCARD UINodeIndex get_node_prev_sibling(UINodeIndex index) const;
 
+		// ATTRIBUTES ////////////////////////////////////////////////////////////////
 		void set_node_attribute(UINodeIndex index,
 			UIAttributeType type, const Optional<Variant>& value);
 
 		UC_NODISCARD Optional<Variant> get_node_attribute(
 			UINodeIndex index, UIAttributeType type) const;
 
-		UC_NODISCARD const UIAttributes& get_node_attributes(UINodeIndex index) const;
-		UC_NODISCARD Size get_node_attributes(UINodeIndex index, UIAttributes& dict) const;
+		UC_NODISCARD const UIAttributeDict& get_node_attributes(UINodeIndex index) const;
+		UC_NODISCARD Size get_node_attributes(UINodeIndex index, UIAttributeDict& dict) const;
 
+		// ACTIONS ///////////////////////////////////////////////////////////////////
 		void set_node_action(UINodeIndex index, UIActionType type, const Optional<UIAction>& action);
 
-		UC_NODISCARD const UINodeActions& get_node_actions(UINodeIndex index) const;
-		UC_NODISCARD Size get_node_actions(UINodeIndex index, UINodeActions& dict) const;
+		UC_NODISCARD const UIActionDict& get_node_actions(UINodeIndex index) const;
+		UC_NODISCARD Size get_node_actions(UINodeIndex index, UIActionDict& dict) const;
 
 	protected:
 		Logger* _logger;
@@ -95,8 +97,8 @@ namespace unicore
 			UINodeType type;
 			UINodeIndex parent;
 			List<UINodeIndex> children;
-			UIAttributes attributes;
-			UINodeActions actions;
+			UIAttributeDict attributes;
+			UIActionDict actions;
 		};
 
 		List<NodeInfo> _nodes;
