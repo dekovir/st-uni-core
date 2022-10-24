@@ -8,7 +8,7 @@ namespace unicore
 	{
 	}
 
-	size_t UIDocument::get_root_nodes(List<UINode>& nodes)
+	Size UIDocument::get_root_nodes(List<UINode>& nodes)
 	{
 		for (auto index : _roots)
 			nodes.push_back(UINode(*this, index));
@@ -40,10 +40,10 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	size_t UIDocument::find_indexes_by_name(StringView name,
+	Size UIDocument::find_indexes_by_name(StringView name,
 		List<UINodeIndex>& list, UINodeIndex parent) const
 	{
-		size_t count = 0;
+		Size count = 0;
 		if (parent == UINodeIndexInvalid)
 		{
 			for (unsigned i = 0; i < _nodes.size(); i++)
@@ -81,7 +81,7 @@ namespace unicore
 		return count;
 	}
 
-	size_t UIDocument::find_nodes_by_name(StringView name,
+	Size UIDocument::find_nodes_by_name(StringView name,
 		List<UINode>& list, UINodeIndex parent)
 	{
 		List<UINodeIndex> indices;
@@ -92,10 +92,10 @@ namespace unicore
 		return count;
 	}
 
-	size_t UIDocument::find_indexes_by_name_recurse(StringView name,
+	Size UIDocument::find_indexes_by_name_recurse(StringView name,
 		List<UINodeIndex>& list, UINodeIndex parent) const
 	{
-		size_t count = 0;
+		Size count = 0;
 		count += find_indexes_by_name(name, list, parent);
 
 		const auto& children = get_node_children(parent);
@@ -105,10 +105,10 @@ namespace unicore
 		return count;
 	}
 
-	size_t UIDocument::find_nodes_by_name_recurse(StringView name,
+	Size UIDocument::find_nodes_by_name_recurse(StringView name,
 		List<UINode>& list, UINodeIndex parent)
 	{
-		size_t count = 0;
+		Size count = 0;
 		count += find_nodes_by_name(name, list, parent);
 
 		const auto& children = get_node_children(parent);
@@ -272,6 +272,23 @@ namespace unicore
 		return info ? info->children : s_empty;
 	}
 
+	Size UIDocument::get_node_children(UINodeIndex index, List<UINodeIndex>& list) const
+	{
+		if (index == UINodeIndexInvalid)
+		{
+			list.insert(list.end(), _roots.begin(), _roots.end());
+			return _roots.size();
+		}
+
+		if (const auto info = get_info(index))
+		{
+			list.insert(list.end(), info->children.begin(), info->children.end());
+			return info->children.size();
+		}
+
+		return 0;
+	}
+
 	UINodeIndex UIDocument::get_node_next_sibling(UINodeIndex index) const
 	{
 		if (const auto info = get_info(index))
@@ -340,9 +357,7 @@ namespace unicore
 			}
 			else
 			{
-				if (const auto it = info->attributes.find(type); it != info->attributes.end())
-					info->attributes.erase(it);
-				else return;
+				info->attributes.erase(type);
 			}
 
 			if (!_event_set_attribute.empty())
@@ -369,6 +384,18 @@ namespace unicore
 		static const UIAttributes s_empty{};
 		const auto info = get_info(index);
 		return info ? info->attributes : s_empty;
+	}
+
+	Size UIDocument::get_node_attributes(UINodeIndex index, UIAttributes& dict) const
+	{
+		if (const auto info = get_info(index))
+		{
+			for (const auto& [type, value] : info->attributes)
+				dict[type] = value;
+			return info->attributes.size();
+		}
+
+		return 0;
 	}
 
 	void UIDocument::set_node_action(UINodeIndex index,
@@ -400,6 +427,18 @@ namespace unicore
 		static const UINodeActions s_empty{};
 		const auto info = get_info(index);
 		return info ? info->actions : s_empty;
+	}
+
+	Size UIDocument::get_node_actions(UINodeIndex index, UINodeActions& dict) const
+	{
+		if (const auto info = get_info(index))
+		{
+			for (const auto& [type, action] : info->actions)
+				dict[type] = action;
+			return info->actions.size();
+		}
+
+		return 0;
 	}
 
 	UIDocument::NodeInfo* UIDocument::get_info(UINodeIndex index)

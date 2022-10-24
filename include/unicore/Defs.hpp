@@ -101,6 +101,7 @@ namespace unicore
 	using Double = double;
 
 	using Byte = UInt8;
+	using Size = size_t;
 
 	namespace arithmetic
 	{

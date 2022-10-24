@@ -28,21 +28,21 @@ namespace unicore
 	public:
 		explicit UIDocument(Logger* logger = nullptr);
 
-		size_t get_root_nodes(List<UINode>& nodes);
+		Size get_root_nodes(List<UINode>& nodes);
 		UC_NODISCARD List<UINode> get_root_nodes();
 
 		// FIND //////////////////////////////////////////////////////////////////////
 		UC_NODISCARD UINodeIndex find_index_by_id(StringView id) const;
 		UC_NODISCARD Optional<UINode> find_node_by_id(StringView id);
 
-		size_t find_indexes_by_name(StringView name,
+		Size find_indexes_by_name(StringView name,
 			List<UINodeIndex>& list, UINodeIndex parent) const;
-		size_t find_nodes_by_name(StringView name,
+		Size find_nodes_by_name(StringView name,
 			List<UINode>& list, UINodeIndex parent);
 
-		size_t find_indexes_by_name_recurse(StringView name,
+		Size find_indexes_by_name_recurse(StringView name,
 			List<UINodeIndex>& list, UINodeIndex parent) const;
-		size_t find_nodes_by_name_recurse(StringView name,
+		Size find_nodes_by_name_recurse(StringView name,
 			List<UINode>& list, UINodeIndex parent);
 
 		UC_NODISCARD UINodeIndex find_index_by_name(
@@ -64,7 +64,9 @@ namespace unicore
 		UC_NODISCARD Bool is_node_valid(UINodeIndex index) const;
 		UC_NODISCARD UINodeType get_node_type(UINodeIndex index) const;
 		UC_NODISCARD UINodeIndex get_node_parent(UINodeIndex index) const;
+
 		UC_NODISCARD const List<UINodeIndex>& get_node_children(UINodeIndex index) const;
+		UC_NODISCARD Size get_node_children(UINodeIndex index, List<UINodeIndex>& list) const;
 
 		UC_NODISCARD UINodeIndex get_node_next_sibling(UINodeIndex index) const;
 		UC_NODISCARD UINodeIndex get_node_prev_sibling(UINodeIndex index) const;
@@ -76,10 +78,12 @@ namespace unicore
 			UINodeIndex index, UIAttributeType type) const;
 
 		UC_NODISCARD const UIAttributes& get_node_attributes(UINodeIndex index) const;
+		UC_NODISCARD Size get_node_attributes(UINodeIndex index, UIAttributes& dict) const;
 
 		void set_node_action(UINodeIndex index, UIActionType type, const Optional<UIAction>& action);
 
 		UC_NODISCARD const UINodeActions& get_node_actions(UINodeIndex index) const;
+		UC_NODISCARD Size get_node_actions(UINodeIndex index, UINodeActions& dict) const;
 
 	protected:
 		Logger* _logger;
