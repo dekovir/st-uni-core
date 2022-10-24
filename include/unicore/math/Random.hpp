@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/system/Object.hpp"
+#include "unicore/math/Angle.hpp"
 #include "unicore/math/Range.hpp"
 #include "unicore/renderer/Color3.hpp"
 #include "unicore/renderer/Color4.hpp"
@@ -50,8 +51,8 @@ namespace unicore
 				std::numeric_limits<T>::max()));
 		}
 
-		// TODO: random Radians
-		// TODO: random Degrees
+		UC_NODISCARD Radians radians();
+		UC_NODISCARD Degrees degrees();
 
 		template<typename T = Byte>
 		Color3<T> color3()

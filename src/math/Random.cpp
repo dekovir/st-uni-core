@@ -12,6 +12,17 @@ namespace unicore
 		return range(0, 100) >= 50;
 	}
 
+	Radians Random::radians()
+	{
+		return Radians(next_float_01() * Math::DoublePi);
+	}
+
+	Degrees Random::degrees()
+	{
+		return Degrees(next_float_01() * 360);
+	}
+
+	// DefaultRandom //////////////////////////////////////////////////////////////
 	uint32_t DefaultRandom::next()
 	{
 		// TODO: Check range
