@@ -6,7 +6,7 @@ namespace unicore
 {
 	enum class UIEventType
 	{
-		ActionCall,
+		Clicked,
 		ValueChanged,
 	};
 

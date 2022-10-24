@@ -120,7 +120,7 @@ namespace unicore
 		case UINodeType::Button:
 			str = cached_info->value.get_string();
 			if (ImGui::Button(str.c_str()))
-				_update_events.push_back({ node, UIEventType::ActionCall, UIActionType::OnClick });
+				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
 			break;
 
 		case UINodeType::Input:

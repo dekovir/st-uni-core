@@ -195,14 +195,11 @@ namespace unicore
 		UIActionType action_type;
 		switch (evt.type)
 		{
-		case UIEventType::ActionCall:
-			if (evt.value.try_get_enum(action_type))
+		case UIEventType::Clicked:
+			if (const auto action = evt.node.get_action(UIActionType::OnClick); action.has_value())
 			{
-				if (const auto action = evt.node.get_action(action_type); action.has_value())
-				{
-					if (const auto ptr = std::get_if<UIActionDefault>(&action.value()))
-						(*ptr)();
-				}
+				if (const auto ptr = std::get_if<UIActionDefault>(&action.value()))
+					(*ptr)();
 			}
 			break;
 
