@@ -251,6 +251,75 @@ namespace unicore
 		UC_NODISCARD bool try_get_rectf(Rectf& value) const { return try_get_rect(value); }
 		UC_NODISCARD Rectf get_rectf(const Rectf& default_value = RectConstf::Zero) const { return get_rect(default_value); }
 
+		// COLOR3 ////////////////////////////////////////////////////////////////////
+		template<typename T>
+		bool try_get_color3(Color3<T>& value) const
+		{
+			if (const auto ptr = std::get_if<Color3b>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			if (const auto ptr = std::get_if<Color3f>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			// TODO: Cast from Vector3?
+
+			return false;
+		}
+
+		template<typename T>
+		UC_NODISCARD Color3<T> get_color3(
+			const Color3<T>& default_value = details::ColorConst3<T>::Clear) const
+		{
+			Color3<T> value{};
+			return try_get_color3(value) ? value : default_value;
+		}
+
+		// COLOR3B ///////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_color3b(Color3b& value) const { return try_get_color3(value); }
+		UC_NODISCARD Color3b get_color3b(const Color3b& default_value = ColorConst3b::Clear) const { return get_color3(default_value); }
+
+		// COLOR3F ///////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_color3f(Color3f& value) const { return try_get_color3(value); }
+		UC_NODISCARD Color3f get_color3f(const Color3f& default_value = ColorConst3f::Clear) const { return get_color3(default_value); }
+
+		// COLOR4 ////////////////////////////////////////////////////////////////////
+		template<typename T>
+		bool try_get_color4(Color4<T>& value) const
+		{
+			if (const auto ptr = std::get_if<Color4b>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			if (const auto ptr = std::get_if<Color4f>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			// TODO: Cast from Vector3?
+
+			return false;
+		}
+
+		template<typename T>
+		UC_NODISCARD Color4<T> get_color4(
+			const Color4<T>& default_value = details::ColorConst4<T>::Clear) const
+		{
+			Color4<T> value{};
+			return try_get_color4(value) ? value : default_value;
+		}
+
+		// COLOR4B ///////////////////////////////////////////////////////////////////
+		// COLOR4F ///////////////////////////////////////////////////////////////////
+
 		static const Variant Empty;
 
 	protected:

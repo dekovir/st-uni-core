@@ -26,26 +26,39 @@ namespace unicore
 	struct color_limits
 	{
 		using ValueType = T;
-		static constexpr T min() noexcept { return std::numeric_limits<T>::min(); }
 		static constexpr T max() noexcept { return std::numeric_limits<T>::max(); }
-		static constexpr T range() noexcept { return std::numeric_limits<T>::max() - std::numeric_limits<T>::min(); }
 	};
 
 	template<>
 	struct color_limits<uint8_t>
 	{
 		using ValueType = unsigned;
-		static constexpr uint8_t min() noexcept { return 0; }
 		static constexpr uint8_t max() noexcept { return 0xFF; }
-		static constexpr uint8_t range() noexcept { return 0xFF; }
 	};
 
 	template<>
 	struct color_limits<float>
 	{
 		using ValueType = float;
-		static constexpr float min() noexcept { return 0.0f; }
 		static constexpr float max() noexcept { return 1.0f; }
-		static constexpr float range() noexcept { return 1.0f; }
+	};
+
+	struct color_limits_convert
+	{
+		template<typename TIn, typename TOut>
+		static constexpr TOut component(TIn value)
+		{
+			if constexpr (std::is_same_v<TIn, TOut>) return value;
+
+			if constexpr (std::is_floating_point_v<TIn> || std::is_floating_point_v<TOut>)
+				return static_cast<TOut>(value);
+
+			if constexpr (std::is_integral_v<TIn> || std::is_integral_v<TOut>)
+				return static_cast<TOut>(value);
+
+			const auto normalized = static_cast<Double>(value) / static_cast<Double>(color_limits<TIn>::max());
+			const auto converted = normalized * static_cast<Double>(color_limits<TOut>::max());
+			return static_cast<TOut>(converted);
+		}
 	};
 }
