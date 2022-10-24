@@ -1,4 +1,5 @@
 #pragma once
+#include "UINode.hpp"
 #include "unicore/system/Index.hpp"
 #include "unicore/system/Variant.hpp"
 
@@ -13,17 +14,30 @@ namespace unicore
 		Uid, // Must be unique for UIDocument
 		Name,
 		//Style,
+		Layout,
 		Value,
 		MinValue,
 		MaxValue,
 	};
 
+	enum class UILayout
+	{
+		None,
+		Vertical,
+		Horizontal,
+	};
+
+	class UINode;
+
 	using UIAttributeDict = Dictionary<UIAttributeType, Variant>;
 
 	using UIActionDefault = std::function<void()>;
-	using UIActionValue = std::function<void(const Variant&)>;
+	using UIActionNodeDefault = std::function<void(const UINode&)>;
 
-	using UIAction = StdVariant<UIActionDefault, UIActionValue>;
+	using UIActionValue = std::function<void(const Variant&)>;
+	using UIActionNodeValue = std::function<void(const UINode&, const Variant&)>;
+
+	using UIAction = StdVariant<UIActionDefault, UIActionNodeDefault, UIActionValue, UIActionNodeValue>;
 
 	enum class UIActionType : uint8_t
 	{
@@ -42,6 +56,7 @@ namespace unicore
 		Button,
 		Input,
 		Slider,
+		Toggle,
 	};
 
 	class UIDocument;
@@ -88,4 +103,5 @@ namespace unicore
 	};
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const UINodeIndex&);
+	extern UNICODE_STRING_BUILDER_FORMAT(const UINode&);
 }

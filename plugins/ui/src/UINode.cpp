@@ -137,4 +137,9 @@ namespace unicore
 	{
 		return builder << "I(" << value.value << ")";
 	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const UINode&)
+	{
+		return builder << "N(" << value.index().value << ")";
+	}
 }

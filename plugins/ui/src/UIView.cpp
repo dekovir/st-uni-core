@@ -32,4 +32,10 @@ namespace unicore
 
 		on_rebuild();
 	}
+
+	UILayout UIView::get_layout(const Variant& value, UILayout default_value)
+	{
+		UILayout layout;
+		return value.try_get_enum(layout) ? layout : default_value;
+	}
 }

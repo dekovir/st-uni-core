@@ -196,26 +196,20 @@ namespace unicore
 		switch (evt.type)
 		{
 		case UIEventType::Clicked:
+			UC_LOG_DEBUG(_logger) << "Node " << evt.node << " value has clicked";
 			if (const auto action = evt.node.get_action(UIActionType::OnClick); action.has_value())
 			{
-				if (const auto ptr = std::get_if<UIActionDefault>(&action.value()))
-					(*ptr)();
+				if (!call_action_default(action.value(), evt.node))
+					UC_LOG_WARNING(_logger) << "Failed to call default action";
 			}
 			break;
 
 		case UIEventType::ValueChanged:
-			//UC_LOG_DEBUG(_logger) << "Value at " << evt.node.index()
-			//	<< " changed to " << std::get<Double>(evt.value);
-
+			UC_LOG_DEBUG(_logger) << "Node " << evt.node << " value changed to " << evt.value;
 			if (const auto action = evt.node.get_action(UIActionType::OnChange); action.has_value())
 			{
-				if (const auto ptr = std::get_if<UIActionValue>(&action.value()))
-					(*ptr)(evt.value);
-			}
-			else if (const auto action = evt.node.get_action(UIActionType::OnChange); action.has_value())
-			{
-				if (const auto ptr = std::get_if<UIActionDefault>(&action.value()))
-					(*ptr)();
+				if (!call_action_value(action.value(), evt.node, evt.value))
+					UC_LOG_WARNING(_logger) << "Failed to call value action";
 			}
 			break;
 		}
@@ -466,5 +460,37 @@ namespace unicore
 			return &_nodes[index.value];
 
 		return nullptr;
+	}
+
+	bool UIDocument::call_action_default(const UIAction& action, const UINode& node)
+	{
+		if (const auto ptr = std::get_if<UIActionDefault>(&action))
+		{
+			(*ptr)();
+			return true;
+		}
+		if (const auto ptr = std::get_if<UIActionNodeDefault>(&action))
+		{
+			(*ptr)(node);
+			return true;
+		}
+
+		return false;
+	}
+
+	bool UIDocument::call_action_value(const UIAction& action, const UINode& node, const Variant& value)
+	{
+		if (const auto ptr = std::get_if<UIActionValue>(&action))
+		{
+			(*ptr)(value);
+			return true;
+		}
+		if (const auto ptr = std::get_if<UIActionNodeValue>(&action))
+		{
+			(*ptr)(node, value);
+			return true;
+		}
+
+		return false;
 	}
 }

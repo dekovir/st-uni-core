@@ -83,6 +83,8 @@ namespace unicore
 		List<UINode> children;
 		node.get_children(children);
 
+		Bool bool_value;
+
 		String str;
 		String32 str32;
 
@@ -96,18 +98,25 @@ namespace unicore
 			{
 				for (const auto& child : children)
 					render_node(child);
-				ImGui::End();
 			}
+			ImGui::End();
 			break;
 
 		case UINodeType::Group:
-
-			if (ImGui::BeginChild(id.c_str()))
+			switch (get_layout(node.get_attribute(UIAttributeType::Layout)))
 			{
+			case UILayout::Horizontal:
+				for (unsigned i = 0; i < children.size(); i++)
+				{
+					if (i > 0) ImGui::SameLine();
+					render_node(children[i]);
+				}
+				break;
+
+			default:
 				for (const auto& child : children)
 					render_node(child);
-
-				ImGui::EndChild();
+				break;
 			}
 			break;
 
@@ -142,6 +151,17 @@ namespace unicore
 			{
 				cached_info->value = value;
 				_update_events.push_back({ node, UIEventType::ValueChanged, value });
+			}
+		}
+		break;
+
+		case UINodeType::Toggle:
+		{
+			bool_value = cached_info->value.get_bool();
+			if (ImGui::Checkbox(id.c_str(), &bool_value))
+			{
+				cached_info->value = bool_value;
+				_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
 			}
 		}
 		break;

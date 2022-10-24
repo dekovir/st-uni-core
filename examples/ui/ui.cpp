@@ -21,13 +21,23 @@ namespace unicore
 	}
 
 	static const auto xml_text = R"(
-	<xml>
+	<group>
 		<text>Sample text</text>
-		<input>quick brown fox</input>
-		<slider id="slider" max="100">50</slider>
+		<group layout="2">
+			<text>Input</text>
+			<input>quick brown fox</input>
+		</group>
+		<group layout="2">
+			<text>Slider</text>
+			<slider id="slider" max="100">50.50</slider>
+		</group>
+		<group layout="2">
+			<text>Toggle</text>
+			<toggle>true</toggle>
+		</group>
 		<group id="group" />
-		<button id="add_item">Button</button>
-	</xml>
+		<button id="add_item">Add item</button>
+	</group>
 	)";
 
 	static const Dictionary<StringView, UINodeType> s_tag_type =
@@ -38,6 +48,7 @@ namespace unicore
 		{"button", UINodeType::Button},
 		{"input", UINodeType::Input},
 		{"slider", UINodeType::Slider},
+		{"toggle", UINodeType::Toggle},
 	};
 
 	static const Dictionary<StringView, UIAttributeType> s_attr_name =
@@ -46,11 +57,17 @@ namespace unicore
 		{"name", UIAttributeType::Name},
 		{"min", UIAttributeType::MinValue},
 		{"max", UIAttributeType::MaxValue},
+		{"layout", UIAttributeType::Layout},
 	};
 
 	static Variant parse_value(const char* str)
 	{
 		char* end;
+
+		const auto i = strtoll(str, &end, 10);
+		if (end[0] == 0)
+			return i;
+
 		const auto d = strtod(str, &end);
 		if (end[0] == 0)
 			return d;
@@ -58,7 +75,7 @@ namespace unicore
 		return str;
 	}
 
-	static void parse_node(const tinyxml2::XMLElement* node, UIDocument& doc, UINodeIndex parent)
+	static void parse_node_recurse(const tinyxml2::XMLElement* node, UIDocument& doc, UINodeIndex parent)
 	{
 		const auto tag = StringView(node->Value());
 		const auto it = s_tag_type.find(tag);
@@ -78,7 +95,7 @@ namespace unicore
 
 		const auto index = doc.create_node(it->second, parent, attributes);
 		for (auto child = node->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
-			parse_node(child, doc, index);
+			parse_node_recurse(child, doc, index);
 	}
 
 	static void parse_xml(const XMLData& data, UIDocument& doc)
@@ -86,8 +103,7 @@ namespace unicore
 		const auto root = data.doc.RootElement();
 		if (!root) return;
 
-		for (auto child = root->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
-			parse_node(child, doc, UINodeIndexInvalid);
+		parse_node_recurse(root, doc, UINodeIndexInvalid);
 	}
 
 	void MyApp::on_init()

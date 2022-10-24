@@ -102,5 +102,8 @@ namespace unicore
 
 		NodeInfo* get_info(UINodeIndex index);
 		UC_NODISCARD const NodeInfo* get_info(UINodeIndex index) const;
+
+		static bool call_action_default(const UIAction& action, const UINode& node);
+		static bool call_action_value(const UIAction& action, const UINode& node, const Variant& value);
 	};
 }

@@ -40,8 +40,38 @@ namespace unicore
 			return true;
 		}
 
-		// TODO: Convert from integral?
-		// TODO: Convert from String? (true/false)
+		uint8_t i;
+		if (try_get_integral(i))
+		{
+			switch (i)
+			{
+			case 0:
+				value = false;
+				return true;
+
+			case 1:
+				value = true;
+				return true;
+			}
+		}
+
+		String str;
+		if (try_get_string(str))
+		{
+			// TODO: Case insensitive compare
+			if (str == "true")
+			{
+				value = true;
+				return true;
+			}
+
+			// TODO: Case insensitive compare
+			if (str == "false")
+			{
+				value = true;
+				return true;
+			}
+		}
 
 		return false;
 	}
