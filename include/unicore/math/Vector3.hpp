@@ -76,7 +76,7 @@ namespace unicore
 		}
 
 		template<typename U>
-		constexpr Vector3<U> cast() const
+		UC_NODISCARD constexpr Vector3<U> cast() const
 		{
 			if constexpr (std::is_same_v<U, T>) return *this;
 
@@ -200,12 +200,12 @@ namespace unicore
 		template<typename T>
 		struct VectorConst3
 		{
-			static constexpr Vector3<T> Zero = Vector2<T>(0, 0, 0);
-			static constexpr Vector3<T> One = Vector2<T>(1, 1, 1);
+			static constexpr Vector3<T> Zero = Vector3<T>(0, 0, 0);
+			static constexpr Vector3<T> One = Vector3<T>(1, 1, 1);
 
-			static constexpr Vector3<T> AxisX = Vector2<T>(1, 0, 0);
-			static constexpr Vector3<T> AxisY = Vector2<T>(0, 1, 0);
-			static constexpr Vector3<T> AxisZ = Vector2<T>(0, 0, 1);
+			static constexpr Vector3<T> AxisX = Vector3<T>(1, 0, 0);
+			static constexpr Vector3<T> AxisY = Vector3<T>(0, 1, 0);
+			static constexpr Vector3<T> AxisZ = Vector3<T>(0, 0, 1);
 		};
 	}
 

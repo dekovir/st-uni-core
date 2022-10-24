@@ -1,7 +1,6 @@
 #pragma once
 #include "unicore/math/Math.hpp"
 #include "unicore/math/Hash.hpp"
-#include "unicore/math/Random.hpp"
 #include "unicore/renderer/PixelFormat.hpp"
 
 namespace unicore
@@ -107,15 +106,6 @@ namespace unicore
 				convert_component_from_uint8(r),
 				convert_component_from_uint8(g),
 				convert_component_from_uint8(b),
-			};
-		}
-
-		static Color3 create_random(Random& random)
-		{
-			return {
-				random.range(MinValue, MaxValue),
-				random.range(MinValue, MaxValue),
-				random.range(MinValue, MaxValue),
 			};
 		}
 

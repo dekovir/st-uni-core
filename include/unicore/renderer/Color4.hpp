@@ -1,7 +1,6 @@
 #pragma once
 #include "unicore/math/Math.hpp"
 #include "unicore/math/Hash.hpp"
-#include "unicore/math/Random.hpp"
 #include "unicore/renderer/PixelFormat.hpp"
 
 namespace unicore
@@ -128,16 +127,6 @@ namespace unicore
 		static constexpr Color4 from_rgba(const uint32_t rgba)
 		{
 			return from_format(pixel_format_rgba, rgba);
-		}
-
-		static Color4 create_random(Random& random, bool random_alpha = false)
-		{
-			return {
-				random.range(MinValue, MaxValue),
-				random.range(MinValue, MaxValue),
-				random.range(MinValue, MaxValue),
-				!random_alpha ? MaxValue : random.range(MinValue, MaxValue)
-			};
 		}
 
 	protected:

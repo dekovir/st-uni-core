@@ -138,16 +138,118 @@ namespace unicore
 		UC_NODISCARD bool try_get_string32(String32& value) const;
 		UC_NODISCARD String32 get_string32(StringView32 default_value = U"") const;
 
+		// VECTOR2 ///////////////////////////////////////////////////////////////////
+		template<typename T>
+		bool try_get_vector2(Vector2<T>& value) const
+		{
+			if (const auto ptr = std::get_if<Vector2i>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			if (const auto ptr = std::get_if<Vector2f>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			return false;
+		}
+
+		template<typename T>
+		UC_NODISCARD Vector2<T> get_vector2(
+			const Vector2<T>& default_value = details::VectorConst2<T>::Zero) const
+		{
+			Vector2<T> value{};
+			return try_get_vector2(value) ? value : default_value;
+		}
+
 		// VECTOR2I //////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_vec2i(Vector2i& value) const { return try_get_vector2(value); }
+		UC_NODISCARD Vector2i get_vec2i(const Vector2i& default_value = VectorConst2i::Zero) const { return get_vector2(default_value); }
+
 		// VECTOR2F //////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_vec2f(Vector2f& value) const { return try_get_vector2(value); }
+		UC_NODISCARD Vector2f get_vec2f(const Vector2f& default_value = VectorConst2f::Zero) const { return get_vector2(default_value); }
+
+		// VECTOR3 ///////////////////////////////////////////////////////////////////
+		template<typename T>
+		bool try_get_vec3(Vector3<T>& value) const
+		{
+			if (const auto ptr = std::get_if<Vector3i>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			if (const auto ptr = std::get_if<Vector3f>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			// TODO: Cast from vector2?
+			//Vector2<T> vec2;
+			//if (try_get_vector2(vec2))
+			//{
+			//	value.set(vec2.x, vec2.y, 0);
+			//	return true;
+			//}
+
+			return false;
+		}
+
+		template<typename T>
+		UC_NODISCARD Vector3<T> get_vec3(
+			const Vector3<T>& default_value = details::VectorConst3<T>::Zero) const
+		{
+			Vector3<T> value{};
+			return try_get_vec3(value) ? value : default_value;
+		}
+
 		// VECTOR3I //////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_vec3i(Vector3i& value) const { return try_get_vec3(value); }
+		UC_NODISCARD Vector3i get_vec3i(const Vector3i& default_value = VectorConst3i::Zero) const { return get_vec3(default_value); }
+
 		// VECTOR3F //////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_vec3f(Vector3f& value) const { return try_get_vec3(value); }
+		UC_NODISCARD Vector3f get_vec3f(const Vector3f& default_value = VectorConst3f::Zero) const { return get_vec3(default_value); }
+
+		// RECT //////////////////////////////////////////////////////////////////////
+		template<typename T>
+		bool try_get_rect(Rect<T>& value) const
+		{
+			if (const auto ptr = std::get_if<Recti>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			if (const auto ptr = std::get_if<Rectf>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			return false;
+		}
+
+		template<typename T>
+		UC_NODISCARD Rect<T> get_rect(
+			const Rect<T>& default_value = details::RectConst<T>::Zero) const
+		{
+			Rect<T> value{};
+			return try_get_rect(value) ? value : default_value;
+		}
+
 		// RECTI /////////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_recti(Recti& value) const { return try_get_rect(value); }
+		UC_NODISCARD Recti get_recti(const Recti& default_value = RectConsti::Zero) const { return get_rect(default_value); }
+
 		// RECTF /////////////////////////////////////////////////////////////////////
-		// COLOR3B ///////////////////////////////////////////////////////////////////
-		// COLOR3F ///////////////////////////////////////////////////////////////////
-		// COLOR4B ///////////////////////////////////////////////////////////////////
-		// COLOR4F ///////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_rectf(Rectf& value) const { return try_get_rect(value); }
+		UC_NODISCARD Rectf get_rectf(const Rectf& default_value = RectConstf::Zero) const { return get_rect(default_value); }
 
 		static const Variant Empty;
 

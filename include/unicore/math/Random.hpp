@@ -1,6 +1,8 @@
 #pragma once
 #include "unicore/system/Object.hpp"
 #include "unicore/math/Range.hpp"
+#include "unicore/renderer/Color3.hpp"
+#include "unicore/renderer/Color4.hpp"
 #include <random>
 
 namespace unicore
@@ -35,7 +37,7 @@ namespace unicore
 		}
 
 		template<typename T>
-		UC_NODISCARD T range(const Range<T>& value) const
+		UC_NODISCARD T range(const Range<T>& value)
 		{
 			return range(value.min, value.max);
 		}
@@ -47,6 +49,36 @@ namespace unicore
 				std::numeric_limits<T>::min(),
 				std::numeric_limits<T>::max()));
 		}
+
+		// TODO: random Radians
+		// TODO: random Degrees
+
+		template<typename T = Byte>
+		Color3<T> color3()
+		{
+			return {
+				range(Color3<T>::MinValue, Color3<T>::MaxValue),
+				range(Color3<T>::MinValue, Color3<T>::MaxValue),
+				range(Color3<T>::MinValue, Color3<T>::MaxValue)
+			};
+		}
+
+		Color3b color3b() { return color3<Byte>(); }
+		Color3f color3f() { return color3<Float>(); }
+
+		template<typename T>
+		Color4<T> color4(bool random_alpha = false)
+		{
+			return {
+				range(Color4<T>::MinValue, Color4<T>::MaxValue),
+				range(Color4<T>::MinValue, Color4<T>::MaxValue),
+				range(Color4<T>::MinValue, Color4<T>::MaxValue),
+				!random_alpha ? Color4<T>::MaxValue : range(Color4<T>::MinValue, Color4<T>::MaxValue)
+			};
+		}
+
+		Color4b color4b(bool random_alpha = false) { return color4<Byte>(random_alpha); }
+		Color4f color4f(bool random_alpha = false) { return color4<float>(random_alpha); }
 	};
 
 	class DefaultRandom : public Random
