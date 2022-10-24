@@ -318,7 +318,12 @@ namespace unicore
 		}
 
 		// COLOR4B ///////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_color4b(Color4b& value) const { return try_get_color4(value); }
+		UC_NODISCARD Color4b get_color4b(const Color4b& default_value = ColorConst4b::Clear) const { return get_color4(default_value); }
+
 		// COLOR4F ///////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_color4f(Color4b& value) const { return try_get_color4(value); }
+		UC_NODISCARD Color4f get_color4f(const Color4f& default_value = ColorConst4f::Clear) const { return get_color4(default_value); }
 
 		static const Variant Empty;
 

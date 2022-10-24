@@ -89,10 +89,10 @@ namespace unicore
 		UC_NODISCARD constexpr Color4<U> cast() const
 		{
 			return {
-				color_limits_convert::component<U>(r),
-				color_limits_convert::component<U>(g),
-				color_limits_convert::component<U>(b),
-				color_limits_convert::component<U>(a)
+				color_limits_convert::component<T, U>(r),
+				color_limits_convert::component<T, U>(g),
+				color_limits_convert::component<T, U>(b),
+				color_limits_convert::component<T, U>(a)
 			};
 		}
 
