@@ -20,9 +20,12 @@ namespace unicore
 
 	using UIAttributeDict = Dictionary<UIAttributeType, Variant>;
 
-	using UIAction = std::function<void()>;
+	using UIActionDefault = std::function<void()>;
+	using UIActionValue = std::function<void(const Variant&)>;
 
-	enum class UIActionType
+	using UIAction = StdVariant<UIActionDefault, UIActionValue>;
+
+	enum class UIActionType : uint8_t
 	{
 		OnLoad,
 		OnClick,

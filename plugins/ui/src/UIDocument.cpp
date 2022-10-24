@@ -192,20 +192,34 @@ namespace unicore
 	// EVENTS ////////////////////////////////////////////////////////////////////
 	void UIDocument::send_event(const UIEvent& evt)
 	{
+		UIActionType action_type;
 		switch (evt.type)
 		{
 		case UIEventType::ActionCall:
-			if (const auto ptr = std::get_if<UIActionType>(&evt.value))
+			if (evt.value.try_get_enum(action_type))
 			{
-				const auto type = *ptr;
-				if (const auto action = evt.node.get_action(type); action.has_value())
-					action.value()();
+				if (const auto action = evt.node.get_action(action_type); action.has_value())
+				{
+					if (const auto ptr = std::get_if<UIActionDefault>(&action.value()))
+						(*ptr)();
+				}
 			}
 			break;
 
 		case UIEventType::ValueChanged:
-			UC_LOG_DEBUG(_logger) << "Value at " << evt.node.index()
-				<< " changed to " << std::get<Double>(evt.value);
+			//UC_LOG_DEBUG(_logger) << "Value at " << evt.node.index()
+			//	<< " changed to " << std::get<Double>(evt.value);
+
+			if (const auto action = evt.node.get_action(UIActionType::OnChange); action.has_value())
+			{
+				if (const auto ptr = std::get_if<UIActionValue>(&action.value()))
+					(*ptr)(evt.value);
+			}
+			else if (const auto action = evt.node.get_action(UIActionType::OnChange); action.has_value())
+			{
+				if (const auto ptr = std::get_if<UIActionDefault>(&action.value()))
+					(*ptr)();
+			}
 			break;
 		}
 	}

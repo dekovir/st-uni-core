@@ -41,6 +41,8 @@ namespace unicore
 
 		CachedInfo info;
 		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index().value));
+		info.value = node.get_attribute(UIAttributeType::Value);
+
 		_cached[node.index()] = info;
 	}
 
@@ -49,11 +51,15 @@ namespace unicore
 	{
 		UC_LOG_DEBUG(_logger) << "set_attribute " << node.index();
 
-		//if (node.type() == UINodeType::Input && type == UIAttributeType::Value)
-		//{
-		//	_input_buffers[node.index()] =
-		//		value.has_value() ? std::get<String>(value.value()) : "";
-		//}
+		if (type == UIAttributeType::Value)
+		{
+			if (const auto it = _cached.find(node.index()); it != _cached.end())
+			{
+				if (value.has_value())
+					it->second.value = value.value();
+				else it->second.value = Variant();
+			}
+		}
 	}
 
 	void UIViewImGui::on_set_action(const UINode& node,
@@ -64,7 +70,7 @@ namespace unicore
 
 	void UIViewImGui::render_node(const UINode& node)
 	{
-		auto cached_info = get_info(node.index());
+		const auto cached_info = get_info(node.index());
 		if (!cached_info)
 		{
 			UC_ASSERT_ALWAYS_MSG("Invalid cache");
@@ -85,7 +91,7 @@ namespace unicore
 		case UINodeType::None: return;
 
 		case UINodeType::Window:
-			str = node.get_attribute(UIAttributeType::Value).get_string("Window");
+			str = cached_info->value.get_string("Window");
 			if (ImGui::Begin(str.c_str()))
 			{
 				for (const auto& child : children)
@@ -106,20 +112,20 @@ namespace unicore
 			break;
 
 		case UINodeType::Text:
-			if (node.get_attribute(UIAttributeType::Value).try_get_string(str))
+			if (cached_info->value.try_get_string(str))
 				ImGui::Text("%s", str.c_str());
 			else ImGui::Text("No text");
 			break;
 
 		case UINodeType::Button:
-			str = node.get_attribute(UIAttributeType::Value).get_string();
+			str = cached_info->value.get_string();
 			if (ImGui::Button(str.c_str()))
 				_update_events.push_back({ node, UIEventType::ActionCall, UIActionType::OnClick });
 			break;
 
 		case UINodeType::Input:
 		{
-			str = node.get_attribute(UIAttributeType::Value).get_string();
+			str = cached_info->value.get_string();
 			if (ImGui::InputText(id.c_str(), &str))
 				_update_events.push_back({ node, UIEventType::ValueChanged, str });
 		}
@@ -130,10 +136,13 @@ namespace unicore
 			const auto value_min = node.get_attribute(UIAttributeType::MinValue).get_float(0);
 			const auto value_max = node.get_attribute(UIAttributeType::MaxValue).get_float(1);
 
-			auto value = node.get_attribute(UIAttributeType::Value).get_float();
+			auto value = cached_info->value.get_float();
 
 			if (ImGui::SliderFloat(id.c_str(), &value, value_min, value_max))
+			{
+				cached_info->value = value;
 				_update_events.push_back({ node, UIEventType::ValueChanged, value });
+			}
 		}
 		break;
 		}

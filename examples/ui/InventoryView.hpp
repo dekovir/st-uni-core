@@ -20,6 +20,7 @@ namespace unicore
 		struct CachedInfo
 		{
 			String id;
+			Variant value;
 		};
 
 		Dictionary<UINodeIndex, CachedInfo> _cached;

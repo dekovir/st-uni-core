@@ -14,6 +14,7 @@ namespace unicore
 
 	protected:
 		Shared<UIDocument> _document;
+
 		const std::function<void(const UINode&)> _bind_create_node;
 		const std::function<void(const UINode&, UIAttributeType, const Optional<Variant>&)> _bind_set_attribute;
 		const std::function<void(const UINode&, UIActionType, const Optional<UIAction>&)> _bind_set_action;

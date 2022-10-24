@@ -10,14 +10,11 @@ namespace unicore
 		ValueChanged,
 	};
 
-	using UIEventValue = StdVariant<UIActionType, Double, String, String32>;
-
 	struct UIEvent
 	{
 		UINode node;
 		UIEventType type;
-		// TODO: Replace to Variant
-		UIEventValue value;
+		Variant value;
 	};
 
 	class UIDocument

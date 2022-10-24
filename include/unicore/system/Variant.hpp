@@ -31,6 +31,9 @@ namespace unicore
 		Variant(StringView16 value) noexcept;
 		Variant(StringView32 value) noexcept;
 
+		template<typename T, std::enable_if_t<std::is_enum_v<T>>* = nullptr>
+		Variant(T enum_value) noexcept : _data(static_cast<std::underlying_type_t<T>>(enum_value)) {}
+
 		template<typename T,
 			std::enable_if_t<std::is_constructible_v<DataType, T>>* = nullptr>
 		Variant(T value) noexcept : _data(value) {}
@@ -113,6 +116,31 @@ namespace unicore
 		{
 			T value;
 			return try_get_floating_point(value) ? value : default_value;
+		}
+
+		// ENUM //////////////////////////////////////////////////////////////////////
+		template<typename T,
+			std::enable_if_t<std::is_enum_v<T>>* = nullptr>
+		bool try_get_enum(T& value) const
+		{
+			using Type = std::underlying_type_t<T>;
+
+			Type i;
+			if (try_get_integral(i))
+			{
+				value = static_cast<T>(i);
+				return true;
+			}
+
+			return false;
+		}
+
+		template<typename T,
+			std::enable_if_t<std::is_enum_v<T>>* = nullptr>
+		T get_enum(T default_value = {}) const
+		{
+			T value;
+			return try_get_enum(value) ? value : default_value;
 		}
 
 		// BOOL //////////////////////////////////////////////////////////////////////

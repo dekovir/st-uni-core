@@ -24,7 +24,7 @@ namespace unicore
 	<xml>
 		<text>Sample text</text>
 		<input>quick brown fox</input>
-		<slider max="100">50</slider>
+		<slider id="slider" max="100">50</slider>
 		<group id="group" />
 		<button id="add_item">Button</button>
 	</xml>
@@ -107,8 +107,10 @@ namespace unicore
 		xml.doc.Parse(xml_text);
 		parse_xml(xml, *_document);
 
+		const auto slider_id = _document->find_index_by_id("slider");
 		const auto group_id = _document->find_index_by_id("group");
 		const auto add_id = _document->find_index_by_id("add_item");
+
 		if (group_id != UINodeIndexInvalid && add_id != UINodeIndexInvalid)
 		{
 			_document->set_node_action(add_id, UIActionType::OnClick,
@@ -118,6 +120,15 @@ namespace unicore
 					auto text = StringBuilder::format("Item {}", index++);
 					_document->create_node(UINodeType::Text, group_id,
 						{ {UIAttributeType::Value, text} });
+				});
+		}
+
+		if (slider_id != UINodeIndexInvalid)
+		{
+			_document->set_node_action(slider_id, UIActionType::OnChange,
+				[this](const Variant& value)
+				{
+					UC_LOG_DEBUG(logger) << "Slider value changed to " << value;
 				});
 		}
 #else
