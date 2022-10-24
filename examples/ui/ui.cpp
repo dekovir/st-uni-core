@@ -78,12 +78,21 @@ namespace unicore
 		return str;
 	}
 
+	static UINodeType parse_tag(StringView tag)
+	{
+		for (const auto & it : s_tag_type)
+		{
+			if (StringHelper::equals(it.first, tag, true))
+				return it.second;
+		}
+
+		return UINodeType::None;
+	}
+
 	static void parse_node_recurse(const tinyxml2::XMLElement* node, UIDocument& doc, UINodeIndex parent)
 	{
 		const auto tag = StringView(node->Value());
-		const auto it = s_tag_type.find(tag);
-		if (it == s_tag_type.end())
-			return;
+		const auto node_type = parse_tag(tag);
 
 		UIAttributeDict attributes;
 		// Fill attributes
@@ -96,7 +105,7 @@ namespace unicore
 				attributes[type] = parse_value(t);
 		}
 
-		const auto index = doc.create_node(it->second, parent, attributes);
+		const auto index = doc.create_node(node_type, parent, attributes);
 		for (auto child = node->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
 			parse_node_recurse(child, doc, index);
 	}
@@ -175,7 +184,9 @@ namespace unicore
 				auto text = StringBuilder::format("Item {}", index++);
 				_document->create_node(UINodeType::Text, group,
 					{ {UIAttributeType::Value, text} });
-			}} });
+			}
+}
+			});
 #endif
 	}
 
@@ -216,4 +227,4 @@ namespace unicore
 	}
 
 	UNICORE_MAIN_CORE(MyApp);
-}
+	}

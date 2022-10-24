@@ -58,15 +58,13 @@ namespace unicore
 		String str;
 		if (try_get_string(str))
 		{
-			// TODO: Case insensitive compare
-			if (str == "true")
+			if (StringHelper::equals(str, "true", true))
 			{
 				value = true;
 				return true;
 			}
 
-			// TODO: Case insensitive compare
-			if (str == "false")
+			if (StringHelper::equals(str, "false", true))
 			{
 				value = true;
 				return true;

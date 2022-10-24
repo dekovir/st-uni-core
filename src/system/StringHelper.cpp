@@ -44,12 +44,12 @@ namespace unicore::StringHelper
 		return a;
 	}
 
-	Int compare(StringView a, StringView b, bool case_sensetive)
+	Int compare(StringView a, StringView b, bool case_insensetive)
 	{
 		if (a.size() < b.size()) return -1;
 		if (a.size() > b.size()) return +1;
 
-		if (!case_sensetive)
+		if (!case_insensetive)
 		{
 			for (unsigned i = 0; i < a.size(); i++)
 			{
@@ -71,8 +71,8 @@ namespace unicore::StringHelper
 		return 0;
 	}
 
-	Bool equals(StringView a, StringView b, bool case_sensetive)
+	Bool equals(StringView a, StringView b, bool case_insensetive)
 	{
-		return compare(a, b, case_sensetive) == 0;
+		return compare(a, b, case_insensetive) == 0;
 	}
 }

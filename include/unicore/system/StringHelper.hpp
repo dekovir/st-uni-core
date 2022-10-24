@@ -27,8 +27,8 @@ namespace unicore::StringHelper
 	extern String print_format(StringView format, ...);
 	extern String to_lower(StringView str);
 
-	extern Int compare(StringView a, StringView b, bool case_sensetive = false);
-	extern Bool equals(StringView a, StringView b, bool case_sensetive = false);
+	extern Int compare(StringView a, StringView b, bool case_insensetive = false);
+	extern Bool equals(StringView a, StringView b, bool case_insensetive = false);
 
 	template<typename Char>
 	static Bool starts_with(const BasicStringView<Char> string,
