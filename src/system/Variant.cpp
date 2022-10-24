@@ -204,19 +204,21 @@ namespace unicore
 	{
 		builder << "V(";
 
+		builder << value.data().index();
+
 		Bool b;
 		Int64 i64;
 		Double d;
 		String32 s32;
 
 		if (value.try_get_bool(b))
-			builder << b;
+			builder << ":" << b;
 		else if (value.try_get_int64(i64))
-			builder << i64;
+			builder << ":" << i64;
 		else if (value.try_get_double(d))
-			builder << d;
+			builder << ":" << d;
 		else if (value.try_get_string32(s32))
-			builder << s32;
+			builder << ":" << s32;
 		else builder << "<?>";
 
 		return builder << ")";

@@ -3,6 +3,9 @@
 
 namespace unicore
 {
+	static List<UINodeIndex> s_indices;
+	static List<UINode> s_nodes;
+
 	UINode::UINode(UIDocument& document, const UINodeIndex& index)
 		: _document(document)
 		, _index(index)
@@ -64,8 +67,7 @@ namespace unicore
 
 	size_t UINode::get_children(List<UINode>& children) const
 	{
-		auto& indices = _document.get_node_children(_index);
-		if (!indices.empty())
+		if (auto& indices = _document.get_node_children(_index); !indices.empty())
 		{
 			for (auto index : indices)
 				children.push_back(UINode(_document, index));
@@ -77,9 +79,9 @@ namespace unicore
 
 	List<UINode> UINode::get_children() const
 	{
-		List<UINode> list;
-		get_children(list);
-		return list;
+		s_nodes.clear();
+		get_children(s_nodes);
+		return s_nodes;
 	}
 
 	Optional<UINode> UINode::get_next_sibling() const
@@ -109,6 +111,26 @@ namespace unicore
 		const auto parent = _document.get_node_parent(_index);
 		const auto child_index = _document.create_node(type, parent);
 		return { _document, child_index };
+	}
+
+	Optional<UINode> UINode::find_child_by_name(StringView name) const
+	{
+		return _document.find_node_by_name(name, _index);
+	}
+
+	Optional<UINode> UINode::find_child_by_name_recurse(StringView name) const
+	{
+		return _document.find_node_by_name_recurse(name, _index);
+	}
+
+	size_t UINode::find_childs_by_name(StringView name, List<UINode>& list) const
+	{
+		return _document.find_nodes_by_name(name, list, _index);
+	}
+
+	size_t UINode::find_childs_by_name_recurse(StringView name, List<UINode>& list) const
+	{
+		return _document.find_nodes_by_name_recurse(name, list, _index);
 	}
 
 	UNICODE_STRING_BUILDER_FORMAT(const UINodeIndex&)

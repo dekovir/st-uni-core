@@ -31,16 +31,32 @@ namespace unicore
 		size_t get_root_nodes(List<UINode>& nodes);
 		UC_NODISCARD List<UINode> get_root_nodes();
 
+		// FIND //////////////////////////////////////////////////////////////////////
 		UC_NODISCARD UINodeIndex find_index_by_id(StringView id) const;
 		UC_NODISCARD Optional<UINode> find_node_by_id(StringView id);
+
+		size_t find_indexes_by_name(StringView name,
+			List<UINodeIndex>& list, UINodeIndex parent) const;
+		size_t find_nodes_by_name(StringView name,
+			List<UINode>& list, UINodeIndex parent);
+
+		size_t find_indexes_by_name_recurse(StringView name,
+			List<UINodeIndex>& list, UINodeIndex parent) const;
+		size_t find_nodes_by_name_recurse(StringView name,
+			List<UINode>& list, UINodeIndex parent);
+
+		UC_NODISCARD UINodeIndex find_index_by_name(
+			StringView name, UINodeIndex parent) const;
+		Optional<UINode> find_node_by_name(StringView name, UINodeIndex parent);
+
+		UC_NODISCARD UINodeIndex find_index_by_name_recurse(
+			StringView name, UINodeIndex parent) const;
+		Optional<UINode> find_node_by_name_recurse(StringView name, UINodeIndex parent);
 
 		// EVENTS ////////////////////////////////////////////////////////////////////
 		void send_event(const UIEvent& evt);
 
 		// RAW INDEX /////////////////////////////////////////////////////////////////
-		size_t get_root_indices(List<UINodeIndex>& indices) const;
-		UC_NODISCARD List<UINodeIndex> get_root_indices() const;
-
 		UINodeIndex create_node(UINodeType type, UINodeIndex parent,
 			const UIAttributes& attributes = {},
 			const UINodeActions& actions = {});
@@ -67,7 +83,7 @@ namespace unicore
 
 	protected:
 		Logger* _logger;
-		UINodeIndex _root_index = UINodeIndexInvalid;
+		List<UINodeIndex> _roots;
 		Dictionary<String, UINodeIndex> _id_dict;
 
 		struct NodeInfo

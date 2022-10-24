@@ -10,7 +10,7 @@ namespace unicore
 
 	enum class UIAttributeType
 	{
-		Uid,
+		Uid, // Must be unique for UIDocument
 		Name,
 		//Style,
 		Value,
@@ -72,6 +72,12 @@ namespace unicore
 
 		UINode create_child(UINodeType type);
 		UINode create_sibling(UINodeType type);
+
+		UC_NODISCARD Optional<UINode> find_child_by_name(StringView name) const;
+		UC_NODISCARD Optional<UINode> find_child_by_name_recurse(StringView name) const;
+
+		UC_NODISCARD size_t find_childs_by_name(StringView name, List<UINode>& list) const;
+		UC_NODISCARD size_t find_childs_by_name_recurse(StringView name, List<UINode>& list) const;
 
 	private:
 		UIDocument& _document;

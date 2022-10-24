@@ -10,13 +10,10 @@ namespace unicore
 
 	size_t UIDocument::get_root_nodes(List<UINode>& nodes)
 	{
-		List<UINodeIndex> indices;
-		get_root_indices(indices);
-
-		for (auto index : indices)
+		for (auto index : _roots)
 			nodes.push_back(UINode(*this, index));
 
-		return indices.size();
+		return _roots.size();
 	}
 
 	List<UINode> UIDocument::get_root_nodes()
@@ -26,6 +23,7 @@ namespace unicore
 		return nodes;
 	}
 
+	// FIND //////////////////////////////////////////////////////////////////////
 	UINodeIndex UIDocument::find_index_by_id(StringView id) const
 	{
 		// TODO: To lower
@@ -42,6 +40,156 @@ namespace unicore
 		return std::nullopt;
 	}
 
+	size_t UIDocument::find_indexes_by_name(StringView name,
+		List<UINodeIndex>& list, UINodeIndex parent) const
+	{
+		size_t count = 0;
+		if (parent == UINodeIndexInvalid)
+		{
+			for (unsigned i = 0; i < _nodes.size(); i++)
+			{
+				if (auto& info = _nodes[i]; info.parent == UINodeIndexInvalid)
+				{
+					const auto it = info.attributes.find(UIAttributeType::Name);
+					if (it != info.attributes.end() && it->second.get_string() == name)
+					{
+						list.push_back(UINodeIndex(i));
+						count++;
+					}
+				}
+			}
+		}
+		else
+		{
+			if (const auto info = get_info(parent))
+			{
+				for (const auto index : info->children)
+				{
+					const auto child = get_info(index);
+					if (!child) continue;
+
+					const auto it = child->attributes.find(UIAttributeType::Name);
+					if (it != child->attributes.end() && it->second.get_string() == name)
+					{
+						list.push_back(index);
+						count++;
+					}
+				}
+			}
+		}
+
+		return count;
+	}
+
+	size_t UIDocument::find_nodes_by_name(StringView name,
+		List<UINode>& list, UINodeIndex parent)
+	{
+		List<UINodeIndex> indices;
+		const auto count = find_indexes_by_name(name, indices, parent);
+		for (const auto& index : indices)
+			list.push_back({ *this, index });
+
+		return count;
+	}
+
+	size_t UIDocument::find_indexes_by_name_recurse(StringView name,
+		List<UINodeIndex>& list, UINodeIndex parent) const
+	{
+		size_t count = 0;
+		count += find_indexes_by_name(name, list, parent);
+
+		const auto& children = get_node_children(parent);
+		for (const auto& child : children)
+			count += find_indexes_by_name_recurse(name, list, child);
+
+		return count;
+	}
+
+	size_t UIDocument::find_nodes_by_name_recurse(StringView name,
+		List<UINode>& list, UINodeIndex parent)
+	{
+		size_t count = 0;
+		count += find_nodes_by_name(name, list, parent);
+
+		const auto& children = get_node_children(parent);
+		for (const auto& child : children)
+			count += find_nodes_by_name(name, list, child);
+
+		return count;
+	}
+
+	UINodeIndex UIDocument::find_index_by_name(
+		StringView name, UINodeIndex parent) const
+	{
+		if (parent == UINodeIndexInvalid)
+		{
+			for (unsigned i = 0; i < _nodes.size(); i++)
+			{
+				if (auto& info = _nodes[i]; info.parent == UINodeIndexInvalid)
+				{
+					const auto it = info.attributes.find(UIAttributeType::Name);
+					if (it != info.attributes.end() && it->second.get_string() == name)
+						return UINodeIndex(i);
+				}
+			}
+		}
+		else
+		{
+			if (const auto info = get_info(parent))
+			{
+				for (const auto index : info->children)
+				{
+					const auto child = get_info(index);
+					if (!child) continue;
+
+					const auto it = child->attributes.find(UIAttributeType::Name);
+					if (it != child->attributes.end() && it->second.get_string() == name)
+						return index;
+				}
+			}
+		}
+
+		return UINodeIndexInvalid;
+	}
+
+	Optional<UINode> UIDocument::find_node_by_name(StringView name, UINodeIndex parent)
+	{
+		if (const auto index = find_index_by_name(name, parent); index != UINodeIndexInvalid)
+			return UINode(*this, index);
+		return std::nullopt;
+	}
+
+	UINodeIndex UIDocument::find_index_by_name_recurse(StringView name, UINodeIndex parent) const
+	{
+		if (const auto index = find_index_by_name(name, parent); index != UINodeIndexInvalid)
+			return index;
+
+		const auto& children = get_node_children(parent);
+		for (const auto& child : children)
+		{
+			if (auto index = find_index_by_name(name, child); index != UINodeIndexInvalid)
+				return index;
+		}
+
+		return UINodeIndexInvalid;
+	}
+
+	Optional<UINode> UIDocument::find_node_by_name_recurse(StringView name, UINodeIndex parent)
+	{
+		if (const auto node = find_node_by_name(name, parent); node.has_value())
+			return node.value();
+
+		const auto& children = get_node_children(parent);
+		for (const auto& child : children)
+		{
+			if (auto node = find_node_by_name(name, child); node.has_value())
+				return node.value();
+		}
+
+		return std::nullopt;
+	}
+
+	// EVENTS ////////////////////////////////////////////////////////////////////
 	void UIDocument::send_event(const UIEvent& evt)
 	{
 		switch (evt.type)
@@ -62,28 +210,7 @@ namespace unicore
 		}
 	}
 
-	size_t UIDocument::get_root_indices(List<UINodeIndex>& indices) const
-	{
-		size_t count = 0;
-		for (unsigned i = 0; i < _nodes.size(); i++)
-		{
-			if (_nodes[i].parent == UINodeIndexInvalid)
-			{
-				indices.push_back(UINodeIndex(i));
-				count++;
-			}
-		}
-
-		return count;
-	}
-
-	List<UINodeIndex> UIDocument::get_root_indices() const
-	{
-		List<UINodeIndex> indices;
-		get_root_indices(indices);
-		return indices;
-	}
-
+	// RAW INDEX /////////////////////////////////////////////////////////////////
 	UINodeIndex UIDocument::create_node(UINodeType type, UINodeIndex parent,
 		const UIAttributes& attributes, const UINodeActions& actions)
 	{
@@ -106,8 +233,14 @@ namespace unicore
 				_id_dict[uid] = index;
 		}
 
-		const UINode node(*this, index);
-		_event_create_node.invoke(node);
+		if (parent == UINodeIndexInvalid)
+			_roots.push_back(index);
+
+		if (!_event_create_node.empty())
+		{
+			const UINode node(*this, index);
+			_event_create_node.invoke(node);
+		}
 
 		return index;
 	}
@@ -131,8 +264,10 @@ namespace unicore
 
 	const List<UINodeIndex>& UIDocument::get_node_children(UINodeIndex index) const
 	{
-		static const List<UINodeIndex> s_empty{};
+		if (index == UINodeIndexInvalid)
+			return _roots;
 
+		static const List<UINodeIndex> s_empty{};
 		const auto info = get_info(index);
 		return info ? info->children : s_empty;
 	}
@@ -184,15 +319,25 @@ namespace unicore
 	{
 		if (const auto info = get_info(index))
 		{
-			if (type == UIAttributeType::Uid && value.has_value())
+			// Remove previous value from cache
+			if (const auto it = info->attributes.find(UIAttributeType::Uid); it != info->attributes.end())
 			{
 				String id;
-				if (value.value().try_get_string(id))
-					_id_dict[id] = index;
+				if (it->second.try_get_string(id))
+					_id_dict.erase(id);
 			}
 
 			if (value.has_value())
-				info->attributes[type] = value.value();
+			{
+				const auto& variant = value.value();
+				info->attributes[type] = variant;
+
+				// Add new value to cache
+				String id;
+				if (variant.try_get_string(id))
+					_id_dict[id] = index;
+				else UC_LOG_ERROR(_logger) << "Invalid variant value for name attribute " << variant;
+			}
 			else
 			{
 				if (const auto it = info->attributes.find(type); it != info->attributes.end())
