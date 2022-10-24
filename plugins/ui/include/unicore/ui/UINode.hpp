@@ -57,6 +57,7 @@ namespace unicore
 		Input,
 		Slider,
 		Toggle,
+		Tooltip,
 	};
 
 	class UIDocument;

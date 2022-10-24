@@ -27,6 +27,7 @@ namespace unicore
 			<text>Input</text>
 			<input>quick brown fox</input>
 		</group>
+			<tooltip>Tooltip</tooltip>
 		<group layout="2">
 			<text>Slider</text>
 			<slider id="slider" max="100">50.50</slider>
@@ -49,6 +50,7 @@ namespace unicore
 		{"input", UINodeType::Input},
 		{"slider", UINodeType::Slider},
 		{"toggle", UINodeType::Toggle},
+		{"tooltip", UINodeType::Tooltip},
 	};
 
 	static const Dictionary<StringView, UIAttributeType> s_attr_name =

@@ -68,13 +68,13 @@ namespace unicore
 		UC_LOG_DEBUG(_logger) << "set_action " << node.index();
 	}
 
-	void UIViewImGui::render_node(const UINode& node)
+	Bool UIViewImGui::render_node(const UINode& node, Bool same_line)
 	{
 		const auto cached_info = get_info(node.index());
 		if (!cached_info)
 		{
 			UC_ASSERT_ALWAYS_MSG("Invalid cache");
-			return;
+			return false;
 		}
 
 		const auto type = node.type();
@@ -90,7 +90,7 @@ namespace unicore
 
 		switch (type)
 		{
-		case UINodeType::None: return;
+		case UINodeType::None: return false;
 
 		case UINodeType::Window:
 			str = cached_info->value.get_string("Window");
@@ -100,17 +100,15 @@ namespace unicore
 					render_node(child);
 			}
 			ImGui::End();
-			break;
+			return true;
 
 		case UINodeType::Group:
+			ImGui::BeginGroup();
 			switch (get_layout(node.get_attribute(UIAttributeType::Layout)))
 			{
 			case UILayout::Horizontal:
 				for (unsigned i = 0; i < children.size(); i++)
-				{
-					if (i > 0) ImGui::SameLine();
-					render_node(children[i]);
-				}
+					render_node(children[i], i > 0);
 				break;
 
 			default:
@@ -118,27 +116,31 @@ namespace unicore
 					render_node(child);
 				break;
 			}
-			break;
+			ImGui::EndGroup();
+			return true;
 
 		case UINodeType::Text:
+			if (same_line) ImGui::SameLine();
 			if (cached_info->value.try_get_string(str))
 				ImGui::Text("%s", str.c_str());
 			else ImGui::Text("No text");
-			break;
+			return true;
 
 		case UINodeType::Button:
 			str = cached_info->value.get_string();
+			if (same_line) ImGui::SameLine();
 			if (ImGui::Button(str.c_str()))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
-			break;
+			return true;
 
 		case UINodeType::Input:
 		{
 			str = cached_info->value.get_string();
+			if (same_line) ImGui::SameLine();
 			if (ImGui::InputText(id.c_str(), &str))
 				_update_events.push_back({ node, UIEventType::ValueChanged, str });
 		}
-		break;
+		return true;
 
 		case UINodeType::Slider:
 		{
@@ -146,26 +148,42 @@ namespace unicore
 			const auto value_max = node.get_attribute(UIAttributeType::MaxValue).get_float(1);
 
 			auto value = cached_info->value.get_float();
-
+			if (same_line) ImGui::SameLine();
 			if (ImGui::SliderFloat(id.c_str(), &value, value_min, value_max))
 			{
 				cached_info->value = value;
 				_update_events.push_back({ node, UIEventType::ValueChanged, value });
 			}
 		}
-		break;
+		return true;
 
 		case UINodeType::Toggle:
-		{
 			bool_value = cached_info->value.get_bool();
+			if (same_line) ImGui::SameLine();
 			if (ImGui::Checkbox(id.c_str(), &bool_value))
 			{
 				cached_info->value = bool_value;
 				_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
 			}
+			return true;
+
+		case UINodeType::Tooltip:
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+
+				str = cached_info->value.get_string();
+				if (!str.empty())
+					ImGui::Text("%s", str.c_str());
+
+				for (const auto& child : children)
+					render_node(child);
+				ImGui::EndTooltip();
+			}
+			return false;
 		}
-		break;
-		}
+
+		return false;
 	}
 
 	UIViewImGui::CachedInfo* UIViewImGui::get_info(UINodeIndex index)

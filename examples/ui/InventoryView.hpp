@@ -35,7 +35,7 @@ namespace unicore
 		void on_set_action(const UINode& node,
 			UIActionType type, const Optional<UIAction>& value) override;
 
-		void render_node(const UINode& node);
+		Bool render_node(const UINode& node, Bool same_line = false);
 
 		UC_NODISCARD CachedInfo* get_info(UINodeIndex index);
 	};
