@@ -9,6 +9,7 @@ namespace unicore
 		{"window", UINodeType::Window},
 		{"group", UINodeType::Group},
 		{"text", UINodeType::Text},
+		{"image", UINodeType::Image},
 		{"button", UINodeType::Button},
 		{"input", UINodeType::Input},
 		{"slider", UINodeType::Slider},

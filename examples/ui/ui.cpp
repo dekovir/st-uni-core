@@ -45,6 +45,7 @@ namespace unicore
 
 		_contex_render.init(renderer);
 
+
 		_document = std::make_shared<UIDocument>(&_context_logger);
 		_view = std::make_shared<UIViewImGui>(_context, _context_logger);
 		_view->set_document(_document);
@@ -52,9 +53,28 @@ namespace unicore
 		_inventory = std::make_shared<Inventory>(16);
 		_inventory_ui = std::make_shared<InventoryUI>(*_inventory, *_document, &_context_logger);
 
-		_inventory->add_item({ U"Item 1", 100, nullptr });
-		_inventory->add_item({ U"Item 2", 125, nullptr });
-		_inventory->add_item({ U"Item 3", 500, nullptr });
+		_item_sprites = resources.load<SpriteList>("items.png"_path, TileSetOptions({16, 16}));
+		if (_item_sprites && _item_sprites->size() == 64)
+		{
+			_inventory->add_item({ U"Dagger", 100, _item_sprites->get(1)});
+			_inventory->add_item({ U"Sword", 300, _item_sprites->get(2)});
+
+			_inventory->add_item({ U"Potion of Mana", 75, _item_sprites->get(3)});
+			_inventory->add_item({ U"Potion of Health", 50, _item_sprites->get(4)});
+			_inventory->add_item({ U"Potion of Stamina", 25, _item_sprites->get(5)});
+
+			_inventory->add_item({ U"Brass Plate", 500, _item_sprites->get(8)});
+			_inventory->add_item({ U"Steel Plate", 1000, _item_sprites->get(9)});
+			_inventory->add_item({ U"Dwarven Plate", 5000, _item_sprites->get(10)});
+
+			_inventory->add_item({ U"Necklace", 100, _item_sprites->get(14)});
+		}
+		else
+		{
+			_inventory->add_item({ U"Item 1", 100, nullptr });
+			_inventory->add_item({ U"Item 2", 125, nullptr });
+			_inventory->add_item({ U"Item 3", 500, nullptr });
+		}
 
 		UIDocumentParseXML::parse(xml_text, *_document, UINodeIndexInvalid, &_context_logger);
 

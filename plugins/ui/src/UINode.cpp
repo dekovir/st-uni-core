@@ -152,6 +152,18 @@ namespace unicore
 		return { _document, child_index };
 	}
 
+	UINode UINode::duplicate()
+	{
+		const auto new_index = _document.duplicate_node(_index);
+		return { _document, new_index };
+	}
+
+	UINode UINode::duplicate_at(UINodeIndex parent)
+	{
+		const auto new_index = _document.duplicate_node_at(_index, parent);
+		return { _document, new_index };
+	}
+
 	Optional<UINode> UINode::find_child_by_name(StringView name) const
 	{
 		return _document.find_node_by_name(name, _index);

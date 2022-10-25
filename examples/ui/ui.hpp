@@ -18,6 +18,8 @@ namespace unicore
 		ImGuiRender2D _contex_render;
 		ImGuiContext _context;
 
+		Shared<SpriteList> _item_sprites;
+
 		Shared<Inventory> _inventory;
 		Shared<UIDocument> _document;
 		Shared<UIViewImGui> _view;

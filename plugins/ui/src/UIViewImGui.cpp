@@ -2,6 +2,7 @@
 #if defined(UNICORE_USE_IMGUI)
 #include "unicore/system/StringHelper.hpp"
 #include "unicore/io/Logger.hpp"
+#include "unicore/renderer/Sprite.hpp"
 #include <imgui_stdlib.h>
 
 namespace unicore
@@ -133,6 +134,32 @@ namespace unicore
 			ImGui::Text("%s", str.c_str());
 			render_node_footer(node);
 			return true;
+
+		case UINodeType::Image:
+			if (const auto tex = cached_info->value.get_object_cast<Texture>(); tex != nullptr)
+			{
+				const auto size = tex->size().cast<Float>();
+				render_node_header(node, same_line);
+				ImGui::Image(tex.get(), { size.x, size.y });
+				render_node_footer(node);
+				return true;
+			}
+
+			if (const auto spr = cached_info->value.get_object_cast<Sprite>(); spr != nullptr)
+			{
+				const auto size = spr->texture()->size().cast<Float>();
+				const auto rect = spr->rect().cast<Float>();
+
+				render_node_header(node, same_line);
+
+				const ImVec2 uv0{ rect.x / size.x, rect.y / size.y };
+				const ImVec2 uv1{ uv0.x + rect.w / size.x, uv0.y + rect.h / size.y };
+
+				ImGui::Image(spr->texture().get(), { rect.w, rect.h }, uv0, uv1);
+				render_node_footer(node);
+				return true;
+			}
+			break;
 
 		case UINodeType::Button:
 			str = node.get_attribute(UIAttributeType::Text).get_string();

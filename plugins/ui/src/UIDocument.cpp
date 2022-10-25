@@ -45,13 +45,13 @@ namespace unicore
 		Size count = 0;
 		if (parent == UINodeIndexInvalid)
 		{
-			for (unsigned i = 0; i < _nodes.size(); i++)
+			for (const auto& [index, info] : _nodes)
 			{
-				if (auto& info = _nodes[i]; info.parent == UINodeIndexInvalid)
+				if (info.parent == UINodeIndexInvalid)
 				{
 					if (StringHelper::equals(info.name, name, true))
 					{
-						list.push_back(UINodeIndex(i));
+						list.push_back(index);
 						count++;
 					}
 				}
@@ -120,12 +120,12 @@ namespace unicore
 	{
 		if (parent == UINodeIndexInvalid)
 		{
-			for (unsigned i = 0; i < _nodes.size(); i++)
+			for (const auto& [index, info] : _nodes)
 			{
-				if (auto& info = _nodes[i]; info.parent == UINodeIndexInvalid)
+				if (info.parent == UINodeIndexInvalid)
 				{
 					if (StringHelper::equals(info.name, name, true))
-						return UINodeIndex(i);
+						return index;
 				}
 			}
 		}
@@ -214,9 +214,8 @@ namespace unicore
 	UINodeIndex UIDocument::create_node(UINodeType type,
 		UINodeIndex parent, const UINodeOptions& options)
 	{
-		const auto index = UINodeIndex(_nodes.size());
-		_nodes.push_back({});
-		auto& info = _nodes.back();
+		const auto index = create_index();
+		auto& info = _nodes[index];
 
 		info.type = type;
 		info.uid = StringHelper::to_lower(options.uid);
@@ -252,6 +251,25 @@ namespace unicore
 		return index;
 	}
 
+	UINodeIndex UIDocument::duplicate_node(UINodeIndex index)
+	{
+		if (is_node_valid(index))
+		{
+			const auto parent = get_node_parent(index);
+			return internal_duplicate_recurse(index, parent);
+		}
+
+		return UINodeIndexInvalid;
+	}
+
+	UINodeIndex UIDocument::duplicate_node_at(UINodeIndex index, UINodeIndex parent)
+	{
+		if (is_node_valid(index))
+			return internal_duplicate_recurse(index, parent);
+
+		return UINodeIndexInvalid;
+	}
+
 	Size UIDocument::remove_node(UINodeIndex index)
 	{
 		if (index == UINodeIndexInvalid)
@@ -263,6 +281,11 @@ namespace unicore
 	}
 
 	// VALUES ////////////////////////////////////////////////////////////////////
+	Bool UIDocument::is_node_valid(UINodeIndex index) const
+	{
+		return get_info(index) != nullptr;
+	}
+
 	const String& UIDocument::get_node_uid(UINodeIndex index) const
 	{
 		static const String s_empty;
@@ -319,18 +342,13 @@ namespace unicore
 		return false;
 	}
 
-	// HIERARCHY /////////////////////////////////////////////////////////////////
-	Bool UIDocument::is_node_valid(UINodeIndex index) const
-	{
-		return get_info(index) != nullptr;
-	}
-
 	UINodeType UIDocument::get_node_type(UINodeIndex index) const
 	{
 		const auto info = get_info(index);
 		return info ? info->type : UINodeType::None;
 	}
 
+	// HIERARCHY /////////////////////////////////////////////////////////////////
 	UINodeIndex UIDocument::get_node_parent(UINodeIndex index) const
 	{
 		const auto info = get_info(index);
@@ -420,30 +438,21 @@ namespace unicore
 					{
 						it->second = value.value();
 						if (!_event_set_attribute.empty())
-						{
-							const UINode node(*this, index);
-							_event_set_attribute.invoke(node, type, value);
-						}
+							_event_set_attribute.invoke(node_from_index(index), type, value);
 					}
 				}
 				else
 				{
 					info->attributes.erase(it);
 					if (!_event_set_attribute.empty())
-					{
-						const UINode node(*this, index);
-						_event_set_attribute.invoke(node, type, std::nullopt);
-					}
+						_event_set_attribute.invoke(node_from_index(index), type, std::nullopt);
 				}
 			}
 			else if (value.has_value())
 			{
 				info->attributes[type] = value.value();
 				if (!_event_set_attribute.empty())
-				{
-					const UINode node(*this, index);
-					_event_set_attribute.invoke(node, type, value);
-				}
+					_event_set_attribute.invoke(node_from_index(index), type, value);
 			}
 		}
 	}
@@ -523,18 +532,21 @@ namespace unicore
 
 	UIDocument::NodeInfo* UIDocument::get_info(UINodeIndex index)
 	{
-		if (index != UINodeIndexInvalid)
-			return &_nodes[index.value];
-
-		return nullptr;
+		const auto it = _nodes.find(index);
+		return it != _nodes.end() ? &it->second : nullptr;
 	}
 
 	const UIDocument::NodeInfo* UIDocument::get_info(UINodeIndex index) const
 	{
-		if (index != UINodeIndexInvalid)
-			return &_nodes[index.value];
+		const auto it = _nodes.find(index);
+		return it != _nodes.end() ? &it->second : nullptr;
+	}
 
-		return nullptr;
+	UINodeIndex UIDocument::create_index()
+	{
+		const auto index = _last_index;
+		_last_index.value++;
+		return index;
 	}
 
 	UINode UIDocument::node_from_index(UINodeIndex index)
@@ -542,9 +554,43 @@ namespace unicore
 		return { *this, index };
 	}
 
+	UINodeIndex UIDocument::internal_duplicate_recurse(UINodeIndex index, UINodeIndex parent)
+	{
+		if (const auto info = get_info(index))
+		{
+			UINodeOptions options;
+			options.name = info->name;
+			options.visible = info->visible;
+			options.attributes = info->attributes;
+			options.actions = info->actions;
+
+			const auto children = info->children;
+			const auto new_parent = create_node(info->type, parent, options);
+
+			for (const auto& child : children)
+				internal_duplicate_recurse(child, new_parent);
+
+			return new_parent;
+		}
+
+		return UINodeIndexInvalid;
+	}
+
 	void UIDocument::internal_remove_node_recurse(UINodeIndex index, Size& count)
 	{
+		const auto it = _nodes.find(index);
+		if (it == _nodes.end())
+			return;
 
+		auto& info = it->second;
+
+		for (const auto& child : info.children)
+			internal_remove_node_recurse(child, count);
+
+		_nodes.erase(index);
+
+		if (!_event_remove_node.empty())
+			_event_remove_node.invoke(index);
 	}
 
 	bool UIDocument::call_action_default(const UIAction& action, const UINode& node)

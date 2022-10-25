@@ -359,23 +359,30 @@ namespace unicore
 		UC_NODISCARD Color4f get_color4f(const Color4f& default_value = ColorConst4f::Clear) const { return get_color4(default_value); }
 
 		// OBJECT ////////////////////////////////////////////////////////////////////
+		bool try_get_object(Shared<Object>& value) const;
+		UC_NODISCARD Shared<Object> get_object(const Shared<Object>& default_value = nullptr) const;
+
 		template<typename T, std::enable_if_t<std::is_base_of_v<Object, T>>* = nullptr>
-		bool try_get_object(Shared<T>& value)
+		bool try_get_object_cast(Shared<T>& value)
 		{
 			if (const auto ptr = std::get_if<Shared<Object>>(&_data))
 			{
-				value = std::dynamic_pointer_cast<T>(*ptr);
-				return true;
+				auto converted = std::dynamic_pointer_cast<T>(*ptr);
+				if (converted)
+				{
+					value = converted;
+					return true;
+				}
 			}
 
 			return false;
 		}
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Object, T>>* = nullptr>
-		Shared<T>& get_object(const Shared<T>& default_value = nullptr)
+		UC_NODISCARD Shared<T> get_object_cast(const Shared<T>& default_value = nullptr)
 		{
 			Shared<T> value;
-			return try_get_object(value) ? value : default_value;
+			return try_get_object_cast(value) ? value : default_value;
 		}
 
 		static const Variant Empty;

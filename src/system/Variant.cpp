@@ -228,6 +228,24 @@ namespace unicore
 		return try_get_string32(str) ? str : String32(default_value);
 	}
 
+	// OBJECT ////////////////////////////////////////////////////////////////////
+	bool Variant::try_get_object(Shared<Object>& value) const
+	{
+		if (const auto ptr = std::get_if<Shared<Object>>(&_data))
+		{
+			value = *ptr;
+			return true;
+		}
+
+		return false;
+	}
+
+	Shared<Object> Variant::get_object(const Shared<Object>& default_value) const
+	{
+		Shared<Object> value;
+		return try_get_object(value) ? value : default_value;
+	}
+
 	UNICODE_STRING_BUILDER_FORMAT(const Variant&)
 	{
 		builder << "V(";

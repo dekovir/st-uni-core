@@ -20,7 +20,7 @@ namespace unicore
 	class UIDocument
 	{
 		UC_OBJECT_EVENT(create_node, const UINode&);
-		UC_OBJECT_EVENT(remove_node, const UINode&);
+		UC_OBJECT_EVENT(remove_node, const UINodeIndex&);
 
 		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_visible, const UINode&, Bool);
@@ -37,22 +37,22 @@ namespace unicore
 		UC_NODISCARD Optional<UINode> find_node_by_id(StringView id);
 
 		Size find_indexes_by_name(StringView name,
-			List<UINodeIndex>& list, UINodeIndex parent) const;
+			List<UINodeIndex>& list, UINodeIndex parent = UINodeIndexInvalid) const;
 		Size find_nodes_by_name(StringView name,
-			List<UINode>& list, UINodeIndex parent);
+			List<UINode>& list, UINodeIndex parent = UINodeIndexInvalid);
 
 		Size find_indexes_by_name_recurse(StringView name,
 			List<UINodeIndex>& list, UINodeIndex parent) const;
 		Size find_nodes_by_name_recurse(StringView name,
-			List<UINode>& list, UINodeIndex parent);
+			List<UINode>& list, UINodeIndex parent = UINodeIndexInvalid);
 
 		UC_NODISCARD UINodeIndex find_index_by_name(
-			StringView name, UINodeIndex parent) const;
-		Optional<UINode> find_node_by_name(StringView name, UINodeIndex parent);
+			StringView name, UINodeIndex parent = UINodeIndexInvalid) const;
+		Optional<UINode> find_node_by_name(StringView name, UINodeIndex parent = UINodeIndexInvalid);
 
 		UC_NODISCARD UINodeIndex find_index_by_name_recurse(
-			StringView name, UINodeIndex parent) const;
-		Optional<UINode> find_node_by_name_recurse(StringView name, UINodeIndex parent);
+			StringView name, UINodeIndex parent = UINodeIndexInvalid) const;
+		Optional<UINode> find_node_by_name_recurse(StringView name, UINodeIndex parent = UINodeIndexInvalid);
 
 		// EVENTS ////////////////////////////////////////////////////////////////////
 		void send_event(const UIEvent& evt);
@@ -61,9 +61,14 @@ namespace unicore
 		UINodeIndex create_node(UINodeType type, UINodeIndex parent,
 			const UINodeOptions& options);
 
+		UINodeIndex duplicate_node(UINodeIndex index);
+		UINodeIndex duplicate_node_at(UINodeIndex index, UINodeIndex parent = UINodeIndexInvalid);
+
 		Size remove_node(UINodeIndex index);
 
 		// VALUES ////////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_node_valid(UINodeIndex index) const;
+
 		UC_NODISCARD const String& get_node_uid(UINodeIndex index) const;
 
 		UC_NODISCARD const String& get_node_name(UINodeIndex index) const;
@@ -72,9 +77,9 @@ namespace unicore
 		UC_NODISCARD Bool get_node_visible(UINodeIndex index) const;
 		Bool set_node_visible(UINodeIndex index, Bool value);
 
-		// HIERARCHY /////////////////////////////////////////////////////////////////
-		UC_NODISCARD Bool is_node_valid(UINodeIndex index) const;
 		UC_NODISCARD UINodeType get_node_type(UINodeIndex index) const;
+
+		// HIERARCHY /////////////////////////////////////////////////////////////////
 		UC_NODISCARD UINodeIndex get_node_parent(UINodeIndex index) const;
 
 		UC_NODISCARD const List<UINodeIndex>& get_node_children(UINodeIndex index) const;
@@ -114,14 +119,18 @@ namespace unicore
 
 		Logger* _logger;
 		List<UINodeIndex> _roots;
-		List<NodeInfo> _nodes;
+		Dictionary<UINodeIndex, NodeInfo> _nodes;
 		Dictionary<String, UINodeIndex> _cached_id;
+
+		UINodeIndex _last_index;
 
 		NodeInfo* get_info(UINodeIndex index);
 		UC_NODISCARD const NodeInfo* get_info(UINodeIndex index) const;
 
+		UINodeIndex create_index();
 		UINode node_from_index(UINodeIndex index);
 
+		UINodeIndex internal_duplicate_recurse(UINodeIndex index, UINodeIndex parent);
 		void internal_remove_node_recurse(UINodeIndex index, Size& count);
 
 		static bool call_action_default(const UIAction& action, const UINode& node);

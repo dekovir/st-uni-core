@@ -19,5 +19,7 @@ namespace unicore
 
 		void on_add_item(unsigned index, const Item& item);
 		void on_remove_item(unsigned index, const Item& item);
+
+		void apply_item(UINode& node, const Item& item);
 	};
 }

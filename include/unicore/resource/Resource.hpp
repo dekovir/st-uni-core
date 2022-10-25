@@ -66,7 +66,11 @@ namespace unicore
 			: _data(std::move(data))
 		{}
 
-		auto operator[](size_t index) const { return _data[index]; }
+		auto get(size_t index) { return _data[index]; }
+		auto get(size_t index) const { return _data[index]; }
+
+		auto operator[](size_t index) { return get(index); }
+		auto operator[](size_t index) const { return get(index); }
 
 		UC_NODISCARD const DataType& data() const { return _data; }
 		UC_NODISCARD size_t size() const { return _data.size(); }

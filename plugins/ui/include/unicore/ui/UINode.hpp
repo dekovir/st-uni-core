@@ -52,6 +52,7 @@ namespace unicore
 		Window,
 		Group,
 		Text,
+		Image,
 		Button,
 		Input,
 		Slider,
@@ -119,6 +120,9 @@ namespace unicore
 
 		UINode create_child(UINodeType type, const UINodeOptions& options);
 		UINode create_sibling(UINodeType type, const UINodeOptions& options);
+
+		UINode duplicate();
+		UINode duplicate_at(UINodeIndex parent = UINodeIndexInvalid);
 
 		UC_NODISCARD Optional<UINode> find_child_by_name(StringView name) const;
 		UC_NODISCARD Optional<UINode> find_child_by_name_recurse(StringView name) const;
