@@ -15,6 +15,10 @@ if (UNICORE_PLUGIN_FNT)
 	add_subdirectory("${PLUGINS_DIR}/fnt")
 endif()
 
+if (UNICORE_PLUGIN_XML)
+	add_subdirectory("${PLUGINS_DIR}/xml")
+endif()
+
 if (UNICORE_PLUGIN_GRID)
 	add_subdirectory("${PLUGINS_DIR}/grid")
 endif()
@@ -35,14 +39,11 @@ if (UNICORE_PLUGIN_SZIP)
 	add_subdirectory("${PLUGINS_DIR}/szip")
 endif()
 
-if (UNICORE_PLUGIN_UI)
-	add_subdirectory("${PLUGINS_DIR}/ui")
-endif()
-
 if (UNICORE_PLUGIN_WASM)
 	add_subdirectory("${PLUGINS_DIR}/wasm")
 endif()
 
-if (UNICORE_PLUGIN_XML)
-	add_subdirectory("${PLUGINS_DIR}/xml")
+# Need to be after imgui
+if (UNICORE_PLUGIN_UI)
+	add_subdirectory("${PLUGINS_DIR}/ui")
 endif()

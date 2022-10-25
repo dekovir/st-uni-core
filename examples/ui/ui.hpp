@@ -1,10 +1,9 @@
 #pragma once
 #include "unicore/app/SDLApplication.hpp"
-#include "unicore/renderer/PrimitiveBatch.hpp"
-#include "unicore/renderer/SpriteBatch.hpp"
 #include "unicore/imgui/ImGuiContext.hpp"
 #include "unicore/imgui/ImGuiRender.hpp"
 #include "unicore/ui/UIDocument.hpp"
+#include "unicore/ui/UIViewImGui.hpp"
 #include "InventoryView.hpp"
 
 namespace unicore
