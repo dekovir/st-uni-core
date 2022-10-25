@@ -43,7 +43,7 @@ if (UNICORE_PLUGIN_WASM)
 	add_subdirectory("${PLUGINS_DIR}/wasm")
 endif()
 
-# Need to be after imgui
+# Need to be after imgui and xml
 if (UNICORE_PLUGIN_UI)
 	add_subdirectory("${PLUGINS_DIR}/ui")
 endif()

@@ -4,7 +4,7 @@
 #include "unicore/imgui/ImGuiRender.hpp"
 #include "unicore/ui/UIDocument.hpp"
 #include "unicore/ui/UIViewImGui.hpp"
-#include "InventoryView.hpp"
+#include "InventoryUI.hpp"
 
 namespace unicore
 {
