@@ -4,9 +4,18 @@
 
 namespace unicore
 {
+	enum class ItemType
+	{
+		Weapon,
+		Armor,
+		Accessory,
+		Consumable,
+	};
+
 	struct Item
 	{
 		String32 title;
+		ItemType type;
 		Int16 price;
 		Shared<Sprite> sprite;
 	};

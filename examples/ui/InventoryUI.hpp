@@ -21,5 +21,7 @@ namespace unicore
 		void on_remove_item(unsigned index, const Item& item);
 
 		void apply_item(UINode& node, const Item& item);
+
+		static StringView type_to_string(ItemType type);
 	};
 }

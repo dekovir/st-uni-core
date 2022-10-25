@@ -93,8 +93,6 @@ namespace unicore
 			return true;
 		}
 
-		// TODO: Convert from bool
-
 		return false;
 	}
 
@@ -116,8 +114,6 @@ namespace unicore
 			value = static_cast<Int64>(d);
 			return true;
 		}
-
-		// TODO: Convert from bool
 
 		return false;
 	}
@@ -187,9 +183,19 @@ namespace unicore
 			return true;
 		}
 
-		// TODO: Convert from boolean?
-		// TODO: Convert from integral?
-		// TODO: Convert from floating point?
+		int64_t i64;
+		if (try_get_integral(i64))
+		{
+			value = std::to_string(i64);
+			return true;
+		}
+
+		Double d;
+		if (try_get_floating_point(d))
+		{
+			value = std::to_string(d);
+			return true;
+		}
 
 		return false;
 	}
@@ -215,9 +221,19 @@ namespace unicore
 			return true;
 		}
 
-		// TODO: Convert from boolean?
-		// TODO: Convert from integral?
-		// TODO: Convert from floating point?
+		int64_t i64;
+		if (try_get_integral(i64))
+		{
+			value = Unicode::to_utf32(std::to_string(i64));
+			return true;
+		}
+
+		Double d;
+		if (try_get_floating_point(d))
+		{
+			value = Unicode::to_utf32(std::to_string(d));
+			return true;
+		}
 
 		return false;
 	}

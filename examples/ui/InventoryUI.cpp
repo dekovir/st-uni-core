@@ -12,6 +12,8 @@ namespace unicore
 		<group name="item_template" value="2" visible="0">
 			<image name="icon" />
 			<text name="name">Name</text>
+			<text name="type">Type</text>
+			<text name="price">0</text>
 		</group>
 	</window>
 	)";
@@ -60,5 +62,23 @@ namespace unicore
 
 		if (auto find = node.find_child_by_name_recurse("icon"); find.has_value())
 			find.value().set_attribute(UIAttributeType::Value, item.sprite);
+
+		if (auto find = node.find_child_by_name_recurse("type"); find.has_value())
+			find.value().set_attribute(UIAttributeType::Text, type_to_string(item.type));
+
+		if (auto find = node.find_child_by_name_recurse("price"); find.has_value())
+			find.value().set_attribute(UIAttributeType::Text, item.price);
+	}
+
+	StringView InventoryUI::type_to_string(ItemType type)
+	{
+		switch (type)
+		{
+		case ItemType::Weapon: return "Weapon";
+		case ItemType::Armor: return "Armor";
+		case ItemType::Accessory: return "Accessory";
+		case ItemType::Consumable: return "Consumable";
+		}
+		return "Error";
 	}
 }
