@@ -45,11 +45,16 @@ namespace unicore
 
 		_contex_render.init(renderer);
 
-		_inventory = std::make_shared<Inventory>(16);
-
 		_document = std::make_shared<UIDocument>(&_context_logger);
 		_view = std::make_shared<UIViewImGui>(_context, _context_logger);
 		_view->set_document(_document);
+
+		_inventory = std::make_shared<Inventory>(16);
+		_inventory_ui = std::make_shared<InventoryUI>(*_inventory, *_document, &_context_logger);
+
+		_inventory->add_item({ U"Item 1", 100, nullptr });
+		_inventory->add_item({ U"Item 2", 125, nullptr });
+		_inventory->add_item({ U"Item 3", 500, nullptr });
 
 		UIDocumentParseXML::parse(xml_text, *_document, UINodeIndexInvalid, &_context_logger);
 

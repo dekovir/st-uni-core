@@ -70,6 +70,9 @@ namespace unicore
 		if (const auto str = node->Attribute("name"); str != nullptr)
 			options.name = str;
 
+		if (const auto str = node->Attribute("visible"); str != nullptr)
+			options.visible = parse_value(str).get_bool(true);
+
 		for (const auto& [name, type] : s_attr_name)
 		{
 			if (const auto t = node->Attribute(name.data()); t != nullptr)

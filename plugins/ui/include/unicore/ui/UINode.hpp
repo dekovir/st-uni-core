@@ -66,6 +66,7 @@ namespace unicore
 	{
 		StringView uid;
 		StringView name;
+		Bool visible = true;
 		UIAttributeDict attributes = {};
 		UIActionDict actions = {};
 	};
@@ -74,6 +75,14 @@ namespace unicore
 	{
 	public:
 		UINode(UIDocument& document, const UINodeIndex& index);
+		~UINode() = default;
+
+		UINode(UINode const& other) noexcept = default;
+		UINode(UINode&& other) = default;
+
+		UINode& operator= (UINode const& other) noexcept;
+
+		UINode& operator= (UINode&& other) noexcept;
 
 		UC_NODISCARD UIDocument& document() const { return _document; }
 		UC_NODISCARD UINodeIndex index() const { return _index; }
@@ -82,10 +91,13 @@ namespace unicore
 		UC_NODISCARD UINodeType type() const;
 		UC_NODISCARD Optional<UINode> parent() const;
 
-		const String& uid() const;
+		UC_NODISCARD const String& uid() const;
 
-		const String& name() const;
+		UC_NODISCARD const String& name() const;
 		void set_name(StringView name);
+
+		UC_NODISCARD Bool visible() const;
+		void set_visible(Bool value);
 
 		UC_NODISCARD const UIAttributeDict& attributes() const;
 		UC_NODISCARD const UIActionDict& actions() const;

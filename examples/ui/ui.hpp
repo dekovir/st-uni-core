@@ -21,6 +21,7 @@ namespace unicore
 		Shared<Inventory> _inventory;
 		Shared<UIDocument> _document;
 		Shared<UIViewImGui> _view;
+		Shared<InventoryUI> _inventory_ui;
 
 		void on_init() override;
 		void on_update() override;

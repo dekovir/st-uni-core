@@ -71,6 +71,8 @@ namespace unicore
 
 	Bool UIViewImGui::render_node(const UINode& node, Bool same_line)
 	{
+		if (!node.visible()) return false;
+
 		const auto cached_info = get_info(node.index());
 		if (!cached_info)
 		{

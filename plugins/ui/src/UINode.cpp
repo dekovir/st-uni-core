@@ -12,6 +12,20 @@ namespace unicore
 	{
 	}
 
+	UINode& UINode::operator=(UINode const& other) noexcept
+	{
+		_document = other._document;
+		_index = other._index;
+		return *this;
+	}
+
+	UINode& UINode::operator=(UINode&& other) noexcept
+	{
+		_document = other._document;
+		_index = other._index;
+		return *this;
+	}
+
 	Bool UINode::valid() const
 	{
 		return _document.is_node_valid(_index);
@@ -43,6 +57,16 @@ namespace unicore
 	void UINode::set_name(StringView name)
 	{
 		_document.set_node_name(_index, name);
+	}
+
+	Bool UINode::visible() const
+	{
+		return _document.get_node_visible(_index);
+	}
+
+	void UINode::set_visible(Bool value)
+	{
+		_document.set_node_visible(_index, value);
 	}
 
 	const UIAttributeDict& UINode::attributes() const

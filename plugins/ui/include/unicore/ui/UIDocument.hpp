@@ -20,7 +20,10 @@ namespace unicore
 	class UIDocument
 	{
 		UC_OBJECT_EVENT(create_node, const UINode&);
+		UC_OBJECT_EVENT(remove_node, const UINode&);
+
 		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
+		UC_OBJECT_EVENT(set_visible, const UINode&, Bool);
 		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttributeType, const Optional<Variant>&);
 		UC_OBJECT_EVENT(set_action, const UINode&, UIActionType, const Optional<UIAction>&);
 	public:
@@ -58,11 +61,16 @@ namespace unicore
 		UINodeIndex create_node(UINodeType type, UINodeIndex parent,
 			const UINodeOptions& options);
 
+		Size remove_node(UINodeIndex index);
+
 		// VALUES ////////////////////////////////////////////////////////////////////
 		UC_NODISCARD const String& get_node_uid(UINodeIndex index) const;
 
 		UC_NODISCARD const String& get_node_name(UINodeIndex index) const;
 		Bool set_node_name(UINodeIndex index, StringView name);
+
+		UC_NODISCARD Bool get_node_visible(UINodeIndex index) const;
+		Bool set_node_visible(UINodeIndex index, Bool value);
 
 		// HIERARCHY /////////////////////////////////////////////////////////////////
 		UC_NODISCARD Bool is_node_valid(UINodeIndex index) const;
@@ -97,6 +105,7 @@ namespace unicore
 			UINodeType type;
 			String uid;
 			String name;
+			Bool visible;
 			UINodeIndex parent;
 			List<UINodeIndex> children;
 			UIAttributeDict attributes;
@@ -112,6 +121,8 @@ namespace unicore
 		UC_NODISCARD const NodeInfo* get_info(UINodeIndex index) const;
 
 		UINode node_from_index(UINodeIndex index);
+
+		void internal_remove_node_recurse(UINodeIndex index, Size& count);
 
 		static bool call_action_default(const UIAction& action, const UINode& node);
 		static bool call_action_value(const UIAction& action, const UINode& node, const Variant& value);

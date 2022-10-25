@@ -221,6 +221,7 @@ namespace unicore
 		info.type = type;
 		info.uid = StringHelper::to_lower(options.uid);
 		info.name = options.name;
+		info.visible = options.visible;
 
 		info.parent = parent;
 		info.attributes = options.attributes;
@@ -251,6 +252,16 @@ namespace unicore
 		return index;
 	}
 
+	Size UIDocument::remove_node(UINodeIndex index)
+	{
+		if (index == UINodeIndexInvalid)
+			return 0;
+
+		Size count = 0;
+		internal_remove_node_recurse(index, count);
+		return count;
+	}
+
 	// VALUES ////////////////////////////////////////////////////////////////////
 	const String& UIDocument::get_node_uid(UINodeIndex index) const
 	{
@@ -276,6 +287,31 @@ namespace unicore
 			{
 				const auto node = node_from_index(index);
 				_event_set_name.invoke(node, name);
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	Bool UIDocument::get_node_visible(UINodeIndex index) const
+	{
+		const auto info = get_info(index);
+		return info ? info->visible : false;
+	}
+
+	Bool UIDocument::set_node_visible(UINodeIndex index, Bool value)
+	{
+		if (const auto info = get_info(index))
+		{
+			if (info->visible != value)
+			{
+				info->visible = value;
+				if (!_event_set_visible.empty())
+				{
+					const auto node = node_from_index(index);
+					_event_set_visible.invoke(node, value);
+				}
 			}
 			return true;
 		}
@@ -370,25 +406,44 @@ namespace unicore
 		return UINodeIndexInvalid;
 	}
 
+	// ATTRIBUTES ////////////////////////////////////////////////////////////////
 	void UIDocument::set_node_attribute(UINodeIndex index,
 		UIAttributeType type, const Optional<Variant>& value)
 	{
 		if (const auto info = get_info(index))
 		{
-			if (value.has_value())
+			if (const auto it = info->attributes.find(type); it != info->attributes.end())
 			{
-				const auto& variant = value.value();
-				info->attributes[type] = variant;
+				if (value.has_value())
+				{
+					if (it->second != value.value())
+					{
+						it->second = value.value();
+						if (!_event_set_attribute.empty())
+						{
+							const UINode node(*this, index);
+							_event_set_attribute.invoke(node, type, value);
+						}
+					}
+				}
+				else
+				{
+					info->attributes.erase(it);
+					if (!_event_set_attribute.empty())
+					{
+						const UINode node(*this, index);
+						_event_set_attribute.invoke(node, type, std::nullopt);
+					}
+				}
 			}
-			else
+			else if (value.has_value())
 			{
-				info->attributes.erase(type);
-			}
-
-			if (!_event_set_attribute.empty())
-			{
-				const UINode node(*this, index);
-				_event_set_attribute.invoke(node, type, value);
+				info->attributes[type] = value.value();
+				if (!_event_set_attribute.empty())
+				{
+					const UINode node(*this, index);
+					_event_set_attribute.invoke(node, type, value);
+				}
 			}
 		}
 	}
@@ -485,6 +540,11 @@ namespace unicore
 	UINode UIDocument::node_from_index(UINodeIndex index)
 	{
 		return { *this, index };
+	}
+
+	void UIDocument::internal_remove_node_recurse(UINodeIndex index, Size& count)
+	{
+
 	}
 
 	bool UIDocument::call_action_default(const UIAction& action, const UINode& node)
