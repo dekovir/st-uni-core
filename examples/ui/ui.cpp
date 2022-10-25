@@ -8,7 +8,7 @@
 
 namespace unicore
 {
-	constexpr Vector2i WindowSize = Vector2i(1024, 768);
+	constexpr Vector2i WindowSize = Vector2i(1280, 800);
 	constexpr DisplayWindowFlags WindowFlags = DisplayWindowFlag::Resizable;
 
 	MyApp::MyApp(const CoreSettings& settings)
@@ -135,7 +135,6 @@ namespace unicore
 		_view = std::make_shared<UIViewImGui>(_context, _context_logger);
 		_view->set_document(_document);
 
-#if 1
 		XMLData xml;
 		xml.doc.Parse(xml_text);
 		parse_xml(xml, *_document);
@@ -166,35 +165,6 @@ namespace unicore
 					UC_LOG_DEBUG(logger) << "Slider value changed to " << value;
 				});
 		}
-#else
-		_document->create_node(UINodeType::Text, UINodeIndexInvalid,
-			{ {UIAttributeType::Value, "Sample text"} });
-
-		_document->create_node(UINodeType::Input, UINodeIndexInvalid,
-			{
-				{UIAttributeType::Value, "quick brown fox"}
-			});
-
-		_document->create_node(UINodeType::Slider, UINodeIndexInvalid,
-			{
-				{UIAttributeType::MaxValue, 100},
-				{UIAttributeType::Value, 50}
-			});
-
-		const auto group = _document->create_node(UINodeType::Group, UINodeIndexInvalid);
-
-		_document->create_node(UINodeType::Button, UINodeIndexInvalid,
-			{ {UIAttributeType::Value, "Button"} },
-			{ {UIActionType::OnClick, [this, group]()
-			{
-				static int index = 1;
-				auto text = StringBuilder::format("Item {}", index++);
-				_document->create_node(UINodeType::Text, group,
-					{ {UIAttributeType::Value, text} });
-			}
-}
-});
-#endif
 	}
 
 	void MyApp::on_update()
@@ -218,8 +188,8 @@ namespace unicore
 		// ImGui //////////////////////////////////////////////////////////////////
 		_context.frame_begin();
 
-		static bool show_demo_window = true;
-		ImGui::ShowDemoWindow(&show_demo_window);
+		//static bool show_demo_window = true;
+		//ImGui::ShowDemoWindow(&show_demo_window);
 
 		_view->render();
 
@@ -234,4 +204,4 @@ namespace unicore
 	}
 
 	UNICORE_MAIN_CORE(MyApp);
-	}
+}
