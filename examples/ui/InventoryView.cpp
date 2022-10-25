@@ -152,10 +152,11 @@ namespace unicore
 		{
 			const auto value_min = node.get_attribute(UIAttributeType::MinValue).get_float(0);
 			const auto value_max = node.get_attribute(UIAttributeType::MaxValue).get_float(1);
+			const auto format = node.get_attribute(UIAttributeType::Text).get_string("%.2f");
 
 			auto value = cached_info->value.get_float();
 			render_node_header(node, same_line);
-			if (ImGui::SliderFloat(id.c_str(), &value, value_min, value_max))
+			if (ImGui::SliderFloat(id.c_str(), &value, value_min, value_max, format.c_str()))
 			{
 				cached_info->value = value;
 				_update_events.push_back({ node, UIEventType::ValueChanged, value });
@@ -199,7 +200,6 @@ namespace unicore
 			{
 				cached_info->value = bool_value;
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
-				_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
 			}
 			render_node_footer(node);
 			break;

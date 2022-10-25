@@ -30,6 +30,21 @@ namespace unicore
 		return std::nullopt;
 	}
 
+	const String& UINode::uid() const
+	{
+		return _document.get_node_uid(_index);
+	}
+
+	const String& UINode::name() const
+	{
+		return _document.get_node_name(_index);
+	}
+
+	void UINode::set_name(StringView name)
+	{
+		_document.set_node_name(_index, name);
+	}
+
 	const UIAttributeDict& UINode::attributes() const
 	{
 		return _document.get_node_attributes(_index);
@@ -100,16 +115,16 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	UINode UINode::create_child(UINodeType type)
+	UINode UINode::create_child(UINodeType type, const UINodeOptions& options)
 	{
-		const auto child_index = _document.create_node(type, _index);
+		const auto child_index = _document.create_node(type, _index, options);
 		return { _document, child_index };
 	}
 
-	UINode UINode::create_sibling(UINodeType type)
+	UINode UINode::create_sibling(UINodeType type, const UINodeOptions& options)
 	{
 		const auto parent = _document.get_node_parent(_index);
-		const auto child_index = _document.create_node(type, parent);
+		const auto child_index = _document.create_node(type, parent, options);
 		return { _document, child_index };
 	}
 

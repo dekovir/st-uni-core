@@ -29,7 +29,7 @@ namespace unicore
 		</group>
 		<group value="2">
 			<text>Slider</text>
-			<slider id="slider" value="50.50" max="100" />
+			<slider id="slider" value="50.50" max="100">Value %.1f</slider>
 		</group>
 		<group value="2">
 			<text>Toggle</text>
@@ -55,8 +55,6 @@ namespace unicore
 
 	static const Dictionary<StringView, UIAttributeType> s_attr_name =
 	{
-		{"id", UIAttributeType::Uid},
-		{"name", UIAttributeType::Name},
 		{"value", UIAttributeType::Value},
 		{"tooltip", UIAttributeType::Tooltip},
 		{"min", UIAttributeType::MinValue},
@@ -80,7 +78,7 @@ namespace unicore
 
 	static UINodeType parse_tag(StringView tag)
 	{
-		for (const auto & it : s_tag_type)
+		for (const auto& it : s_tag_type)
 		{
 			if (StringHelper::equals(it.first, tag, true))
 				return it.second;
@@ -94,18 +92,25 @@ namespace unicore
 		const auto tag = StringView(node->Value());
 		const auto node_type = parse_tag(tag);
 
-		UIAttributeDict attributes;
+		UINodeOptions options;
+
 		// Fill attributes
 		if (const auto value = node->GetText(); value != nullptr)
-			attributes[UIAttributeType::Text] = parse_value(value);
+			options.attributes[UIAttributeType::Text] = parse_value(value);
+
+		if (const auto str = node->Attribute("id"); str != nullptr)
+			options.uid = str;
+
+		if (const auto str = node->Attribute("name"); str != nullptr)
+			options.name = str;
 
 		for (const auto& [name, type] : s_attr_name)
 		{
 			if (const auto t = node->Attribute(name.data()); t != nullptr)
-				attributes[type] = parse_value(t);
+				options.attributes[type] = parse_value(t);
 		}
 
-		const auto index = doc.create_node(node_type, parent, attributes);
+		const auto index = doc.create_node(node_type, parent, options);
 		for (auto child = node->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
 			parse_node_recurse(child, doc, index);
 	}
@@ -145,9 +150,11 @@ namespace unicore
 				[this, group_id]()
 				{
 					static int index = 1;
-					auto text = StringBuilder::format("Item {}", index++);
-					_document->create_node(UINodeType::Item, group_id,
-						{ {UIAttributeType::Text, text} });
+					const auto text = StringBuilder::format("Item {}", index++);
+
+					UINodeOptions options;
+					options.attributes[UIAttributeType::Text] = text;
+					_document->create_node(UINodeType::Item, group_id, options);
 				});
 		}
 
@@ -186,7 +193,7 @@ namespace unicore
 					{ {UIAttributeType::Value, text} });
 			}
 }
-			});
+});
 #endif
 	}
 
@@ -211,8 +218,8 @@ namespace unicore
 		// ImGui //////////////////////////////////////////////////////////////////
 		_context.frame_begin();
 
-		//static bool show_demo_window = true;
-		//ImGui::ShowDemoWindow(&show_demo_window);
+		static bool show_demo_window = true;
+		ImGui::ShowDemoWindow(&show_demo_window);
 
 		_view->render();
 

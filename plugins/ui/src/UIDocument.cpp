@@ -26,19 +26,9 @@ namespace unicore
 	// FIND //////////////////////////////////////////////////////////////////////
 	UINodeIndex UIDocument::find_index_by_id(StringView id) const
 	{
-		for (unsigned i = 0; i < _nodes.size(); i++)
-		{
-			auto& info = _nodes[i];
-			auto it = info.attributes.find(UIAttributeType::Uid);
-			if (it != info.attributes.end())
-			{
-				String str;
-				if (it->second.try_get_string(str) && StringHelper::equals(id, str, true))
-					return UINodeIndex(i);
-			}
-		}
-
-		return UINodeIndexInvalid;
+		const auto key = StringHelper::to_lower(id);
+		const auto it = _cached_id.find(key);
+		return it != _cached_id.end() ? it->second : UINodeIndexInvalid;
 	}
 
 	Optional<UINode> UIDocument::find_node_by_id(StringView id)
@@ -59,8 +49,7 @@ namespace unicore
 			{
 				if (auto& info = _nodes[i]; info.parent == UINodeIndexInvalid)
 				{
-					const auto it = info.attributes.find(UIAttributeType::Name);
-					if (it != info.attributes.end() && it->second.get_string() == name)
+					if (StringHelper::equals(info.name, name, true))
 					{
 						list.push_back(UINodeIndex(i));
 						count++;
@@ -77,8 +66,7 @@ namespace unicore
 					const auto child = get_info(index);
 					if (!child) continue;
 
-					const auto it = child->attributes.find(UIAttributeType::Name);
-					if (it != child->attributes.end() && it->second.get_string() == name)
+					if (StringHelper::equals(child->name, name, true))
 					{
 						list.push_back(index);
 						count++;
@@ -136,8 +124,7 @@ namespace unicore
 			{
 				if (auto& info = _nodes[i]; info.parent == UINodeIndexInvalid)
 				{
-					const auto it = info.attributes.find(UIAttributeType::Name);
-					if (it != info.attributes.end() && it->second.get_string() == name)
+					if (StringHelper::equals(info.name, name, true))
 						return UINodeIndex(i);
 				}
 			}
@@ -151,8 +138,7 @@ namespace unicore
 					const auto child = get_info(index);
 					if (!child) continue;
 
-					const auto it = child->attributes.find(UIAttributeType::Name);
-					if (it != child->attributes.end() && it->second.get_string() == name)
+					if (StringHelper::equals(child->name, name, true))
 						return index;
 				}
 			}
@@ -225,23 +211,36 @@ namespace unicore
 	}
 
 	// RAW INDEX /////////////////////////////////////////////////////////////////
-	UINodeIndex UIDocument::create_node(UINodeType type, UINodeIndex parent,
-		const UIAttributeDict& attributes, const UIActionDict& actions)
+	UINodeIndex UIDocument::create_node(UINodeType type,
+		UINodeIndex parent, const UINodeOptions& options)
 	{
 		const auto index = UINodeIndex(_nodes.size());
 		_nodes.push_back({});
 		auto& info = _nodes.back();
 
 		info.type = type;
+		info.uid = StringHelper::to_lower(options.uid);
+		info.name = options.name;
+
 		info.parent = parent;
-		info.attributes = attributes;
-		info.actions = actions;
+		info.attributes = options.attributes;
+		info.actions = options.actions;
 
 		if (const auto parent_info = get_info(parent))
 			parent_info->children.push_back(index);
 
 		if (parent == UINodeIndexInvalid)
 			_roots.push_back(index);
+
+		if (!info.uid.empty())
+		{
+			if (_cached_id.find(info.uid) != _cached_id.end())
+				UC_LOG_ERROR(_logger) << "Duplicate uid '" << info.uid << "'";
+
+			_cached_id[info.uid] = index;
+			UC_LOG_DEBUG(_logger) << "Node at " << index
+				<< " registered with '" << info.uid << "' uid";
+		}
 
 		if (!_event_create_node.empty())
 		{
@@ -252,6 +251,39 @@ namespace unicore
 		return index;
 	}
 
+	// VALUES ////////////////////////////////////////////////////////////////////
+	const String& UIDocument::get_node_uid(UINodeIndex index) const
+	{
+		static const String s_empty;
+		const auto info = get_info(index);
+		return info ? info->uid : s_empty;
+	}
+
+	const String& UIDocument::get_node_name(UINodeIndex index) const
+	{
+		static const String s_empty;
+		const auto info = get_info(index);
+		return info ? info->name : s_empty;
+	}
+
+	Bool UIDocument::set_node_name(UINodeIndex index, StringView name)
+	{
+		static const String s_empty;
+		if (const auto info = get_info(index))
+		{
+			info->name = name;
+			if (!_event_set_name.empty())
+			{
+				const auto node = node_from_index(index);
+				_event_set_name.invoke(node, name);
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	// HIERARCHY /////////////////////////////////////////////////////////////////
 	Bool UIDocument::is_node_valid(UINodeIndex index) const
 	{
 		return get_info(index) != nullptr;
@@ -448,6 +480,11 @@ namespace unicore
 			return &_nodes[index.value];
 
 		return nullptr;
+	}
+
+	UINode UIDocument::node_from_index(UINodeIndex index)
+	{
+		return { *this, index };
 	}
 
 	bool UIDocument::call_action_default(const UIAction& action, const UINode& node)

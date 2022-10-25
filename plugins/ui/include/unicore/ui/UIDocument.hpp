@@ -20,6 +20,7 @@ namespace unicore
 	class UIDocument
 	{
 		UC_OBJECT_EVENT(create_node, const UINode&);
+		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttributeType, const Optional<Variant>&);
 		UC_OBJECT_EVENT(set_action, const UINode&, UIActionType, const Optional<UIAction>&);
 	public:
@@ -53,11 +54,17 @@ namespace unicore
 		// EVENTS ////////////////////////////////////////////////////////////////////
 		void send_event(const UIEvent& evt);
 
-		// RAW INDEX /////////////////////////////////////////////////////////////////
+		// CREATE ////////////////////////////////////////////////////////////////////
 		UINodeIndex create_node(UINodeType type, UINodeIndex parent,
-			const UIAttributeDict& attributes = {},
-			const UIActionDict& actions = {});
+			const UINodeOptions& options);
 
+		// VALUES ////////////////////////////////////////////////////////////////////
+		UC_NODISCARD const String& get_node_uid(UINodeIndex index) const;
+
+		UC_NODISCARD const String& get_node_name(UINodeIndex index) const;
+		Bool set_node_name(UINodeIndex index, StringView name);
+
+		// HIERARCHY /////////////////////////////////////////////////////////////////
 		UC_NODISCARD Bool is_node_valid(UINodeIndex index) const;
 		UC_NODISCARD UINodeType get_node_type(UINodeIndex index) const;
 		UC_NODISCARD UINodeIndex get_node_parent(UINodeIndex index) const;
@@ -88,6 +95,8 @@ namespace unicore
 		struct NodeInfo
 		{
 			UINodeType type;
+			String uid;
+			String name;
 			UINodeIndex parent;
 			List<UINodeIndex> children;
 			UIAttributeDict attributes;
@@ -97,11 +106,12 @@ namespace unicore
 		Logger* _logger;
 		List<UINodeIndex> _roots;
 		List<NodeInfo> _nodes;
-
-		// TODO: Cache Uid values
+		Dictionary<String, UINodeIndex> _cached_id;
 
 		NodeInfo* get_info(UINodeIndex index);
 		UC_NODISCARD const NodeInfo* get_info(UINodeIndex index) const;
+
+		UINode node_from_index(UINodeIndex index);
 
 		static bool call_action_default(const UIAction& action, const UINode& node);
 		static bool call_action_value(const UIAction& action, const UINode& node, const Variant& value);

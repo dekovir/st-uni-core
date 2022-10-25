@@ -11,8 +11,6 @@ namespace unicore
 
 	enum class UIAttributeType
 	{
-		Uid, // Must be unique for UIDocument
-		Name,
 		Value,
 		Tooltip,
 		//Style,
@@ -64,6 +62,14 @@ namespace unicore
 
 	class UIDocument;
 
+	struct UINodeOptions
+	{
+		StringView uid;
+		StringView name;
+		UIAttributeDict attributes = {};
+		UIActionDict actions = {};
+	};
+
 	class UINode
 	{
 	public:
@@ -76,11 +82,19 @@ namespace unicore
 		UC_NODISCARD UINodeType type() const;
 		UC_NODISCARD Optional<UINode> parent() const;
 
+		const String& uid() const;
+
+		const String& name() const;
+		void set_name(StringView name);
+
 		UC_NODISCARD const UIAttributeDict& attributes() const;
 		UC_NODISCARD const UIActionDict& actions() const;
 
 		void set_attribute(UIAttributeType type, const Optional<Variant>& value);
 		UC_NODISCARD Variant get_attribute(UIAttributeType type) const;
+
+		UC_NODISCARD Variant get_value() const { return get_attribute(UIAttributeType::Value); }
+		void set_value(const Optional<Variant>& value) { set_attribute(UIAttributeType::Value, value); }
 
 		void set_action(UIActionType type, const Optional<UIAction>& value);
 		UC_NODISCARD Optional<UIAction> get_action(UIActionType type) const;
@@ -91,8 +105,8 @@ namespace unicore
 		UC_NODISCARD Optional<UINode> get_next_sibling() const;
 		UC_NODISCARD Optional<UINode> get_prev_sibling() const;
 
-		UINode create_child(UINodeType type);
-		UINode create_sibling(UINodeType type);
+		UINode create_child(UINodeType type, const UINodeOptions& options);
+		UINode create_sibling(UINodeType type, const UINodeOptions& options);
 
 		UC_NODISCARD Optional<UINode> find_child_by_name(StringView name) const;
 		UC_NODISCARD Optional<UINode> find_child_by_name_recurse(StringView name) const;
