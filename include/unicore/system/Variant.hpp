@@ -311,7 +311,7 @@ namespace unicore
 
 		template<typename T>
 		UC_NODISCARD Color3<T> get_color3(
-			const Color3<T>& default_value = details::ColorConst3<T>::Clear) const
+			const Color3<T>& default_value = ColorTable<T>::Clear) const
 		{
 			Color3<T> value{};
 			return try_get_color3(value) ? value : default_value;
@@ -319,11 +319,11 @@ namespace unicore
 
 		// COLOR3B ///////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_color3b(Color3b& value) const { return try_get_color3(value); }
-		UC_NODISCARD Color3b get_color3b(const Color3b& default_value = ColorConst3b::Clear) const { return get_color3(default_value); }
+		UC_NODISCARD Color3b get_color3b(const Color3b& default_value = ColorConst3b::White) const { return get_color3(default_value); }
 
 		// COLOR3F ///////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_color3f(Color3f& value) const { return try_get_color3(value); }
-		UC_NODISCARD Color3f get_color3f(const Color3f& default_value = ColorConst3f::Clear) const { return get_color3(default_value); }
+		UC_NODISCARD Color3f get_color3f(const Color3f& default_value = ColorConst3f::White) const { return get_color3(default_value); }
 
 		// COLOR4 ////////////////////////////////////////////////////////////////////
 		template<typename T>
@@ -348,7 +348,7 @@ namespace unicore
 
 		template<typename T>
 		UC_NODISCARD Color4<T> get_color4(
-			const Color4<T>& default_value = details::ColorConst4<T>::Clear) const
+			const Color4<T>& default_value = ColorTable<T>::Clear) const
 		{
 			Color4<T> value{};
 			return try_get_color4(value) ? value : default_value;
@@ -356,11 +356,11 @@ namespace unicore
 
 		// COLOR4B ///////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_color4b(Color4b& value) const { return try_get_color4(value); }
-		UC_NODISCARD Color4b get_color4b(const Color4b& default_value = ColorConst4b::Clear) const { return get_color4(default_value); }
+		UC_NODISCARD Color4b get_color4b(const Color4b& default_value = ColorConst4b::White) const { return get_color4(default_value); }
 
 		// COLOR4F ///////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_color4f(Color4b& value) const { return try_get_color4(value); }
-		UC_NODISCARD Color4f get_color4f(const Color4f& default_value = ColorConst4f::Clear) const { return get_color4(default_value); }
+		UC_NODISCARD Color4f get_color4f(const Color4f& default_value = ColorConst4f::White) const { return get_color4(default_value); }
 
 		// OBJECT ////////////////////////////////////////////////////////////////////
 		bool try_get_object(Shared<Object>& value) const;

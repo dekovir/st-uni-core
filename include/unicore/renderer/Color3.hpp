@@ -2,6 +2,7 @@
 #include "unicore/math/Math.hpp"
 #include "unicore/math/Hash.hpp"
 #include "unicore/renderer/PixelFormat.hpp"
+#include "unicore/renderer/ColorTable.hpp"
 
 namespace unicore
 {
@@ -101,6 +102,11 @@ namespace unicore
 			};
 		}
 
+		static constexpr Color3 from_one(T value)
+		{
+			return { value, value, value };
+		}
+
 		static constexpr Color3 from_rgb(const uint32_t rgb)
 		{
 			const UInt8 r = (rgb >> 16) & 0xFF;
@@ -167,33 +173,11 @@ namespace unicore
 	namespace details
 	{
 		template<typename T>
-		struct ColorConst3
-		{
-			static constexpr auto MaxValue = color_limits<T>::max();
-
-			// For compatibility with ColorConst4
-			static constexpr auto Clear = Color3<T>(0, 0, 0);
-
-			static constexpr auto Black = Color3<T>(0, 0, 0);
-			static constexpr auto White = Color3<T>(MaxValue, MaxValue, MaxValue);
-
-			static constexpr auto Red = Color3<T>(MaxValue, 0, 0);
-			static constexpr auto Green = Color3<T>(0, MaxValue, 0);
-			static constexpr auto Blue = Color3<T>(0, 0, MaxValue);
-
-			static constexpr auto Magenta = Color3<T>(MaxValue, 0, MaxValue);
-			static constexpr auto Yellow = Color3<T>(MaxValue, MaxValue, 0);
-			static constexpr auto Cyan = Color3<T>(0, MaxValue, MaxValue);
-
-			ColorConst3() = delete;
-		};
-
-		template<typename T>
 		using ColorPalette3 = List<Color3<T>>;
 	}
 
-	using ColorConst3b = details::ColorConst3<uint8_t>;
-	using ColorConst3f = details::ColorConst3<float>;
+	using ColorConst3b = ColorTable<Color3b>;
+	using ColorConst3f = ColorTable<Color3f>;
 
 	using ColorPalette3b = details::ColorPalette3<uint8_t>;
 	using ColorPalette3f = details::ColorPalette3<float>;

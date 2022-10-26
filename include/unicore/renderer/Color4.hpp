@@ -2,6 +2,7 @@
 #include "unicore/math/Math.hpp"
 #include "unicore/math/Hash.hpp"
 #include "unicore/renderer/PixelFormat.hpp"
+#include "unicore/renderer/ColorTable.hpp"
 
 namespace unicore
 {
@@ -197,32 +198,11 @@ namespace unicore
 	namespace details
 	{
 		template<typename T>
-		struct ColorConst4
-		{
-			static constexpr auto MaxValue = color_limits<T>::max();
-
-			static constexpr auto Clear = Color4<T>(0, 0, 0, 0);
-
-			static constexpr auto Black = Color4<T>(0, 0, 0);
-			static constexpr auto White = Color4<T>(MaxValue, MaxValue, MaxValue);
-
-			static constexpr auto Red = Color4<T>(MaxValue, 0, 0);
-			static constexpr auto Green = Color4<T>(0, MaxValue, 0);
-			static constexpr auto Blue = Color4<T>(0, 0, MaxValue);
-
-			static constexpr auto Magenta = Color4<T>(MaxValue, 0, MaxValue);
-			static constexpr auto Yellow = Color4<T>(MaxValue, MaxValue, 0);
-			static constexpr auto Cyan = Color4<T>(0, MaxValue, MaxValue);
-
-			ColorConst4() = delete;
-		};
-
-		template<typename T>
 		using ColorPalette4 = List<Color4<T>>;
 	}
 
-	using ColorConst4b = details::ColorConst4<uint8_t>;
-	using ColorConst4f = details::ColorConst4<float>;
+	using ColorConst4b = ColorTableWithalpha<Color4b>;
+	using ColorConst4f = ColorTableWithalpha<Color4f>;
 
 	using ColorPalette4b = details::ColorPalette4<uint8_t>;
 	using ColorPalette4f = details::ColorPalette4<float>;

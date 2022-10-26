@@ -117,7 +117,7 @@ namespace unicore
 		// COPY CHARS FONT TO SURFACE
 		DynamicSurface font_surface(surface_size);
 		Canvas canvas(font_surface);
-		canvas.fill(ColorConst4b::Clear);
+		canvas.fill({0, 0, 0, 0});
 
 		for (unsigned i = 0; i < char_count; i++)
 		{
