@@ -38,6 +38,10 @@ namespace unicore
 			std::enable_if_t<std::is_constructible_v<DataType, T>>* = nullptr>
 		Variant(T value) noexcept : _data(value) {}
 
+		template<typename T,
+			std::enable_if_t<!std::is_constructible_v<DataType, T> && std::is_integral_v<T>>* = nullptr>
+		Variant(T value) noexcept : _data(static_cast<Int64>(value)) {}
+
 		template<typename T, std::enable_if_t<std::is_base_of_v<Object, T>>* = nullptr>
 		Variant(const Shared<T>& object) noexcept : _data(object) {}
 

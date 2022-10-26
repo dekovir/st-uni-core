@@ -6,6 +6,7 @@ namespace unicore
 {
 	static const auto xml = R"(
 	<group>
+		<text name="money" />
 		<text>Items</text>
 		<group name="item_group">
 		</group>
@@ -28,11 +29,19 @@ namespace unicore
 		_inventory.on_add_item() += [&](auto index, auto& item) { on_add_item(index, item); };
 		_inventory.on_remove_item() += [&](auto index, auto& item) { on_remove_item(index, item); };
 
+		_money_text = _document.find_node_by_name_recurse("money");
 		_items_group = _document.find_node_by_name_recurse("item_group");
 		_items_template = _document.find_node_by_name_recurse("item_template");
 
 		if (!_items_group) UC_LOG_ERROR(_logger) << "Group not found";
 		if (!_items_template) UC_LOG_ERROR(_logger) << "Item template not found";
+
+		apply_money(_inventory.money());
+	}
+
+	void InventoryUI::on_change_money(UInt16 value)
+	{
+		apply_money(value);
 	}
 
 	void InventoryUI::on_add_item(unsigned index, const Item& item)
@@ -51,6 +60,15 @@ namespace unicore
 	{
 		if (!_items_group.has_value() || !_items_template.has_value())
 			return;
+	}
+
+	void InventoryUI::apply_money(UInt16 value)
+	{
+		if (_money_text.has_value())
+		{
+			const auto text = StringBuilder::format("Money: {}", value);
+			_money_text.value().set_attribute(UIAttributeType::Text, text);
+		}
 	}
 
 	void InventoryUI::apply_item(UINode& node, const Item& item)

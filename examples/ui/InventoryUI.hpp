@@ -14,12 +14,15 @@ namespace unicore
 		UIDocument& _document;
 		Logger* _logger;
 
+		Optional<UINode> _money_text;
 		Optional<UINode> _items_group;
 		Optional<UINode> _items_template;
 
+		void on_change_money(UInt16 value);
 		void on_add_item(unsigned index, const Item& item);
 		void on_remove_item(unsigned index, const Item& item);
 
+		void apply_money(UInt16 value);
 		void apply_item(UINode& node, const Item& item);
 
 		static StringView type_to_string(ItemType type);

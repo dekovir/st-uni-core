@@ -22,10 +22,17 @@ namespace unicore
 
 	class Inventory // Model
 	{
+		UC_OBJECT_EVENT(money_change, unsigned);
 		UC_OBJECT_EVENT(add_item, unsigned, const Item&);
 		UC_OBJECT_EVENT(remove_item, unsigned, const Item&);
 	public:
-		explicit Inventory(UInt16 count);
+		explicit Inventory(UInt16 count, UInt16 money = 0);
+
+		UC_NODISCARD UInt16 money() const { return _money; }
+
+		void set_money(UInt16 value);
+		void inc_money(UInt16 amount);
+		Bool dec_money(UInt16 amount);
 
 		UC_NODISCARD auto size() const { return _slots.size(); }
 
@@ -39,5 +46,6 @@ namespace unicore
 
 	protected:
 		List<const Item*> _slots;
+		UInt16 _money;
 	};
 }

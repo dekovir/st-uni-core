@@ -2,8 +2,40 @@
 
 namespace unicore
 {
-	Inventory::Inventory(UInt16 count) : _slots(count, nullptr)
+	Inventory::Inventory(UInt16 count, UInt16 money)
+		: _slots(count, nullptr)
+		, _money(money)
 	{}
+
+	void Inventory::set_money(UInt16 value)
+	{
+		if (_money != value)
+		{
+			_money = value;
+			_event_money_change.invoke(_money);
+		}
+	}
+
+	void Inventory::inc_money(UInt16 amount)
+	{
+		if (amount > 0)
+		{
+			_money += amount;
+			_event_money_change.invoke(_money);
+		}
+	}
+
+	Bool Inventory::dec_money(UInt16 amount)
+	{
+		if (_money >= amount)
+		{
+			_money -= amount;
+			_event_money_change.invoke(_money);
+			return true;
+		}
+
+		return false;
+	}
 
 	bool Inventory::add_item(const Item& item, unsigned* index)
 	{
