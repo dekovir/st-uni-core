@@ -6,14 +6,27 @@
 #include "unicore/renderer/Surface.hpp"
 #include "unicore/renderer/Font.hpp"
 #include "unicore/io/FileLoader.hpp"
-#include "unicore/system/Variant.hpp"
+#include "unicore/ui/UIDocumentParseXML.hpp"
 
 namespace unicore
 {
 	constexpr DisplayWindowFlags WindowFlags = DisplayWindowFlag::Resizable;
 
+	static const auto xml = R"(
+	<group>
+		<text>Examples</text>
+		<group id="group" />
+		<group id="template" visible="0">
+			<item name="name">Title</item>
+		</group>
+	</group>
+	)";
+
 	MyApp::MyApp(const CoreSettings& settings)
 		: SDLApplication(create_settings(settings, "Testbed"))
+		, _ui_logger("[UI] ", logger)
+		, _ui_render(renderer, _ui_logger)
+		, _ui_context(_ui_render, time, input, _ui_logger)
 	{
 		UC_LOG_INFO(logger) << "Starting";
 
@@ -28,38 +41,57 @@ namespace unicore
 			resources.add_loader(std::make_shared<ReadFileLoader>(*_archive));
 #endif
 
-		const auto v_n = Variant();
-		const auto v_b = Variant(false);
-		const auto v_i = Variant(42);
-		const auto v_d = Variant(1.234);
-
-		const auto v_s0 = Variant("Test");
-		const auto v_s1 = Variant("Test"s);
-		const auto v_s2 = Variant("Test"sv);
-
-		const auto v_s3 = Variant(U"Test");
-		const auto v_s4 = Variant(U"Test"s);
-		const auto v_s5 = Variant(U"Test"sv);
-
-		const auto v_s6 = Variant(L"Test");
-		const auto v_s7 = Variant(L"Test"s);
-		const auto v_s8 = Variant(L"Test"sv);
-
-		const auto v_c = Variant(ColorConst4b::White);
-
 		//_font = resources.create<Font>(EmptyResourceOptions{});
 		//_font = resources.load<Font>(L"font_004.fnt"_path);
 		_font = resources.load<Font>("ubuntu.regular.ttf"_path);
 
-		set_example(0);
+		_ui_render.init(renderer);
+
+		_ui_document = std::make_shared<UIDocument>(&_ui_logger);
+		_ui_view = std::make_shared<UIViewImGui>(_ui_context, _ui_logger);
+		_ui_view->set_document(_ui_document);
+		_ui_view->set_size({ 300, 400 });
+		_ui_view->flags().set(UIViewImGuiFlag::NoTiltebar);
+		_ui_view->flags().set(UIViewImGuiFlag::NoMove);
+		_ui_view->flags().set(UIViewImGuiFlag::NoResize);
+
+		if (UIDocumentParseXML::parse(xml, *_ui_document, UINodeIndexInvalid, &_ui_logger))
+		{
+			auto group_node = _ui_document->find_node_by_id("group");
+			auto template_node = _ui_document->find_node_by_id("template");
+			if (group_node.has_value() && template_node.has_value())
+			{
+				const auto& example_infos = ExampleCatalog::get_all();
+				for (unsigned i = 0; i < example_infos.size(); i++)
+				{
+					auto node = template_node->duplicate();
+
+					node.set_visible(true);
+
+					auto& info = example_infos[i];
+
+					const auto index = i;
+
+					if (auto find = node.find_child_by_name_recurse("name"); find.has_value())
+					{
+						find->set_attribute(UIAttributeType::Text, info.title);
+						find->set_action(UIActionType::OnClick,
+							[this, index] { set_example(index); });
+					}
+				}
+			}
+		}
 	}
 
 	void MyApp::on_update()
 	{
-#if !defined(UNICORE_PLATFORM_WEB)
-		if (input.keyboard().down(KeyCode::Escape))
-			platform.looper.quit();
+		if (input.keyboard().down_changed(KeyCode::Escape))
+		{
+			if (_example) set_example(-1);
+			else platform.looper.quit();
+		}
 
+#if !defined(UNICORE_PLATFORM_WEB)
 		if (
 			input.keyboard().down_changed(KeyCode::Enter) &&
 			input.keyboard().mods(KeyModCombine::Alt))
@@ -72,54 +104,66 @@ namespace unicore
 		}
 #endif
 
+		const auto screen_size = renderer.screen_size();
 		auto& examples = ExampleCatalog::get_all();
+
 		if (input.keyboard().down_changed(KeyCode::BracketRight))
 			set_example((_example_index + 1) % examples.size());
 		if (input.keyboard().down_changed(KeyCode::BracketLeft))
 			set_example((_example_index + examples.size() - 1) % examples.size());
 
+		_sprite_batch.clear();
+
+		_ui_context.frame_begin();
+
+		// EXAMPLE ////////////////////////////////////////////////////////////
 		if (_example)
+		{
 			_example->update();
 
-		// SPRITE BATCH ////////////////////////////////////////////////////////////
-		const auto screen_size = renderer.screen_size();
-		const auto& example_info = examples[_example_index];
+			const auto& example_info = examples[_example_index];
 
-		const auto title_str = StringBuilder::format(U"Example: {}", example_info.title);
-		const auto fps_str = StringBuilder::format(U"FPS: {}", fps());
-		const auto draw_str = StringBuilder::format(U"Draw: {}", _draw_calls);
-		const auto screen_str = StringBuilder::format(U"Screen: {}", screen_size);
+			const auto title_str = StringBuilder::format(U"Example: {}", example_info.title);
+			const auto fps_str = StringBuilder::format(U"FPS: {}", fps());
+			const auto draw_str = StringBuilder::format(U"Draw: {}", _draw_calls);
+			const auto screen_str = StringBuilder::format(U"Screen: {}", screen_size);
 
-		_lines.clear();
-		_example->get_text(_lines);
+			_lines.clear();
+			_example->get_text(_lines);
 
-		String32 comment;
-		_example->get_comment(comment);
+			String32 comment;
+			_example->get_comment(comment);
 
-		if (_font)
-		{
-			const float height = _font->get_height();
-
-			_sprite_batch
-				.clear()
-				.print(_font, { 0, 0 }, fps_str)
-				.print(_font, { 0, height * 1 }, draw_str)
-				.print(_font, { 0, height * 2 }, screen_str);
-
-			_sprite_batch
-				.print(_font, { 250, 0 }, title_str);
-
-			for (unsigned i = 0; i < _lines.size(); i++)
+			if (_font)
 			{
+				const float height = _font->get_height();
+
 				_sprite_batch
-					.print(_font, { 250, height * (i + 1) }, _lines[i]);
+					.print(_font, { 0, 0 }, fps_str)
+					.print(_font, { 0, height * 1 }, draw_str)
+					.print(_font, { 0, height * 2 }, screen_str);
+
+				_sprite_batch
+					.print(_font, { 250, 0 }, title_str);
+
+				for (unsigned i = 0; i < _lines.size(); i++)
+				{
+					_sprite_batch
+						.print(_font, { 250, height * (i + 1) }, _lines[i]);
+				}
+
+				if (!comment.empty())
+					_sprite_batch.print(_font, { 0, screen_size.y - height }, comment);
 			}
-
-			if (!comment.empty())
-				_sprite_batch.print(_font, { 0, screen_size.y - height }, comment);
-
-			_sprite_batch.flush();
 		}
+		else if (_ui_view)
+		{
+			_ui_view->set_position((screen_size.cast<Float>() - _ui_view->size()) / 2.f);
+			_ui_view->render();
+		}
+
+		_sprite_batch.flush();
+		_ui_context.frame_end();
 	}
 
 	void MyApp::on_draw()
@@ -130,6 +174,8 @@ namespace unicore
 			_example->draw();
 
 		_sprite_batch.render(renderer);
+
+		_ui_context.render();
 
 		_draw_calls = renderer.draw_calls();
 	}
@@ -144,20 +190,29 @@ namespace unicore
 	{
 		if (_example_index == index) return;
 
-		auto& info = ExampleCatalog::get_all()[index];
-
-		auto example = info.factory({ logger, _random, time, input, renderer, platform, _font });
-		if (!example)
+		if (index >= 0)
 		{
-			UC_LOG_ERROR(logger) << "Failed to create example " << info.title << ":" << index;
-			return;
+			auto& info = ExampleCatalog::get_all()[index];
+
+			auto example = info.factory({ logger, _random, time, input, renderer, platform, _font });
+			if (!example)
+			{
+				UC_LOG_ERROR(logger) << "Failed to create example " << info.title << ":" << index;
+				return;
+			}
+
+			_example_index = index;
+			_example = std::move(example);
+			UC_LOG_INFO(logger) << "Set example " << index << ": " << info.title;
+
+			_example->load(resources);
+		}
+		else
+		{
+			_example_index = -1;
+			_example = nullptr;
 		}
 
-		_example_index = index;
-		_example = std::move(example);
-		UC_LOG_INFO(logger) << "Set example " << index << ": " << info.title;
-
-		_example->load(resources);
 		resources.unload_unused();
 		//resources.dump_used();
 	}

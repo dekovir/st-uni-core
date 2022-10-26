@@ -12,10 +12,5 @@ namespace unicore
 
 		void update() override;
 		void draw() const override;
-
-	protected:
-		ProxyLogger _imgui_logger;
-		ImGuiRender2D _imgui_render;
-		ImGuiContext _imgui;
 	};
 }
