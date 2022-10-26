@@ -125,7 +125,7 @@ namespace unicore
 		Dictionary<UINodeIndex, NodeInfo> _nodes;
 		Dictionary<String, UINodeIndex> _cached_id;
 
-		UINodeIndex _last_index;
+		UINodeIndex _last_index = UINodeIndex(0);
 
 		NodeInfo* get_info(UINodeIndex index);
 		UC_NODISCARD const NodeInfo* get_info(UINodeIndex index) const;

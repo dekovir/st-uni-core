@@ -5,6 +5,16 @@
 
 namespace unicore
 {
+	enum class UIViewImGuiFlag
+	{
+		NoTiltebar = 1 << 0,
+		NoMove = 1 << 1,
+		NoResize = 1 << 2,
+		NoCollapse = 1 << 3,
+		NoBackground = 1 << 4,
+	};
+	UNICORE_ENUM_FLAGS(UIViewImGuiFlag, UIViewImGuiFlags);
+
 	class UIViewImGui : public UIView
 	{
 	public:
@@ -19,6 +29,9 @@ namespace unicore
 		UC_NODISCARD const Vector2f& size() const { return _size; }
 		void set_size(const Vector2f& size) { _set_size = size; }
 
+		UIViewImGuiFlags& flags() { return _flags; }
+		UC_NODISCARD const UIViewImGuiFlags& flags() const { return _flags; }
+
 		void render();
 
 	protected:
@@ -28,12 +41,13 @@ namespace unicore
 
 		String32 _title = U"Title";
 		Optional<Vector2f> _set_pos, _set_size;
+
 		Vector2f _pos, _size;
+		UIViewImGuiFlags _flags = UIViewImGuiFlag::NoCollapse;
 
 		struct CachedInfo
 		{
 			String id;
-			Variant value;
 		};
 
 		Dictionary<UINodeIndex, CachedInfo> _cached;

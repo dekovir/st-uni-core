@@ -111,6 +111,11 @@ namespace unicore
 			};
 		}
 
+		static constexpr Color4 from_one(T value, T a = MaxValue)
+		{
+			return { value, value, value, a };
+		}
+
 		static constexpr Color4 from_rgb(const uint32_t rgb)
 		{
 			const uint8_t r = (rgb >> 16) & 0xFF;

@@ -173,7 +173,7 @@ namespace unicore
 
 	void MyApp::on_draw()
 	{
-		renderer.clear(ColorConst4b::Black);
+		renderer.clear(Color4b::from_one(40));
 
 		_context.render();
 	}

@@ -187,7 +187,13 @@ namespace unicore
 	// EVENTS ////////////////////////////////////////////////////////////////////
 	void UIDocument::send_event(const UIEvent& evt)
 	{
-		UIActionType action_type;
+		if (&evt.node.document() != this)
+			return;
+
+		const auto info = get_info(evt.node.index());
+		if (!info)
+			return;
+
 		switch (evt.type)
 		{
 		case UIEventType::Clicked:
@@ -200,7 +206,9 @@ namespace unicore
 			break;
 
 		case UIEventType::ValueChanged:
+			info->attributes[UIAttributeType::Value] = evt.value;
 			UC_LOG_DEBUG(_logger) << "Node " << evt.node << " value changed to " << evt.value;
+
 			if (const auto action = evt.node.get_action(UIActionType::OnChange); action.has_value())
 			{
 				if (!call_action_value(action.value(), evt.node, evt.value))

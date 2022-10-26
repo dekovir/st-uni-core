@@ -36,7 +36,23 @@ namespace unicore
 			_set_size.reset();
 		}
 
-		if (ImGui::Begin(str.c_str()))
+		ImGuiWindowFlags window_flags = 0;
+		if (_flags.has(UIViewImGuiFlag::NoTiltebar))
+			window_flags |= ImGuiWindowFlags_NoTitleBar;
+
+		if (_flags.has(UIViewImGuiFlag::NoMove))
+			window_flags |= ImGuiWindowFlags_NoMove;
+
+		if (_flags.has(UIViewImGuiFlag::NoResize))
+			window_flags |= ImGuiWindowFlags_NoResize;
+
+		if (_flags.has(UIViewImGuiFlag::NoCollapse))
+			window_flags |= ImGuiWindowFlags_NoCollapse;
+
+		if (_flags.has(UIViewImGuiFlag::NoBackground))
+			window_flags |= ImGuiWindowFlags_NoBackground;
+
+		if (ImGui::Begin(str.c_str(), nullptr, window_flags))
 		{
 			for (auto& node : _document->get_root_nodes())
 				render_node(node);
@@ -67,31 +83,19 @@ namespace unicore
 
 		CachedInfo info;
 		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index().value));
-		info.value = node.get_attribute(UIAttributeType::Value);
-
 		_cached[node.index()] = info;
 	}
 
 	void UIViewImGui::on_set_attribute(const UINode& node,
 		UIAttributeType type, const Optional<Variant>& value)
 	{
-		UC_LOG_DEBUG(_logger) << "set_attribute " << node.index();
-
-		if (type == UIAttributeType::Value)
-		{
-			if (const auto it = _cached.find(node.index()); it != _cached.end())
-			{
-				if (value.has_value())
-					it->second.value = value.value();
-				else it->second.value = Variant();
-			}
-		}
+		//UC_LOG_DEBUG(_logger) << "set_attribute " << node.index();
 	}
 
 	void UIViewImGui::on_set_action(const UINode& node,
 		UIActionType type, const Optional<UIAction>& value)
 	{
-		UC_LOG_DEBUG(_logger) << "set_action " << node.index();
+		//UC_LOG_DEBUG(_logger) << "set_action " << node.index();
 	}
 
 	Bool UIViewImGui::render_node(const UINode& node, Bool same_line)
@@ -107,6 +111,7 @@ namespace unicore
 
 		const auto type = node.type();
 		const auto& id = cached_info->id;
+		auto node_value = node.get_value();
 
 		List<UINode> children;
 		node.get_children(children);
@@ -124,7 +129,7 @@ namespace unicore
 		case UINodeType::Group:
 			render_node_header(node, same_line);
 			ImGui::BeginGroup();
-			switch (get_layout(cached_info->value))
+			switch (get_layout(node_value))
 			{
 			case UILayout::Horizontal:
 				for (unsigned i = 0; i < children.size(); i++)
@@ -149,7 +154,7 @@ namespace unicore
 			return true;
 
 		case UINodeType::Image:
-			if (const auto tex = cached_info->value.get_object_cast<Texture>(); tex != nullptr)
+			if (const auto tex = node_value.get_object_cast<Texture>(); tex != nullptr)
 			{
 				const auto size = tex->size().cast<Float>();
 				const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
@@ -160,7 +165,7 @@ namespace unicore
 				return true;
 			}
 
-			if (const auto spr = cached_info->value.get_object_cast<Sprite>(); spr != nullptr)
+			if (const auto spr = node_value.get_object_cast<Sprite>(); spr != nullptr)
 			{
 				const auto size = spr->texture()->size().cast<Float>();
 				const auto rect = spr->rect().cast<Float>();
@@ -186,7 +191,7 @@ namespace unicore
 			return true;
 
 		case UINodeType::Input:
-			str = cached_info->value.get_string();
+			str = node_value.get_string();
 			render_node_header(node, same_line);
 			if (ImGui::InputText(id.c_str(), &str))
 				_update_events.push_back({ node, UIEventType::ValueChanged, str });
@@ -199,25 +204,19 @@ namespace unicore
 			const auto value_max = node.get_attribute(UIAttributeType::MaxValue).get_float(1);
 			const auto format = node.get_attribute(UIAttributeType::Text).get_string("%.2f");
 
-			auto value = cached_info->value.get_float();
+			auto value = node_value.get_float();
 			render_node_header(node, same_line);
 			if (ImGui::SliderFloat(id.c_str(), &value, value_min, value_max, format.c_str()))
-			{
-				cached_info->value = value;
 				_update_events.push_back({ node, UIEventType::ValueChanged, value });
-			}
 			render_node_footer(node);
 		}
 		return true;
 
 		case UINodeType::Toggle:
-			bool_value = cached_info->value.get_bool();
+			bool_value = node_value.get_bool();
 			render_node_header(node, same_line);
 			if (ImGui::Checkbox(id.c_str(), &bool_value))
-			{
-				cached_info->value = bool_value;
 				_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
-			}
 			render_node_footer(node);
 			return true;
 
@@ -237,15 +236,12 @@ namespace unicore
 			return false;
 
 		case UINodeType::Item:
-			bool_value = cached_info->value.get_bool();
+			bool_value = node_value.get_bool();
 			str = node.get_attribute(UIAttributeType::Text).get_string();
 
 			render_node_header(node, same_line);
 			if (ImGui::Selectable(str.c_str(), bool_value))
-			{
-				cached_info->value = bool_value;
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
-			}
 			render_node_footer(node);
 			break;
 		}
