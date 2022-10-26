@@ -7,9 +7,12 @@
 
 namespace unicore
 {
+	static unsigned s_last_id = 0;
+
 	UIViewImGui::UIViewImGui(ImGuiContext& context, Logger& logger)
 		: _logger(logger)
 		, _context(context)
+		, _id(s_last_id)
 	{
 	}
 
@@ -19,8 +22,29 @@ namespace unicore
 
 		_update_events.clear();
 
-		for (auto& node : _document->get_root_nodes())
-			render_node(node);
+		const auto str = StringBuilder::format("{}##{}", _title, _id);
+
+		if (_set_pos.has_value())
+		{
+			ImGui::SetNextWindowPos(ImGuiConvert::convert(_set_pos.value()));
+			_set_pos.reset();
+		}
+
+		if (_set_size.has_value())
+		{
+			ImGui::SetNextWindowSize(ImGuiConvert::convert(_set_size.value()));
+			_set_size.reset();
+		}
+
+		if (ImGui::Begin(str.c_str()))
+		{
+			for (auto& node : _document->get_root_nodes())
+				render_node(node);
+
+			_pos = ImGuiConvert::convert(ImGui::GetWindowPos());
+			_size = ImGuiConvert::convert(ImGui::GetWindowSize());
+		}
+		ImGui::End();
 
 		for (const auto& evt : _update_events)
 			_document->send_event(evt);
@@ -87,6 +111,9 @@ namespace unicore
 		List<UINode> children;
 		node.get_children(children);
 
+		const auto width = node.get_attribute(UIAttributeType::Width).get_float();
+		const auto height = node.get_attribute(UIAttributeType::Height).get_float();
+
 		Bool bool_value;
 
 		String str;
@@ -94,20 +121,6 @@ namespace unicore
 
 		switch (type)
 		{
-		case UINodeType::None: return false;
-
-		case UINodeType::Window:
-			//bool_value = cached_info->value.get_bool();
-			str = node.get_attribute(UIAttributeType::Text).get_string();
-
-			if (ImGui::Begin(str.c_str()))
-			{
-				for (const auto& child : children)
-					render_node(child);
-			}
-			ImGui::End();
-			return true;
-
 		case UINodeType::Group:
 			render_node_header(node, same_line);
 			ImGui::BeginGroup();
@@ -139,8 +152,10 @@ namespace unicore
 			if (const auto tex = cached_info->value.get_object_cast<Texture>(); tex != nullptr)
 			{
 				const auto size = tex->size().cast<Float>();
+				const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
+
 				render_node_header(node, same_line);
-				ImGui::Image(tex.get(), { size.x, size.y });
+				ImGui::Image(tex.get(), s);
 				render_node_footer(node);
 				return true;
 			}
@@ -150,12 +165,12 @@ namespace unicore
 				const auto size = spr->texture()->size().cast<Float>();
 				const auto rect = spr->rect().cast<Float>();
 
-				render_node_header(node, same_line);
-
 				const ImVec2 uv0{ rect.x / size.x, rect.y / size.y };
 				const ImVec2 uv1{ uv0.x + rect.w / size.x, uv0.y + rect.h / size.y };
+				const ImVec2 s = { width > 0 ? width : rect.w, height > 0 ? height : rect.h };
 
-				ImGui::Image(spr->texture().get(), { rect.w, rect.h }, uv0, uv1);
+				render_node_header(node, same_line);
+				ImGui::Image(spr->texture().get(), s, uv0, uv1);
 				render_node_footer(node);
 				return true;
 			}
@@ -165,7 +180,7 @@ namespace unicore
 			str = node.get_attribute(UIAttributeType::Text).get_string();
 
 			render_node_header(node, same_line);
-			if (ImGui::Button(str.c_str()))
+			if (ImGui::Button(str.c_str(), { width, height }))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
 			render_node_footer(node);
 			return true;

@@ -33,7 +33,8 @@ namespace unicore
 
 	UINodeType UINode::type() const
 	{
-		return _document.get_node_type(_index);
+		const auto value = _document.get_node_type(_index);
+		return value.has_value() ? value.value() : UINodeType::Group;
 	}
 
 	Optional<UINode> UINode::parent() const

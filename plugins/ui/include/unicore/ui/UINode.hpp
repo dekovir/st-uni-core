@@ -9,9 +9,12 @@ namespace unicore
 	using UINodeIndex = Index<UInt32, UINodeIndexTag>;
 	static constexpr auto UINodeIndexInvalid = UINodeIndex(std::numeric_limits<UInt32>::max());
 
+	// ATTRIBUTES
 	enum class UIAttributeType
 	{
 		Value,
+		Width,
+		Height,
 		Tooltip,
 		//Style,
 		Text,
@@ -26,10 +29,10 @@ namespace unicore
 		Horizontal,
 	};
 
-	class UINode;
-
 	using UIAttributeDict = Dictionary<UIAttributeType, Variant>;
 
+	// ACTIONS
+	class UINode;
 	using UIActionDefault = std::function<void()>;
 	using UIActionNodeDefault = std::function<void(const UINode&)>;
 
@@ -46,10 +49,9 @@ namespace unicore
 	};
 	using UIActionDict = Dictionary<UIActionType, UIAction>;
 
+	// NODE
 	enum class UINodeType
 	{
-		None,
-		Window,
 		Group,
 		Text,
 		Image,

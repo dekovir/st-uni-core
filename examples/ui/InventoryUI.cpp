@@ -5,17 +5,17 @@
 namespace unicore
 {
 	static const auto xml = R"(
-	<window>Inventory
+	<group>
 		<text>Items</text>
 		<group name="item_group">
 		</group>
 		<group name="item_template" value="2" visible="0">
 			<image name="icon" />
-			<text name="name">Name</text>
+			<item name="name">Name</item>
 			<text name="type">Type</text>
 			<text name="price">0</text>
 		</group>
-	</window>
+	</group>
 	)";
 
 	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger)

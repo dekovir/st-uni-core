@@ -20,9 +20,13 @@ namespace unicore
 
 		Shared<SpriteList> _item_sprites;
 
+		Shared<UIDocument> _test_doc;
+		Shared<UIViewImGui> _test_view;
+		UINodeIndex _test_position_id;
+
 		Shared<Inventory> _inventory;
-		Shared<UIDocument> _document;
-		Shared<UIViewImGui> _view;
+		Shared<UIDocument> _inventory_doc;
+		Shared<UIViewImGui> _inventory_view;
 		Shared<InventoryUI> _inventory_ui;
 
 		void on_init() override;

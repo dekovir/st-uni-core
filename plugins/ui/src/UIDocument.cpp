@@ -342,10 +342,11 @@ namespace unicore
 		return false;
 	}
 
-	UINodeType UIDocument::get_node_type(UINodeIndex index) const
+	Optional<UINodeType> UIDocument::get_node_type(UINodeIndex index) const
 	{
-		const auto info = get_info(index);
-		return info ? info->type : UINodeType::None;
+		if (const auto info = get_info(index))
+			return info->type;
+		return std::nullopt;
 	}
 
 	// HIERARCHY /////////////////////////////////////////////////////////////////

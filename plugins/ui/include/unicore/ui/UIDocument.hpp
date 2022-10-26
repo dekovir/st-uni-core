@@ -77,7 +77,7 @@ namespace unicore
 		UC_NODISCARD Bool get_node_visible(UINodeIndex index) const;
 		Bool set_node_visible(UINodeIndex index, Bool value);
 
-		UC_NODISCARD UINodeType get_node_type(UINodeIndex index) const;
+		UC_NODISCARD Optional<UINodeType> get_node_type(UINodeIndex index) const;
 
 		// HIERARCHY /////////////////////////////////////////////////////////////////
 		UC_NODISCARD UINodeIndex get_node_parent(UINodeIndex index) const;

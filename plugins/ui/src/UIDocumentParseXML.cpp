@@ -6,7 +6,6 @@ namespace unicore
 {
 	static const Dictionary<StringView, UINodeType> s_tag_type =
 	{
-		{"window", UINodeType::Window},
 		{"group", UINodeType::Group},
 		{"text", UINodeType::Text},
 		{"image", UINodeType::Image},
@@ -21,12 +20,14 @@ namespace unicore
 	static const Dictionary<StringView, UIAttributeType> s_attr_name =
 	{
 		{"value", UIAttributeType::Value},
+		{"width", UIAttributeType::Width},
+		{"height", UIAttributeType::Height},
 		{"tooltip", UIAttributeType::Tooltip},
 		{"min", UIAttributeType::MinValue},
 		{"max", UIAttributeType::MaxValue},
 	};
 
-	static UINodeType parse_tag(StringView tag)
+	static Optional<UINodeType> parse_tag(StringView tag)
 	{
 		for (const auto& it : s_tag_type)
 		{
@@ -34,7 +35,7 @@ namespace unicore
 				return it.second;
 		}
 
-		return UINodeType::None;
+		return std::nullopt;
 	}
 
 	static Variant parse_value(const char* str)
@@ -57,8 +58,11 @@ namespace unicore
 		const auto tag = StringView(node->Value());
 		const auto node_type = parse_tag(tag);
 
-		if (node_type == UINodeType::None)
+		if (!node_type.has_value())
+		{
 			UC_LOG_WARNING(logger) << "Failed to parse '" << tag << "' tag at line " << node->GetLineNum();
+			return;
+		}
 
 		// Fill options
 		UINodeOptions options;
@@ -80,7 +84,7 @@ namespace unicore
 				options.attributes[type] = parse_value(t);
 		}
 
-		const auto index = doc.create_node(node_type, parent, options);
+		const auto index = doc.create_node(node_type.value(), parent, options);
 		for (auto child = node->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
 			parse_node_recurse(child, doc, index, logger);
 	}
