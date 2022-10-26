@@ -31,6 +31,10 @@
 #include "unicore/xml/XMLPlugin.hpp"
 #endif
 
+#if defined(UNICORE_USE_UI)
+#include "unicore/ui/UIPlugin.hpp"
+#endif
+
 namespace unicore
 {
 	void init_plugins(Application& app)
@@ -65,6 +69,10 @@ namespace unicore
 
 #if defined(UNICORE_USE_XML)
 		app.create_plugin<XMLPlugin>();
+#endif
+
+#if defined(UNICORE_USE_UI)
+		app.create_plugin<UIPlugin>();
 #endif
 	}
 }

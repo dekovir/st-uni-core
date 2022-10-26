@@ -8,7 +8,7 @@ option(UNICORE_TESTBED "Add Testbed project" ${UNICORE_EXAMPLES_ALL})
 # EXAMPLE_MINIMAL ##############################################################
 if (UNICORE_EXAMPLE_MINIMAL)
 	set(EXAMPLE_MINIMAL_DIR "${EXAMPLES_DIR}/minimal")
-	file(GLOB EXAMPLE_MINIMAL_SRC "${EXAMPLE_MINIMAL_DIR}/*.cpp" "${EXAMPLE_MINIMAL_DIR}/*.hpp")
+	file(GLOB EXAMPLE_MINIMAL_SRC "${EXAMPLE_MINIMAL_DIR}/*")
 
 	add_executable(minimal "${EXAMPLE_MINIMAL_SRC}")
 	unicore_init_executable(minimal)
@@ -18,7 +18,7 @@ endif()
 # EXAMPLE_UI ###################################################################
 if (UNICORE_EXAMPLE_UI)
 	set(EXAMPLE_UI_DIR "${EXAMPLES_DIR}/ui")
-	file(GLOB EXAMPLE_UI_SRC "${EXAMPLE_UI_DIR}/*.cpp" "${EXAMPLE_UI_DIR}/*.hpp")
+	file(GLOB EXAMPLE_UI_SRC "${EXAMPLE_UI_DIR}/*")
 
 	add_executable(ui "${EXAMPLE_UI_SRC}")
 	unicore_init_executable(ui)
@@ -37,7 +37,7 @@ endif()
 # EXAMPLE_WASM #################################################################
 if (UNICORE_EXAMPLE_WASM)
 	set(EXAMPLE_WASM_DIR "${EXAMPLES_DIR}/wasm")
-	file(GLOB EXAMPLE_WASM_SRC "${EXAMPLE_WASM_DIR}/*.cpp" "${EXAMPLE_WASM_DIR}/*.hpp")
+	file(GLOB EXAMPLE_WASM_SRC "${EXAMPLE_WASM_DIR}/*")
 
 	add_executable(wasm "${EXAMPLE_WASM_SRC}")
 	unicore_init_executable(wasm)
@@ -53,7 +53,7 @@ endif()
 # TESTBED ######################################################################
 if (UNICORE_TESTBED)
 	set(TESTBED_DIR "${EXAMPLES_DIR}/testbed")
-	file(GLOB TESTBED_SRC "${TESTBED_DIR}/*.cpp" "${TESTBED_DIR}/*.hpp")
+	file(GLOB TESTBED_SRC "${TESTBED_DIR}/*")
 
 	add_executable(testbed "${TESTBED_SRC}")
 	unicore_init_executable(testbed)

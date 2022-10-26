@@ -1,9 +1,13 @@
 #pragma once
+#include "unicore/system/Index.hpp"
 #include "unicore/system/Event.hpp"
 #include "unicore/renderer/Sprite.hpp"
 
 namespace unicore
 {
+	struct ItemId_Tag {};
+	using ItemId = Index<UInt16, ItemId_Tag>;
+
 	enum class ItemType
 	{
 		Weapon,
@@ -14,13 +18,14 @@ namespace unicore
 
 	struct Item
 	{
+		//ItemId id;
 		String32 title;
 		ItemType type;
 		Int16 price;
 		Shared<Sprite> sprite;
 	};
 
-	class Inventory // Model
+	class Inventory
 	{
 		UC_OBJECT_EVENT(money_change, unsigned);
 		UC_OBJECT_EVENT(add_item, unsigned, const Item&);

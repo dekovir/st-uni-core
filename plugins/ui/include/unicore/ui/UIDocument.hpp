@@ -1,4 +1,5 @@
 #pragma once
+#include "unicore/resource/Resource.hpp"
 #include "unicore/ui/UINode.hpp"
 #include "unicore/system/Event.hpp"
 
@@ -17,7 +18,7 @@ namespace unicore
 		Variant value;
 	};
 
-	class UIDocument
+	class UIDocument : public Resource
 	{
 		UC_OBJECT_EVENT(create_node, const UINode&);
 		UC_OBJECT_EVENT(remove_node, const UINodeIndex&);
@@ -28,6 +29,8 @@ namespace unicore
 		UC_OBJECT_EVENT(set_action, const UINode&, UIActionType, const Optional<UIAction>&);
 	public:
 		explicit UIDocument(Logger* logger = nullptr);
+
+		UC_NODISCARD size_t get_system_memory_use() const override { return 0; }
 
 		Size get_root_nodes(List<UINode>& nodes);
 		UC_NODISCARD List<UINode> get_root_nodes();

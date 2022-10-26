@@ -1,7 +1,11 @@
 #pragma once
-#include "unicore/system/Event.hpp"
-#include "unicore/math/Rect.hpp"
+#include "unicore/platform/Plugin.hpp"
 
 namespace unicore
 {
+	class UIPlugin : public Plugin
+	{
+	public:
+		void register_plugin(const ModuleContext& context) override;
+	};
 }
