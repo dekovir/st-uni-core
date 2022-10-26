@@ -27,7 +27,7 @@ namespace unicore
 
 	class Inventory
 	{
-		UC_OBJECT_EVENT(money_change, unsigned);
+		UC_OBJECT_EVENT(money_change, UInt16);
 		UC_OBJECT_EVENT(add_item, unsigned, const Item&);
 		UC_OBJECT_EVENT(remove_item, unsigned, const Item&);
 	public:
@@ -39,7 +39,7 @@ namespace unicore
 		void inc_money(UInt16 amount);
 		Bool dec_money(UInt16 amount);
 
-		UC_NODISCARD auto size() const { return _slots.size(); }
+		UC_NODISCARD auto item_count() const { return _slots.size(); }
 
 		bool add_item(const Item& item, unsigned* index = nullptr);
 

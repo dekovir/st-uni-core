@@ -63,7 +63,7 @@ namespace unicore
 		if (group_id != UINodeIndexInvalid && add_id != UINodeIndexInvalid)
 		{
 			_test_doc->set_node_action(add_id, UIActionType::OnClick,
-				[this, group_id]()
+				[this, group_id]
 				{
 					static int index = 1;
 					const auto text = StringBuilder::format("Item {}", index++);
@@ -121,7 +121,7 @@ namespace unicore
 			_inventory->add_item({ U"Crossbow", ItemType::Weapon, 500, _item_sprites->get(48) });
 			_inventory->add_item({ U"Spear", ItemType::Weapon, 150, _item_sprites->get(50) });
 
-			_inventory->add_item({ U"Cloack", ItemType::Armor, 100, _item_sprites->get(52) });
+			_inventory->add_item({ U"Cloak", ItemType::Armor, 100, _item_sprites->get(52) });
 		}
 		else
 		{
