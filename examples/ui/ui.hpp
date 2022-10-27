@@ -22,7 +22,7 @@ namespace unicore
 
 		Shared<UIDocument> _test_doc;
 		Shared<UIViewImGui> _test_view;
-		UINodeIndex _test_position_id;
+		Optional<UINode> _test_position_id;
 
 		Shared<Inventory> _inventory;
 		Shared<UIDocument> _inventory_doc;

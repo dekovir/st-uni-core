@@ -24,14 +24,14 @@ namespace unicore
 		, _document(document)
 		, _logger(logger)
 	{
-		UIDocumentParseXML::parse(xml, _document, UINodeIndexInvalid, _logger);
+		UIDocumentParseXML::parse(xml, _document, std::nullopt, _logger);
 
 		_inventory.on_add_item() += [&](auto index, auto& item) { on_add_item(index, item); };
 		_inventory.on_remove_item() += [&](auto index, auto& item) { on_remove_item(index, item); };
 
-		_money_text = _document.find_node_by_name_recurse("money");
-		_items_group = _document.find_node_by_name_recurse("item_group");
-		_items_template = _document.find_node_by_name_recurse("item_template");
+		_money_text = _document.find_by_name("money");
+		_items_group = _document.find_by_name("item_group");
+		_items_template = _document.find_by_name("item_template");
 
 		if (!_items_group) UC_LOG_ERROR(_logger) << "Group not found";
 		if (!_items_template) UC_LOG_ERROR(_logger) << "Item template not found";
@@ -51,9 +51,8 @@ namespace unicore
 
 		UC_LOG_DEBUG(_logger) << "Item " << item.title << " added";
 
-		auto item_node = _items_template.value()
-			.duplicate_at(_items_group.value().index());
-		apply_item(item_node, item);
+		if (const auto item_node = _document.duplicate(_items_template.value(), _items_group.value()); item_node.has_value())
+			apply_item(item_node.value(), item);
 	}
 
 	void InventoryUI::on_remove_item(unsigned index, const Item& item)
@@ -67,25 +66,25 @@ namespace unicore
 		if (_money_text.has_value())
 		{
 			const auto text = StringBuilder::format("Money: {}", value);
-			_money_text.value().set_attribute(UIAttributeType::Text, text);
+			_document.set_node_attribute(_money_text.value(), UIAttributeType::Text, text);
 		}
 	}
 
-	void InventoryUI::apply_item(UINode& node, const Item& item)
+	void InventoryUI::apply_item(const UINode& node, const Item& item)
 	{
-		node.set_visible(true);
+		_document.set_node_visible(node, true);
 
-		if (auto find = node.find_child_by_name_recurse("name"); find.has_value())
-			find.value().set_attribute(UIAttributeType::Text, item.title);
+		if (const auto find = node.find_by_name("name"); find.valid())
+			_document.set_node_attribute(find, UIAttributeType::Text, item.title);
 
-		if (auto find = node.find_child_by_name_recurse("icon"); find.has_value())
-			find.value().set_attribute(UIAttributeType::Value, item.sprite);
+		if (const auto find = node.find_by_name("icon"); find.valid())
+			_document.set_node_attribute(find, UIAttributeType::Value, item.sprite);
 
-		if (auto find = node.find_child_by_name_recurse("type"); find.has_value())
-			find.value().set_attribute(UIAttributeType::Text, type_to_string(item.type));
+		if (const auto find = node.find_by_name("type"); find.valid())
+			_document.set_node_attribute(find, UIAttributeType::Text, type_to_string(item.type));
 
-		if (auto find = node.find_child_by_name_recurse("price"); find.has_value())
-			find.value().set_attribute(UIAttributeType::Text, item.price);
+		if (const auto find = node.find_by_name("price"); find.valid())
+			_document.set_node_attribute(find, UIAttributeType::Text, item.price);
 	}
 
 	StringView InventoryUI::type_to_string(ItemType type)

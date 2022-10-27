@@ -21,7 +21,7 @@ namespace unicore
 	class UIDocument : public Resource
 	{
 		UC_OBJECT_EVENT(create_node, const UINode&);
-		UC_OBJECT_EVENT(remove_node, const UINodeIndex&);
+		UC_OBJECT_EVENT(remove_node, const UINode&);
 
 		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_visible, const UINode&, Bool);
@@ -32,80 +32,72 @@ namespace unicore
 
 		UC_NODISCARD size_t get_system_memory_use() const override { return 0; }
 
-		Size get_root_nodes(List<UINode>& nodes);
-		UC_NODISCARD List<UINode> get_root_nodes();
+		Size get_roots(List<UINode>& list) const;
+		UC_NODISCARD List<UINode> get_roots() const;
 
 		// FIND //////////////////////////////////////////////////////////////////////
-		UC_NODISCARD UINodeIndex find_index_by_id(StringView id) const;
-		UC_NODISCARD Optional<UINode> find_node_by_id(StringView id);
+		UC_NODISCARD Optional<UINode> find_by_id(StringView id,
+			const Optional<UINode>& parent = std::nullopt) const;
 
-		Size find_indexes_by_name(StringView name,
-			List<UINodeIndex>& list, UINodeIndex parent = UINodeIndexInvalid) const;
-		Size find_nodes_by_name(StringView name,
-			List<UINode>& list, UINodeIndex parent = UINodeIndexInvalid);
+		UC_NODISCARD Optional<UINode> find_by_type(UINodeType type,
+			const Optional<UINode>& parent = std::nullopt) const;
+		Size find_all_by_type(UINodeType type, List<UINode>& list,
+			const Optional<UINode>& parent = std::nullopt) const;
 
-		Size find_indexes_by_name_recurse(StringView name,
-			List<UINodeIndex>& list, UINodeIndex parent) const;
-		Size find_nodes_by_name_recurse(StringView name,
-			List<UINode>& list, UINodeIndex parent = UINodeIndexInvalid);
-
-		UC_NODISCARD UINodeIndex find_index_by_name(
-			StringView name, UINodeIndex parent = UINodeIndexInvalid) const;
-		Optional<UINode> find_node_by_name(StringView name, UINodeIndex parent = UINodeIndexInvalid);
-
-		UC_NODISCARD UINodeIndex find_index_by_name_recurse(
-			StringView name, UINodeIndex parent = UINodeIndexInvalid) const;
-		Optional<UINode> find_node_by_name_recurse(StringView name, UINodeIndex parent = UINodeIndexInvalid);
+		UC_NODISCARD Optional<UINode> find_by_name(StringView name,
+			const Optional<UINode>& parent = std::nullopt) const;
+		Size find_all_by_name(StringView name, List<UINode>& list,
+			const Optional<UINode>& parent = std::nullopt) const;
 
 		// EVENTS ////////////////////////////////////////////////////////////////////
 		void send_event(const UIEvent& evt);
 
 		// CREATE ////////////////////////////////////////////////////////////////////
-		UINodeIndex create_node(UINodeType type, UINodeIndex parent,
-			const UINodeOptions& options);
+		Optional<UINode> create_node(UINodeType type, const UINodeOptions& options,
+			const Optional<UINode>& parent = std::nullopt);
 
-		UINodeIndex duplicate_node(UINodeIndex index);
-		UINodeIndex duplicate_node_at(UINodeIndex index, UINodeIndex parent = UINodeIndexInvalid);
+		Optional<UINode> duplicate(const UINode& node,
+			const Optional<UINode>& at_parent = std::nullopt);
 
-		Size remove_node(UINodeIndex index);
+		Bool remove_node(const UINode& node);
 
 		// VALUES ////////////////////////////////////////////////////////////////////
-		UC_NODISCARD Bool is_node_valid(UINodeIndex index) const;
+		UC_NODISCARD Bool is_node_valid(const UINode& node) const;
 
-		UC_NODISCARD const String& get_node_uid(UINodeIndex index) const;
+		UC_NODISCARD const String& get_node_uid(const UINode& node) const;
 
-		UC_NODISCARD const String& get_node_name(UINodeIndex index) const;
-		Bool set_node_name(UINodeIndex index, StringView name);
+		UC_NODISCARD const String& get_node_name(const UINode& node) const;
+		Bool set_node_name(const UINode& node, StringView name);
 
-		UC_NODISCARD Bool get_node_visible(UINodeIndex index) const;
-		Bool set_node_visible(UINodeIndex index, Bool value);
+		UC_NODISCARD Bool get_node_visible(const UINode& node) const;
+		Bool set_node_visible(const UINode& node, Bool value);
 
-		UC_NODISCARD Optional<UINodeType> get_node_type(UINodeIndex index) const;
+		UC_NODISCARD Optional<UINodeType> get_node_type(const UINode& node) const;
 
 		// HIERARCHY /////////////////////////////////////////////////////////////////
-		UC_NODISCARD UINodeIndex get_node_parent(UINodeIndex index) const;
+		UC_NODISCARD Optional<UINode> get_node_parent(const UINode& node) const;
 
-		UC_NODISCARD const List<UINodeIndex>& get_node_children(UINodeIndex index) const;
-		UC_NODISCARD Size get_node_children(UINodeIndex index, List<UINodeIndex>& list) const;
+		Size get_node_children(List<UINode>& list, const Optional<UINode>& parent) const;
+		UC_NODISCARD List<UINode> get_node_children(const Optional<UINode>& parent) const;
 
-		UC_NODISCARD UINodeIndex get_node_next_sibling(UINodeIndex index) const;
-		UC_NODISCARD UINodeIndex get_node_prev_sibling(UINodeIndex index) const;
+		UC_NODISCARD Optional<UINode> get_node_next_sibling(const Optional<UINode>& node) const;
+		UC_NODISCARD Optional<UINode> get_node_prev_sibling(const Optional<UINode>& node) const;
 
 		// ATTRIBUTES ////////////////////////////////////////////////////////////////
-		void set_node_attribute(UINodeIndex index,
+		void set_node_attribute(const UINode& node,
 			UIAttributeType type, const Optional<Variant>& value);
 
 		UC_NODISCARD Optional<Variant> get_node_attribute(
-			UINodeIndex index, UIAttributeType type) const;
+			const UINode& node, UIAttributeType type) const;
 
-		UC_NODISCARD const UIAttributeDict& get_node_attributes(UINodeIndex index) const;
-		UC_NODISCARD Size get_node_attributes(UINodeIndex index, UIAttributeDict& dict) const;
+		UC_NODISCARD const UIAttributeDict& get_node_attributes(const UINode& node) const;
+		UC_NODISCARD Size get_node_attributes(const UINode& node, UIAttributeDict& dict) const;
 
 		// ACTIONS ///////////////////////////////////////////////////////////////////
-		void set_node_action(UINodeIndex index, UIActionType type, const Optional<UIAction>& action);
+		void set_node_action(const UINode& node, UIActionType type, const Optional<UIAction>& action);
 
-		UC_NODISCARD const UIActionDict& get_node_actions(UINodeIndex index) const;
-		UC_NODISCARD Size get_node_actions(UINodeIndex index, UIActionDict& dict) const;
+		UC_NODISCARD const UIActionDict& get_node_actions(const UINode& node) const;
+		UC_NODISCARD Size get_node_actions(const UINode& node, UIActionDict& dict) const;
 
 	protected:
 		struct NodeInfo
@@ -114,27 +106,35 @@ namespace unicore
 			String uid;
 			String name;
 			Bool visible;
-			UINodeIndex parent;
-			List<UINodeIndex> children;
+			UINode::IndexType parent;
+			List<UINode::IndexType> children;
 			UIAttributeDict attributes;
 			UIActionDict actions;
 		};
 
 		Logger* _logger;
-		List<UINodeIndex> _roots;
-		Dictionary<UINodeIndex, NodeInfo> _nodes;
-		Dictionary<String, UINodeIndex> _cached_id;
+		List<UINode::IndexType> _roots;
+		Dictionary<UINode::IndexType, NodeInfo> _nodes;
+		Dictionary<String, UINode::IndexType> _cached_id;
 
-		UINodeIndex _last_index = UINodeIndex(0);
+		UINode::IndexType _last_index = 0;
 
-		NodeInfo* get_info(UINodeIndex index);
-		UC_NODISCARD const NodeInfo* get_info(UINodeIndex index) const;
+		NodeInfo* get_info(UINode::IndexType index);
+		UC_NODISCARD const NodeInfo* get_info(UINode::IndexType index) const;
 
-		UINodeIndex create_index();
-		UINode node_from_index(UINodeIndex index);
+		NodeInfo* get_info(const UINode& node);
+		UC_NODISCARD const NodeInfo* get_info(const UINode& node) const;
 
-		UINodeIndex internal_duplicate_recurse(UINodeIndex index, UINodeIndex parent);
-		void internal_remove_node_recurse(UINodeIndex index, Size& count);
+		UINode::IndexType create_index();
+		UC_NODISCARD UINode node_from_index(UINode::IndexType index) const;
+
+		void internal_find_all_by_type(UINode::IndexType index,
+			UINodeType type, List<UINode>& list, Size& count) const;
+		void internal_find_all_by_name(UINode::IndexType index,
+			StringView name, List<UINode>& list, Size& count) const;
+
+		Optional<UINode> internal_duplicate_recurse(const UINode& node, const Optional<UINode>& parent);
+		void internal_remove_node_recurse(UINode::IndexType index, Size& count);
 
 		static bool call_action_default(const UIAction& action, const UINode& node);
 		static bool call_action_value(const UIAction& action, const UINode& node, const Variant& value);

@@ -50,7 +50,7 @@ namespace unicore
 			String id;
 		};
 
-		Dictionary<UINodeIndex, CachedInfo> _cached;
+		Dictionary<UINode::IndexType, CachedInfo> _cached;
 
 		void on_rebuild() override;
 
@@ -67,7 +67,7 @@ namespace unicore
 		void render_node_header(const UINode& node, Bool same_line = false);
 		void render_node_footer(const UINode& node);
 
-		UC_NODISCARD CachedInfo* get_info(UINodeIndex index);
+		UC_NODISCARD CachedInfo* get_info(UINode::IndexType index);
 
 	private:
 		unsigned _id;

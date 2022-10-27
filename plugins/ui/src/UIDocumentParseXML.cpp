@@ -53,7 +53,8 @@ namespace unicore
 		return str;
 	}
 
-	static void parse_node_recurse(const tinyxml2::XMLElement* node, UIDocument& doc, UINodeIndex parent, Logger* logger)
+	static void parse_node_recurse(const tinyxml2::XMLElement* node,
+		UIDocument& doc, const Optional<UINode>& parent, Logger* logger)
 	{
 		const auto tag = StringView(node->Value());
 		const auto node_type = parse_tag(tag);
@@ -84,13 +85,13 @@ namespace unicore
 				options.attributes[type] = parse_value(t);
 		}
 
-		const auto index = doc.create_node(node_type.value(), parent, options);
+		const auto index = doc.create_node(node_type.value(), options, parent);
 		for (auto child = node->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
 			parse_node_recurse(child, doc, index, logger);
 	}
 
 	Bool UIDocumentParseXML::parse(StringView xml,
-		UIDocument& document, UINodeIndex parent, Logger* logger)
+		UIDocument& document, const Optional<UINode>& parent, Logger* logger)
 	{
 		XMLData data;
 		if (!data.parse(xml, logger))
@@ -100,7 +101,7 @@ namespace unicore
 	}
 
 	Bool UIDocumentParseXML::parse(const XMLData& data,
-		UIDocument& document, UINodeIndex parent, Logger* logger)
+		UIDocument& document, const Optional<UINode>& parent, Logger* logger)
 	{
 		const auto root = data.doc.RootElement();
 		if (!root) return false;

@@ -55,28 +55,31 @@ namespace unicore
 		_ui_view->flags().set(UIViewImGuiFlag::NoMove);
 		_ui_view->flags().set(UIViewImGuiFlag::NoResize);
 
-		if (UIDocumentParseXML::parse(xml, *_ui_document, UINodeIndexInvalid, &_ui_logger))
+		if (UIDocumentParseXML::parse(xml, *_ui_document, std::nullopt, &_ui_logger))
 		{
-			auto group_node = _ui_document->find_node_by_id("group");
-			auto template_node = _ui_document->find_node_by_id("template");
+			const auto group_node = _ui_document->find_by_id("group");
+			const auto template_node = _ui_document->find_by_id("template");
 			if (group_node.has_value() && template_node.has_value())
 			{
 				const auto& example_infos = ExampleCatalog::get_all();
 				for (unsigned i = 0; i < example_infos.size(); i++)
 				{
-					auto node = template_node->duplicate();
-
-					node.set_visible(true);
-
-					auto& info = example_infos[i];
-
-					const auto index = i;
-
-					if (auto find = node.find_child_by_name_recurse("name"); find.has_value())
+					const auto dup_result = _ui_document->duplicate(template_node.value(), group_node.value());
+					if (dup_result.has_value())
 					{
-						find->set_attribute(UIAttributeType::Text, info.title);
-						find->set_action(UIActionType::OnClick,
-							[this, index] { set_example(index); });
+						const auto& node = dup_result.value();
+						_ui_document->set_node_visible(node, true);
+
+						auto& info = example_infos[i];
+
+						const auto index = i;
+
+						if (auto find = node.find_by_name("name"); find.valid())
+						{
+							_ui_document->set_node_attribute(find, UIAttributeType::Text, info.title);
+							_ui_document->set_node_action(find, UIActionType::OnClick,
+								[this, index] { set_example(index); });
+						}
 					}
 				}
 			}

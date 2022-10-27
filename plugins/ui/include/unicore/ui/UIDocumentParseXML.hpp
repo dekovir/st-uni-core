@@ -9,10 +9,10 @@ namespace unicore
 	{
 	public:
 		static Bool parse(StringView xml, UIDocument& document,
-			UINodeIndex parent = UINodeIndexInvalid, Logger* logger = nullptr);
+			const Optional<UINode>& parent = std::nullopt, Logger* logger = nullptr);
 
 		static Bool parse(const XMLData& data, UIDocument& document,
-			UINodeIndex parent = UINodeIndexInvalid, Logger* logger = nullptr);
+			const Optional<UINode>& parent = std::nullopt, Logger* logger = nullptr);
 	};
 }
 #endif

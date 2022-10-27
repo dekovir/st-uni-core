@@ -1,14 +1,9 @@
 #pragma once
 #include "UINode.hpp"
-#include "unicore/system/Index.hpp"
 #include "unicore/system/Variant.hpp"
 
 namespace unicore
 {
-	struct UINodeIndexTag {};
-	using UINodeIndex = Index<UInt32, UINodeIndexTag>;
-	static constexpr auto UINodeIndexInvalid = UINodeIndex(std::numeric_limits<UInt32>::max());
-
 	// ATTRIBUTES
 	enum class UIAttributeType
 	{
@@ -77,41 +72,33 @@ namespace unicore
 	class UINode
 	{
 	public:
-		UINode(UIDocument& document, const UINodeIndex& index);
+		using IndexType = UInt16;
+		static constexpr IndexType InvalidIndex = std::numeric_limits<IndexType>::max();
+
+		UINode();
+		UINode(const UIDocument* document, IndexType index);
 		~UINode() = default;
 
-		UINode(UINode const& other) noexcept = default;
-		UINode(UINode&& other) = default;
+		UC_TYPE_DEFAULT_MOVE_COPY(UINode);
 
-		UINode& operator= (UINode const& other) noexcept;
-
-		UINode& operator= (UINode&& other) noexcept;
-
-		UC_NODISCARD UIDocument& document() const { return _document; }
-		UC_NODISCARD UINodeIndex index() const { return _index; }
+		UC_NODISCARD auto document() const { return _document; }
+		UC_NODISCARD auto index() const { return _index; }
 
 		UC_NODISCARD Bool valid() const;
 		UC_NODISCARD UINodeType type() const;
 		UC_NODISCARD Optional<UINode> parent() const;
 
 		UC_NODISCARD const String& uid() const;
-
 		UC_NODISCARD const String& name() const;
-		void set_name(StringView name);
-
 		UC_NODISCARD Bool visible() const;
-		void set_visible(Bool value);
 
 		UC_NODISCARD const UIAttributeDict& attributes() const;
 		UC_NODISCARD const UIActionDict& actions() const;
 
-		void set_attribute(UIAttributeType type, const Optional<Variant>& value);
 		UC_NODISCARD Variant get_attribute(UIAttributeType type) const;
 
 		UC_NODISCARD Variant get_value() const { return get_attribute(UIAttributeType::Value); }
-		void set_value(const Optional<Variant>& value) { set_attribute(UIAttributeType::Value, value); }
 
-		void set_action(UIActionType type, const Optional<UIAction>& value);
 		UC_NODISCARD Optional<UIAction> get_action(UIActionType type) const;
 
 		size_t get_children(List<UINode>& children) const;
@@ -120,23 +107,19 @@ namespace unicore
 		UC_NODISCARD Optional<UINode> get_next_sibling() const;
 		UC_NODISCARD Optional<UINode> get_prev_sibling() const;
 
-		UINode create_child(UINodeType type, const UINodeOptions& options);
-		UINode create_sibling(UINodeType type, const UINodeOptions& options);
+		// FIND //////////////////////////////////////////////////////////////////////
+		UC_NODISCARD UINode find_by_type(UINodeType type) const;
+		Size find_all_by_type(UINodeType type, List<UINode>& list) const;
 
-		UINode duplicate();
-		UINode duplicate_at(UINodeIndex parent = UINodeIndexInvalid);
+		UC_NODISCARD UINode find_by_name(StringView name) const;
+		Size find_all_by_name(StringView name, List<UINode>& list) const;
 
-		UC_NODISCARD Optional<UINode> find_child_by_name(StringView name) const;
-		UC_NODISCARD Optional<UINode> find_child_by_name_recurse(StringView name) const;
-
-		UC_NODISCARD size_t find_childs_by_name(StringView name, List<UINode>& list) const;
-		UC_NODISCARD size_t find_childs_by_name_recurse(StringView name, List<UINode>& list) const;
+		static const UINode Empty;
 
 	private:
-		UIDocument& _document;
-		UINodeIndex _index;
+		const UIDocument* _document;
+		IndexType _index;
 	};
 
-	extern UNICODE_STRING_BUILDER_FORMAT(const UINodeIndex&);
 	extern UNICODE_STRING_BUILDER_FORMAT(const UINode&);
 }

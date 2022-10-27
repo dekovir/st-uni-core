@@ -23,7 +23,7 @@ namespace unicore
 		void on_remove_item(unsigned index, const Item& item);
 
 		void apply_money(UInt16 value);
-		void apply_item(UINode& node, const Item& item);
+		void apply_item(const UINode& node, const Item& item);
 
 		static StringView type_to_string(ItemType type);
 	};

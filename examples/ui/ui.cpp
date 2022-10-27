@@ -53,16 +53,16 @@ namespace unicore
 		_test_view->set_size(Vector2f(300, 0));
 		_test_view->set_position(Vector2f(50, 50.f));
 
-		UIDocumentParseXML::parse(xml_text, *_test_doc, UINodeIndexInvalid, &_context_logger);
+		UIDocumentParseXML::parse(xml_text, *_test_doc, std::nullopt, &_context_logger);
 
-		_test_position_id = _test_doc->find_index_by_id("position");
-		const auto slider_id = _test_doc->find_index_by_id("slider");
-		const auto group_id = _test_doc->find_index_by_id("group");
-		const auto add_id = _test_doc->find_index_by_id("add_item");
+		_test_position_id = _test_doc->find_by_id("position");
+		const auto slider_id = _test_doc->find_by_id("slider");
+		const auto group_id = _test_doc->find_by_id("group");
+		const auto add_id = _test_doc->find_by_id("add_item");
 
-		if (group_id != UINodeIndexInvalid && add_id != UINodeIndexInvalid)
+		if (group_id.has_value() && add_id.has_value())
 		{
-			_test_doc->set_node_action(add_id, UIActionType::OnClick,
+			_test_doc->set_node_action(add_id.value(), UIActionType::OnClick,
 				[this, group_id]
 				{
 					static int index = 1;
@@ -70,13 +70,13 @@ namespace unicore
 
 					UINodeOptions options;
 					options.attributes[UIAttributeType::Text] = text;
-					_test_doc->create_node(UINodeType::Item, group_id, options);
+					_test_doc->create_node(UINodeType::Item, options, group_id.value());
 				});
 		}
 
-		if (slider_id != UINodeIndexInvalid)
+		if (slider_id.has_value())
 		{
-			_test_doc->set_node_action(slider_id, UIActionType::OnChange,
+			_test_doc->set_node_action(slider_id.value(), UIActionType::OnChange,
 				[this](const Variant& value)
 				{
 					UC_LOG_DEBUG(logger) << "Slider value changed to " << value;
@@ -150,11 +150,11 @@ namespace unicore
 		}
 #endif
 
-		if (_test_doc && _test_view && _test_position_id != UINodeIndexInvalid)
+		if (_test_doc && _test_view && _test_position_id.has_value())
 		{
 			auto text = StringBuilder::format("Pos {}, Size {}",
 				_test_view->position().cast<Int>(), _test_view->size().cast<Int>());
-			_test_doc->set_node_attribute(_test_position_id, UIAttributeType::Text, text);
+			_test_doc->set_node_attribute(_test_position_id.value(), UIAttributeType::Text, text);
 		}
 
 		// ImGui //////////////////////////////////////////////////////////////////

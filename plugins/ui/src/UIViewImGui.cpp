@@ -54,7 +54,7 @@ namespace unicore
 
 		if (ImGui::Begin(str.c_str(), nullptr, window_flags))
 		{
-			for (auto& node : _document->get_root_nodes())
+			for (auto& node : _document->get_roots())
 				render_node(node);
 
 			_pos = ImGuiConvert::convert(ImGui::GetWindowPos());
@@ -72,7 +72,7 @@ namespace unicore
 
 		if (_document)
 		{
-			for (const auto& node : _document->get_root_nodes())
+			for (const auto& node : _document->get_roots())
 				on_create_node(node);
 		}
 	}
@@ -82,7 +82,7 @@ namespace unicore
 		UC_LOG_DEBUG(_logger) << "create_node " << node.index();
 
 		CachedInfo info;
-		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index().value));
+		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index()));
 		_cached[node.index()] = info;
 	}
 
@@ -264,7 +264,7 @@ namespace unicore
 		}
 	}
 
-	UIViewImGui::CachedInfo* UIViewImGui::get_info(UINodeIndex index)
+	UIViewImGui::CachedInfo* UIViewImGui::get_info(UINode::IndexType index)
 	{
 		const auto it = _cached.find(index);
 		return it != _cached.end() ? &it->second : nullptr;
