@@ -22,6 +22,7 @@ namespace unicore
 	class SDL2EventListener
 	{
 	public:
+		virtual ~SDL2EventListener() = default;
 		virtual bool on_event(const SDL_Event& evt) = 0;
 	};
 

@@ -33,6 +33,10 @@ namespace unicore
 				_running = false;
 				break;
 
+			case SDL_KEYMAPCHANGED:
+				UC_LOG_DEBUG(_logger) << "Keymap changed";
+				break;
+
 			case SDL_DROPFILE:
 				Path path(evt.drop.file);
 				UC_LOG_DEBUG(_logger) << "Drop file: " << path;

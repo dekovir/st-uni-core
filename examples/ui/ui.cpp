@@ -152,7 +152,7 @@ namespace unicore
 
 		if (_test_doc && _test_view && _test_position_id != UINodeIndexInvalid)
 		{
-			auto text = StringBuilder::format("Pos {}, Size {}", 
+			auto text = StringBuilder::format("Pos {}, Size {}",
 				_test_view->position().cast<Int>(), _test_view->size().cast<Int>());
 			_test_doc->set_node_attribute(_test_position_id, UIAttributeType::Text, text);
 		}
@@ -160,8 +160,10 @@ namespace unicore
 		// ImGui //////////////////////////////////////////////////////////////////
 		_context.frame_begin();
 
+#if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
 		//static bool show_demo_window = true;
 		//ImGui::ShowDemoWindow(&show_demo_window);
+#endif
 
 		if (_test_view)
 			_test_view->render();

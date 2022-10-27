@@ -11,8 +11,12 @@ namespace unicore
 
 	void Example03::update()
 	{
+#if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
 		static bool show_demo_window = true;
 		ImGui::ShowDemoWindow(&show_demo_window);
+#else
+		ImGui::Text("Demo window is disabled");
+#endif
 	}
 
 	void Example03::draw() const

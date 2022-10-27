@@ -13,14 +13,20 @@ namespace unicore
 		, _file_system_logger("[FS] ", _logger)
 		, _file_system(_file_system_logger)
 	{
+#if defined(UNICORE_USE_SDL2)
+		_looper.add_listener(&_input);
+#endif
+
 		file_system.add_read(std::make_shared<WinFileProvider>(_file_system_logger, Path::Empty));
 	}
 
 	void WinPlatform::update()
 	{
+		_time.update();
+		_input.frame();
+
 		Platform::update();
 
-		_time.update();
 		_input.update();
 	}
 
