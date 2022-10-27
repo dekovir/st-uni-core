@@ -22,10 +22,14 @@ namespace unicore
 
 	void WinPlatform::update()
 	{
+		Platform::update();
+
 		_time.update();
 		_input.frame();
 
-		Platform::update();
+#if defined(UNICORE_USE_SDL2)
+		_looper.poll_events();
+#endif
 
 		_input.update();
 	}

@@ -15,7 +15,8 @@ namespace unicore
 		UC_NODISCARD bool running() const override { return _running; }
 
 		void quit() override;
-		void poll_events() override;
+
+		void poll_events();
 
 		void add_listener(SDL2EventListener* listener);
 		void remove_listener(SDL2EventListener* listener);
