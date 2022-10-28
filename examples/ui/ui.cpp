@@ -65,8 +65,8 @@ namespace unicore
 			_test_doc->set_node_action(add_id.value(), UIActionType::OnClick,
 				[this, group_id]
 				{
-					static int index = 1;
-					const auto text = StringBuilder::format("Item {}", index++);
+					const auto count = _test_doc->get_node_children_count(group_id.value());
+					const auto text = StringBuilder::format("Item {}", count + 1);
 
 					UINodeOptions options;
 					options.attributes[UIAttributeType::Text] = text;

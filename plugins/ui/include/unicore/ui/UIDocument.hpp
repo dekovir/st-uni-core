@@ -77,11 +77,13 @@ namespace unicore
 		// HIERARCHY /////////////////////////////////////////////////////////////////
 		UC_NODISCARD Optional<UINode> get_node_parent(const UINode& node) const;
 
-		Size get_node_children(List<UINode>& list, const Optional<UINode>& parent) const;
-		UC_NODISCARD List<UINode> get_node_children(const Optional<UINode>& parent) const;
+		Size get_node_children(List<UINode>& list, const Optional<UINode>& node) const;
+		UC_NODISCARD List<UINode> get_node_children(const Optional<UINode>& node) const;
+		UC_NODISCARD Size get_node_children_count(const Optional<UINode>& node) const;
 
-		UC_NODISCARD Optional<UINode> get_node_next_sibling(const Optional<UINode>& node) const;
-		UC_NODISCARD Optional<UINode> get_node_prev_sibling(const Optional<UINode>& node) const;
+		UC_NODISCARD Optional<unsigned> get_node_sibling_index(const UINode& node) const;
+		UC_NODISCARD Optional<UINode> get_node_next_sibling(const UINode& node) const;
+		UC_NODISCARD Optional<UINode> get_node_prev_sibling(const UINode& node) const;
 
 		// ATTRIBUTES ////////////////////////////////////////////////////////////////
 		void set_node_attribute(const UINode& node,
@@ -102,11 +104,11 @@ namespace unicore
 	protected:
 		struct NodeInfo
 		{
-			UINodeType type;
+			UINodeType type = UINodeType::Group;
 			String uid;
 			String name;
-			Bool visible;
-			UINode::IndexType parent;
+			Bool visible = true;
+			UINode::IndexType parent = UINode::InvalidIndex;
 			List<UINode::IndexType> children;
 			UIAttributeDict attributes;
 			UIActionDict actions;

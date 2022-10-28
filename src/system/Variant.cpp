@@ -275,9 +275,9 @@ namespace unicore
 
 		if (value.try_get_bool(b))
 			builder << ":" << b;
-		else if (value.try_get_int64(i64))
+		else if (value.try_get_integral(i64))
 			builder << ":" << i64;
-		else if (value.try_get_double(d))
+		else if (value.try_get_floating_point(d))
 			builder << ":" << d;
 		else if (value.try_get_string32(s32))
 			builder << ":" << s32;

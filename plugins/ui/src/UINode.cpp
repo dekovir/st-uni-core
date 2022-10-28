@@ -3,21 +3,7 @@
 
 namespace unicore
 {
-	const UINode UINode::Empty{};
-
 	static List<UINode> s_nodes;
-
-	UINode::UINode()
-		: _document(nullptr)
-		, _index(InvalidIndex)
-	{
-	}
-
-	UINode::UINode(const UIDocument* document, IndexType index)
-		: _document(document)
-		, _index(index)
-	{
-	}
 
 	Bool UINode::valid() const
 	{
@@ -72,7 +58,7 @@ namespace unicore
 		return _document ? _document->get_node_actions(*this) : s_empty;
 	}
 
-	Variant UINode::get_attribute(UIAttributeType type) const
+	Variant UINode::attribute(UIAttributeType type) const
 	{
 		if (_document)
 		{
@@ -83,7 +69,7 @@ namespace unicore
 		return Variant::Empty;
 	}
 
-	Optional<UIAction> UINode::get_action(UIActionType type) const
+	Optional<UIAction> UINode::action(UIActionType type) const
 	{
 		if (_document)
 		{
@@ -126,7 +112,7 @@ namespace unicore
 				return result.value();
 		}
 
-		return Empty;
+		return {};
 	}
 
 	Size UINode::find_all_by_type(UINodeType type, List<UINode>& list) const
@@ -144,7 +130,7 @@ namespace unicore
 				return result.value();
 		}
 
-		return Empty;
+		return {};
 	}
 
 	Size UINode::find_all_by_name(StringView name, List<UINode>& list) const

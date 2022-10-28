@@ -153,7 +153,7 @@ namespace unicore
 		{
 		case UIEventType::Clicked:
 			UC_LOG_DEBUG(_logger) << "Node " << evt.node << " value has clicked";
-			if (const auto action = evt.node.get_action(UIActionType::OnClick); action.has_value())
+			if (const auto action = evt.node.action(UIActionType::OnClick); action.has_value())
 			{
 				if (!call_action_default(action.value(), evt.node))
 					UC_LOG_WARNING(_logger) << "Failed to call default action";
@@ -164,7 +164,7 @@ namespace unicore
 			info->attributes[UIAttributeType::Value] = evt.value;
 			UC_LOG_DEBUG(_logger) << "Node " << evt.node << " value changed to " << evt.value;
 
-			if (const auto action = evt.node.get_action(UIActionType::OnChange); action.has_value())
+			if (const auto action = evt.node.action(UIActionType::OnChange); action.has_value())
 			{
 				if (!call_action_value(action.value(), evt.node, evt.value))
 					UC_LOG_WARNING(_logger) << "Failed to call value action";
@@ -321,11 +321,11 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	Size UIDocument::get_node_children(List<UINode>& list, const Optional<UINode>& parent) const
+	Size UIDocument::get_node_children(List<UINode>& list, const Optional<UINode>& node) const
 	{
-		if (parent.has_value())
+		if (node.has_value())
 		{
-			const auto& info = get_info(parent.value());
+			const auto& info = get_info(node.value());
 
 			for (const auto child_index : info->children)
 				list.push_back(node_from_index(child_index));
@@ -339,59 +339,90 @@ namespace unicore
 		return _roots.size();
 	}
 
-	List<UINode> UIDocument::get_node_children(const Optional<UINode>& parent) const
+	List<UINode> UIDocument::get_node_children(const Optional<UINode>& node) const
 	{
 		List<UINode> list;
-		get_node_children(list, parent);
+		get_node_children(list, node);
 		return list;
 	}
 
-	Optional<UINode> UIDocument::get_node_next_sibling(const Optional<UINode>& node) const
+	Size UIDocument::get_node_children_count(const Optional<UINode>& node) const
 	{
-		const List<UINode::IndexType>* childs = nullptr;
-
 		if (node.has_value())
 		{
-			if (const auto info = get_info(node.value()))
-			{
-				if (const auto parent_info = get_info(info->parent))
-					childs = &parent_info->children;
-			}
+			if (const auto& info = get_info(node.value()))
+				return info->children.size();
 		}
-		else childs = &_roots;
 
-		if (childs)
+		return _roots.size();
+	}
+
+	Optional<unsigned> UIDocument::get_node_sibling_index(const UINode& node) const
+	{
+		if (const auto& info = get_info(node); info != nullptr)
 		{
-			if (const auto it = std::find(childs->begin(), childs->end(), node->index()); it != childs->end())
+			if (const auto& parent_info = get_info(info->parent))
 			{
-				if (const auto i = it - childs->end(); i + 1 < childs->size())
-					return node_from_index(childs->at(i + 1));
+				auto& children = parent_info->children;
+				if (const auto it = std::find(children.begin(), children.end(), node.index()); it != children.end())
+					return it - children.end();
+			}
+			else
+			{
+				if (const auto it = std::find(_roots.begin(), _roots.end(), node.index()); it != _roots.end())
+					return it - _roots.end();
 			}
 		}
 
 		return std::nullopt;
 	}
 
-	Optional<UINode> UIDocument::get_node_prev_sibling(const Optional<UINode>& node) const
+	Optional<UINode> UIDocument::get_node_next_sibling(const UINode& node) const
 	{
-		const List<UINode::IndexType>* childs = nullptr;
-
-		if (node.has_value())
+		if (const auto& info = get_info(node); info != nullptr)
 		{
-			if (const auto info = get_info(node.value()))
+			if (const auto& parent_info = get_info(info->parent))
 			{
-				if (const auto parent_info = get_info(info->parent))
-					childs = &parent_info->children;
+				auto& children = parent_info->children;
+				if (const auto it = std::find(children.begin(), children.end(), node.index()); it != children.end())
+				{
+					if (const auto index = it - children.end(); index + 1 < children.size())
+						return node_from_index(children[index + 1]);
+				}
+			}
+			else
+			{
+				if (const auto it = std::find(_roots.begin(), _roots.end(), node.index()); it != _roots.end())
+				{
+					if (const auto index = it - _roots.end(); index + 1 < _roots.size())
+						return node_from_index(_roots[index + 1]);
+				}
 			}
 		}
-		else childs = &_roots;
 
-		if (childs)
+		return std::nullopt;
+	}
+
+	Optional<UINode> UIDocument::get_node_prev_sibling(const UINode& node) const
+	{
+		if (const auto& info = get_info(node); info != nullptr)
 		{
-			if (const auto it = std::find(childs->begin(), childs->end(), node->index()); it != childs->end())
+			if (const auto& parent_info = get_info(info->parent))
 			{
-				if (const auto i = it - childs->end(); i > 0)
-					return node_from_index(childs->at(i - 1));
+				auto& children = parent_info->children;
+				if (const auto it = std::find(children.begin(), children.end(), node.index()); it != children.end())
+				{
+					if (const auto index = it - children.end(); index > 0)
+						return node_from_index(children[index - 1]);
+				}
+			}
+			else
+			{
+				if (const auto it = std::find(_roots.begin(), _roots.end(), node.index()); it != _roots.end())
+				{
+					if (const auto index = it - _roots.end(); index > 0)
+						return node_from_index(_roots[index - 1]);
+				}
 			}
 		}
 

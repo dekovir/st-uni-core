@@ -111,13 +111,13 @@ namespace unicore
 
 		const auto type = node.type();
 		const auto& id = cached_info->id;
-		auto node_value = node.get_value();
+		auto node_value = node.value();
 
 		List<UINode> children;
 		node.get_children(children);
 
-		const auto width = node.get_attribute(UIAttributeType::Width).get_float();
-		const auto height = node.get_attribute(UIAttributeType::Height).get_float();
+		const auto width = node.attribute(UIAttributeType::Width).get_float();
+		const auto height = node.attribute(UIAttributeType::Height).get_float();
 
 		Bool bool_value;
 
@@ -146,7 +146,7 @@ namespace unicore
 			return true;
 
 		case UINodeType::Text:
-			str = node.get_attribute(UIAttributeType::Text).get_string();
+			str = node.attribute(UIAttributeType::Text).get_string();
 
 			render_node_header(node, same_line);
 			ImGui::Text("%s", str.c_str());
@@ -182,7 +182,7 @@ namespace unicore
 			break;
 
 		case UINodeType::Button:
-			str = node.get_attribute(UIAttributeType::Text).get_string();
+			str = node.attribute(UIAttributeType::Text).get_string();
 
 			render_node_header(node, same_line);
 			if (ImGui::Button(str.c_str(), { width, height }))
@@ -200,9 +200,9 @@ namespace unicore
 
 		case UINodeType::Slider:
 		{
-			const auto value_min = node.get_attribute(UIAttributeType::MinValue).get_float(0);
-			const auto value_max = node.get_attribute(UIAttributeType::MaxValue).get_float(1);
-			const auto format = node.get_attribute(UIAttributeType::Text).get_string("%.2f");
+			const auto value_min = node.attribute(UIAttributeType::MinValue).get_float(0);
+			const auto value_max = node.attribute(UIAttributeType::MaxValue).get_float(1);
+			const auto format = node.attribute(UIAttributeType::Text).get_string("%.2f");
 
 			auto value = node_value.get_float();
 			render_node_header(node, same_line);
@@ -225,7 +225,7 @@ namespace unicore
 			{
 				ImGui::BeginTooltip();
 
-				str = node.get_attribute(UIAttributeType::Text).get_string();
+				str = node.attribute(UIAttributeType::Text).get_string();
 				if (!str.empty())
 					ImGui::Text("%s", str.c_str());
 
@@ -237,7 +237,7 @@ namespace unicore
 
 		case UINodeType::Item:
 			bool_value = node_value.get_bool();
-			str = node.get_attribute(UIAttributeType::Text).get_string();
+			str = node.attribute(UIAttributeType::Text).get_string();
 
 			render_node_header(node, same_line);
 			if (ImGui::Selectable(str.c_str(), bool_value))
@@ -257,7 +257,7 @@ namespace unicore
 	void UIViewImGui::render_node_footer(const UINode& node)
 	{
 		String tooltip;
-		if (node.get_attribute(UIAttributeType::Tooltip).try_get_string(tooltip))
+		if (node.attribute(UIAttributeType::Tooltip).try_get_string(tooltip))
 		{
 			if (ImGui::IsItemHovered())
 				ImGui::SetTooltip("%s", tooltip.c_str());
