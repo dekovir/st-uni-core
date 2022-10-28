@@ -92,18 +92,6 @@ namespace unicore
 		_cached[node.index()] = info;
 	}
 
-	void UIViewImGui::on_set_attribute(const UINode& node,
-		UIAttributeType type, const Optional<Variant>& value)
-	{
-		//UC_LOG_DEBUG(_logger) << "set_attribute " << node.index();
-	}
-
-	void UIViewImGui::on_set_action(const UINode& node,
-		UIActionType type, const Optional<UIAction>& value)
-	{
-		//UC_LOG_DEBUG(_logger) << "set_action " << node.index();
-	}
-
 	Bool UIViewImGui::render_node(const UINode& node, Bool same_line)
 	{
 		if (!node.visible()) return false;
@@ -129,6 +117,7 @@ namespace unicore
 
 		String str;
 		String32 str32;
+		Color4f col4f;
 
 		switch (type)
 		{

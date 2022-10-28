@@ -26,6 +26,7 @@ namespace unicore
 		UC_OBJECT_EVENT(change_index, const UINode& /* parent */, unsigned /* old */, unsigned /* new */);
 
 		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
+		UC_OBJECT_EVENT(set_style, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_visible, const UINode&, Bool);
 		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttributeType, const Optional<Variant>&);
 		UC_OBJECT_EVENT(set_action, const UINode&, UIActionType, const Optional<UIAction>&);
@@ -73,15 +74,18 @@ namespace unicore
 		// VALUES ////////////////////////////////////////////////////////////////////
 		UC_NODISCARD Bool is_node_valid(const UINode& node) const;
 
+		UC_NODISCARD Bool get_node_type(const UINode& node, UINodeType& value) const;
+
 		UC_NODISCARD Bool get_node_uid(const UINode& node, String& value) const;
 
 		UC_NODISCARD Bool get_node_name(const UINode& node, String& value) const;
-		Bool set_node_name(const UINode& node, StringView name);
+		Bool set_node_name(const UINode& node, StringView value);
+
+		UC_NODISCARD Bool get_node_style(const UINode& node, String& value) const;
+		Bool set_node_style(const UINode& node, StringView value);
 
 		UC_NODISCARD Bool get_node_visible(const UINode& node, Bool& value) const;
 		Bool set_node_visible(const UINode& node, Bool value);
-
-		UC_NODISCARD Bool get_node_type(const UINode& node, UINodeType& type) const;
 
 		// HIERARCHY /////////////////////////////////////////////////////////////////
 		UC_NODISCARD Optional<UINode> get_node_parent(const UINode& node) const;
@@ -120,6 +124,7 @@ namespace unicore
 			UINodeType type = UINodeType::Group;
 			String uid;
 			String name;
+			String style;
 			Bool visible = true;
 			UINode::IndexType parent = UINode::InvalidIndex;
 			List<UINode::IndexType> children;

@@ -14,7 +14,7 @@ namespace unicore
 
 	static const auto xml = R"(
 	<group>
-		<text>Examples</text>
+		<text style="h1">Examples</text>
 		<group id="group" />
 		<group id="template" visible="0">
 			<item name="name">Title</item>

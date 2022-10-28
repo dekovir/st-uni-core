@@ -74,6 +74,7 @@ namespace unicore
 
 		UC_NODISCARD Optional<String> uid() const;
 		UC_NODISCARD Optional<String> name() const;
+		UC_NODISCARD Optional<String> style() const;
 		UC_NODISCARD Bool visible() const;
 
 		UC_NODISCARD UIAttributeDict get_attributes() const;

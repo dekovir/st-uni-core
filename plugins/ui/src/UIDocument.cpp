@@ -310,6 +310,17 @@ namespace unicore
 			get_info(node.index()) != nullptr;
 	}
 
+	Bool UIDocument::get_node_type(const UINode& node, UINodeType& value) const
+	{
+		if (const auto info = get_info(node))
+		{
+			value = info->type;
+			return true;
+		}
+
+		return false;
+	}
+
 	Bool UIDocument::get_node_uid(const UINode& node, String& value) const
 	{
 		if (const auto info = get_info(node); info && !info->uid.empty())
@@ -332,15 +343,37 @@ namespace unicore
 		return false;
 	}
 
-	Bool UIDocument::set_node_name(const UINode& node, StringView name)
+	Bool UIDocument::set_node_name(const UINode& node, StringView value)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
-		static const String s_empty;
-
 		if (const auto info = get_info(node))
 		{
-			info->name = name;
-			_event_set_name.invoke(node, name);
+			info->name = value;
+			_event_set_name.invoke(node, value);
+			return true;
+		}
+
+		return false;
+	}
+
+	Bool UIDocument::get_node_style(const UINode& node, String& value) const
+	{
+		if (const auto info = get_info(node); info && !info->style.empty())
+		{
+			value = info->style;
+			return true;
+		}
+
+		return false;
+	}
+
+	Bool UIDocument::set_node_style(const UINode& node, StringView value)
+	{
+		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
+		if (const auto info = get_info(node))
+		{
+			info->style = value;
+			_event_set_style.invoke(node, value);
 			return true;
 		}
 
@@ -368,17 +401,6 @@ namespace unicore
 				info->visible = value;
 				_event_set_visible.invoke(node, value);
 			}
-			return true;
-		}
-
-		return false;
-	}
-
-	Bool UIDocument::get_node_type(const UINode& node, UINodeType& type) const
-	{
-		if (const auto info = get_info(node))
-		{
-			type = info->type;
 			return true;
 		}
 

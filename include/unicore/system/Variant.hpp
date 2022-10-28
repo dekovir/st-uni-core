@@ -359,7 +359,7 @@ namespace unicore
 		UC_NODISCARD Color4b get_color4b(const Color4b& default_value = ColorConst4b::White) const { return get_color4(default_value); }
 
 		// COLOR4F ///////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_color4f(Color4b& value) const { return try_get_color4(value); }
+		UC_NODISCARD bool try_get_color4f(Color4f& value) const { return try_get_color4(value); }
 		UC_NODISCARD Color4f get_color4f(const Color4f& default_value = ColorConst4f::White) const { return get_color4(default_value); }
 
 		// OBJECT ////////////////////////////////////////////////////////////////////

@@ -59,12 +59,6 @@ namespace unicore
 
 		void on_create_node(const UINode& node) override;
 
-		void on_set_attribute(const UINode& node,
-			UIAttributeType type, const Optional<Variant>& value) override;
-
-		void on_set_action(const UINode& node,
-			UIActionType type, const Optional<UIAction>& value) override;
-
 		Bool render_node(const UINode& node, Bool same_line = false);
 
 		void render_node_header(const UINode& node, Bool same_line = false);
