@@ -367,7 +367,7 @@ namespace unicore
 		UC_NODISCARD Shared<Object> get_object(const Shared<Object>& default_value = nullptr) const;
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Object, T>>* = nullptr>
-		bool try_get_object_cast(Shared<T>& value)
+		bool try_get_object_cast(Shared<T>& value) const
 		{
 			if (const auto ptr = std::get_if<Shared<Object>>(&_data))
 			{
@@ -383,7 +383,7 @@ namespace unicore
 		}
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Object, T>>* = nullptr>
-		UC_NODISCARD Shared<T> get_object_cast(const Shared<T>& default_value = nullptr)
+		UC_NODISCARD Shared<T> get_object_cast(const Shared<T>& default_value = nullptr) const
 		{
 			Shared<T> value;
 			return try_get_object_cast(value) ? value : default_value;

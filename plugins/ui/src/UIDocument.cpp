@@ -585,23 +585,23 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	const UIAttributeDict& UIDocument::get_node_attributes(const UINode& node) const
+	Optional<UIAttributeDict> UIDocument::get_node_attributes(const UINode& node) const
 	{
-		static const UIAttributeDict s_empty{};
-		const auto info = get_info(node);
-		return info ? info->attributes : s_empty;
+		if (const auto info = get_info(node))
+			return info->attributes;
+
+		return std::nullopt;
 	}
 
-	Size UIDocument::get_node_attributes(const UINode& node, UIAttributeDict& dict) const
+	Bool UIDocument::get_node_attributes(const UINode& node, UIAttributeDict& dict) const
 	{
 		if (const auto info = get_info(node))
 		{
-			for (const auto& [type, value] : info->attributes)
-				dict[type] = value;
-			return info->attributes.size();
+			dict = info->attributes;
+			return true;
 		}
 
-		return 0;
+		return false;
 	}
 
 	// ACTIONS ///////////////////////////////////////////////////////////////////
@@ -626,23 +626,34 @@ namespace unicore
 		}
 	}
 
-	const UIActionDict& UIDocument::get_node_actions(const UINode& node) const
-	{
-		static const UIActionDict s_empty{};
-		const auto info = get_info(node);
-		return info ? info->actions : s_empty;
-	}
-
-	Size UIDocument::get_node_actions(const UINode& node, UIActionDict& dict) const
+	Optional<UIAction> UIDocument::get_node_action(const UINode& node, UIActionType type) const
 	{
 		if (const auto info = get_info(node))
 		{
-			for (const auto& [type, action] : info->actions)
-				dict[type] = action;
-			return info->actions.size();
+			if (const auto it = info->actions.find(type); it != info->actions.end())
+				return it->second;
 		}
 
-		return 0;
+		return std::nullopt;
+	}
+
+	Optional<UIActionDict> UIDocument::get_node_actions(const UINode& node) const
+	{
+		if (const auto info = get_info(node))
+			return info->actions;
+
+		return std::nullopt;
+	}
+
+	Bool UIDocument::get_node_actions(const UINode& node, UIActionDict& dict) const
+	{
+		if (const auto info = get_info(node))
+		{
+			dict = info->actions;
+			return true;
+		}
+
+		return false;
 	}
 
 	UIDocument::NodeInfo* UIDocument::get_info(UINode::IndexType index)

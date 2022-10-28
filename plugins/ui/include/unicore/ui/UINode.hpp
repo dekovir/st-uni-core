@@ -1,33 +1,12 @@
 #pragma once
 #include "UINode.hpp"
-#include "unicore/system/Variant.hpp"
+#include "unicore/ui/UIAttribute.hpp"
 
 namespace unicore
 {
-	// ATTRIBUTES
-	enum class UIAttributeType
-	{
-		Value,
-		Width,
-		Height,
-		Tooltip,
-		//Style,
-		Text,
-		MinValue,
-		MaxValue,
-	};
-
-	enum class UILayout
-	{
-		None,
-		Vertical,
-		Horizontal,
-	};
-
-	using UIAttributeDict = Dictionary<UIAttributeType, Variant>;
-
 	// ACTIONS
 	class UINode;
+
 	using UIActionDefault = std::function<void()>;
 	using UIActionNodeDefault = std::function<void(const UINode&)>;
 
@@ -38,9 +17,8 @@ namespace unicore
 
 	enum class UIActionType : uint8_t
 	{
-		OnLoad,
 		OnClick,
-		OnChange,
+		OnChange, // Value changed
 	};
 	using UIActionDict = Dictionary<UIActionType, UIAction>;
 
@@ -98,8 +76,8 @@ namespace unicore
 		UC_NODISCARD Optional<String> name() const;
 		UC_NODISCARD Bool visible() const;
 
-		UC_NODISCARD const UIAttributeDict& attributes() const;
-		UC_NODISCARD const UIActionDict& actions() const;
+		UC_NODISCARD UIAttributeDict get_attributes() const;
+		UC_NODISCARD UIActionDict get_actions() const;
 
 		UC_NODISCARD Variant attribute(UIAttributeType type) const;
 
@@ -138,6 +116,38 @@ namespace unicore
 	static constexpr Bool operator!=(const UINode& a, const UINode& b) noexcept
 	{
 		return !(a == b);
+	}
+
+	static constexpr Bool operator<=(const UINode& a, const UINode& b) noexcept
+	{
+		if (a.document() == b.document())
+			return a.index() <= b.index();
+
+		return a.document() < b.document();
+	}
+
+	static constexpr Bool operator>=(const UINode& a, const UINode& b) noexcept
+	{
+		if (a.document() == b.document())
+			return a.index() >= b.index();
+
+		return a.document() > b.document();
+	}
+
+	static constexpr Bool operator<(const UINode& a, const UINode& b) noexcept
+	{
+		if (a.document() == b.document())
+			return a.index() < b.index();
+
+		return a.document() < b.document();
+	}
+
+	static constexpr Bool operator>(const UINode& a, const UINode& b) noexcept
+	{
+		if (a.document() == b.document())
+			return a.index() > b.index();
+
+		return a.document() > b.document();
 	}
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const UINode&);

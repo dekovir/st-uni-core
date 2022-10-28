@@ -111,7 +111,7 @@ namespace unicore
 
 		const auto type = node.type();
 		const auto& id = cached_info->id;
-		auto node_value = node.value();
+		const auto node_value = node.value();
 
 		List<UINode> children;
 		node.get_children(children);
@@ -129,9 +129,9 @@ namespace unicore
 		case UINodeType::Group:
 			render_node_header(node, same_line);
 			ImGui::BeginGroup();
-			switch (get_layout(node_value))
+			switch (get_group_value(node_value))
 			{
-			case UILayout::Horizontal:
+			case UIGroupValue::Horizontal:
 				for (unsigned i = 0; i < children.size(); i++)
 					render_node(children[i], i > 0);
 				break;

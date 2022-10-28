@@ -33,9 +33,9 @@ namespace unicore
 		on_rebuild();
 	}
 
-	UILayout UIView::get_layout(const Variant& value, UILayout default_value)
+	UIGroupValue UIView::get_group_value(const Variant& value, UIGroupValue default_value)
 	{
-		UILayout layout;
+		UIGroupValue layout;
 		return value.try_get_enum(layout) ? layout : default_value;
 	}
 }

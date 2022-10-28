@@ -103,14 +103,16 @@ namespace unicore
 		UC_NODISCARD Optional<Variant> get_node_attribute(
 			const UINode& node, UIAttributeType type) const;
 
-		UC_NODISCARD const UIAttributeDict& get_node_attributes(const UINode& node) const;
-		UC_NODISCARD Size get_node_attributes(const UINode& node, UIAttributeDict& dict) const;
+		UC_NODISCARD Optional<UIAttributeDict> get_node_attributes(const UINode& node) const;
+		UC_NODISCARD Bool get_node_attributes(const UINode& node, UIAttributeDict& dict) const;
 
 		// ACTIONS ///////////////////////////////////////////////////////////////////
 		void set_node_action(const UINode& node, UIActionType type, const Optional<UIAction>& action);
 
-		UC_NODISCARD const UIActionDict& get_node_actions(const UINode& node) const;
-		UC_NODISCARD Size get_node_actions(const UINode& node, UIActionDict& dict) const;
+		UC_NODISCARD Optional<UIAction> get_node_action(const UINode& node, UIActionType type) const;
+
+		UC_NODISCARD Optional<UIActionDict> get_node_actions(const UINode& node) const;
+		UC_NODISCARD Bool get_node_actions(const UINode& node, UIActionDict& dict) const;
 
 	protected:
 		struct NodeInfo

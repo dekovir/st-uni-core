@@ -24,6 +24,6 @@ namespace unicore
 		virtual void on_set_attribute(const UINode& node, UIAttributeType type, const Optional<Variant>& value) = 0;
 		virtual void on_set_action(const UINode& node, UIActionType type, const Optional<UIAction>& value) = 0;
 
-		static UILayout get_layout(const Variant& value, UILayout default_value = UILayout::None);
+		static UIGroupValue get_group_value(const Variant& value, UIGroupValue default_value = UIGroupValue::None);
 	};
 }

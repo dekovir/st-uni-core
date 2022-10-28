@@ -60,16 +60,26 @@ namespace unicore
 		return false;
 	}
 
-	const UIAttributeDict& UINode::attributes() const
+	UIAttributeDict UINode::get_attributes() const
 	{
-		static const UIAttributeDict s_empty;
-		return _document ? _document->get_node_attributes(*this) : s_empty;
+		if (_document)
+		{
+			if (const auto result = _document->get_node_attributes(*this); result.has_value())
+				return result.value();
+		}
+
+		return {};
 	}
 
-	const UIActionDict& UINode::actions() const
+	UIActionDict UINode::get_actions() const
 	{
-		static const UIActionDict s_empty;
-		return _document ? _document->get_node_actions(*this) : s_empty;
+		if (_document)
+		{
+			if (const auto result = _document->get_node_actions(*this); result.has_value())
+				return result.value();
+		}
+
+		return {};
 	}
 
 	Variant UINode::attribute(UIAttributeType type) const
@@ -87,9 +97,8 @@ namespace unicore
 	{
 		if (_document)
 		{
-			auto& actions = _document->get_node_actions(*this);
-			if (const auto it = actions.find(type); it != actions.end())
-				return it->second;
+			if (const auto action = _document->get_node_action(*this, type); action.has_value())
+				return action.value();
 		}
 
 		return std::nullopt;
