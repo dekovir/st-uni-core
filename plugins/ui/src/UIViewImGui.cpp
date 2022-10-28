@@ -189,10 +189,8 @@ namespace unicore
 			break;
 
 		case UINodeType::Button:
-			str = node.attribute(UIAttributeType::Text).get_string();
-
 			render_node_header(node, same_line);
-			if (ImGui::Button(str.c_str(), { width, height }))
+			if (ImGui::Button(title.c_str(), { width, height }))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
 			render_node_footer(node);
 			return true;
@@ -254,10 +252,8 @@ namespace unicore
 
 		case UINodeType::Item:
 			bool_value = node.value().get_bool();
-			str = node.attribute(UIAttributeType::Text).get_string();
-
 			render_node_header(node, same_line);
-			if (ImGui::Selectable(str.c_str(), bool_value))
+			if (ImGui::Selectable(title.c_str(), bool_value))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
 			render_node_footer(node);
 			return true;
