@@ -51,6 +51,22 @@ namespace unicore
 		</list>
 		<button id="add_item">Add item</button>
 
+		<text>Table</text>
+		<table value="2">
+			<tr>
+				<td><button>Cell 0</button></td>
+				<td>Cell 1</td>
+			</tr>
+			<tr>
+				<td>Cell 2</td>
+				<td>Cell 3</td>
+			</tr>
+			<tr>
+				<td>Cell 4</td>
+				<td><item>Cell 5</item></td>
+			</tr>
+		</table>
+
 		<text>Tree</text>
 		<tree value="1">Item 1
 			<text>Text 1</text>

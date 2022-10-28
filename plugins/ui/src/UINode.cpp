@@ -222,6 +222,6 @@ namespace unicore
 
 	UNICODE_STRING_BUILDER_FORMAT(const UINode&)
 	{
-		return builder << "N(" << value.index() << ")";
+		return builder << "N(" << value.type() << ":" << value.index() << ")";
 	}
 }

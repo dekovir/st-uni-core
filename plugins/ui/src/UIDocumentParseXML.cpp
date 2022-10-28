@@ -18,6 +18,9 @@ namespace unicore
 		{"item", UINodeType::Item},
 		{"tree", UINodeType::Tree},
 		{"combo", UINodeType::Combo},
+		{"table", UINodeType::Table},
+		{"tr", UINodeType::TableRow},
+		{"td", UINodeType::TableCell},
 	};
 
 	static const Dictionary<StringView, UIAttributeType> s_attr_name =

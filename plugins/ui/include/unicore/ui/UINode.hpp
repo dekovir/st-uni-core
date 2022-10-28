@@ -37,6 +37,9 @@ namespace unicore
 		Item,
 		Tree,
 		Combo,
+		Table,
+		TableRow,
+		TableCell,
 	};
 
 	class UIDocument;

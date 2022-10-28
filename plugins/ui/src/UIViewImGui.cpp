@@ -85,7 +85,7 @@ namespace unicore
 
 	void UIViewImGui::on_create_node(const UINode& node)
 	{
-		UC_LOG_DEBUG(_logger) << "create_node " << node.index();
+		UC_LOG_DEBUG(_logger) << "create_node " << node;
 
 		CachedInfo info;
 		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index()));
@@ -285,6 +285,41 @@ namespace unicore
 
 				ImGui::EndCombo();
 			}
+			return true;
+
+		case UINodeType::Table:
+			if (ImGui::BeginTable(id.c_str(), node.value().get_int(1)))
+			{
+				for (const auto& child : children)
+					render_node(child);
+
+				ImGui::EndTable();
+			}
+			return true;
+
+		case UINodeType::TableRow:
+			ImGui::TableNextRow();
+			ImGui::BeginGroup();
+			for (const auto& child : children)
+				render_node(child);
+			ImGui::EndGroup();
+
+			return true;
+
+		case UINodeType::TableCell:
+			ImGui::TableNextColumn();
+
+			if (node.attribute(UIAttributeType::Text).try_get_string(str))
+				ImGui::Text("%s", str.c_str());
+
+			if (!children.empty())
+			{
+				ImGui::BeginGroup();
+				for (const auto& child : children)
+					render_node(child);
+				ImGui::EndGroup();
+			}
+
 			return true;
 		}
 
