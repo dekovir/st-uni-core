@@ -37,6 +37,16 @@ namespace unicore
 		</group>
 		<group id="group" />
 		<button id="add_item">Add item</button>
+
+		<text>Tree</text>
+		<tree value="1">Item 1
+			<text>Text 1</text>
+			<text>Text 2</text>
+			<tree>Item 2
+				<text>Text 3</text>
+				<text>Text 4</text>
+			</tree>
+		</tree>
 	</group>
 	)";
 

@@ -89,7 +89,21 @@ namespace unicore
 
 		CachedInfo info;
 		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index()));
+		info.title = node.text().get_string() + info.id;
+
 		_cached[node.index()] = info;
+	}
+
+	void UIViewImGui::on_set_attribute(const UINode& node,
+		UIAttributeType type, const Optional<Variant>& value)
+	{
+		UIView::on_set_attribute(node, type, value);
+
+		if (type == UIAttributeType::Text)
+		{
+			if (const auto info = get_info(node.index()))
+				info->title = value->get_string() + info->id;
+		}
 	}
 
 	Bool UIViewImGui::render_node(const UINode& node, Bool same_line)
@@ -105,6 +119,7 @@ namespace unicore
 
 		const auto type = node.type();
 		const auto& id = cached_info->id;
+		const auto& title = cached_info->title;
 
 		List<UINode> children;
 		node.get_children(children);
@@ -245,7 +260,25 @@ namespace unicore
 			if (ImGui::Selectable(str.c_str(), bool_value))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
 			render_node_footer(node);
-			break;
+			return true;
+
+		case UINodeType::Tree:
+			bool_value = node.value().get_bool();
+			ImGui::SetNextItemOpen(bool_value);
+			if (ImGui::TreeNode(title.c_str()))
+			{
+				if (!bool_value)
+					_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+
+				for (const auto& child : children)
+					render_node(child);
+
+				ImGui::TreePop();
+			}
+			else if (bool_value)
+				_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+
+			return true;
 		}
 
 		return false;

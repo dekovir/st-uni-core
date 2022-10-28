@@ -51,6 +51,7 @@ namespace unicore
 		struct CachedInfo
 		{
 			String id;
+			String title; // text + id;
 		};
 
 		Dictionary<UINode::IndexType, CachedInfo> _cached;
@@ -58,6 +59,8 @@ namespace unicore
 		void on_rebuild() override;
 
 		void on_create_node(const UINode& node) override;
+		void on_set_attribute(const UINode& node,
+			UIAttributeType type, const Optional<Variant>& value) override;
 
 		Bool render_node(const UINode& node, Bool same_line = false);
 

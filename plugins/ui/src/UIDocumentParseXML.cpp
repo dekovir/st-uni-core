@@ -16,6 +16,7 @@ namespace unicore
 		{"tooltip", UINodeType::Tooltip},
 		{"list", UINodeType::List},
 		{"item", UINodeType::Item},
+		{"tree", UINodeType::Tree},
 	};
 
 	static const Dictionary<StringView, UIAttributeType> s_attr_name =
@@ -69,7 +70,10 @@ namespace unicore
 		// Fill options
 		UINodeOptions options;
 		if (const auto value = node->GetText(); value != nullptr)
-			options.attributes[UIAttributeType::Text] = parse_value(value);
+		{
+			const auto s = StringHelper::rtrim(StringView(value));
+			options.attributes[UIAttributeType::Text] = s;
+		}
 
 		if (const auto str = node->Attribute("id"); str != nullptr)
 			options.uid = str;

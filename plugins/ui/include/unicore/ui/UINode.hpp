@@ -35,6 +35,7 @@ namespace unicore
 		Tooltip,
 		List,
 		Item,
+		Tree,
 	};
 
 	class UIDocument;
