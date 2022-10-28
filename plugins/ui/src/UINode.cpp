@@ -14,36 +14,50 @@ namespace unicore
 	{
 		if (_document)
 		{
-			if (const auto value = _document->get_node_type(*this); value.has_value())
-				return value.value();
+			UINodeType type;
+			if (_document->get_node_type(*this, type))
+				return type;
 		}
 
 		return UINodeType::Group;
 	}
 
-	Optional<UINode> UINode::parent() const
+	UINode UINode::parent() const
 	{
 		if (_document)
-			return _document->get_node_parent(*this);
+		{
+			if (const auto result = _document->get_node_parent(*this); result.has_value())
+				return result.value();
+		}
+
+		return {};
+	}
+
+	Optional<String> UINode::uid() const
+	{
+		String value;
+		if (_document && _document->get_node_uid(*this, value))
+			return value;
 
 		return std::nullopt;
 	}
 
-	const String& UINode::uid() const
+	Optional<String> UINode::name() const
 	{
-		static const String s_empty;
-		return _document ? _document->get_node_uid(*this) : s_empty;
-	}
+		String value;
+		if (_document && _document->get_node_name(*this, value))
+			return value;
 
-	const String& UINode::name() const
-	{
-		static const String s_empty;
-		return _document ? _document->get_node_name(*this) : s_empty;
+		return std::nullopt;
 	}
 
 	Bool UINode::visible() const
 	{
-		return _document ? _document->get_node_visible(*this) : false;
+		Bool value;
+		if (_document && _document->get_node_visible(*this, value))
+			return value;
+
+		return false;
 	}
 
 	const UIAttributeDict& UINode::attributes() const
@@ -93,14 +107,37 @@ namespace unicore
 		return s_nodes;
 	}
 
-	Optional<UINode> UINode::get_next_sibling() const
+	unsigned UINode::get_sibling_index() const
 	{
-		return _document ? _document->get_node_next_sibling(*this) : std::nullopt;
+		if (_document)
+		{
+			if (const auto result = _document->get_node_sibling_index(*this); result.has_value())
+				return result.value();
+		}
+
+		return 0;
 	}
 
-	Optional<UINode> UINode::get_prev_sibling() const
+	UINode UINode::get_next_sibling() const
 	{
-		return _document ? _document->get_node_prev_sibling(*this) : std::nullopt;
+		if (_document)
+		{
+			if (const auto result = _document->get_node_next_sibling(*this); result.has_value())
+				return result.value();
+		}
+
+		return {};
+	}
+
+	UINode UINode::get_prev_sibling() const
+	{
+		if (_document)
+		{
+			if (const auto result = _document->get_node_prev_sibling(*this); result.has_value())
+				return result.value();
+		}
+
+		return {};
 	}
 
 	// FIND //////////////////////////////////////////////////////////////////////
@@ -137,6 +174,26 @@ namespace unicore
 	{
 		if (_document)
 			return _document->find_all_by_name(name, list, *this);
+
+		return 0;
+	}
+
+	UINode UINode::querry(const Predicate<const UINode&>& predicate) const
+	{
+		if (_document)
+		{
+			if (const auto result = _document->querry(predicate, *this); result.has_value())
+				return result.value();
+		}
+
+		return {};
+	}
+
+	Size UINode::querry_all(const Predicate<const UINode&>& predicate, List<UINode>& list) const
+	{
+		if (_document)
+			return _document->querry_all(predicate, list, *this);
+
 		return 0;
 	}
 

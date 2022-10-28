@@ -92,10 +92,10 @@ namespace unicore
 
 		UC_NODISCARD Bool valid() const;
 		UC_NODISCARD UINodeType type() const;
-		UC_NODISCARD Optional<UINode> parent() const;
+		UC_NODISCARD UINode parent() const;
 
-		UC_NODISCARD const String& uid() const;
-		UC_NODISCARD const String& name() const;
+		UC_NODISCARD Optional<String> uid() const;
+		UC_NODISCARD Optional<String> name() const;
 		UC_NODISCARD Bool visible() const;
 
 		UC_NODISCARD const UIAttributeDict& attributes() const;
@@ -104,14 +104,16 @@ namespace unicore
 		UC_NODISCARD Variant attribute(UIAttributeType type) const;
 
 		UC_NODISCARD Variant value() const { return attribute(UIAttributeType::Value); }
+		UC_NODISCARD Variant text() const { return attribute(UIAttributeType::Text); }
 
 		UC_NODISCARD Optional<UIAction> action(UIActionType type) const;
 
 		size_t get_children(List<UINode>& children) const;
 		UC_NODISCARD List<UINode> get_children() const;
 
-		UC_NODISCARD Optional<UINode> get_next_sibling() const;
-		UC_NODISCARD Optional<UINode> get_prev_sibling() const;
+		UC_NODISCARD unsigned get_sibling_index() const;
+		UC_NODISCARD UINode get_next_sibling() const;
+		UC_NODISCARD UINode get_prev_sibling() const;
 
 		// FIND //////////////////////////////////////////////////////////////////////
 		UC_NODISCARD UINode find_by_type(UINodeType type) const;
@@ -120,10 +122,23 @@ namespace unicore
 		UC_NODISCARD UINode find_by_name(StringView name) const;
 		Size find_all_by_name(StringView name, List<UINode>& list) const;
 
+		UC_NODISCARD UINode querry(const Predicate<const UINode&>& predicate) const;
+		Size querry_all(const Predicate<const UINode&>& predicate, List<UINode>& list) const;
+
 	private:
 		const UIDocument* _document;
 		IndexType _index;
 	};
+
+	static constexpr Bool operator==(const UINode& a, const UINode& b) noexcept
+	{
+		return a.document() == b.document() && a.index() == b.index();
+	}
+
+	static constexpr Bool operator!=(const UINode& a, const UINode& b) noexcept
+	{
+		return !(a == b);
+	}
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const UINode&);
 }

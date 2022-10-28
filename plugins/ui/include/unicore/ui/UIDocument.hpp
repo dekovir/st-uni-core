@@ -23,6 +23,8 @@ namespace unicore
 		UC_OBJECT_EVENT(create_node, const UINode&);
 		UC_OBJECT_EVENT(remove_node, const UINode&);
 
+		UC_OBJECT_EVENT(change_index, const UINode& /* parent */, unsigned /* old */, unsigned /* new */);
+
 		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_visible, const UINode&, Bool);
 		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttributeType, const Optional<Variant>&);
@@ -30,14 +32,13 @@ namespace unicore
 	public:
 		explicit UIDocument(Logger* logger = nullptr);
 
-		UC_NODISCARD size_t get_system_memory_use() const override { return 0; }
+		UC_NODISCARD size_t get_system_memory_use() const override;
 
 		Size get_roots(List<UINode>& list) const;
 		UC_NODISCARD List<UINode> get_roots() const;
 
 		// FIND //////////////////////////////////////////////////////////////////////
-		UC_NODISCARD Optional<UINode> find_by_id(StringView id,
-			const Optional<UINode>& parent = std::nullopt) const;
+		UC_NODISCARD Optional<UINode> find_by_id(StringView id) const;
 
 		UC_NODISCARD Optional<UINode> find_by_type(UINodeType type,
 			const Optional<UINode>& parent = std::nullopt) const;
@@ -47,6 +48,14 @@ namespace unicore
 		UC_NODISCARD Optional<UINode> find_by_name(StringView name,
 			const Optional<UINode>& parent = std::nullopt) const;
 		Size find_all_by_name(StringView name, List<UINode>& list,
+			const Optional<UINode>& parent = std::nullopt) const;
+
+		UC_NODISCARD Optional<UINode> querry(
+			const Predicate<const UINode&>& predicate,
+			const Optional<UINode>& parent = std::nullopt) const;
+
+		Size querry_all(
+			const Predicate<const UINode&>& predicate, List<UINode>& list,
 			const Optional<UINode>& parent = std::nullopt) const;
 
 		// EVENTS ////////////////////////////////////////////////////////////////////
@@ -64,15 +73,15 @@ namespace unicore
 		// VALUES ////////////////////////////////////////////////////////////////////
 		UC_NODISCARD Bool is_node_valid(const UINode& node) const;
 
-		UC_NODISCARD const String& get_node_uid(const UINode& node) const;
+		UC_NODISCARD Bool get_node_uid(const UINode& node, String& value) const;
 
-		UC_NODISCARD const String& get_node_name(const UINode& node) const;
+		UC_NODISCARD Bool get_node_name(const UINode& node, String& value) const;
 		Bool set_node_name(const UINode& node, StringView name);
 
-		UC_NODISCARD Bool get_node_visible(const UINode& node) const;
+		UC_NODISCARD Bool get_node_visible(const UINode& node, Bool& value) const;
 		Bool set_node_visible(const UINode& node, Bool value);
 
-		UC_NODISCARD Optional<UINodeType> get_node_type(const UINode& node) const;
+		UC_NODISCARD Bool get_node_type(const UINode& node, UINodeType& type) const;
 
 		// HIERARCHY /////////////////////////////////////////////////////////////////
 		UC_NODISCARD Optional<UINode> get_node_parent(const UINode& node) const;
@@ -82,6 +91,8 @@ namespace unicore
 		UC_NODISCARD Size get_node_children_count(const Optional<UINode>& node) const;
 
 		UC_NODISCARD Optional<unsigned> get_node_sibling_index(const UINode& node) const;
+		Bool set_node_sibling_index(const UINode& node, unsigned new_index);
+
 		UC_NODISCARD Optional<UINode> get_node_next_sibling(const UINode& node) const;
 		UC_NODISCARD Optional<UINode> get_node_prev_sibling(const UINode& node) const;
 
@@ -119,6 +130,24 @@ namespace unicore
 		Dictionary<UINode::IndexType, NodeInfo> _nodes;
 		Dictionary<String, UINode::IndexType> _cached_id;
 
+		mutable bool _write_protection = false;
+
+		struct WriteProtectionGuard
+		{
+			explicit WriteProtectionGuard(Bool& value)
+				: _value(value)
+			{
+				_value = true;
+			}
+
+			~WriteProtectionGuard()
+			{
+				_value = false;
+			}
+
+			Bool& _value;
+		};
+
 		UINode::IndexType _last_index = 0;
 
 		NodeInfo* get_info(UINode::IndexType index);
@@ -134,6 +163,13 @@ namespace unicore
 			UINodeType type, List<UINode>& list, Size& count) const;
 		void internal_find_all_by_name(UINode::IndexType index,
 			StringView name, List<UINode>& list, Size& count) const;
+
+		Optional<UINode> internal_querry(UINode::IndexType index,
+			const Predicate<const UINode&>& predicate) const;
+
+		void internal_querry_all(UINode::IndexType index,
+			const Predicate<const UINode&>& predicate,
+			List<UINode>& list, Size& count) const;
 
 		Optional<UINode> internal_duplicate_recurse(const UINode& node, const Optional<UINode>& parent);
 		void internal_remove_node_recurse(UINode::IndexType index, Size& count);
