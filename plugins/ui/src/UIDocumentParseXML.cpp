@@ -14,6 +14,7 @@ namespace unicore
 		{"slider", UINodeType::Slider},
 		{"toggle", UINodeType::Toggle},
 		{"tooltip", UINodeType::Tooltip},
+		{"list", UINodeType::List},
 		{"item", UINodeType::Item},
 	};
 

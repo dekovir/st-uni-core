@@ -33,6 +33,7 @@ namespace unicore
 		Slider,
 		Toggle,
 		Tooltip,
+		List,
 		Item,
 	};
 
