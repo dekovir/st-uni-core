@@ -275,6 +275,17 @@ namespace unicore
 				_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
 
 			return true;
+
+		case UINodeType::Combo:
+			str = node.value().get_string();
+			if (ImGui::BeginCombo(title.c_str(), str.c_str()))
+			{
+				for (const auto& child : children)
+					render_node(child);
+
+				ImGui::EndCombo();
+			}
+			return true;
 		}
 
 		return false;

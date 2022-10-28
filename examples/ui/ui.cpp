@@ -35,9 +35,18 @@ namespace unicore
 			<text>Toggle</text>
 			<toggle value="true" />
 		</group>
+		<group value="2">
+			<text>Combo</text>
+			<combo value="Item 1">
+				<text>Text inside combo</text>
+				<item>Item 1</item>
+				<item>Item 2</item>
+				<item>Item 3</item>
+				<item>Item 4</item>
+			</combo>
+		</group>
 		<group id="group" />
 		<button id="add_item">Add item</button>
-
 		<text>Tree</text>
 		<tree value="1">Item 1
 			<text>Text 1</text>
