@@ -34,6 +34,8 @@ namespace unicore
 
 		void render();
 
+		UC_NODISCARD bool is_mouse_over() const;
+
 	protected:
 		Logger& _logger;
 		ImGuiContext& _context;
@@ -44,6 +46,7 @@ namespace unicore
 
 		Vector2f _pos, _size;
 		UIViewImGuiFlags _flags = UIViewImGuiFlag::NoCollapse;
+		Bool _hovered = false;
 
 		struct CachedInfo
 		{

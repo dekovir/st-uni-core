@@ -59,11 +59,17 @@ namespace unicore
 
 			_pos = ImGuiConvert::convert(ImGui::GetWindowPos());
 			_size = ImGuiConvert::convert(ImGui::GetWindowSize());
+			_hovered = ImGui::IsWindowHovered();
 		}
 		ImGui::End();
 
 		for (const auto& evt : _update_events)
 			_document->send_event(evt);
+	}
+
+	bool UIViewImGui::is_mouse_over() const
+	{
+		return _hovered;
 	}
 
 	void UIViewImGui::on_rebuild()
