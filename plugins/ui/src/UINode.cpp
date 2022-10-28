@@ -125,6 +125,11 @@ namespace unicore
 		return s_nodes;
 	}
 
+	Size UINode::get_children_count() const
+	{
+		return _document ? _document->get_node_children_count(*this) : 0;
+	}
+
 	unsigned UINode::get_sibling_index() const
 	{
 		if (_document)

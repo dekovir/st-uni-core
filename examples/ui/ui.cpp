@@ -45,8 +45,12 @@ namespace unicore
 				<item>Item 4</item>
 			</combo>
 		</group>
-		<group id="group" />
+
+		<text>Items</text>
+		<list id="group">
+		</list>
 		<button id="add_item">Add item</button>
+
 		<text>Tree</text>
 		<tree value="1">Item 1
 			<text>Text 1</text>
@@ -84,7 +88,7 @@ namespace unicore
 			_test_doc->set_node_action(add_id.value(), UIActionType::OnClick,
 				[this, group_id]
 				{
-					const auto count = _test_doc->get_node_children_count(group_id.value());
+					const auto count = group_id.value().get_children_count();
 					const auto text = StringBuilder::format("Item {}", count + 1);
 
 					UINodeOptions options;
