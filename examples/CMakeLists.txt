@@ -1,6 +1,7 @@
 # OPTIONS ######################################################################
 option(UNICORE_EXAMPLES_ALL "Add all examples projects" OFF)
 option(UNICORE_EXAMPLE_MINIMAL "Add Minimal project" ${UNICORE_EXAMPLES_ALL})
+option(UNICORE_EXAMPLE_RAYCAST "Add raycast project" ${UNICORE_EXAMPLES_ALL})
 option(UNICORE_EXAMPLE_UI "Add ui example project" ${UNICORE_EXAMPLES_ALL})
 option(UNICORE_EXAMPLE_WASM "Add wasm example project" ${UNICORE_EXAMPLES_ALL})
 option(UNICORE_TESTBED "Add Testbed project" ${UNICORE_EXAMPLES_ALL})
@@ -30,6 +31,22 @@ if (UNICORE_EXAMPLE_UI)
 	unciore_link_stb(ui)
 	unciore_link_ui(ui)
 	unciore_link_xml(ui)
+endif()
+
+# EXAMPLE_RAYCAST ##############################################################
+if (UNICORE_EXAMPLE_RAYCAST)
+	set(EXAMPLE_RAYCAST_DIR "${EXAMPLES_DIR}/raycast")
+	file(GLOB EXAMPLE_RAYCAST_SRC "${EXAMPLE_RAYCAST_DIR}/*")
+
+	add_executable(raycast "${EXAMPLE_RAYCAST_SRC}")
+	unicore_init_executable(raycast)
+	unicore_init_assets(raycast "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+	set_target_properties(raycast PROPERTIES FOLDER "Examples")
+
+	unciore_link_fnt(raycast)
+	unciore_link_stb(raycast)
+	unciore_link_xml(raycast)
+	unciore_link_raycast(raycast)
 endif()
 
 # EXAMPLE_WASM #################################################################
