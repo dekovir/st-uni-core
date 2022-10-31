@@ -31,6 +31,34 @@ namespace unicore
 	}
 
 	template<typename Type, typename Tag,
+		std::enable_if_t<std::is_same_v<bool, decltype(std::declval<Type>() <= std::declval<Type>())>>* = nullptr>
+	static constexpr bool operator<=(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
+	{
+		return a.value <= b.value;
+	}
+
+	template<typename Type, typename Tag,
+		std::enable_if_t<std::is_same_v<bool, decltype(std::declval<Type>() >= std::declval<Type>())>>* = nullptr>
+	static constexpr bool operator>=(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
+	{
+		return a.value >= b.value;
+	}
+
+	template<typename Type, typename Tag,
+		std::enable_if_t<std::is_same_v<bool, decltype(std::declval<Type>() < std::declval<Type>())>>* = nullptr>
+	static constexpr bool operator<(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
+	{
+		return a.value < b.value;
+	}
+
+	template<typename Type, typename Tag,
+		std::enable_if_t<std::is_same_v<bool, decltype(std::declval<Type>() > std::declval<Type>())>>* = nullptr>
+	static constexpr bool operator>(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
+	{
+		return a.value > b.value;
+	}
+
+	template<typename Type, typename Tag,
 		class = decltype(std::declval<Type>() + std::declval<Type>())>
 	static constexpr Index<Type, Tag> operator+(const Index<Type, Tag>& a, const Index<Type, Tag>& b)
 	{

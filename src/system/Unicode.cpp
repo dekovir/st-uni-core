@@ -7,7 +7,7 @@ namespace unicore::Unicode
 	bool try_convert(StringView32 from, String16& to)
 	{
 		std::wstring_convert<std::codecvt_utf16<char32_t>, char32_t> conv;
-		std::string bytes = conv.to_bytes(from.data());
+		std::string bytes = conv.to_bytes(&from.front(), &from.back() + 1);
 		to = std::u16string(reinterpret_cast<const char16_t*>(bytes.c_str()), bytes.length() / sizeof(char16_t));
 		return true;
 	}
@@ -23,7 +23,7 @@ namespace unicore::Unicode
 	bool try_convert(StringView32 from, String& to)
 	{
 		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
-		to = conv.to_bytes(from.data());
+		to = conv.to_bytes(&from.front(), &from.back() + 1);
 		return true;
 	}
 
@@ -45,7 +45,7 @@ namespace unicore::Unicode
 	bool try_convert(StringView16 from, String& to)
 	{
 		std::wstring_convert<std::codecvt_utf8<char16_t>, char16_t> conv;
-		to = conv.to_bytes(from.data());
+		to = conv.to_bytes(&from.front(), &from.back() + 1);
 		return true;
 	}
 
@@ -68,28 +68,28 @@ namespace unicore::Unicode
 	bool try_convert(StringViewW from, String& to)
 	{
 		static std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> conv;
-		to = conv.to_bytes(from.data());
+		to = conv.to_bytes(&from.front(), &from.back() + 1);
 		return true;
 	}
 
 	bool try_convert(StringView from, String32& to)
 	{
 		std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> conv;
-		to = conv.from_bytes(from.data());
+		to = conv.from_bytes(&from.front(), &from.back() + 1);
 		return true;
 	}
 
 	bool try_convert(StringView from, String16& to)
 	{
 		std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conv;
-		to = conv.from_bytes(from.data());
+		to = conv.from_bytes(&from.front(), &from.back() + 1);
 		return true;
 	}
 
 	bool try_convert(StringView from, StringW& to)
 	{
 		static std::wstring_convert< std::codecvt_utf8<wchar_t>, wchar_t > conv;
-		to = conv.from_bytes(from.data());
+		to = conv.from_bytes(&from.front(), &from.back() + 1);
 		return true;
 	}
 

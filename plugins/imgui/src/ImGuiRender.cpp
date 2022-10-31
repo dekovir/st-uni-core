@@ -110,7 +110,12 @@ namespace unicore
 					if (clip_max.x <= clip_min.x || clip_max.y <= clip_min.y)
 						continue;
 
-					Recti r = { (int)(clip_min.x), (int)(clip_min.y), (int)(clip_max.x - clip_min.x), (int)(clip_max.y - clip_min.y) };
+					const Recti r =
+					{
+						static_cast<int>(clip_min.x), static_cast<int>(clip_min.y),
+						static_cast<int>(clip_max.x - clip_min.x),
+						static_cast<int>(clip_max.y - clip_min.y)
+					};
 
 					_render.set_clip(r);
 

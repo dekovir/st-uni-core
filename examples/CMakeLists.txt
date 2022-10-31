@@ -1,37 +1,41 @@
 # OPTIONS ######################################################################
 option(UNICORE_EXAMPLES_ALL "Add all examples projects" OFF)
 option(UNICORE_EXAMPLE_MINIMAL "Add Minimal project" ${UNICORE_EXAMPLES_ALL})
-option(UNICORE_EXAMPLE_RAYCAST "Add Raycast project" ${UNICORE_EXAMPLES_ALL})
+option(UNICORE_EXAMPLE_UI "Add ui example project" ${UNICORE_EXAMPLES_ALL})
 option(UNICORE_EXAMPLE_WASM "Add wasm example project" ${UNICORE_EXAMPLES_ALL})
 option(UNICORE_TESTBED "Add Testbed project" ${UNICORE_EXAMPLES_ALL})
 
 # EXAMPLE_MINIMAL ##############################################################
 if (UNICORE_EXAMPLE_MINIMAL)
 	set(EXAMPLE_MINIMAL_DIR "${EXAMPLES_DIR}/minimal")
-	file(GLOB EXAMPLE_MINIMAL_SRC "${EXAMPLE_MINIMAL_DIR}/*.cpp" "${EXAMPLE_MINIMAL_DIR}/*.hpp")
+	file(GLOB EXAMPLE_MINIMAL_SRC "${EXAMPLE_MINIMAL_DIR}/*")
 
 	add_executable(minimal "${EXAMPLE_MINIMAL_SRC}")
 	unicore_init_executable(minimal)
 	set_target_properties(minimal PROPERTIES FOLDER "Examples")
 endif()
 
-# EXAMPLE_RAYCAST ##############################################################
-if (UNICORE_EXAMPLE_RAYCAST)
-	set(EXAMPLE_RAYCAST_DIR "${EXAMPLES_DIR}/raycast")
-	file(GLOB EXAMPLE_RAYCAST_SRC "${EXAMPLE_RAYCAST_DIR}/*.cpp" "${EXAMPLE_RAYCAST_DIR}/*.hpp")
+# EXAMPLE_UI ###################################################################
+if (UNICORE_EXAMPLE_UI)
+	set(EXAMPLE_UI_DIR "${EXAMPLES_DIR}/ui")
+	file(GLOB EXAMPLE_UI_SRC "${EXAMPLE_UI_DIR}/*")
 
-	add_executable(raycast "${EXAMPLE_RAYCAST_SRC}")
-	unicore_init_executable(raycast)
-	set_target_properties(raycast PROPERTIES FOLDER "Examples")
+	add_executable(ui "${EXAMPLE_UI_SRC}")
+	unicore_init_executable(ui)
+	unicore_init_assets(ui "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+	set_target_properties(ui PROPERTIES FOLDER "Examples")
 
-	unciore_link_stb(raycast)
-	unciore_link_raycast(raycast)
+	unciore_link_fnt(ui)
+	unciore_link_imgui(ui)
+	unciore_link_stb(ui)
+	unciore_link_ui(ui)
+	unciore_link_xml(ui)
 endif()
 
 # EXAMPLE_WASM #################################################################
 if (UNICORE_EXAMPLE_WASM)
 	set(EXAMPLE_WASM_DIR "${EXAMPLES_DIR}/wasm")
-	file(GLOB EXAMPLE_WASM_SRC "${EXAMPLE_WASM_DIR}/*.cpp" "${EXAMPLE_WASM_DIR}/*.hpp")
+	file(GLOB EXAMPLE_WASM_SRC "${EXAMPLE_WASM_DIR}/*")
 
 	add_executable(wasm "${EXAMPLE_WASM_SRC}")
 	unicore_init_executable(wasm)
@@ -47,7 +51,7 @@ endif()
 # TESTBED ######################################################################
 if (UNICORE_TESTBED)
 	set(TESTBED_DIR "${EXAMPLES_DIR}/testbed")
-	file(GLOB TESTBED_SRC "${TESTBED_DIR}/*.cpp" "${TESTBED_DIR}/*.hpp")
+	file(GLOB TESTBED_SRC "${TESTBED_DIR}/*")
 
 	add_executable(testbed "${TESTBED_SRC}")
 	unicore_init_executable(testbed)
@@ -57,8 +61,9 @@ if (UNICORE_TESTBED)
 	unciore_link_fnt(testbed)
 	unciore_link_grid(testbed)
 	unciore_link_imgui(testbed)
-	unciore_link_raycast(testbed)
+	unciore_link_pattern(testbed)
 	unciore_link_stb(testbed)
 	unciore_link_szip(testbed)
+	unciore_link_ui(testbed)
 	unciore_link_xml(testbed)
 endif()

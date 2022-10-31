@@ -1,6 +1,10 @@
 #pragma once
 #include "unicore/app/SDLApplication.hpp"
 #include "unicore/renderer/SpriteBatch.hpp"
+#include "unicore/imgui/ImGuiContext.hpp"
+#include "unicore/imgui/ImGuiRender.hpp"
+#include "unicore/ui/UIDocument.hpp"
+#include "unicore/ui/UIViewImGui.hpp"
 #include "example.hpp"
 
 namespace unicore
@@ -24,6 +28,14 @@ namespace unicore
 		uint32_t _draw_calls = 0;
 
 		List<String32> _lines;
+
+		ProxyLogger _ui_logger;
+
+		ImGuiRender2D _ui_render;
+		ImGuiContext _ui_context;
+
+		Shared<UIDocument> _ui_document;
+		Shared<UIViewImGui> _ui_view;
 
 		void on_init() override;
 		void on_update() override;

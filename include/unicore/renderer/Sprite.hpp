@@ -17,7 +17,6 @@ namespace unicore
 		UC_NODISCARD size_t hash() const override { return Hash::make(tile); }
 	};
 
-	// TODO: Do we need virtual methods?
 	class Sprite : public Resource
 	{
 		UC_OBJECT(Sprite, Resource)

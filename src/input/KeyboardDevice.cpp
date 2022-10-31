@@ -12,6 +12,7 @@ namespace unicore
 	{
 		_prev = {};
 		_current = {};
+		_text = U"";
 	}
 
 	void KeyboardDeviceState::update()
@@ -21,6 +22,8 @@ namespace unicore
 		_current.mods = _device.mods();
 		for (size_t i = 0; i < KeyCount; i++)
 			_current.keys[i] = _device.key(static_cast<KeyCode>(i));
+
+		_text = _device.text();
 	}
 
 	KeyModFlags KeyboardDeviceState::mods() const
@@ -47,6 +50,11 @@ namespace unicore
 
 		UC_ASSERT_ALWAYS_MSG("Unknown flag");
 		return false;
+	}
+
+	const String32& KeyboardDeviceState::text() const
+	{
+		return _text;
 	}
 
 	ButtonState KeyboardDeviceState::state(KeyCode code) const

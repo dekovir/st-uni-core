@@ -25,9 +25,41 @@ namespace unicore::StringHelper
 	// METHODS ////////////////////////////////////////////////////////////////////
 	extern String to_hex(intptr_t value);
 	extern String print_format(StringView format, ...);
+	extern String to_lower(StringView str);
+
+	extern Int compare(StringView a, StringView b, bool case_insensetive = false);
+	extern Bool equals(StringView a, StringView b, bool case_insensetive = false);
 
 	template<typename Char>
-	static bool starts_with(const BasicStringView<Char> string,
+	extern BasicString<Char> ltrim(BasicStringView<Char> string,
+		BasicStringView<Char> chars = " \t\n\r\f\v")
+	{
+		BasicString<Char> s(string);
+		s.erase(0, s.find_first_not_of(chars));
+		return s;
+	}
+
+	template<typename Char>
+	extern BasicString<Char> rtrim(BasicStringView<Char> string,
+		BasicStringView<Char> chars = " \t\n\r\f\v")
+	{
+		BasicString<Char> s(string);
+		s.erase(s.find_last_not_of(chars) + 1);
+		return s;
+	}
+
+	template<typename Char>
+	extern BasicString<Char> trim(BasicStringView<Char> string,
+		BasicStringView<Char> chars = " \t\n\r\f\v")
+	{
+		BasicString<Char> s(string);
+		s.erase(0, s.find_first_not_of(chars));
+		s.erase(s.find_last_not_of(chars) + 1);
+		return s;
+	}
+
+	template<typename Char>
+	extern Bool starts_with(const BasicStringView<Char> string,
 		const BasicStringView<Char> prefix)
 	{
 		if (string.length() >= prefix.length())
@@ -37,7 +69,7 @@ namespace unicore::StringHelper
 	}
 
 	template<typename Char>
-	static bool ends_with(const BasicStringView<Char> string,
+	extern Bool ends_with(const BasicStringView<Char> string,
 		const BasicStringView<Char> ending)
 	{
 		if (string.length() >= ending.length())
@@ -69,7 +101,7 @@ namespace unicore::StringHelper
 	};
 
 	template<typename TChar>
-	extern bool compare_to_mask(BasicStringView<TChar> string_, BasicStringView<TChar> wild_)
+	extern Bool compare_to_mask(BasicStringView<TChar> string_, BasicStringView<TChar> wild_)
 	{
 		auto string = string_.data();
 		auto wild = wild_.data();

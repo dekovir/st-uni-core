@@ -111,12 +111,12 @@ namespace unicore
 			random.range(100.f, 500.f) * random.sign<float>(),
 			random.range(100.f, 500.f) * random.sign<float>()
 		);
-		entity.color = Color4b::create_random(random);
+		entity.color = random.color4b();
 
 		entity.radius = random.range(25.f, 50.f);
 		entity.scale = Vector2f(2.f * entity.radius / static_cast<float>(size.x));
 
-		entity.angle = Degrees(random.range(359.f, 359.f));
+		entity.angle = random.radians();
 		entity.angle_speed = Degrees(random.range(45.f, 300.f) * random.sign<float>());
 
 		_entites.push_back(entity);

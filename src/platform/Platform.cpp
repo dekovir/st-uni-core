@@ -22,7 +22,6 @@ namespace unicore
 
 	void Platform::update()
 	{
-		looper.poll_events();
 	}
 
 	Unique<Platform> Platform::create()

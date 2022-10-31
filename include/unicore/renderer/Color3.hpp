@@ -1,8 +1,8 @@
 #pragma once
 #include "unicore/math/Math.hpp"
 #include "unicore/math/Hash.hpp"
-#include "unicore/math/Random.hpp"
 #include "unicore/renderer/PixelFormat.hpp"
+#include "unicore/renderer/ColorTable.hpp"
 
 namespace unicore
 {
@@ -14,7 +14,7 @@ namespace unicore
 
 		using Limits = color_limits<T>;
 
-		static constexpr T MinValue = Limits::min();
+		static constexpr T MinValue = 0;
 		static constexpr T MaxValue = Limits::max();
 
 		constexpr Color3() : r(MaxValue), g(MaxValue), b(MaxValue) {}
@@ -41,6 +41,7 @@ namespace unicore
 			return  *this;
 		}
 
+		// TODO: Test convert
 		template<
 			typename DataType,
 			typename ComponentType>
@@ -50,37 +51,40 @@ namespace unicore
 			const auto g = static_cast<uint8_t>((value >> format.g_shift) & format.component_mask);
 			const auto b = static_cast<uint8_t>((value >> format.b_shift) & format.component_mask);
 			return {
-				convert_component_from_uint8(r),
-				convert_component_from_uint8(g),
-				convert_component_from_uint8(b),
+				color_limits_convert::component<UInt8, T>(r),
+				color_limits_convert::component<UInt8, T>(g),
+				color_limits_convert::component<UInt8, T>(b)
 			};
 		}
 
+		// TODO: Test convert
 		template<
 			typename DataType,
 			typename ComponentType>
 		constexpr DataType to_format(PixelFormat<DataType, ComponentType> format) const
 		{
 			return
-				(convert_component_to_uint8(r) << format.r_shift) |
-				(convert_component_to_uint8(g) << format.g_shift) |
-				(convert_component_to_uint8(b) << format.b_shift);
-		}
-
-		UC_NODISCARD constexpr uint32_t to_rgb() const
-		{
-			return
-				(convert_component_to_uint8(r) << 16) |
-				(convert_component_to_uint8(g) << 8) |
-				convert_component_to_uint8(b);
+				(color_limits_convert::component<T, ComponentType>(r) << format.r_shift) |
+				(color_limits_convert::component<T, ComponentType>(g) << format.g_shift) |
+				(color_limits_convert::component<T, ComponentType>(b) << format.b_shift);
 		}
 
 		UC_NODISCARD constexpr Color3 invert() const
 		{
 			return {
-				static_cast<T>(Limits::max() - r),
-				static_cast<T>(Limits::max() - g),
-				static_cast<T>(Limits::max() - b)
+				static_cast<T>(MaxValue - r),
+				static_cast<T>(MaxValue - g),
+				static_cast<T>(MaxValue - b)
+			};
+		}
+
+		template<typename U>
+		UC_NODISCARD constexpr Color3<U> cast() const
+		{
+			return {
+				color_limits_convert::component<T, U>(r),
+				color_limits_convert::component<T, U>(g),
+				color_limits_convert::component<T, U>(b)
 			};
 		}
 
@@ -98,48 +102,21 @@ namespace unicore
 			};
 		}
 
+		static constexpr Color3 from_one(T value)
+		{
+			return { value, value, value };
+		}
+
 		static constexpr Color3 from_rgb(const uint32_t rgb)
 		{
-			const uint8_t r = (rgb >> 16) & 0xFF;
-			const uint8_t g = (rgb >> 8) & 0xFF;
-			const uint8_t b = rgb & 0xFF;
+			const UInt8 r = (rgb >> 16) & 0xFF;
+			const UInt8 g = (rgb >> 8) & 0xFF;
+			const UInt8 b = rgb & 0xFF;
 			return {
-				convert_component_from_uint8(r),
-				convert_component_from_uint8(g),
-				convert_component_from_uint8(b),
+				color_limits_convert::component<UInt8, T>(r),
+				color_limits_convert::component<UInt8, T>(g),
+				color_limits_convert::component<UInt8, T>(b)
 			};
-		}
-
-		static Color3 create_random(Random& random)
-		{
-			return {
-				random.range(MinValue, MaxValue),
-				random.range(MinValue, MaxValue),
-				random.range(MinValue, MaxValue),
-			};
-		}
-
-	protected:
-		// TODO: Convert to template
-		static constexpr T convert_component_from_uint8(uint8_t value)
-		{
-			if constexpr (std::is_same_v<T, uint8_t>) return value;
-
-			if constexpr (std::is_floating_point_v<T>)
-				return static_cast<T>((static_cast<T>(value) / 255.0f) * Limits::max());
-
-			return static_cast<T>((static_cast<double>(value) / 255.0) * Limits::range()) + Limits::min();
-		}
-
-		// TODO: Convert to template
-		UC_NODISCARD constexpr uint8_t convert_component_to_uint8(T value) const
-		{
-			if constexpr (std::is_same_v<T, uint8_t>) return value;
-
-			if constexpr (std::is_floating_point_v<T>)
-				return static_cast<uint8_t>((value / Limits::max()) * 0xFF);
-
-			return static_cast<uint8_t>((static_cast<double>(value) / static_cast<double>(Limits::range())) * 0xFF);
 		}
 	};
 
@@ -196,30 +173,11 @@ namespace unicore
 	namespace details
 	{
 		template<typename T>
-		struct ColorConst3
-		{
-			static constexpr auto Clear = Color3<T>::from_argb(0);
-
-			static constexpr auto Black = Color3<T>::from_rgb(0x000000);
-			static constexpr auto White = Color3<T>::from_rgb(0xFFFFFF);
-
-			static constexpr auto Red = Color3<T>::from_rgb(0xFF0000);
-			static constexpr auto Green = Color3<T>::from_rgb(0x00FF00);
-			static constexpr auto Blue = Color3<T>::from_rgb(0x0000FF);
-
-			static constexpr auto Magenta = Color3<T>::from_rgb(0xFF00FF);
-			static constexpr auto Yellow = Color3<T>::from_rgb(0xFFFF00);
-			static constexpr auto Cyan = Color3<T>::from_rgb(0x00FFFF);
-
-			ColorConst3() = delete;
-		};
-
-		template<typename T>
 		using ColorPalette3 = List<Color3<T>>;
 	}
 
-	using ColorConst3b = details::ColorConst3<uint8_t>;
-	using ColorConst3f = details::ColorConst3<float>;
+	using ColorConst3b = ColorTable<Color3b>;
+	using ColorConst3f = ColorTable<Color3f>;
 
 	using ColorPalette3b = details::ColorPalette3<uint8_t>;
 	using ColorPalette3f = details::ColorPalette3<float>;

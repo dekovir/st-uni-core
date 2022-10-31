@@ -12,6 +12,10 @@ namespace unicore
 		, _file_system_logger("[FS] ", _logger)
 		, _file_system(_file_system_logger)
 	{
+#if defined(UNICORE_USE_SDL2)
+		_looper.add_listener(&_input);
+#endif
+
 		file_system.add_read(std::make_shared<PosixFileProvider>(_file_system_logger));
 	}
 
@@ -20,6 +24,12 @@ namespace unicore
 		Platform::update();
 
 		_time.update();
+		_input.frame();
+
+#if defined(UNICORE_USE_SDL2)
+		_looper.poll_events();
+#endif
+
 		_input.update();
 	}
 

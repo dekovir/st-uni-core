@@ -2,6 +2,7 @@
 #include "unicore/system/Object.hpp"
 #include "unicore/renderer/sdl2/Pipeline.hpp"
 #include "unicore/imgui/ImGuiDefs.hpp"
+
 namespace unicore
 {
 	class Logger;

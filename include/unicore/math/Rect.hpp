@@ -108,9 +108,9 @@ namespace unicore
 		}
 
 		template<typename U>
-		constexpr Rect<U> cast() const
+		UC_NODISCARD constexpr Rect<U> cast() const
 		{
-			if constexpr (std::is_same_v<U, T>) return this;
+			if constexpr (std::is_same_v<U, T>) return *this;
 
 			return Rect<U>(
 				static_cast<U>(x), static_cast<U>(y),

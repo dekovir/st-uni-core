@@ -22,7 +22,7 @@ namespace unicore::StringHelper
 
 		std::reverse(str.begin(), str.end());
 
-		while (str[0] == '0')
+		while (str.size() > 1 && str[0] == '0')
 			str.erase(str.begin());
 
 		return str;
@@ -35,5 +35,44 @@ namespace unicore::StringHelper
 		vsprintf(s_buffer, format.data(), args);
 		va_end(args);
 		return s_buffer;
+	}
+
+	String to_lower(StringView str)
+	{
+		String a(str);
+		std::transform(a.begin(), a.end(), a.begin(), std::tolower);
+		return a;
+	}
+
+	Int compare(StringView a, StringView b, bool case_insensetive)
+	{
+		if (a.size() < b.size()) return -1;
+		if (a.size() > b.size()) return +1;
+
+		if (!case_insensetive)
+		{
+			for (unsigned i = 0; i < a.size(); i++)
+			{
+				if (a[i] < b[i]) return -1;
+				if (a[i] > b[i]) return -1;
+			}
+		}
+		else
+		{
+			for (unsigned i = 0; i < a.size(); i++)
+			{
+				const auto a_c = std::tolower(a[i]);
+				const auto b_c = std::tolower(b[i]);
+				if (a_c < b_c) return -1;
+				if (a_c > b_c) return -1;
+			}
+		}
+
+		return 0;
+	}
+
+	Bool equals(StringView a, StringView b, bool case_insensetive)
+	{
+		return compare(a, b, case_insensetive) == 0;
 	}
 }

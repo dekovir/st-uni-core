@@ -31,6 +31,11 @@ namespace unicore
 			return (_value & static_cast<TValue>(flag)) == static_cast<TValue>(flag);
 		}
 
+		void reset()
+		{
+			_value = 0;
+		}
+
 		template<T Flag>
 		UC_NODISCARD constexpr bool has() const
 		{

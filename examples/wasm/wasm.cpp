@@ -81,7 +81,7 @@ namespace unicore
 
 	static float api_random_f()
 	{
-		return s_example->_random.next_float();
+		return s_example->_random.next_float_01();
 	}
 
 	static int api_screen_x()

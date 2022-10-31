@@ -101,6 +101,7 @@ namespace unicore
 	using Double = double;
 
 	using Byte = UInt8;
+	using Size = size_t;
 
 	namespace arithmetic
 	{
@@ -176,7 +177,7 @@ namespace unicore
 	using Any = std::any;
 
 	template <typename This, typename... Rest>
-	using Variant = std::variant<This, Rest...>;
+	using StdVariant = std::variant<This, Rest...>;
 
 	template<typename T>
 	using HashFunc = std::hash<T>;

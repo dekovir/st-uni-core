@@ -1,7 +1,6 @@
 #pragma once
 #include "unicore/math/Math.hpp"
 #include "unicore/math/Hash.hpp"
-#include "unicore/math/Random.hpp"
 
 namespace unicore
 {
@@ -24,8 +23,6 @@ namespace unicore
 		Range& operator=(Range&& other) noexcept = default;
 
 		UC_NODISCARD constexpr T size() const { return max - min; }
-
-		UC_NODISCARD T random(Random& rnd) const { return rnd.range(min, max); }
 	};
 
 	template<typename T>

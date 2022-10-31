@@ -123,6 +123,10 @@ namespace unicore
 	};
 
 	// SDL2MouseDevice ///////////////////////////////////////////////////////////
+	SDL2MouseDevice::SDL2MouseDevice(Logger& logger) : SDL2InputDevice(logger)
+	{
+	}
+
 	Bool SDL2MouseDevice::button(uint8_t button) const
 	{
 		return button < _buttons.size() ? _buttons[button] : false;
@@ -135,14 +139,58 @@ namespace unicore
 		_wheel = VectorConst2i::Zero;
 	}
 
-	void SDL2MouseDevice::update()
+	void SDL2MouseDevice::frame()
 	{
-		const auto mouse_buttons = SDL_GetMouseState(&_position.x, &_position.y);
-		for (unsigned i = 0; i < _buttons.size(); i++)
-			_buttons[i] = (mouse_buttons & SDL_BUTTON(i + 1)) != 0;
+		_wheel = VectorConst2i::Zero;
+	}
+
+	bool SDL2MouseDevice::on_event(const SDL_Event& evt)
+	{
+		switch (evt.type)
+		{
+		case SDL_MOUSEMOTION: /**< Mouse moved */
+			_position.x = evt.motion.x;
+			_position.y = evt.motion.y;
+			return true;
+
+		case SDL_MOUSEBUTTONDOWN: /**< Mouse button pressed */
+		case SDL_MOUSEBUTTONUP: /**< Mouse button released */
+			switch (evt.button.button)
+			{
+			case SDL_BUTTON_LEFT:
+				_buttons[static_cast<unsigned>(MouseButton::Left)]
+					= evt.button.state == SDL_PRESSED;
+				break;
+
+			case SDL_BUTTON_MIDDLE:
+				_buttons[static_cast<unsigned>(MouseButton::Middle)]
+					= evt.button.state == SDL_PRESSED;
+				break;
+
+			case SDL_BUTTON_RIGHT:
+				_buttons[static_cast<unsigned>(MouseButton::Right)]
+					= evt.button.state == SDL_PRESSED;
+				break;
+			}
+
+			_position.x = evt.motion.x;
+			_position.y = evt.motion.y;
+			return true;
+
+		case SDL_MOUSEWHEEL: /**< Mouse wheel motion */
+			_wheel.x = evt.wheel.x;
+			_wheel.y = evt.wheel.y;
+			return true;
+		}
+
+		return false;
 	}
 
 	// SDL2KeyboardDevice ////////////////////////////////////////////////////////
+	SDL2KeyboardDevice::SDL2KeyboardDevice(Logger& logger) : SDL2InputDevice(logger)
+	{
+	}
+
 	Bool SDL2KeyboardDevice::key(KeyCode code) const
 	{
 		const int index = static_cast<int>(code);
@@ -154,79 +202,118 @@ namespace unicore
 		return _mods;
 	}
 
+	const String32& SDL2KeyboardDevice::text() const
+	{
+		return _text;
+	}
+
 	void SDL2KeyboardDevice::reset()
 	{
 		_state.reset();
 		_mods = KeyModFlags::Zero;
 	}
 
-	void SDL2KeyboardDevice::update()
+	void SDL2KeyboardDevice::frame()
 	{
-		// Keyboard State
-		_state.reset();
-		int keys_num;
-		const auto key_state = SDL_GetKeyboardState(&keys_num);
-		for (auto i = 0; i < keys_num; i++)
+		_text = U"";
+	}
+
+	bool SDL2KeyboardDevice::on_event(const SDL_Event& evt)
+	{
+		if (evt.type == SDL_KEYDOWN || evt.type == SDL_KEYUP)
 		{
-			if (key_state[i] == 1)
-			{
-				const auto scancode = static_cast<SDL_Scancode>(i);
-				const auto it = s_key_bindings.find(scancode);
-				if (it != s_key_bindings.end())
-					_state[static_cast<int>(it->second)] = true;
-				//else
-				//{
-				//	const auto key_name = SDL_GetScancodeName(scancode);
-				//	UC_LOG_WARNING(_logger) << "Unknown scancode " << key_name << ":" << scancode;
-				//}
-			}
+			const auto it = s_key_bindings.find(evt.key.keysym.scancode);
+			if (it != s_key_bindings.end())
+				_state[static_cast<size_t>(it->second)] = evt.key.state == SDL_PRESSED;
+
+			//const auto key_mod = SDL_GetModState();
+			update_flags((SDL_Keymod)evt.key.keysym.mod, _mods);
+
+			return true;
 		}
 
-		// Keyboard Modifiers
-		const auto key_mod = SDL_GetModState();
-		_mods.set(KeyMod::ShiftLeft, key_mod & KMOD_LSHIFT);
-		_mods.set(KeyMod::ShiftRight, key_mod & KMOD_LSHIFT);
+		if (evt.type == SDL_TEXTINPUT)
+		{
+			//UC_LOG_DEBUG(_logger) << "Input: " << evt.text.text;
+			_text += Unicode::to_utf32(evt.text.text);
+			return true;
+		}
 
-		_mods.set(KeyMod::AltLeft, key_mod & KMOD_LALT);
-		_mods.set(KeyMod::AltRight, key_mod & KMOD_RALT);
+		return false;
+	}
 
-		_mods.set(KeyMod::ControlLeft, key_mod & KMOD_LCTRL);
-		_mods.set(KeyMod::ControlRight, key_mod & KMOD_RCTRL);
+	void SDL2KeyboardDevice::update_flags(const SDL_Keymod mod, KeyModFlags& flags)
+	{
+		flags.reset();
 
-		_mods.set(KeyMod::SystemLeft, key_mod & KMOD_LGUI);
-		_mods.set(KeyMod::SystemRight, key_mod & KMOD_RGUI);
+		flags.set(KeyMod::ShiftLeft, mod & KMOD_LSHIFT);
+		flags.set(KeyMod::ShiftRight, mod & KMOD_LSHIFT);
+
+		flags.set(KeyMod::AltLeft, mod & KMOD_LALT);
+		flags.set(KeyMod::AltRight, mod & KMOD_RALT);
+
+		flags.set(KeyMod::ControlLeft, mod & KMOD_LCTRL);
+		flags.set(KeyMod::ControlRight, mod & KMOD_RCTRL);
+
+		flags.set(KeyMod::SystemLeft, mod & KMOD_LGUI);
+		flags.set(KeyMod::SystemRight, mod & KMOD_RGUI);
 	}
 
 	// SDL2TouchDevice ////////////////////////////////////////////////////////////
+	SDL2TouchDevice::SDL2TouchDevice(Logger& logger) : SDL2InputDevice(logger)
+	{
+	}
+
 	void SDL2TouchDevice::reset()
 	{
 		_fingers.clear();
 	}
 
-	void SDL2TouchDevice::update()
+	void SDL2TouchDevice::frame()
 	{
-		_fingers.clear();
-
-		const int num_touch_devices = SDL_GetNumTouchDevices();
-		for (int device_index = 0; device_index < num_touch_devices; device_index++)
-		{
-			const SDL_TouchID touch_id = SDL_GetTouchDevice(device_index);
-			if (touch_id == 0) continue;
-
-			const int num_touch_fingers = SDL_GetNumTouchFingers(touch_id);
-			for (int finger_index = 0; finger_index < num_touch_fingers; finger_index++)
-			{
-				const SDL_Finger* finger = SDL_GetTouchFinger(touch_id, finger_index);
-				if (finger == nullptr) continue;
-
-				_fingers.push_back({ static_cast<IntPtr>(finger->id), {0, 0} });
-			}
-		}
 	}
+
+	bool SDL2TouchDevice::on_event(const SDL_Event& evt)
+	{
+		// TODO: Implement touch input
+		//switch (evt.type)
+		//{
+		//case SDL_FINGERDOWN:
+		//case SDL_FINGERUP:
+		//	evt.tfinger
+		//	return false;
+		//case SDL_FINGERMOTION:
+		//	evt.tfinger.
+		//	return false;
+		//}
+
+		return false;
+	}
+
+	//void SDL2TouchDevice::update()
+	//{
+	//	_fingers.clear();
+	//	const int num_touch_devices = SDL_GetNumTouchDevices();
+	//	for (int device_index = 0; device_index < num_touch_devices; device_index++)
+	//	{
+	//		const SDL_TouchID touch_id = SDL_GetTouchDevice(device_index);
+	//		if (touch_id == 0) continue;
+	//		const int num_touch_fingers = SDL_GetNumTouchFingers(touch_id);
+	//		for (int finger_index = 0; finger_index < num_touch_fingers; finger_index++)
+	//		{
+	//			const SDL_Finger* finger = SDL_GetTouchFinger(touch_id, finger_index);
+	//			if (finger == nullptr) continue;
+	//			_fingers.push_back({ static_cast<IntPtr>(finger->id), {0, 0} });
+	//		}
+	//	}
+	//}
 
 	// SDL2Input //////////////////////////////////////////////////////////////////
 	SDL2Input::SDL2Input(Logger& logger)
 		: _logger(logger)
+		, _mouse(logger)
+		, _keyboard(logger)
+		, _touch(logger)
 		, _mouse_state(_mouse)
 		, _keyboard_state(_keyboard)
 		, _touch_state(_touch)
@@ -260,15 +347,30 @@ namespace unicore
 		_touch_state.reset();
 	}
 
+	void SDL2Input::frame()
+	{
+		_mouse.frame();
+		_keyboard.frame();
+		_touch.frame();
+	}
+
 	void SDL2Input::update()
 	{
-		_mouse.update();
-		_keyboard.update();
-		_touch.update();
-
 		_mouse_state.update();
 		_keyboard_state.update();
 		_touch_state.update();
+	}
+
+	bool SDL2Input::on_event(const SDL_Event& evt)
+	{
+		if (_mouse.on_event(evt))
+			return true;
+		if (_touch.on_event(evt))
+			return true;
+		if (_keyboard.on_event(evt))
+			return true;
+
+		return false;
 	}
 }
 #endif

@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/app/SDLApplication.hpp"
+#include "unicore/math/Random.hpp"
 #include "unicore/renderer/PrimitiveBatch.hpp"
 #include "unicore/renderer/SpriteBatch.hpp"
 
