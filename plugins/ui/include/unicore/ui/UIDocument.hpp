@@ -9,6 +9,8 @@ namespace unicore
 	{
 		Clicked,
 		ValueChanged,
+		MouseEnter,
+		MouseLeave,
 	};
 
 	struct UIEvent

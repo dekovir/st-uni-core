@@ -19,6 +19,8 @@ namespace unicore
 	{
 		OnClick,
 		OnChange, // Value changed
+		OnMouseEnter, // Mouse cursor enters
+		OnMouseLeave, // Mouse cursor enters
 	};
 	using UIActionDict = Dictionary<UIActionType, UIAction>;
 

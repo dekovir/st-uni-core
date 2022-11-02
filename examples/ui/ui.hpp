@@ -24,6 +24,8 @@ namespace unicore
 		Shared<UIViewImGui> _test_view;
 		Optional<UINode> _test_position_id;
 
+		ItemDataBase _items_db;
+
 		Shared<Inventory> _inventory;
 		Shared<UIDocument> _inventory_doc;
 		Shared<UIViewImGui> _inventory_view;

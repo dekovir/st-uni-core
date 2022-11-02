@@ -7,6 +7,7 @@ namespace unicore
 {
 	struct ItemId_Tag {};
 	using ItemId = Index<UInt16, ItemId_Tag>;
+	static constexpr ItemId ItemId_Invalid = ItemId(std::numeric_limits<ItemId::TypeValue>::max());
 
 	enum class ItemType
 	{
@@ -18,20 +19,60 @@ namespace unicore
 
 	struct Item
 	{
-		//ItemId id;
 		String32 title;
 		ItemType type;
 		Int16 price;
 		Shared<Sprite> sprite;
 	};
 
+	class ItemDataBase
+	{
+	public:
+		UC_NODISCARD Size size() const { return _items.size(); }
+
+		ItemId add(const Item& item)
+		{
+			const auto index = ItemId(_last_index++);
+			_items.insert({ index, item });
+			return index;
+		}
+
+		UC_NODISCARD bool has(ItemId id) const
+		{
+			if (id != ItemId_Invalid)
+			{
+				const auto it = _items.find(id);
+				if (it != _items.end())
+					return true;
+			}
+
+			return false;
+		}
+
+		UC_NODISCARD const Item* get(ItemId id) const
+		{
+			const auto it = _items.find(id);
+			return it != _items.end() ? &it->second : nullptr;
+		}
+
+		UC_NODISCARD auto begin() const { return _items.begin(); }
+		UC_NODISCARD auto end() const { return _items.end(); }
+
+	protected:
+		ItemId::TypeValue _last_index = 0;
+
+		Dictionary<ItemId, Item> _items;
+	};
+
 	class Inventory
 	{
 		UC_OBJECT_EVENT(money_change, UInt16);
-		UC_OBJECT_EVENT(add_item, unsigned, const Item&);
-		UC_OBJECT_EVENT(remove_item, unsigned, const Item&);
+		UC_OBJECT_EVENT(add_item, unsigned, ItemId);
+		UC_OBJECT_EVENT(remove_item, unsigned, ItemId);
 	public:
-		explicit Inventory(UInt16 count, UInt16 money = 0);
+		explicit Inventory(const ItemDataBase& item_db, UInt16 count, UInt16 money = 0);
+
+		UC_NODISCARD const ItemDataBase& database() const { return _item_db; }
 
 		UC_NODISCARD UInt16 money() const { return _money; }
 
@@ -41,16 +82,18 @@ namespace unicore
 
 		UC_NODISCARD auto item_count() const { return _slots.size(); }
 
-		bool add_item(const Item& item, unsigned* index = nullptr);
+		bool add_item(ItemId id);
 
-		UC_NODISCARD const Item* get_item(unsigned index) const;
+		UC_NODISCARD ItemId get_item(unsigned index) const;
 
-		UC_NODISCARD bool find_item(const Item& item, unsigned* index = nullptr) const;
+		UC_NODISCARD bool has_item(ItemId id) const;
+		UC_NODISCARD Optional<unsigned> find_item_slot(ItemId id) const;
 
-		UC_NODISCARD bool remove_item(unsigned index);
+		UC_NODISCARD bool remove_slot(unsigned index);
 
 	protected:
-		List<const Item*> _slots;
+		const ItemDataBase& _item_db;
+		List<ItemId> _slots;
 		UInt16 _money;
 	};
 }

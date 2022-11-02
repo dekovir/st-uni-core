@@ -212,7 +212,7 @@ namespace unicore
 		{
 		case UIEventType::Clicked:
 			UC_LOG_DEBUG(_logger) << "Node " << evt.node << " value has clicked";
-			if (const auto action = evt.node.action(UIActionType::OnClick); action.has_value())
+			if (const auto action = get_node_action(evt.node, UIActionType::OnClick); action.has_value())
 			{
 				if (!call_action_default(action.value(), evt.node))
 					UC_LOG_WARNING(_logger) << "Failed to call default action";
@@ -223,10 +223,28 @@ namespace unicore
 			info->attributes[UIAttributeType::Value] = evt.value;
 			UC_LOG_DEBUG(_logger) << "Node " << evt.node << " value changed to " << evt.value;
 
-			if (const auto action = evt.node.action(UIActionType::OnChange); action.has_value())
+			if (const auto action = get_node_action(evt.node, UIActionType::OnChange); action.has_value())
 			{
 				if (!call_action_value(action.value(), evt.node, evt.value))
 					UC_LOG_WARNING(_logger) << "Failed to call value action";
+			}
+			break;
+
+		case UIEventType::MouseEnter:
+			//UC_LOG_DEBUG(_logger) << "Mouse enters " << evt.node;
+			if (const auto action = get_node_action(evt.node, UIActionType::OnMouseEnter); action.has_value())
+			{
+				if (!call_action_default(action.value(), evt.node))
+					UC_LOG_WARNING(_logger) << "Failed to call default action";
+			}
+			break;
+
+		case UIEventType::MouseLeave:
+			//UC_LOG_DEBUG(_logger) << "Mouse leaves " << evt.node;
+			if (const auto action = get_node_action(evt.node, UIActionType::OnMouseLeave); action.has_value())
+			{
+				if (!call_action_default(action.value(), evt.node))
+					UC_LOG_WARNING(_logger) << "Failed to call default action";
 			}
 			break;
 		}

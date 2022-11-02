@@ -6,6 +6,8 @@ namespace unicore
 	template<typename Type, typename Tag>
 	struct Index
 	{
+		using TypeValue = Type;
+
 		Type value;
 
 		constexpr Index() = default;

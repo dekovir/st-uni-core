@@ -22,6 +22,10 @@ namespace unicore
 			<td><text name="type">Type</text></td>
 			<td><text name="price">0</text></td>
 		</tr>
+		<tooltip name="item_tooltip" visible="0">
+			<text name="title">title</text>
+			<text name="desc">description</text>
+		</tooltip>
 	</group>
 	)";
 
@@ -32,15 +36,17 @@ namespace unicore
 	{
 		UIDocumentParseXML::parse(xml, _document, std::nullopt, _logger);
 
-		_inventory.on_add_item() += [&](auto index, auto& item) { on_add_item(index, item); };
-		_inventory.on_remove_item() += [&](auto index, auto& item) { on_remove_item(index, item); };
+		_inventory.on_add_item() += [&](auto index, auto id) { on_add_item(index, id); };
+		_inventory.on_remove_item() += [&](auto index, auto id) { on_remove_item(index, id); };
 
 		_money_text = _document.find_by_name("money");
+
 		_items_group = _document.find_by_name("item_group");
-		_items_template = _document.find_by_name("item_template");
+		_item_template = _document.find_by_name("item_template");
+		_item_tooltip = _document.find_by_name("item_tooltip");
 
 		if (!_items_group) UC_LOG_ERROR(_logger) << "Group not found";
-		if (!_items_template) UC_LOG_ERROR(_logger) << "Item template not found";
+		if (!_item_template) UC_LOG_ERROR(_logger) << "Item template not found";
 
 		apply_money(_inventory.money());
 	}
@@ -50,20 +56,18 @@ namespace unicore
 		apply_money(value);
 	}
 
-	void InventoryUI::on_add_item(unsigned index, const Item& item)
+	void InventoryUI::on_add_item(unsigned index, ItemId id)
 	{
-		if (!_items_group.has_value() || !_items_template.has_value())
+		if (!_items_group.has_value() || !_item_template.has_value())
 			return;
 
-		UC_LOG_DEBUG(_logger) << "Item " << item.title << " added";
-
-		if (const auto item_node = _document.duplicate(_items_template.value(), _items_group.value()); item_node.has_value())
-			apply_item(item_node.value(), item);
+		if (const auto new_node = _document.duplicate(_item_template.value(), _items_group.value()); new_node.has_value())
+			apply_item(new_node.value(), id);
 	}
 
-	void InventoryUI::on_remove_item(unsigned index, const Item& item)
+	void InventoryUI::on_remove_item(unsigned index, ItemId id)
 	{
-		if (!_items_group.has_value() || !_items_template.has_value())
+		if (!_items_group.has_value() || !_item_template.has_value())
 			return;
 	}
 
@@ -76,12 +80,22 @@ namespace unicore
 		}
 	}
 
-	void InventoryUI::apply_item(const UINode& node, const Item& item)
+	void InventoryUI::apply_item(const UINode& node, ItemId id)
 	{
+		const auto& item = *_inventory.database().get(id);
+		UC_LOG_DEBUG(_logger) << "Apply item " << item.title << " to " << node;
+
 		_document.set_node_visible(node, true);
 
 		if (const auto find = node.find_by_name("name"); find.valid())
+		{
 			_document.set_node_attribute(find, UIAttributeType::Text, item.title);
+
+			_document.set_node_action(find, UIActionType::OnMouseEnter,
+				[this, id] { apply_tooltip(id); });
+			_document.set_node_action(find, UIActionType::OnMouseLeave,
+				[this] { apply_tooltip(ItemId_Invalid); });
+		}
 
 		if (const auto find = node.find_by_name("icon"); find.valid())
 			_document.set_node_attribute(find, UIAttributeType::Value, item.sprite);
@@ -91,6 +105,23 @@ namespace unicore
 
 		if (const auto find = node.find_by_name("price"); find.valid())
 			_document.set_node_attribute(find, UIAttributeType::Text, item.price);
+	}
+
+	void InventoryUI::apply_tooltip(ItemId id)
+	{
+		if (!_item_tooltip.has_value()) return;
+
+		if (const auto item = _inventory.database().get(id); item != nullptr)
+		{
+			_document.set_node_visible(_item_tooltip.value(), true);
+
+			if (const auto find = _item_tooltip.value().find_by_name("title"); find.valid())
+				_document.set_node_attribute(find, UIAttributeType::Text, item->title);
+
+			if (const auto find = _item_tooltip.value().find_by_name("desc"); find.valid())
+				_document.set_node_attribute(find, UIAttributeType::Text, "");
+		}
+		else _document.set_node_visible(_item_tooltip.value(), false);
 	}
 
 	StringView InventoryUI::type_to_string(ItemType type)

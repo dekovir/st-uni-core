@@ -2,8 +2,9 @@
 
 namespace unicore
 {
-	Inventory::Inventory(UInt16 count, UInt16 money)
-		: _slots(count, nullptr)
+	Inventory::Inventory(const ItemDataBase& item_db, UInt16 count, UInt16 money)
+		: _item_db(item_db)
+		, _slots(count, ItemId_Invalid)
 		, _money(money)
 	{}
 
@@ -37,48 +38,57 @@ namespace unicore
 		return false;
 	}
 
-	bool Inventory::add_item(const Item& item, unsigned* index)
+	bool Inventory::add_item(ItemId id)
 	{
-		for (unsigned i = 0; i < _slots.size(); i++)
+		if (_item_db.has(id))
 		{
-			if (_slots[i] == nullptr)
+			for (unsigned i = 0; i < _slots.size(); i++)
 			{
-				_slots[i] = &item;
-				_event_add_item.invoke(i, item);
-				if (index)
-					*index = i;
-				return true;
+				if (_slots[i] == ItemId_Invalid)
+				{
+					_slots[i] = id;
+					_event_add_item.invoke(i, id);
+					return true;
+				}
 			}
 		}
 
 		return false;
 	}
 
-	const Item* Inventory::get_item(unsigned index) const
+	ItemId Inventory::get_item(unsigned index) const
 	{
-		return _slots[index];
+		return index < _slots.size() ? _slots[index] : ItemId_Invalid;
 	}
 
-	bool Inventory::find_item(const Item& item, unsigned* index) const
+	bool Inventory::has_item(ItemId id) const
 	{
-		for (unsigned i = 0; i < _slots.size(); i++)
+		for (auto slot : _slots)
 		{
-			if (_slots[i] == &item)
-			{
-				if (index) *index = i;
+			if (slot == id)
 				return true;
-			}
 		}
 
 		return false;
 	}
 
-	bool Inventory::remove_item(unsigned index)
+	Optional<unsigned> Inventory::find_item_slot(ItemId id) const
 	{
-		if (const auto item = _slots[index])
+		for (unsigned i = 0; i < _slots.size(); i++)
 		{
-			_slots[index] = nullptr;
-			_event_remove_item.invoke(index, *item);
+			if (_slots[i] == id)
+				return i;
+		}
+
+		return std::nullopt;
+	}
+
+	bool Inventory::remove_slot(unsigned index)
+	{
+		if (const auto id = _slots[index]; id != ItemId_Invalid)
+		{
+			_slots[index] = ItemId_Invalid;
+			_event_remove_item.invoke(index, id);
 			return true;
 		}
 

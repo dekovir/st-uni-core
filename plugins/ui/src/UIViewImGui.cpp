@@ -85,7 +85,7 @@ namespace unicore
 
 	void UIViewImGui::on_create_node(const UINode& node)
 	{
-		UC_LOG_DEBUG(_logger) << "create_node " << node;
+		//UC_LOG_DEBUG(_logger) << "create_node " << node;
 
 		CachedInfo info;
 		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index()));
@@ -227,7 +227,7 @@ namespace unicore
 			return true;
 
 		case UINodeType::Tooltip:
-			if (node.value().get_bool())
+			if (node.visible())
 			{
 				ImGui::BeginTooltip();
 
@@ -345,10 +345,23 @@ namespace unicore
 
 	void UIViewImGui::render_node_footer(const UINode& node)
 	{
+		const bool is_item_hovered = ImGui::IsItemHovered();
+
+		if (const auto info = get_info(node.index()))
+		{
+			if (info->mouse_over != is_item_hovered)
+			{
+				const auto event_type = info->mouse_over ? UIEventType::MouseLeave : UIEventType::MouseEnter;
+				_update_events.push_back({ node, event_type, Variant::Empty });
+				info->mouse_over = is_item_hovered;
+				//UC_LOG_DEBUG(_logger) << "Mouse " << event_type << " at " << node;
+			}
+		}
+
 		String tooltip;
 		if (node.attribute(UIAttributeType::Tooltip).try_get_string(tooltip))
 		{
-			if (ImGui::IsItemHovered())
+			if (is_item_hovered)
 				ImGui::SetTooltip("%s", tooltip.c_str());
 		}
 	}

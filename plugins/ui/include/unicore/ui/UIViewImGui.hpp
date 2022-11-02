@@ -52,6 +52,7 @@ namespace unicore
 		{
 			String id;
 			String title; // text + id;
+			bool mouse_over = false;
 		};
 
 		Dictionary<UINode::IndexType, CachedInfo> _cached;
