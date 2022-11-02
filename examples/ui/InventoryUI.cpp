@@ -8,8 +8,9 @@ namespace unicore
 		, _document(document)
 		, _logger(logger)
 	{
-		_inventory.on_add_item() += [&](auto index, auto id) { on_add_item(index, id); };
-		_inventory.on_remove_item() += [&](auto index, auto id) { on_remove_item(index, id); };
+		_inventory.on_add_item() += [&](auto index) { on_add(index); };
+		_inventory.on_remove_item() += [&](auto index) { on_remove(index); };
+		_inventory.on_item_value_changed() += [&](auto index) { on_change(index); };
 
 		_money_text = _document.find_by_name("money");
 
@@ -20,27 +21,40 @@ namespace unicore
 		if (!_items_group) UC_LOG_ERROR(_logger) << "Group not found";
 		if (!_item_template) UC_LOG_ERROR(_logger) << "Item template not found";
 
-		apply_money(_inventory.money());
+		apply_money(0);
 	}
 
-	void InventoryUI::on_change_money(UInt16 value)
-	{
-		apply_money(value);
-	}
-
-	void InventoryUI::on_add_item(unsigned index, ItemId id)
+	void InventoryUI::on_add(InventoryIndex index)
 	{
 		if (!_items_group.has_value() || !_item_template.has_value())
 			return;
 
 		if (const auto new_node = _document.duplicate(_item_template.value(), _items_group.value()); new_node.has_value())
-			apply_item(new_node.value(), id);
+		{
+			_item_nodes[index] = new_node.value();
+			apply_item(new_node.value(), index);
+		}
 	}
 
-	void InventoryUI::on_remove_item(unsigned index, ItemId id)
+	void InventoryUI::on_remove(InventoryIndex index)
 	{
-		if (!_items_group.has_value() || !_item_template.has_value())
+		const auto it = _item_nodes.find(index);
+		if (it != _item_nodes.end())
+		{
+			_document.remove_node(it->second);
+			_item_nodes.erase(it);
+		}
+	}
+
+	void InventoryUI::on_change(InventoryIndex index)
+	{
+		if (const auto it = _item_nodes.find(index); it != _item_nodes.end())
+		{
+			apply_value(it->second, index);
 			return;
+		}
+
+		UC_LOG_ERROR(_logger) << "Invalid index";
 	}
 
 	void InventoryUI::apply_money(UInt16 value)
@@ -52,8 +66,10 @@ namespace unicore
 		}
 	}
 
-	void InventoryUI::apply_item(const UINode& node, ItemId id)
+	void InventoryUI::apply_item(const UINode& node, InventoryIndex index)
 	{
+		const auto id = _inventory.get_index_id(index);
+
 		const auto& item = *_inventory.database().get(id);
 		UC_LOG_DEBUG(_logger) << "Apply item " << item.title << " to " << node;
 
@@ -61,8 +77,6 @@ namespace unicore
 
 		if (const auto find = node.find_by_name("name"); find.valid())
 		{
-			_document.set_node_attribute(find, UIAttributeType::Text, item.title);
-
 			_document.set_node_action(find, UIActionType::OnMouseEnter,
 				[this, id] { apply_tooltip(id); });
 			_document.set_node_action(find, UIActionType::OnMouseLeave,
@@ -72,11 +86,38 @@ namespace unicore
 		if (const auto find = node.find_by_name("icon"); find.valid())
 			_document.set_node_attribute(find, UIAttributeType::Value, item.sprite);
 
+		if (const auto find = node.find_by_name("action"); find.valid())
+			_document.set_node_visible(find, item.is_wearable());
+
 		if (const auto find = node.find_by_name("type"); find.valid())
 			_document.set_node_attribute(find, UIAttributeType::Text, type_to_string(item.type));
 
 		if (const auto find = node.find_by_name("price"); find.valid())
 			_document.set_node_attribute(find, UIAttributeType::Text, item.price);
+
+		if (const auto find = node.find_by_name("weight"); find.valid())
+			_document.set_node_attribute(find, UIAttributeType::Text, weight_to_string(item.weight));
+
+		apply_value(node, index);
+	}
+
+	void InventoryUI::apply_value(const UINode& node, InventoryIndex index)
+	{
+		const auto id = _inventory.get_index_id(index);
+		const auto& item = *_inventory.database().get(id);
+
+		UC_LOG_DEBUG(_logger) << "Apply item " << item.title << " to " << node;
+
+		if (const auto find = node.find_by_name("name"); find.valid())
+		{
+			if (item.is_stackable())
+			{
+				const auto amount = _inventory.get_index_value(index);
+				const auto str = StringBuilder::format("{} ({})", item.title, amount);
+				_document.set_node_attribute(find, UIAttributeType::Text, str);
+			}
+			else _document.set_node_attribute(find, UIAttributeType::Text, item.title);
+		}
 	}
 
 	void InventoryUI::apply_tooltip(ItemId id)
@@ -101,10 +142,17 @@ namespace unicore
 		switch (type)
 		{
 		case ItemType::Weapon: return "Weapon";
+		case ItemType::Shield: return "Shield";
 		case ItemType::Armor: return "Armor";
 		case ItemType::Accessory: return "Accessory";
 		case ItemType::Consumable: return "Consumable";
 		}
 		return "Error";
+	}
+
+	String InventoryUI::weight_to_string(UInt16 weight)
+	{
+		const auto value = static_cast<float>(weight) / 1000.0f;
+		return StringBuilder::format("{}", value);
 	}
 }

@@ -72,31 +72,31 @@ namespace unicore
 			_item_sprites = resources.load<SpriteList>("items.png"_path, TileSetOptions({ 16, 16 }));
 			if (_item_sprites && _item_sprites->size() == 64)
 			{
-				_items_db.add({ U"Staff", ItemType::Weapon, 70, _item_sprites->get(33) });
-				_items_db.add({ U"Dagger", ItemType::Weapon, 100, _item_sprites->get(1) });
-				_items_db.add({ U"Sword", ItemType::Weapon, 300, _item_sprites->get(2) });
-				_items_db.add({ U"Crossbow", ItemType::Weapon, 500, _item_sprites->get(48) });
-				_items_db.add({ U"Spear", ItemType::Weapon, 150, _item_sprites->get(50) });
+				_items_db.add({ U"Staff", ItemType::Weapon, 50, 1500, _item_sprites->get(33) });
+				_items_db.add({ U"Dagger", ItemType::Weapon, 150, 1000, _item_sprites->get(1) });
+				_items_db.add({ U"Sword", ItemType::Weapon, 350, 2000, _item_sprites->get(2) });
+				_items_db.add({ U"Crossbow", ItemType::Weapon, 500, 4000, _item_sprites->get(48) });
+				_items_db.add({ U"Spear", ItemType::Weapon, 150, 5000, _item_sprites->get(50) });
 
-				_items_db.add({ U"Potion of Mana", ItemType::Consumable, 75, _item_sprites->get(3) });
-				_items_db.add({ U"Potion of Health", ItemType::Consumable, 50, _item_sprites->get(4) });
-				_items_db.add({ U"Potion of Stamina", ItemType::Consumable, 25, _item_sprites->get(5) });
+				_items_db.add({ U"Potion of Mana", ItemType::Consumable, 75, 150, _item_sprites->get(3) });
+				_items_db.add({ U"Potion of Health", ItemType::Consumable, 50, 150, _item_sprites->get(4) });
+				_items_db.add({ U"Potion of Stamina", ItemType::Consumable, 25, 150, _item_sprites->get(5) });
 
-				_items_db.add({ U"Cloak", ItemType::Armor, 100, _item_sprites->get(52) });
-				_items_db.add({ U"Brass Plate", ItemType::Armor, 500, _item_sprites->get(8) });
-				_items_db.add({ U"Steel Plate", ItemType::Armor, 1000, _item_sprites->get(9) });
-				_items_db.add({ U"Dwarven Plate", ItemType::Armor, 5000, _item_sprites->get(10) });
+				_items_db.add({ U"Cloak", ItemType::Armor, 100, 300, _item_sprites->get(52) });
+				_items_db.add({ U"Brass Plate", ItemType::Armor, 500, 15000, _item_sprites->get(8) });
+				_items_db.add({ U"Steel Plate", ItemType::Armor, 1000, 13000, _item_sprites->get(9) });
+				_items_db.add({ U"Dwarven Plate", ItemType::Armor, 5000, 14000, _item_sprites->get(10) });
 
-				_items_db.add({ U"Necklace", ItemType::Accessory, 100, _item_sprites->get(14) });
-				_items_db.add({ U"Magic orb", ItemType::Accessory, 500, _item_sprites->get(36) });
-				_items_db.add({ U"Ring of Health", ItemType::Accessory, 1500, _item_sprites->get(38) });
-				_items_db.add({ U"Ring of Mana", ItemType::Accessory, 1500, _item_sprites->get(39) });
+				_items_db.add({ U"Necklace", ItemType::Accessory, 100, 300, _item_sprites->get(14) });
+				_items_db.add({ U"Magic orb", ItemType::Accessory, 500, 1100, _item_sprites->get(36) });
+				_items_db.add({ U"Ring of Health", ItemType::Accessory, 1500, 100, _item_sprites->get(38) });
+				_items_db.add({ U"Ring of Mana", ItemType::Accessory, 1500, 100, _item_sprites->get(39) });
 			}
 			else
 			{
-				_items_db.add({ U"Item 1", ItemType::Accessory, 100, nullptr });
-				_items_db.add({ U"Item 2", ItemType::Accessory, 125, nullptr });
-				_items_db.add({ U"Item 3", ItemType::Accessory, 500, nullptr });
+				_items_db.add({ U"Item 1", ItemType::Accessory, 100, 100, nullptr });
+				_items_db.add({ U"Item 2", ItemType::Accessory, 125, 100, nullptr });
+				_items_db.add({ U"Item 3", ItemType::Accessory, 500, 100, nullptr });
 			}
 
 			_inventory_view = std::make_shared<UIViewImGui>(_context, _context_logger);
@@ -104,11 +104,16 @@ namespace unicore
 			_inventory_view->set_title(U"Inventory");
 			_inventory_view->set_position(Vector2f(400, 50.f));
 
-			_inventory = std::make_shared<Inventory>(_items_db, 16);
+			_inventory = std::make_shared<Inventory>(_items_db);
 			_inventory_ui = std::make_shared<InventoryUI>(*_inventory, *_inventory_doc, &_context_logger);
 
 			for (const auto& it : _items_db)
-				_inventory->add_item(it.first);
+			{
+				const auto item = _inventory->database().get(it.first);
+				if (item->is_stackable())
+					_inventory->add_item(it.first, 10);
+				else _inventory->add_item(it.first);
+			}
 		}
 #endif
 	}

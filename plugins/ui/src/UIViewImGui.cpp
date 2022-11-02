@@ -292,10 +292,7 @@ namespace unicore
 		case UINodeType::TableHeader:
 			str = node.text().get_string();
 
-			int_value = ImGui::TableGetColumnIndex();
-
-			ImGui::TableSetColumnIndex(int_value + 1);
-			ImGui::PushItemWidth(50);
+			ImGui::TableNextColumn();
 			ImGui::TableHeader(str.c_str());
 			return true;
 

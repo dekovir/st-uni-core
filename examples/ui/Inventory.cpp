@@ -2,93 +2,70 @@
 
 namespace unicore
 {
-	Inventory::Inventory(const ItemDataBase& item_db, UInt16 count, UInt16 money)
+	Inventory::Inventory(const ItemDataBase& item_db)
 		: _item_db(item_db)
-		, _slots(count, ItemId_Invalid)
-		, _money(money)
 	{}
 
-	void Inventory::set_money(UInt16 value)
+	InventoryIndex Inventory::add_item(ItemId id, ItemValue value)
 	{
-		if (_money != value)
+		if (const auto item = _item_db.get(id))
 		{
-			_money = value;
-			_event_money_change.invoke(_money);
-		}
-	}
-
-	void Inventory::inc_money(UInt16 amount)
-	{
-		if (amount > 0)
-		{
-			_money += amount;
-			_event_money_change.invoke(_money);
-		}
-	}
-
-	Bool Inventory::dec_money(UInt16 amount)
-	{
-		if (_money >= amount)
-		{
-			_money -= amount;
-			_event_money_change.invoke(_money);
-			return true;
-		}
-
-		return false;
-	}
-
-	bool Inventory::add_item(ItemId id)
-	{
-		if (_item_db.has(id))
-		{
-			for (unsigned i = 0; i < _slots.size(); i++)
+			if (item->is_stackable())
 			{
-				if (_slots[i] == ItemId_Invalid)
+				for (auto& [index, info] : _items)
 				{
-					_slots[i] = id;
-					_event_add_item.invoke(i, id);
-					return true;
+					if (info.id == id)
+					{
+						info.value += value;
+						_event_item_value_changed.invoke(index);
+						return index;
+					}
 				}
 			}
+
+			const InventoryIndex index(_last_index++);
+			_items[index] = { id, value };
+			_event_add_item.invoke(index);
+			return index;
 		}
 
-		return false;
+		return InventoryIndex_Invalid;
 	}
 
-	ItemId Inventory::get_item(unsigned index) const
+	ItemId Inventory::get_index_id(InventoryIndex index) const
 	{
-		return index < _slots.size() ? _slots[index] : ItemId_Invalid;
+		const auto it = _items.find(index);
+		return it != _items.end() ? it->second.id : ItemId_Invalid;
+	}
+
+	ItemValue Inventory::get_index_value(InventoryIndex index) const
+	{
+		const auto it = _items.find(index);
+		return it != _items.end() ? it->second.value : 0;
 	}
 
 	bool Inventory::has_item(ItemId id) const
 	{
-		for (auto slot : _slots)
-		{
-			if (slot == id)
-				return true;
-		}
-
-		return false;
+		return find_item_index(id) != InventoryIndex_Invalid;
 	}
 
-	Optional<unsigned> Inventory::find_item_slot(ItemId id) const
+	InventoryIndex Inventory::find_item_index(ItemId id) const
 	{
-		for (unsigned i = 0; i < _slots.size(); i++)
+		for (const auto& it : _items)
 		{
-			if (_slots[i] == id)
-				return i;
+			if (it.second.id == id)
+				return it.first;
 		}
 
-		return std::nullopt;
+		return InventoryIndex_Invalid;
 	}
 
-	bool Inventory::remove_slot(unsigned index)
+	bool Inventory::remove_index(InventoryIndex index)
 	{
-		if (const auto id = _slots[index]; id != ItemId_Invalid)
+		if (const auto it = _items.find(index); it != _items.end())
 		{
-			_slots[index] = ItemId_Invalid;
-			_event_remove_item.invoke(index, id);
+			_items.erase(index);
+			_event_remove_item.invoke(index);
 			return true;
 		}
 
