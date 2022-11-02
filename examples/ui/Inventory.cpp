@@ -17,7 +17,7 @@ namespace unicore
 					if (info.id == id)
 					{
 						info.value += value;
-						_event_item_value_changed.invoke(index);
+						_event_changed.invoke(index);
 						return index;
 					}
 				}
@@ -25,7 +25,7 @@ namespace unicore
 
 			const InventoryIndex index(_last_index++);
 			_items[index] = { id, value };
-			_event_add_item.invoke(index);
+			_event_add.invoke(index);
 			return index;
 		}
 
@@ -65,7 +65,7 @@ namespace unicore
 		if (const auto it = _items.find(index); it != _items.end())
 		{
 			_items.erase(index);
-			_event_remove_item.invoke(index);
+			_event_remove.invoke(index);
 			return true;
 		}
 

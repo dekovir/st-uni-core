@@ -80,9 +80,9 @@ namespace unicore
 
 	class Inventory
 	{
-		UC_OBJECT_EVENT(add_item, InventoryIndex);
-		UC_OBJECT_EVENT(remove_item, InventoryIndex);
-		UC_OBJECT_EVENT(item_value_changed, InventoryIndex);
+		UC_OBJECT_EVENT(add, InventoryIndex);
+		UC_OBJECT_EVENT(remove, InventoryIndex);
+		UC_OBJECT_EVENT(changed, InventoryIndex);
 	public:
 		explicit Inventory(const ItemDataBase& item_db);
 

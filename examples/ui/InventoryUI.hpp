@@ -7,6 +7,8 @@ namespace unicore
 	class InventoryUI
 	{
 	public:
+		InventoryUI(Inventory& inventory, UIDocument& document,
+			const Optional<UINode>& parent, Logger* logger = nullptr);
 		InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger = nullptr);
 
 	protected:

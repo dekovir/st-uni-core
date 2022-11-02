@@ -3,25 +3,31 @@
 
 namespace unicore
 {
-	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger)
+	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document,
+		const Optional<UINode>& parent, Logger* logger)
 		: _inventory(inventory)
 		, _document(document)
 		, _logger(logger)
 	{
-		_inventory.on_add_item() += [&](auto index) { on_add(index); };
-		_inventory.on_remove_item() += [&](auto index) { on_remove(index); };
-		_inventory.on_item_value_changed() += [&](auto index) { on_change(index); };
+		_inventory.on_add() += [&](auto index) { on_add(index); };
+		_inventory.on_remove() += [&](auto index) { on_remove(index); };
+		_inventory.on_changed() += [&](auto index) { on_change(index); };
 
-		_money_text = _document.find_by_name("money");
+		_money_text = _document.find_by_name("money", parent);
 
-		_items_group = _document.find_by_name("item_group");
-		_item_template = _document.find_by_name("item_template");
-		_item_tooltip = _document.find_by_name("item_tooltip");
+		_items_group = _document.find_by_name("item_group", parent);
+		_item_template = _document.find_by_name("item_template", parent);
+		_item_tooltip = _document.find_by_name("item_tooltip", parent);
 
 		if (!_items_group) UC_LOG_ERROR(_logger) << "Group not found";
 		if (!_item_template) UC_LOG_ERROR(_logger) << "Item template not found";
 
 		apply_money(0);
+	}
+
+	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger)
+		: InventoryUI(inventory, document, std::nullopt, logger)
+	{
 	}
 
 	void InventoryUI::on_add(InventoryIndex index)

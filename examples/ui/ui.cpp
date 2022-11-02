@@ -105,7 +105,8 @@ namespace unicore
 			_inventory_view->set_position(Vector2f(400, 50.f));
 
 			_inventory = std::make_shared<Inventory>(_items_db);
-			_inventory_ui = std::make_shared<InventoryUI>(*_inventory, *_inventory_doc, &_context_logger);
+			_inventory_ui = std::make_shared<InventoryUI>(
+				*_inventory, *_inventory_doc, &_context_logger);
 
 			for (const auto& it : _items_db)
 			{
