@@ -2,6 +2,7 @@
 #include "UnicoreMain.hpp"
 #include "InitPlugins.hpp"
 #include "unicore/io/Logger.hpp"
+#include "unicore/math/Random.hpp"
 #include "unicore/platform/Input.hpp"
 #include "unicore/ui/UIDocumentParseXML.hpp"
 
@@ -72,33 +73,40 @@ namespace unicore
 			_item_sprites = resources.load<SpriteList>("items.png"_path, TileSetOptions({ 16, 16 }));
 			if (_item_sprites && _item_sprites->size() == 64)
 			{
-				_items_db.add({ U"Staff", ItemType::Weapon, 50, 1500, _item_sprites->get(33) });
-				_items_db.add({ U"Dagger", ItemType::Weapon, 150, 1000, _item_sprites->get(1) });
-				_items_db.add({ U"Sword", ItemType::Weapon, 350, 2000, _item_sprites->get(2) });
-				_items_db.add({ U"Crossbow", ItemType::Weapon, 500, 4000, _item_sprites->get(48) });
-				_items_db.add({ U"Spear", ItemType::Weapon, 150, 5000, _item_sprites->get(50) });
+				_items_db.add(Item::make_weapon(U"Staff", 50, 1500, { 5, 10 }, _item_sprites->get(33)));
+				_items_db.add(Item::make_weapon(U"Dagger", 150, 1000, { 2, 5 }, _item_sprites->get(1)));
+				_items_db.add(Item::make_weapon(U"Sword", 350, 2000, { 7, 14 }, _item_sprites->get(2)));
+				_items_db.add(Item::make_weapon(U"Crossbow", 500, 4000, { 5, 12 }, _item_sprites->get(48)));
+				_items_db.add(Item::make_weapon(U"Spear", 150, 5000, { 8,  16 }, _item_sprites->get(50)));
 
-				_items_db.add({ U"Shield", ItemType::Shield, 250, 1500, _item_sprites->get(43) });
+				_items_db.add(Item::make_shield(U"Shield", 250, 1500, 5, _item_sprites->get(43)));
 
-				_items_db.add({ U"Potion of Mana", ItemType::Consumable, 75, 150, _item_sprites->get(3) });
-				_items_db.add({ U"Potion of Health", ItemType::Consumable, 50, 150, _item_sprites->get(4) });
-				_items_db.add({ U"Potion of Stamina", ItemType::Consumable, 25, 150, _item_sprites->get(5) });
+				_items_db.add(Item::make_consumable(U"Potion of Mana", 75, 150, _item_sprites->get(3)));
+				_items_db.add(Item::make_consumable(U"Potion of Health", 50, 150, _item_sprites->get(4)));
+				_items_db.add(Item::make_consumable(U"Potion of Stamina", 25, 150, _item_sprites->get(5)));
 
-				_items_db.add({ U"Cloak", ItemType::Armor, 100, 300, _item_sprites->get(52) });
-				_items_db.add({ U"Brass Plate", ItemType::Armor, 500, 15000, _item_sprites->get(8) });
-				_items_db.add({ U"Steel Plate", ItemType::Armor, 1000, 13000, _item_sprites->get(9) });
-				_items_db.add({ U"Dwarven Plate", ItemType::Armor, 5000, 14000, _item_sprites->get(10) });
+				_items_db.add(Item::make_armor(U"Cloak", 100, 300, 1, _item_sprites->get(52)));
+				_items_db.add(Item::make_armor(U"Brass Plate", 500, 15000, 15, _item_sprites->get(8)));
+				_items_db.add(Item::make_armor(U"Steel Plate", 1000, 13000, 25, _item_sprites->get(9)));
+				_items_db.add(Item::make_armor(U"Dwarven Plate", 5000, 14000, 40, _item_sprites->get(10)));
 
-				_items_db.add({ U"Necklace", ItemType::Accessory, 100, 300, _item_sprites->get(14) });
-				_items_db.add({ U"Magic orb", ItemType::Accessory, 500, 1100, _item_sprites->get(36) });
-				_items_db.add({ U"Ring of Health", ItemType::Accessory, 1500, 100, _item_sprites->get(38) });
-				_items_db.add({ U"Ring of Mana", ItemType::Accessory, 1500, 100, _item_sprites->get(39) });
+				_items_db.add(Item::make_accessory(U"Necklace", 100, 300, _item_sprites->get(14)));
+				_items_db.add(Item::make_accessory(U"Magic orb", 500, 1100, _item_sprites->get(36)));
+				_items_db.add(Item::make_accessory(U"Ring of Health", 1500, 100, _item_sprites->get(38)));
+				_items_db.add(Item::make_accessory(U"Ring of Mana", 1500, 100, _item_sprites->get(39)));
 			}
 			else
 			{
-				_items_db.add({ U"Item 1", ItemType::Accessory, 100, 100, nullptr });
-				_items_db.add({ U"Item 2", ItemType::Accessory, 125, 100, nullptr });
-				_items_db.add({ U"Item 3", ItemType::Accessory, 500, 100, nullptr });
+				DefaultRandom random;
+				for (unsigned i = 0; i < 5; i++)
+				{
+					Item item;
+					item.type = ItemType::Accessory;
+					item.price = random.range(100, 900);
+					item.weight = random.range(100, 15000);
+					item.title = StringBuilder::format(U"Item {}", i + 1);
+					_items_db.add(item);
+				}
 			}
 
 			_inventory_view = std::make_shared<UIViewImGui>(_context, _context_logger);
