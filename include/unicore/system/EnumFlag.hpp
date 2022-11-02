@@ -122,6 +122,18 @@ namespace unicore
 			return a.has(flag) != b.has(flag);
 		}
 
+		template<T Flag>
+		static constexpr TValue merge()
+		{
+			return static_cast<TValue>(Flag);
+		}
+
+		template<T FlagA, T FlagB, T... Rest>
+		static constexpr TValue merge()
+		{
+			return merge<FlagA>() | merge<FlagB, Rest...>();
+		}
+
 		static const EnumFlag<T> Zero;
 
 	protected:
@@ -152,14 +164,14 @@ namespace unicore
 		return a.value() != value;
 	}
 
-	template<typename T>
-	static constexpr EnumFlag<T> operator |(const T a, const T b)
-	{
-		return EnumFlag<T>(
-			static_cast<typename EnumFlag<T>::TValue>(a) |
-			static_cast<typename EnumFlag<T>::TValue>(b)
-			);
-	}
+	//template<typename T>
+	//static constexpr EnumFlag<T> operator |(const T a, const T b)
+	//{
+	//	return EnumFlag<T>(
+	//		static_cast<typename EnumFlag<T>::TValue>(a) |
+	//		static_cast<typename EnumFlag<T>::TValue>(b)
+	//		);
+	//}
 
 	template<typename T>
 	static constexpr EnumFlag<T> operator |(const EnumFlag<T> flags, const T value)
@@ -171,14 +183,23 @@ namespace unicore
 	}
 
 	template<typename T>
+	static constexpr EnumFlag<T> operator |(const T value, const EnumFlag<T> flags)
+	{
+		return EnumFlag<T>(
+			flags.value() |
+			static_cast<typename EnumFlag<T>::TValue>(value)
+			);
+	}
+
+	template<typename T>
 	const EnumFlag<T> EnumFlag<T>::Zero(0);
 
-//#define UNICORE_ENUM_MASK(TEnum) \
-//	static constexpr TEnum operator|(TEnum a, TEnum b) { \
-//		using Type = std::underlying_type_t<TEnum>; \
-//		return  TEnum(Type(a) | Type(b)); } \
-//	static constexpr bool operator==(TEnum color, std::underlying_type_t<TEnum> value) { \
-//		return static_cast<std::underlying_type_t<TEnum>>(color) == value; }
+	//#define UNICORE_ENUM_MASK(TEnum) \
+	//	static constexpr TEnum operator|(TEnum a, TEnum b) { \
+	//		using Type = std::underlying_type_t<TEnum>; \
+	//		return  TEnum(Type(a) | Type(b)); } \
+	//	static constexpr bool operator==(TEnum color, std::underlying_type_t<TEnum> value) { \
+	//		return static_cast<std::underlying_type_t<TEnum>>(color) == value; }
 
 #define UNICORE_ENUM_FLAGS(TFlag, TName) using TName = EnumFlag<TFlag>
 

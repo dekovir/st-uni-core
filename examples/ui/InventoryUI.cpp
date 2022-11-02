@@ -8,14 +8,20 @@ namespace unicore
 	<group>
 		<text name="money" />
 		<text>Items</text>
-		<group name="item_group">
-		</group>
-		<group name="item_template" value="2" visible="0">
-			<image name="icon" />
-			<item name="name">Name</item>
-			<text name="type">Type</text>
-			<text name="price">0</text>
-		</group>
+		<table name="item_group" value="4">
+			<tr>
+				<th>Icon</th>
+				<th>Name</th>
+				<th>Type</th>
+				<th>Price</th>
+			</tr>
+		</table>
+		<tr name="item_template" visible="0">
+			<td><image name="icon" /></td>
+			<td><item name="name">Name</item></td>
+			<td><text name="type">Type</text></td>
+			<td><text name="price">0</text></td>
+		</tr>
 	</group>
 	)";
 

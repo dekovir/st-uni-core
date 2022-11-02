@@ -19,6 +19,7 @@ namespace unicore
 		{"tree", UINodeType::Tree},
 		{"combo", UINodeType::Combo},
 		{"table", UINodeType::Table},
+		{"th", UINodeType::TableHeader},
 		{"tr", UINodeType::TableRow},
 		{"td", UINodeType::TableCell},
 	};
@@ -27,7 +28,9 @@ namespace unicore
 	{
 		{"value", UIAttributeType::Value},
 		{"width", UIAttributeType::Width},
+		{"w", UIAttributeType::Width},
 		{"height", UIAttributeType::Height},
+		{"h", UIAttributeType::Height},
 		{"tooltip", UIAttributeType::Tooltip},
 		{"min", UIAttributeType::MinValue},
 		{"max", UIAttributeType::MaxValue},

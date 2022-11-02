@@ -38,6 +38,7 @@ namespace unicore
 		Tree,
 		Combo,
 		Table,
+		TableHeader,
 		TableRow,
 		TableCell,
 	};

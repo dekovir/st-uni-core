@@ -128,6 +128,7 @@ namespace unicore
 		const auto height = node.attribute(UIAttributeType::Height).get_float();
 
 		Bool bool_value;
+		Int int_value;
 		String str;
 		String32 str32;
 
@@ -226,7 +227,7 @@ namespace unicore
 			return true;
 
 		case UINodeType::Tooltip:
-			if (ImGui::IsItemHovered())
+			if (node.value().get_bool())
 			{
 				ImGui::BeginTooltip();
 
@@ -288,13 +289,24 @@ namespace unicore
 			return true;
 
 		case UINodeType::Table:
-			if (ImGui::BeginTable(id.c_str(), node.value().get_int(1)))
+			if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
+				ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
 			{
 				for (const auto& child : children)
 					render_node(child);
 
 				ImGui::EndTable();
 			}
+			return true;
+
+		case UINodeType::TableHeader:
+			str = node.text().get_string();
+
+			int_value = ImGui::TableGetColumnIndex();
+
+			ImGui::TableSetColumnIndex(int_value + 1);
+			ImGui::PushItemWidth(50);
+			ImGui::TableHeader(str.c_str());
 			return true;
 
 		case UINodeType::TableRow:

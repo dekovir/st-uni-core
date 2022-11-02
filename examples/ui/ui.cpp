@@ -200,8 +200,8 @@ namespace unicore
 		_context.frame_begin();
 
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
-		//static bool show_demo_window = true;
-		//ImGui::ShowDemoWindow(&show_demo_window);
+		static bool show_demo_window = true;
+		ImGui::ShowDemoWindow(&show_demo_window);
 #endif
 
 		if (_test_view)
