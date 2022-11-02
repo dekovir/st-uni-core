@@ -92,9 +92,6 @@ namespace unicore
 		if (const auto find = node.find_by_name("icon"); find.valid())
 			_document.set_node_attribute(find, UIAttributeType::Value, item.sprite);
 
-		if (const auto find = node.find_by_name("action"); find.valid())
-			_document.set_node_visible(find, item.is_wearable());
-
 		if (const auto find = node.find_by_name("type"); find.valid())
 			_document.set_node_attribute(find, UIAttributeType::Text, type_to_string(item.type));
 

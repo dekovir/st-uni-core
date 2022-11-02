@@ -5,7 +5,6 @@
 	<table name="item_group" value="6">
 		<tr>
 			<th>Icon</th>
-			<th>Action</th>
 			<th>Name</th>
 			<th>Type</th>
 			<th>Price</th>
@@ -15,7 +14,6 @@
 
 	<tr name="item_template" visible="0">
 		<td><image name="icon"/></td>
-		<td><item name="action">Equip</item></td>
 		<td><item name="name">Name</item></td>
 		<td><text name="type">Type</text></td>
 		<td><text name="price">0</text></td>
