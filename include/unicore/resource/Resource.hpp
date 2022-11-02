@@ -24,14 +24,14 @@ namespace unicore
 	{
 	public:
 		virtual ~ResourceOptions() = default;
-		UC_NODISCARD virtual size_t hash() const = 0;
+		UC_NODISCARD virtual Size hash() const = 0;
 	};
 
-	template<size_t Hash>
+	template<Size Hash>
 	class ResourceOptionsHash : public ResourceOptions
 	{
 	public:
-		UC_NODISCARD size_t hash() const override { return Hash; }
+		UC_NODISCARD Size hash() const override { return Hash; }
 	};
 
 	class ResourceOptionsTag : public ResourceOptions
@@ -42,7 +42,22 @@ namespace unicore
 
 		explicit ResourceOptionsTag(StringView text);
 
-		UC_NODISCARD size_t hash() const override { return hash_value; }
+		UC_NODISCARD Size hash() const override { return hash_value; }
+	};
+
+	class LoggerOption : public ResourceOptions
+	{
+	public:
+		Logger* logger = nullptr;
+
+		LoggerOption() = default;
+
+		explicit LoggerOption(Logger& logger)
+			: logger(&logger)
+		{
+		}
+
+		UC_NODISCARD Size hash() const override;
 	};
 
 #define UNICORE_RESOURCE_OPTIONS_TAG(name) \
@@ -51,7 +66,7 @@ namespace unicore
 	class EmptyResourceOptions : public ResourceOptions
 	{
 	public:
-		UC_NODISCARD size_t hash() const override { return 0; }
+		UC_NODISCARD Size hash() const override { return 0; }
 	};
 
 	template<typename T,

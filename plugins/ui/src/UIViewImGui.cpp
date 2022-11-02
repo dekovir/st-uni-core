@@ -92,6 +92,9 @@ namespace unicore
 		info.title = node.text().get_string() + info.id;
 
 		_cached[node.index()] = info;
+
+		for (const auto& child : node.get_children())
+			on_create_node(child);
 	}
 
 	void UIViewImGui::on_set_attribute(const UINode& node,
@@ -132,6 +135,9 @@ namespace unicore
 		String str;
 		String32 str32;
 
+		ImTextureID texture_id;
+		ImVec2 size, uv0, uv1;
+
 		switch (type)
 		{
 		case UINodeType::Group:
@@ -162,28 +168,12 @@ namespace unicore
 			return true;
 
 		case UINodeType::Image:
-			if (const auto tex = node.value().get_object_cast<Texture>(); tex != nullptr)
+			if (get_texture(node.value(), texture_id, size, uv0, uv1))
 			{
-				const auto size = tex->size().cast<Float>();
 				const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
 
 				render_node_header(node, same_line);
-				ImGui::Image(tex.get(), s);
-				render_node_footer(node);
-				return true;
-			}
-
-			if (const auto spr = node.value().get_object_cast<Sprite>(); spr != nullptr)
-			{
-				const auto size = spr->texture()->size().cast<Float>();
-				const auto rect = spr->rect().cast<Float>();
-
-				const ImVec2 uv0{ rect.x / size.x, rect.y / size.y };
-				const ImVec2 uv1{ uv0.x + rect.w / size.x, uv0.y + rect.h / size.y };
-				const ImVec2 s = { width > 0 ? width : rect.w, height > 0 ? height : rect.h };
-
-				render_node_header(node, same_line);
-				ImGui::Image(spr->texture().get(), s, uv0, uv1);
+				ImGui::Image(texture_id, s, uv0, uv1);
 				render_node_footer(node);
 				return true;
 			}
@@ -370,6 +360,33 @@ namespace unicore
 	{
 		const auto it = _cached.find(index);
 		return it != _cached.end() ? &it->second : nullptr;
+	}
+
+	bool UIViewImGui::get_texture(const Variant& value,
+		ImTextureID& id, ImVec2& size, ImVec2& uv0, ImVec2& uv1)
+	{
+		if (const auto tex = value.get_object_cast<Texture>(); tex != nullptr)
+		{
+			id = tex.get();
+			size = ImGuiConvert::convert(tex->size().cast<Float>());
+			uv0 = { 0, 0 };
+			uv1 = { 1 , 1 };
+			return true;
+		}
+
+		if (const auto spr = value.get_object_cast<Sprite>(); spr != nullptr)
+		{
+			const auto tex_size = spr->texture()->size().cast<Float>();
+			const auto rect = spr->rect().cast<Float>();
+
+			id = spr->texture().get();
+			size = { rect.w, rect.h };
+			uv0 = { rect.x / tex_size.x, rect.y / tex_size.y };
+			uv1 = { uv0.x + rect.w / tex_size.x, uv0.y + rect.h / tex_size.y };
+			return true;
+		}
+
+		return false;
 	}
 }
 #endif

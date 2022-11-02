@@ -72,6 +72,9 @@ namespace unicore
 
 	private:
 		unsigned _id;
+
+		static bool get_texture(const Variant& value,
+			ImTextureID& id, ImVec2& size, ImVec2& uv0, ImVec2& uv1);
 	};
 }
 #endif

@@ -1,0 +1,57 @@
+<group>
+	<text id="position" />
+	<text>Sample text</text>
+	<group value="2" tooltip="Tooltip text">
+		<text>Input</text>
+		<input value="quick brown fox" />
+	</group>
+	<group value="2">
+		<text>Slider</text>
+		<slider id="slider" value="50.50" max="100">Value %.1f</slider>
+	</group>
+	<group value="2">
+		<text>Toggle</text>
+		<toggle value="true" />
+	</group>
+	<group value="2">
+		<text>Combo</text>
+		<combo value="Item 1">
+			<text>Text inside combo</text>
+			<item>Item 1</item>
+			<item>Item 2</item>
+			<item>Item 3</item>
+			<item>Item 4</item>
+		</combo>
+	</group>
+
+	<text>Items</text>
+	<list id="group">
+	</list>
+	<button id="add_item">Add item</button>
+
+	<text>Table</text>
+	<table value="2">
+		<tr>
+			<td><button>Cell 0</button></td>
+			<td>Cell 1</td>
+		</tr>
+		<tr>
+			<td>Cell 2</td>
+			<td>Cell 3</td>
+		</tr>
+		<tr>
+			<td>Cell 4</td>
+			<td><item>Cell 5</item></td>
+		</tr>
+	</table>
+
+	<text>Tree</text>
+	<tree value="1">Item 1
+		<text>Text 1</text>
+		<text>Text 2</text>
+		<tree>Item 2
+			<text>Text 3</text>
+			<text>Text 4</text>
+		</tree>
+	</tree>
+</group>

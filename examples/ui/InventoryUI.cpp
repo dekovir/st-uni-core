@@ -1,41 +1,13 @@
 #include "InventoryUI.hpp"
 #include "unicore/io/Logger.hpp"
-#include "unicore/ui/UIDocumentParseXML.hpp"
 
 namespace unicore
 {
-	static const auto xml = R"(
-	<group>
-		<text name="money" />
-		<text>Items</text>
-		<table name="item_group" value="4">
-			<tr>
-				<th>Icon</th>
-				<th>Name</th>
-				<th>Type</th>
-				<th>Price</th>
-			</tr>
-		</table>
-		<tr name="item_template" visible="0">
-			<td><image name="icon" /></td>
-			<td><item name="name">Name</item></td>
-			<td><text name="type">Type</text></td>
-			<td><text name="price">0</text></td>
-		</tr>
-		<tooltip name="item_tooltip" visible="0">
-			<text name="title">title</text>
-			<text name="desc">description</text>
-		</tooltip>
-	</group>
-	)";
-
 	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger)
 		: _inventory(inventory)
 		, _document(document)
 		, _logger(logger)
 	{
-		UIDocumentParseXML::parse(xml, _document, std::nullopt, _logger);
-
 		_inventory.on_add_item() += [&](auto index, auto id) { on_add_item(index, id); };
 		_inventory.on_remove_item() += [&](auto index, auto id) { on_remove_item(index, id); };
 

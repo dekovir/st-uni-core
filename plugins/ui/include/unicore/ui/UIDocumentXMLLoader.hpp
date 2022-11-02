@@ -6,12 +6,15 @@
 
 namespace unicore
 {
-	class UIDocumentXMLLoader : public ResourceLoaderTyped<
-		ResourceLoaderTypePolicy::Single<UIDocument>, XMLLoadPolicy>
+	class UIDocumentXMLLoader : public ResourceLoaderOptionsTyped<
+		LoggerOption, ResourceLoaderTypePolicy::Single<UIDocument>, XMLLoadPolicy,
+		ResourceLoaderOptionsPolicy::NullOrExact<LoggerOption>>
 	{
 		UC_OBJECT(UIDocumentXMLLoader, ResourceLoader)
 	public:
-		UC_NODISCARD Shared<Resource> load(const Context& context) override;
+
+		UC_NODISCARD Shared<Resource> load_options(
+			const Context& context, const LoggerOption& options) override;
 	};
 }
 #endif

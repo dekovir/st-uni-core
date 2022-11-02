@@ -1,0 +1,24 @@
+<group>
+	<text name="money" />
+	<text>Items</text>
+	<table name="item_group" value="5">
+		<tr>
+			<th>Icon</th>
+			<th>Status</th>
+			<th>Name</th>
+			<th>Type</th>
+			<th>Price</th>
+		</tr>
+	</table>
+	<tr name="item_template" visible="0">
+		<td><image name="icon"/></td>
+		<td><item>Equip</item></td>
+		<td><item name="name">Name</item></td>
+		<td><text name="type">Type</text></td>
+		<td><text name="price">0</text></td>
+	</tr>
+	<tooltip name="item_tooltip" visible="0">
+		<text name="title">title</text>
+		<text name="desc">description</text>
+	</tooltip>
+</group>
