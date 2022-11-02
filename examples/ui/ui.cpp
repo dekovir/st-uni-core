@@ -78,6 +78,8 @@ namespace unicore
 				_items_db.add({ U"Crossbow", ItemType::Weapon, 500, 4000, _item_sprites->get(48) });
 				_items_db.add({ U"Spear", ItemType::Weapon, 150, 5000, _item_sprites->get(50) });
 
+				_items_db.add({ U"Shield", ItemType::Shield, 250, 1500, _item_sprites->get(43) });
+
 				_items_db.add({ U"Potion of Mana", ItemType::Consumable, 75, 150, _item_sprites->get(3) });
 				_items_db.add({ U"Potion of Health", ItemType::Consumable, 50, 150, _item_sprites->get(4) });
 				_items_db.add({ U"Potion of Stamina", ItemType::Consumable, 25, 150, _item_sprites->get(5) });

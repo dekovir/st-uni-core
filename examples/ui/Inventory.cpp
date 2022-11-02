@@ -2,13 +2,13 @@
 
 namespace unicore
 {
-	Inventory::Inventory(const ItemDataBase& item_db)
-		: _item_db(item_db)
+	Inventory::Inventory(const ItemDatabase& database)
+		: _database(database)
 	{}
 
 	InventoryIndex Inventory::add_item(ItemId id, ItemValue value)
 	{
-		if (const auto item = _item_db.get(id))
+		if (const auto item = _database.get(id))
 		{
 			if (item->is_stackable())
 			{

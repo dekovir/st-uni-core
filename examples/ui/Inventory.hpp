@@ -38,7 +38,7 @@ namespace unicore
 
 	using ItemValue = UInt16;
 
-	class ItemDataBase
+	class ItemDatabase
 	{
 	public:
 		UC_NODISCARD Size size() const { return _items.size(); }
@@ -84,9 +84,9 @@ namespace unicore
 		UC_OBJECT_EVENT(remove, InventoryIndex);
 		UC_OBJECT_EVENT(changed, InventoryIndex);
 	public:
-		explicit Inventory(const ItemDataBase& item_db);
+		explicit Inventory(const ItemDatabase& database);
 
-		UC_NODISCARD const ItemDataBase& database() const { return _item_db; }
+		UC_NODISCARD const ItemDatabase& database() const { return _database; }
 
 		UC_NODISCARD auto items_count() const { return _items.size(); }
 
@@ -107,7 +107,7 @@ namespace unicore
 			ItemValue value;
 		};
 
-		const ItemDataBase& _item_db;
+		const ItemDatabase& _database;
 		Dictionary<InventoryIndex, ItemInfo> _items;
 		InventoryIndex::TypeValue _last_index = 0;
 	};
