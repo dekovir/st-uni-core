@@ -536,7 +536,7 @@ namespace unicore
 						_roots.erase(_roots.begin() + old_index);
 						_roots.insert(_roots.begin() + new_index, node.index());
 
-						_event_change_index.invoke(UINode(), old_index, new_index);
+						_event_change_index.invoke(node_from_index(UINode::InvalidIndex), old_index, new_index);
 					}
 					return true;
 				}

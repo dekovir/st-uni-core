@@ -66,16 +66,13 @@ namespace unicore
 	void InventoryUI::apply_money(UInt16 value)
 	{
 		if (!_money_text.empty())
-		{
-			const auto text = StringBuilder::format("Money: {}", value);
-			_document.set_node_attribute(_money_text, UIAttributeType::Text, text);
-		}
+			_document.set_node_attribute(_money_text, UIAttributeType::Text, value);
 	}
 
 	static std::pair<UINode, UINode> find_node(const UINode& node, StringView name)
 	{
 		if (const auto find = node.find_by_name(name); find.valid())
-			return std::make_pair(find, UINode::Empty);
+			return std::make_pair(find, find);
 
 		return std::make_pair(
 			node.find_by_name(String(name) + "_value"),
@@ -151,33 +148,30 @@ namespace unicore
 			_document.set_node_attribute(find, UIAttributeType::Text, item->title);
 
 		if (const auto find = _item_tooltip.find_by_name("type"); find.valid())
-		{
-			const auto str = StringBuilder::format(U"Type: {}", type_to_string(item->type));
-			_document.set_node_attribute(find, UIAttributeType::Text, str);
-		}
+			_document.set_node_attribute(find, UIAttributeType::Text, type_to_string(item->type));
 
-		if (const auto find = _item_tooltip.find_by_name("damage"); find.valid())
+		if (const auto [find, group] = find_node(_item_tooltip, "damage"); find.valid())
 		{
 			if (item->damage != RangeConsti::Zero)
 			{
-				const auto str = StringBuilder::format(U"Damage: {}-{}", item->damage.min, item->damage.max);
+				const auto str = StringBuilder::format(U"{}-{}", item->damage.min, item->damage.max);
 
-				_document.set_node_visible(find, true);
+				_document.set_node_visible(group, true);
 				_document.set_node_attribute(find, UIAttributeType::Text, str);
 			}
-			else _document.set_node_visible(find, false);
+			else _document.set_node_visible(group, false);
 		}
 
-		if (const auto find = _item_tooltip.find_by_name("armor"); find.valid())
+		if (const auto [find, group] = find_node(_item_tooltip, "armor"); find.valid())
 		{
 			if (item->armor > 0)
 			{
-				const auto str = StringBuilder::format(U"Armor: +{}", item->armor);
+				const auto str = StringBuilder::format(U"+{}", item->armor);
 
-				_document.set_node_visible(find, true);
+				_document.set_node_visible(group, true);
 				_document.set_node_attribute(find, UIAttributeType::Text, str);
 			}
-			else _document.set_node_visible(find, false);
+			else _document.set_node_visible(group, false);
 		}
 
 		if (const auto find = _item_tooltip.find_by_name("desc"); find.valid())

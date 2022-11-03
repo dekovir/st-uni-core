@@ -23,7 +23,7 @@
 
 	<group variant="1">
 		<text>Slider</text>
-		<slider id="slider" value="50.50" max="100">Value %.1f</slider>
+		<slider value="50.50" max="100">Value %.1f</slider>
 	</group>
 
 	<group variant="1">
@@ -54,13 +54,20 @@
 
 	<!-- Combobox -->
 	<group variant="1">
-		<text>Combo</text>
+		<text>Combo 1</text>
 		<combo value="Item 1">
 			<text>Text inside combo</text>
+			<slider />
 			<item>Item 1</item>
 			<item>Item 2</item>
 			<item>Item 3</item>
 			<item>Item 4</item>
+		</combo>
+	</group>
+
+	<group variant="1">
+		<text tooltip="Combobox with logic">Combo 2</text>
+		<combo id="combo">
 		</combo>
 	</group>
 

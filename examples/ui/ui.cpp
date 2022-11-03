@@ -36,31 +36,49 @@ namespace unicore
 			_test_view->set_position(Vector2f(10, 10));
 
 			_test_position_id = _test_doc->find_by_id("position");
-			const auto slider_id = _test_doc->find_by_id("slider");
-			const auto group_id = _test_doc->find_by_id("group");
-			const auto add_id = _test_doc->find_by_id("add_item");
+			const auto slider_node = _test_doc->find_by_id("slider");
+			const auto group_node = _test_doc->find_by_id("group");
+			const auto add_node = _test_doc->find_by_id("add_item");
+			const auto combo_node = _test_doc->find_by_id("combo");
 
-			if (!group_id.empty() && !add_id.empty())
+			if (!group_node.empty() && !add_node.empty())
 			{
-				_test_doc->set_node_action(add_id, UIActionType::OnClick,
-					[this, group_id]
+				_test_doc->set_node_action(add_node, UIActionType::OnClick,
+					[this, group_node]
 					{
-						const auto count = group_id.get_children_count();
+						const auto count = group_node.get_children_count();
 						const auto text = StringBuilder::format("Item {}", count + 1);
 
 						UINodeOptions options;
 						options.attributes[UIAttributeType::Text] = text;
-						_test_doc->create_node(UINodeType::Item, options, group_id);
+						_test_doc->create_node(UINodeType::Item, options, group_node);
 					});
 			}
 
-			if (!slider_id.empty())
+			if (!combo_node.empty())
 			{
-				_test_doc->set_node_action(slider_id, UIActionType::OnChange,
-					[this](const Variant& value)
-					{
-						UC_LOG_DEBUG(logger) << "Slider value changed to " << value;
-					});
+				for (unsigned i = 0; i < 5; i++)
+				{
+					const auto str = StringBuilder::format("Item {}", i + 1);
+					UINodeOptions options;
+					options.attributes[UIAttributeType::Text] = str;
+					options.attributes[UIAttributeType::Value] = (i == 0);
+
+					auto node = _test_doc->create_node(UINodeType::Item, options, combo_node);
+					_test_doc->set_node_action(node, UIActionType::OnClick, 
+						[this, combo_node, node]
+						{
+							for (const auto & child : combo_node.get_children())
+							{
+								if (child.type() == UINodeType::Item)
+									_test_doc->set_node_attribute(child, UIAttributeType::Value, false);
+							}
+
+							_test_doc->set_node_attribute(node, UIAttributeType::Value, true);
+							_test_doc->set_node_attribute(combo_node, UIAttributeType::Value, node.text());
+						});
+				}
+				_test_doc->set_node_attribute(combo_node, UIAttributeType::Value, "Item 1");
 			}
 		}
 #endif
