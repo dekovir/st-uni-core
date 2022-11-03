@@ -40,23 +40,23 @@ namespace unicore
 			const auto group_id = _test_doc->find_by_id("group");
 			const auto add_id = _test_doc->find_by_id("add_item");
 
-			if (group_id.has_value() && add_id.has_value())
+			if (!group_id.empty() && !add_id.empty())
 			{
-				_test_doc->set_node_action(add_id.value(), UIActionType::OnClick,
+				_test_doc->set_node_action(add_id, UIActionType::OnClick,
 					[this, group_id]
 					{
-						const auto count = group_id.value().get_children_count();
+						const auto count = group_id.get_children_count();
 						const auto text = StringBuilder::format("Item {}", count + 1);
 
 						UINodeOptions options;
 						options.attributes[UIAttributeType::Text] = text;
-						_test_doc->create_node(UINodeType::Item, options, group_id.value());
+						_test_doc->create_node(UINodeType::Item, options, group_id);
 					});
 			}
 
-			if (slider_id.has_value())
+			if (!slider_id.empty())
 			{
-				_test_doc->set_node_action(slider_id.value(), UIActionType::OnChange,
+				_test_doc->set_node_action(slider_id, UIActionType::OnChange,
 					[this](const Variant& value)
 					{
 						UC_LOG_DEBUG(logger) << "Slider value changed to " << value;

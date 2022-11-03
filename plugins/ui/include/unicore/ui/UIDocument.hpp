@@ -41,35 +41,33 @@ namespace unicore
 		UC_NODISCARD List<UINode> get_roots() const;
 
 		// FIND //////////////////////////////////////////////////////////////////////
-		UC_NODISCARD Optional<UINode> find_by_id(StringView id) const;
+		UC_NODISCARD UINode find_by_id(StringView id) const;
 
-		UC_NODISCARD Optional<UINode> find_by_type(UINodeType type,
-			const Optional<UINode>& parent = std::nullopt) const;
+		UC_NODISCARD UINode find_by_type(UINodeType type,
+			const UINode& parent = UINode::Empty) const;
 		Size find_all_by_type(UINodeType type, List<UINode>& list,
-			const Optional<UINode>& parent = std::nullopt) const;
+			const UINode& parent = UINode::Empty) const;
 
-		UC_NODISCARD Optional<UINode> find_by_name(StringView name,
-			const Optional<UINode>& parent = std::nullopt) const;
+		UC_NODISCARD UINode find_by_name(StringView name,
+			const UINode& parent = UINode::Empty) const;
 		Size find_all_by_name(StringView name, List<UINode>& list,
-			const Optional<UINode>& parent = std::nullopt) const;
+			const UINode& parent = UINode::Empty) const;
 
-		UC_NODISCARD Optional<UINode> querry(
+		UC_NODISCARD UINode querry(
 			const Predicate<const UINode&>& predicate,
-			const Optional<UINode>& parent = std::nullopt) const;
+			const UINode& parent = UINode::Empty) const;
 
-		Size querry_all(
-			const Predicate<const UINode&>& predicate, List<UINode>& list,
-			const Optional<UINode>& parent = std::nullopt) const;
+		Size querry_all(const Predicate<const UINode&>& predicate,
+			List<UINode>& list, const UINode& parent = UINode::Empty) const;
 
 		// EVENTS ////////////////////////////////////////////////////////////////////
 		void send_event(const UIEvent& evt);
 
 		// CREATE ////////////////////////////////////////////////////////////////////
-		Optional<UINode> create_node(UINodeType type, const UINodeOptions& options,
-			const Optional<UINode>& parent = std::nullopt);
+		UINode create_node(UINodeType type, const UINodeOptions& options,
+			const UINode& parent = UINode::Empty);
 
-		Optional<UINode> duplicate(const UINode& node,
-			const Optional<UINode>& at_parent = std::nullopt);
+		UINode duplicate(const UINode& node, const UINode& at_parent = UINode::Empty);
 
 		Bool remove_node(const UINode& node);
 
@@ -90,17 +88,17 @@ namespace unicore
 		Bool set_node_visible(const UINode& node, Bool value);
 
 		// HIERARCHY /////////////////////////////////////////////////////////////////
-		UC_NODISCARD Optional<UINode> get_node_parent(const UINode& node) const;
+		UC_NODISCARD UINode get_node_parent(const UINode& node) const;
 
-		Size get_node_children(List<UINode>& list, const Optional<UINode>& node) const;
-		UC_NODISCARD List<UINode> get_node_children(const Optional<UINode>& node) const;
-		UC_NODISCARD Size get_node_children_count(const Optional<UINode>& node) const;
+		Size get_node_children(List<UINode>& list, const UINode& node) const;
+		UC_NODISCARD List<UINode> get_node_children(const UINode& node) const;
+		UC_NODISCARD Size get_node_children_count(const UINode& node) const;
 
 		UC_NODISCARD Optional<unsigned> get_node_sibling_index(const UINode& node) const;
 		Bool set_node_sibling_index(const UINode& node, unsigned new_index);
 
-		UC_NODISCARD Optional<UINode> get_node_next_sibling(const UINode& node) const;
-		UC_NODISCARD Optional<UINode> get_node_prev_sibling(const UINode& node) const;
+		UC_NODISCARD UINode get_node_next_sibling(const UINode& node) const;
+		UC_NODISCARD UINode get_node_prev_sibling(const UINode& node) const;
 
 		// ATTRIBUTES ////////////////////////////////////////////////////////////////
 		void set_node_attribute(const UINode& node,
@@ -173,14 +171,14 @@ namespace unicore
 		void internal_find_all_by_name(UINode::IndexType index,
 			StringView name, List<UINode>& list, Size& count) const;
 
-		Optional<UINode> internal_querry(UINode::IndexType index,
+		UINode internal_querry(UINode::IndexType index,
 			const Predicate<const UINode&>& predicate) const;
 
 		void internal_querry_all(UINode::IndexType index,
 			const Predicate<const UINode&>& predicate,
 			List<UINode>& list, Size& count) const;
 
-		Optional<UINode> internal_duplicate_recurse(const UINode& node, const Optional<UINode>& parent);
+		UINode internal_duplicate_recurse(const UINode& node, const UINode& parent);
 		void internal_remove_node_recurse(UINode::IndexType index, Size& count);
 
 		static bool call_action_default(const UIAction& action, const UINode& node);

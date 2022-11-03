@@ -64,7 +64,7 @@ namespace unicore
 	}
 
 	static void parse_node_recurse(const tinyxml2::XMLElement* node,
-		UIDocument& doc, const Optional<UINode>& parent, Logger* logger)
+		UIDocument& doc, const UINode& parent, Logger* logger)
 	{
 		const auto tag = StringView(node->Value());
 		const auto node_type = parse_tag(tag);
@@ -104,7 +104,7 @@ namespace unicore
 	}
 
 	Bool UIDocumentParseXML::parse(StringView xml,
-		UIDocument& document, const Optional<UINode>& parent, Logger* logger)
+		UIDocument& document, const UINode& parent, Logger* logger)
 	{
 		XMLData data;
 		if (!data.parse(xml, logger))
@@ -114,7 +114,7 @@ namespace unicore
 	}
 
 	Bool UIDocumentParseXML::parse(const XMLData& data,
-		UIDocument& document, const Optional<UINode>& parent, Logger* logger)
+		UIDocument& document, const UINode& parent, Logger* logger)
 	{
 		const auto root = data.doc.RootElement();
 		if (!root) return false;

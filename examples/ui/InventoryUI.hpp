@@ -8,7 +8,7 @@ namespace unicore
 	{
 	public:
 		InventoryUI(Inventory& inventory, UIDocument& document,
-			const Optional<UINode>& parent, Logger* logger = nullptr);
+			const UINode& parent = UINode::Empty, Logger* logger = nullptr);
 		InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger = nullptr);
 
 	protected:
@@ -18,10 +18,10 @@ namespace unicore
 
 		Dictionary<InventoryIndex, UINode> _item_nodes;
 
-		Optional<UINode> _money_text;
-		Optional<UINode> _items_group;
-		Optional<UINode> _item_template;
-		Optional<UINode> _item_tooltip;
+		UINode _money_text;
+		UINode _items_group;
+		UINode _item_template;
+		UINode _item_tooltip;
 
 		void on_add(InventoryIndex index);
 		void on_remove(InventoryIndex index);

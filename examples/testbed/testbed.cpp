@@ -55,19 +55,18 @@ namespace unicore
 		_ui_view->flags().set(UIViewImGuiFlag::NoMove);
 		_ui_view->flags().set(UIViewImGuiFlag::NoResize);
 
-		if (UIDocumentParseXML::parse(xml, *_ui_document, std::nullopt, &_ui_logger))
+		if (UIDocumentParseXML::parse(xml, *_ui_document, UINode::Empty, &_ui_logger))
 		{
 			const auto group_node = _ui_document->find_by_id("group");
 			const auto template_node = _ui_document->find_by_id("template");
-			if (group_node.has_value() && template_node.has_value())
+			if (!group_node.empty() && !template_node.empty())
 			{
 				const auto& example_infos = ExampleCatalog::get_all();
 				for (unsigned i = 0; i < example_infos.size(); i++)
 				{
-					const auto dup_result = _ui_document->duplicate(template_node.value(), group_node.value());
-					if (dup_result.has_value())
+					const auto node = _ui_document->duplicate(template_node, group_node);
+					if (!node.empty())
 					{
-						const auto& node = dup_result.value();
 						_ui_document->set_node_visible(node, true);
 
 						auto& info = example_infos[i];

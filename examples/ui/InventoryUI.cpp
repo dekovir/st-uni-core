@@ -4,7 +4,7 @@
 namespace unicore
 {
 	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document,
-		const Optional<UINode>& parent, Logger* logger)
+		const UINode& parent, Logger* logger)
 		: _inventory(inventory)
 		, _document(document)
 		, _logger(logger)
@@ -19,26 +19,26 @@ namespace unicore
 		_item_template = _document.find_by_name("item_template", parent);
 		_item_tooltip = _document.find_by_name("item_tooltip", parent);
 
-		if (!_items_group) UC_LOG_ERROR(_logger) << "Group not found";
-		if (!_item_template) UC_LOG_ERROR(_logger) << "Item template not found";
+		if (_items_group.empty()) UC_LOG_ERROR(_logger) << "Group not found";
+		if (_item_template.empty()) UC_LOG_ERROR(_logger) << "Item template not found";
 
 		apply_money(0);
 	}
 
 	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger)
-		: InventoryUI(inventory, document, std::nullopt, logger)
+		: InventoryUI(inventory, document, UINode::Empty, logger)
 	{
 	}
 
 	void InventoryUI::on_add(InventoryIndex index)
 	{
-		if (!_items_group.has_value() || !_item_template.has_value())
+		if (_items_group.empty() || _item_template.empty())
 			return;
 
-		if (const auto new_node = _document.duplicate(_item_template.value(), _items_group.value()); new_node.has_value())
+		if (const auto new_node = _document.duplicate(_item_template, _items_group); !new_node.empty())
 		{
-			_item_nodes[index] = new_node.value();
-			apply_item(new_node.value(), index);
+			_item_nodes[index] = new_node;
+			apply_item(new_node, index);
 		}
 	}
 
@@ -65,10 +65,10 @@ namespace unicore
 
 	void InventoryUI::apply_money(UInt16 value)
 	{
-		if (_money_text.has_value())
+		if (!_money_text.empty())
 		{
 			const auto text = StringBuilder::format("Money: {}", value);
-			_document.set_node_attribute(_money_text.value(), UIAttributeType::Text, text);
+			_document.set_node_attribute(_money_text, UIAttributeType::Text, text);
 		}
 	}
 
@@ -134,30 +134,29 @@ namespace unicore
 
 	void InventoryUI::apply_tooltip(InventoryIndex index)
 	{
-		if (!_item_tooltip.has_value()) return;
+		if (_item_tooltip.empty()) return;
 
-		const auto node = _item_tooltip.value();
 		const auto id = _inventory.get_index_id(index);
 		const auto item = _inventory.database().get(id);
 
 		if (item == nullptr)
 		{
-			_document.set_node_visible(node, false);
+			_document.set_node_visible(_item_tooltip, false);
 			return;
 		}
 
-		_document.set_node_visible(node, true);
+		_document.set_node_visible(_item_tooltip, true);
 
-		if (const auto find = node.find_by_name("title"); find.valid())
+		if (const auto find = _item_tooltip.find_by_name("title"); find.valid())
 			_document.set_node_attribute(find, UIAttributeType::Text, item->title);
 
-		if (const auto find = node.find_by_name("type"); find.valid())
+		if (const auto find = _item_tooltip.find_by_name("type"); find.valid())
 		{
 			const auto str = StringBuilder::format(U"Type: {}", type_to_string(item->type));
 			_document.set_node_attribute(find, UIAttributeType::Text, str);
 		}
 
-		if (const auto find = node.find_by_name("damage"); find.valid())
+		if (const auto find = _item_tooltip.find_by_name("damage"); find.valid())
 		{
 			if (item->damage != RangeConsti::Zero)
 			{
@@ -169,7 +168,7 @@ namespace unicore
 			else _document.set_node_visible(find, false);
 		}
 
-		if (const auto find = node.find_by_name("armor"); find.valid())
+		if (const auto find = _item_tooltip.find_by_name("armor"); find.valid())
 		{
 			if (item->armor > 0)
 			{
@@ -181,10 +180,10 @@ namespace unicore
 			else _document.set_node_visible(find, false);
 		}
 
-		if (const auto find = node.find_by_name("desc"); find.valid())
+		if (const auto find = _item_tooltip.find_by_name("desc"); find.valid())
 			_document.set_node_visible(find, false);
 
-		if (const auto [find, group] = find_node(node, "status"); find.valid())
+		if (const auto [find, group] = find_node(_item_tooltip, "status"); find.valid())
 		{
 			_document.set_node_visible(group, item->has_status());
 			const auto value = Math::inverse_lerp<ItemValue>(0,

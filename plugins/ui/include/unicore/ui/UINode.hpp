@@ -78,6 +78,7 @@ namespace unicore
 		UC_NODISCARD constexpr auto document() const { return _document; }
 		UC_NODISCARD constexpr auto index() const { return _index; }
 
+		UC_NODISCARD Bool empty() const;
 		UC_NODISCARD Bool valid() const;
 		UC_NODISCARD UINodeType type() const;
 		UC_NODISCARD UINode parent() const;

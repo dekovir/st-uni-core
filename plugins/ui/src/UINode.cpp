@@ -7,6 +7,11 @@ namespace unicore
 
 	static List<UINode> s_nodes;
 
+	Bool UINode::empty() const
+	{
+		return _document == nullptr || _index == InvalidIndex;
+	}
+
 	Bool UINode::valid() const
 	{
 		return _document && _document->is_node_valid(*this);
@@ -26,13 +31,7 @@ namespace unicore
 
 	UINode UINode::parent() const
 	{
-		if (_document)
-		{
-			if (const auto result = _document->get_node_parent(*this); result.has_value())
-				return result.value();
-		}
-
-		return {};
+		return _document ? _document->get_node_parent(*this) : Empty;
 	}
 
 	Optional<String> UINode::uid() const
@@ -145,81 +144,43 @@ namespace unicore
 
 	UINode UINode::get_next_sibling() const
 	{
-		if (_document)
-		{
-			if (const auto result = _document->get_node_next_sibling(*this); result.has_value())
-				return result.value();
-		}
-
-		return {};
+		return _document ? _document->get_node_next_sibling(*this) : Empty;
 	}
 
 	UINode UINode::get_prev_sibling() const
 	{
-		if (_document)
-		{
-			if (const auto result = _document->get_node_prev_sibling(*this); result.has_value())
-				return result.value();
-		}
-
-		return {};
+		return _document ? _document->get_node_prev_sibling(*this) : Empty;
 	}
 
 	// FIND //////////////////////////////////////////////////////////////////////
 	UINode UINode::find_by_type(UINodeType type) const
 	{
-		if (_document)
-		{
-			if (const auto result = _document->find_by_type(type, *this); result.has_value())
-				return result.value();
-		}
-
-		return {};
+		return _document ? _document->find_by_type(type, *this) : Empty;
 	}
 
 	Size UINode::find_all_by_type(UINodeType type, List<UINode>& list) const
 	{
-		if (_document)
-			return _document->find_all_by_type(type, list, *this);
-		return 0;
+		return _document ? _document->find_all_by_type(type, list, *this) : 0;
 	}
 
 	UINode UINode::find_by_name(StringView name) const
 	{
-		if (_document)
-		{
-			if (const auto result = _document->find_by_name(name, *this); result.has_value())
-				return result.value();
-		}
-
-		return {};
+		return _document ? _document->find_by_name(name, *this) : Empty;
 	}
 
 	Size UINode::find_all_by_name(StringView name, List<UINode>& list) const
 	{
-		if (_document)
-			return _document->find_all_by_name(name, list, *this);
-
-		return 0;
+		return _document ? _document->find_all_by_name(name, list, *this) : 0;
 	}
 
 	UINode UINode::querry(const Predicate<const UINode&>& predicate) const
 	{
-		if (_document)
-		{
-			if (const auto result = _document->querry(predicate, *this); result.has_value())
-				return result.value();
-		}
-
-		return {};
+		return _document ? _document->querry(predicate, *this) : Empty;
 	}
 
 	Size UINode::querry_all(const Predicate<const UINode&>& predicate, List<UINode>& list) const
 	{
-		if (_document)
-			return _document->querry_all(predicate, list, *this);
-
-		return 0;
+		return _document ? _document->querry_all(predicate, list, *this) : 0;
 	}
 
 	UNICODE_STRING_BUILDER_FORMAT(const UINode&)
