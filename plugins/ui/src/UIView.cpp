@@ -42,4 +42,10 @@ namespace unicore
 		UIGroupValue layout;
 		return value.try_get_enum(layout) ? layout : default_value;
 	}
+
+	UIInputVariant UIView::get_input_variant(const Variant& value, UIInputVariant default_value)
+	{
+		UIInputVariant layout;
+		return value.try_get_enum(layout) ? layout : default_value;
+	}
 }

@@ -6,10 +6,12 @@ namespace unicore
 	enum class UIAttributeType
 	{
 		Value,
+		Variant,
 		Width,
 		Height,
 		Tooltip,
 		Text,
+		StepValue,
 		MinValue,
 		MaxValue,
 	};
@@ -19,6 +21,18 @@ namespace unicore
 		None,
 		Vertical,
 		Horizontal,
+	};
+
+	enum class UIInputVariant
+	{
+		Text,
+		Toggle,
+		Radio,
+		Button,
+		Number,
+		Range,
+		Color3,
+		Color4,
 	};
 
 	using UIAttributeDict = Dictionary<UIAttributeType, Variant>;

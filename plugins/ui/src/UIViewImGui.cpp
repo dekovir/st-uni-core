@@ -132,8 +132,14 @@ namespace unicore
 
 		Bool bool_value;
 		Int int_value;
+		Float float_value;
+		Color3f col3_value;
+		Color4f col4_value;
+
 		String str;
 		String32 str32;
+		Rangei range_i;
+		Rangef range_f;
 
 		ImTextureID texture_id;
 		ImVec2 size, uv0, uv1;
@@ -179,40 +185,65 @@ namespace unicore
 			}
 			break;
 
-		case UINodeType::Button:
-			render_node_header(node, same_line);
-			if (ImGui::Button(title.c_str(), { width, height }))
-				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
-			render_node_footer(node);
-			return true;
-
 		case UINodeType::Input:
-			str = node.value().get_string();
 			render_node_header(node, same_line);
-			if (ImGui::InputText(id.c_str(), &str))
-				_update_events.push_back({ node, UIEventType::ValueChanged, str });
-			render_node_footer(node);
-			return true;
+			switch (get_input_variant(node.variant()))
+			{
+			case UIInputVariant::Text:
+				str = node.value().get_string();
+				if (ImGui::InputText(id.c_str(), &str))
+					_update_events.push_back({ node, UIEventType::ValueChanged, str });
+				break;
 
-		case UINodeType::Slider:
-		{
-			const auto value_min = node.attribute(UIAttributeType::MinValue).get_float(0);
-			const auto value_max = node.attribute(UIAttributeType::MaxValue).get_float(1);
-			const auto format = node.attribute(UIAttributeType::Text).get_string("%.2f");
+			case UIInputVariant::Toggle:
+				bool_value = node.value().get_bool();
+				if (ImGui::Checkbox(id.c_str(), &bool_value))
+					_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
+				break;
 
-			auto value = node.value().get_float();
-			render_node_header(node, same_line);
-			if (ImGui::SliderFloat(id.c_str(), &value, value_min, value_max, format.c_str()))
-				_update_events.push_back({ node, UIEventType::ValueChanged, value });
-			render_node_footer(node);
-		}
-		return true;
+			case UIInputVariant::Radio:
+				bool_value = node.value().get_bool();
+				if (ImGui::RadioButton(id.c_str(), bool_value))
+					_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+				break;
 
-		case UINodeType::Toggle:
-			bool_value = node.value().get_bool();
-			render_node_header(node, same_line);
-			if (ImGui::Checkbox(id.c_str(), &bool_value))
-				_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
+			case UIInputVariant::Button:
+				if (ImGui::Button(title.c_str(), { width, height }))
+					_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+				break;
+
+			case UIInputVariant::Number:
+				// TODO: Implement min/max
+				int_value = node.variant().get_int();
+				if (ImGui::InputInt(id.c_str(), &int_value, node.attribute(UIAttributeType::StepValue).get_int(1)))
+					_update_events.push_back({ node, UIEventType::ValueChanged, int_value });
+				break;
+
+			case UIInputVariant::Range:
+				// TODO: Implement step
+				range_f = {
+					node.attribute(UIAttributeType::MinValue).get_float(0),
+					node.attribute(UIAttributeType::MaxValue).get_float(1)
+				};
+				str = node.attribute(UIAttributeType::Text).get_string("%.2f");
+				float_value = node.value().get_float();
+				if (ImGui::SliderFloat(id.c_str(), &float_value, range_f.min, range_f.max, str.c_str()))
+					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
+				break;
+
+			case UIInputVariant::Color3:
+				col3_value = node.value().get_color3f();
+				if (ImGui::ColorEdit3(id.c_str(), &col3_value.r))
+					_update_events.push_back({ node, UIEventType::ValueChanged, col3_value });
+				break;
+
+			case UIInputVariant::Color4:
+				col4_value = node.value().get_color4f();
+				if (ImGui::ColorEdit4(id.c_str(), &col4_value.r))
+					_update_events.push_back({ node, UIEventType::ValueChanged, col4_value });
+				break;
+			}
+
 			render_node_footer(node);
 			return true;
 
@@ -279,7 +310,8 @@ namespace unicore
 
 				ImGui::EndCombo();
 
-			render_node_footer(node);}
+				render_node_footer(node);
+			}
 			return true;
 
 		case UINodeType::Table:
@@ -338,8 +370,8 @@ namespace unicore
 		case UINodeType::Progress:
 			render_node_header(node, same_line);
 			if (node.attribute(UIAttributeType::Text).try_get_string(str))
-				ImGui::ProgressBar(node.value().get_float(), {width, height}, str.c_str());
-			else ImGui::ProgressBar(node.value().get_float(), {width, height});
+				ImGui::ProgressBar(node.value().get_float(), { width, height }, str.c_str());
+			else ImGui::ProgressBar(node.value().get_float(), { width, height });
 			render_node_footer(node);
 			break;
 		}

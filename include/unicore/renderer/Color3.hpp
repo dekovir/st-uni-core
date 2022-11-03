@@ -191,4 +191,10 @@ namespace unicore
 	{
 		return make(value.r, value.g, value.b);
 	}
+
+	template<typename T>
+	extern UNICODE_STRING_BUILDER_FORMAT(const Color3<T>&)
+	{
+		return builder << value.r << ":" << value.g << ":" << value.b;
+	}
 }

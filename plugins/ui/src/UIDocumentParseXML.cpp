@@ -9,10 +9,8 @@ namespace unicore
 		{"group", UINodeType::Group},
 		{"text", UINodeType::Text},
 		{"image", UINodeType::Image},
-		{"button", UINodeType::Button},
+		{"img", UINodeType::Image},
 		{"input", UINodeType::Input},
-		{"slider", UINodeType::Slider},
-		{"toggle", UINodeType::Toggle},
 		{"tooltip", UINodeType::Tooltip},
 		{"list", UINodeType::List},
 		{"item", UINodeType::Item},
@@ -33,16 +31,40 @@ namespace unicore
 		{"height", UIAttributeType::Height},
 		{"h", UIAttributeType::Height},
 		{"tooltip", UIAttributeType::Tooltip},
+		{"step", UIAttributeType::StepValue},
 		{"min", UIAttributeType::MinValue},
 		{"max", UIAttributeType::MaxValue},
 	};
 
-	static Optional<UINodeType> parse_tag(StringView tag)
+	static const Dictionary<StringView, UIInputVariant> s_input_variant =
+	{
+		{"toggle", UIInputVariant::Toggle},
+		{"radio", UIInputVariant::Radio},
+		{"button", UIInputVariant::Button},
+		{"number", UIInputVariant::Number},
+		{"slider", UIInputVariant::Range},
+		{"color3", UIInputVariant::Color3},
+		{"color4", UIInputVariant::Color4},
+	};
+
+	static Optional<UINodeType> parse_tag(StringView tag, UIInputVariant& variant)
 	{
 		for (const auto& it : s_tag_type)
 		{
 			if (StringHelper::equals(it.first, tag, true))
+			{
+				variant = UIInputVariant::Text;
 				return it.second;
+			}
+		}
+
+		for (const auto& it : s_input_variant)
+		{
+			if (StringHelper::equals(it.first, tag, true))
+			{
+				variant = it.second;
+				return UINodeType::Input;
+			}
 		}
 
 		return std::nullopt;
@@ -66,8 +88,9 @@ namespace unicore
 	static void parse_node_recurse(const tinyxml2::XMLElement* node,
 		UIDocument& doc, const UINode& parent, Logger* logger)
 	{
+		UIInputVariant input_variant;
 		const auto tag = StringView(node->Value());
-		const auto node_type = parse_tag(tag);
+		const auto node_type = parse_tag(tag, input_variant);
 
 		if (!node_type.has_value())
 		{
@@ -75,8 +98,23 @@ namespace unicore
 			return;
 		}
 
+		if (const auto str = node->Attribute("variant"); str != nullptr)
+		{
+			for (const auto& it : s_input_variant)
+			{
+				if (StringHelper::equals(str, it.first))
+				{
+					input_variant = it.second;
+					break;
+				}
+			}
+		}
+
 		// Fill options
 		UINodeOptions options;
+		if (node_type.value() == UINodeType::Input)
+			options.attributes[UIAttributeType::Variant] = input_variant;
+
 		if (const auto value = node->GetText(); value != nullptr)
 		{
 			const auto s = StringHelper::rtrim(StringView(value));

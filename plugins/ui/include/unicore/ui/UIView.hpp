@@ -35,6 +35,9 @@ namespace unicore
 		virtual void on_set_attribute(const UINode& node, UIAttributeType type, const Optional<Variant>& value) {}
 		virtual void on_set_action(const UINode& node, UIActionType type, const Optional<UIAction>& value) {}
 
-		static UIGroupValue get_group_value(const Variant& value, UIGroupValue default_value = UIGroupValue::None);
+		static UIGroupValue get_group_value(const Variant& value,
+			UIGroupValue default_value = UIGroupValue::None);
+		static UIInputVariant get_input_variant(const Variant& value,
+			UIInputVariant default_value = UIInputVariant::Text);
 	};
 }

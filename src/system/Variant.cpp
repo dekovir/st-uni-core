@@ -265,23 +265,35 @@ namespace unicore
 	UNICODE_STRING_BUILDER_FORMAT(const Variant&)
 	{
 		builder << "V(";
-
 		builder << value.data().index();
+		builder << ":";
 
 		Bool b;
 		Int64 i64;
 		Double d;
+		Vector2i vec2i;
+		Vector2f vec2f;
 		String32 s32;
+		Color3b col3;
+		Color4b col4;
 
 		if (value.try_get_bool(b))
-			builder << ":" << b;
+			builder << b;
 		else if (value.try_get_integral(i64))
-			builder << ":" << i64;
+			builder << i64;
 		else if (value.try_get_floating_point(d))
-			builder << ":" << d;
+			builder << d;
 		else if (value.try_get_string32(s32))
-			builder << ":" << s32;
-		else builder << "<?>";
+			builder << s32;
+		else if (value.try_get_vec2i(vec2i))
+			builder << "[" << vec2i << "]";
+		else if (value.try_get_vec2f(vec2f))
+			builder << "[" << vec2f << "]";
+		else if (value.try_get_color3b(col3))
+			builder << "[" << col3 << "]";
+		else if (value.try_get_color4b(col4))
+			builder << "[" << col4 << "]";
+		else builder << "?";
 
 		return builder << ")";
 	}
