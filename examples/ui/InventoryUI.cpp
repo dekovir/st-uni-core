@@ -88,7 +88,7 @@ namespace unicore
 		const auto id = _inventory.get_index_id(index);
 
 		const auto& item = *_inventory.database().get(id);
-		UC_LOG_DEBUG(_logger) << "Apply item " << item.title << " to " << node;
+		//UC_LOG_DEBUG(_logger) << "Apply item " << item.title << " to " << node;
 
 		_document.set_node_visible(node, true);
 
@@ -118,7 +118,7 @@ namespace unicore
 		const auto id = _inventory.get_index_id(index);
 		const auto& item = *_inventory.database().get(id);
 
-		UC_LOG_DEBUG(_logger) << "Apply item " << item.title << " to " << node;
+		//UC_LOG_DEBUG(_logger) << "Apply item " << item.title << " to " << node;
 
 		if (const auto find = node.find_by_name("name"); find.valid())
 		{

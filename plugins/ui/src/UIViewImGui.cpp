@@ -232,6 +232,7 @@ namespace unicore
 			return false;
 
 		case UINodeType::List:
+			render_node_header(node, same_line);
 			if (ImGui::BeginListBox(id.c_str()))
 			{
 				for (const auto& child : children)
@@ -239,6 +240,7 @@ namespace unicore
 
 				ImGui::EndListBox();
 			}
+			render_node_footer(node);
 			return true;
 
 		case UINodeType::Item:
@@ -281,6 +283,7 @@ namespace unicore
 			return true;
 
 		case UINodeType::Table:
+			render_node_header(node, same_line);
 			if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
 				ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
 			{
@@ -289,27 +292,34 @@ namespace unicore
 
 				ImGui::EndTable();
 			}
+			render_node_footer(node);
 			return true;
 
 		case UINodeType::TableHeader:
 			str = node.text().get_string();
 
+			render_node_header(node, same_line);
 			ImGui::TableNextColumn();
 			ImGui::TableHeader(str.c_str());
+			render_node_footer(node);
 			return true;
 
 		case UINodeType::TableRow:
+			render_node_header(node, same_line);
 			ImGui::TableNextRow();
 			ImGui::BeginGroup();
 			for (const auto& child : children)
 				render_node(child);
 			ImGui::EndGroup();
+			render_node_footer(node);
 
 			return true;
 
 		case UINodeType::TableCell:
 			ImGui::TableNextColumn();
 
+			render_node_header(node, same_line);
+			ImGui::BeginGroup();
 			if (node.attribute(UIAttributeType::Text).try_get_string(str))
 				ImGui::Text("%s", str.c_str());
 
@@ -320,6 +330,8 @@ namespace unicore
 					render_node(child);
 				ImGui::EndGroup();
 			}
+			ImGui::EndGroup();
+			render_node_footer(node);
 
 			return true;
 
