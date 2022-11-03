@@ -3,47 +3,47 @@
 	<text>Sample text</text>
 
 	<!-- Button -->
-	<group value="2">
+	<group variant="1">
 		<button>Default</button>
 	</group>
 
 	<!-- Inputs -->
-	<group value="2">
+	<horizontal>
 		<text>Input</text>
 		<input value="quick brown fox" />
-	</group>
+	</horizontal>
 
 	<text>Multi line input</text>
 	<textarea height="50" value="first line&#10;second line" />
 
-	<group value="2" tooltip="Tooltip text">
+	<group variant="1" tooltip="Tooltip text">
 		<text>Input</text>
 		<input variant="number" value="10" />
 	</group>
 
-	<group value="2">
+	<group variant="1">
 		<text>Slider</text>
 		<slider id="slider" value="50.50" max="100">Value %.1f</slider>
 	</group>
 
-	<group value="2">
+	<group variant="1">
 		<text>Toggle</text>
 		<toggle value="true" />
 		<radio value="true" />
 	</group>
 
-	<group value="2">
+	<group variant="1">
 		<text>Color3</text>
 		<input variant="color3" />
 	</group>
 
-	<group value="2">
+	<group variant="1">
 		<text>Color4</text>
 		<input variant="color4" />
 	</group>
 
 	<!-- Combobox -->
-	<group value="2">
+	<group variant="1">
 		<text>Combo</text>
 		<combo value="Item 1">
 			<text>Text inside combo</text>

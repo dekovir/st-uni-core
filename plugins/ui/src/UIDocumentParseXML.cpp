@@ -12,7 +12,6 @@ namespace unicore
 		{"img", UINodeType::Image},
 		{"input", UINodeType::Input},
 		{"tooltip", UINodeType::Tooltip},
-		{"list", UINodeType::List},
 		{"item", UINodeType::Item},
 		{"tree", UINodeType::Tree},
 		{"combo", UINodeType::Combo},
@@ -36,6 +35,12 @@ namespace unicore
 		{"max", UIAttributeType::MaxValue},
 	};
 
+	static const Dictionary<StringView, UIGroupVariant> s_group_variant = {
+		{"vertical", UIGroupVariant::Vertical},
+		{"horizontal", UIGroupVariant::Horizontal},
+		{"list", UIGroupVariant::List}
+	};
+
 	static const Dictionary<StringView, UIInputVariant> s_input_variant =
 	{
 		{"textarea", UIInputVariant::TextArea},
@@ -48,7 +53,9 @@ namespace unicore
 		{"color4", UIInputVariant::Color4},
 	};
 
-	static Optional<UINodeType> parse_tag(StringView tag, UIInputVariant& variant)
+	using VariantType = StdVariant<std::nullopt_t, UIGroupVariant, UIInputVariant>;
+
+	static Optional<UINodeType> parse_tag(StringView tag, VariantType& variant)
 	{
 		for (const auto& it : s_tag_type)
 		{
@@ -56,6 +63,15 @@ namespace unicore
 			{
 				variant = UIInputVariant::Text;
 				return it.second;
+			}
+		}
+
+		for (const auto& it : s_group_variant)
+		{
+			if (StringHelper::equals(it.first, tag, true))
+			{
+				variant = it.second;
+				return UINodeType::Group;
 			}
 		}
 
@@ -86,10 +102,22 @@ namespace unicore
 		return str;
 	}
 
+	template<typename T>
+	static T parse_enum_variant(const char* str, const Dictionary<StringView, T>& dict)
+	{
+		for (const auto& it : dict)
+		{
+			if (StringHelper::equals(str, it.first))
+				return it.second;
+		}
+
+		return parse_value(str).get_enum<T>();
+	}
+
 	static void parse_node_recurse(const tinyxml2::XMLElement* node,
 		UIDocument& doc, const UINode& parent, Logger* logger)
 	{
-		UIInputVariant input_variant;
+		VariantType input_variant = std::nullopt;
 		const auto tag = StringView(node->Value());
 		const auto node_type = parse_tag(tag, input_variant);
 
@@ -99,22 +127,26 @@ namespace unicore
 			return;
 		}
 
-		if (const auto str = node->Attribute("variant"); str != nullptr)
+		if (node_type.value() == UINodeType::Group)
 		{
-			for (const auto& it : s_input_variant)
-			{
-				if (StringHelper::equals(str, it.first))
-				{
-					input_variant = it.second;
-					break;
-				}
-			}
+			if (const auto str = node->Attribute("variant"); str != nullptr)
+				input_variant = parse_enum_variant<UIGroupVariant>(str, s_group_variant);
+		}
+
+		if (node_type.value() == UINodeType::Input)
+		{
+			if (const auto str = node->Attribute("variant"); str != nullptr)
+				input_variant = parse_enum_variant<UIInputVariant>(str, s_input_variant);
 		}
 
 		// Fill options
 		UINodeOptions options;
-		if (node_type.value() == UINodeType::Input)
-			options.attributes[UIAttributeType::Variant] = input_variant;
+
+		if (const auto ptr = std::get_if<UIGroupVariant>(&input_variant))
+			options.attributes[UIAttributeType::Variant] = *ptr;
+
+		if (const auto ptr = std::get_if<UIInputVariant>(&input_variant))
+			options.attributes[UIAttributeType::Variant] = *ptr;
 
 		if (const auto value = node->GetText(); value != nullptr)
 		{

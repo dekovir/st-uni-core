@@ -16,11 +16,11 @@ namespace unicore
 		MaxValue,
 	};
 
-	enum class UIGroupValue
+	enum class UIGroupVariant
 	{
-		None,
 		Vertical,
 		Horizontal,
+		List
 	};
 
 	enum class UIInputVariant

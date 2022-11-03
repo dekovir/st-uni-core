@@ -22,7 +22,7 @@
 		<text name="title">title</text>
 		<text name="type">Value</text>
 		<text name="damage">+0</text>
-		<group value="2" name="status_group">
+		<group variant="1" name="status_group">
 			<text>Status:</text>
 			<progress name="status_value" value="0.8" w="80" h="16"/>
 		</group>

@@ -37,9 +37,9 @@ namespace unicore
 		on_rebuild();
 	}
 
-	UIGroupValue UIView::get_group_value(const Variant& value, UIGroupValue default_value)
+	UIGroupVariant UIView::get_group_variant(const Variant& value, UIGroupVariant default_value)
 	{
-		UIGroupValue layout;
+		UIGroupVariant layout;
 		return value.try_get_enum(layout) ? layout : default_value;
 	}
 

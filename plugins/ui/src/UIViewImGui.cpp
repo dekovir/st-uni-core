@@ -138,7 +138,6 @@ namespace unicore
 
 		String str;
 		String32 str32;
-		Rangei range_i;
 		Rangef range_f;
 
 		ImTextureID texture_id;
@@ -148,20 +147,32 @@ namespace unicore
 		{
 		case UINodeType::Group:
 			render_node_header(node, same_line);
-			ImGui::BeginGroup();
-			switch (get_group_value(node.value()))
+			switch (get_group_variant(node.variant()))
 			{
-			case UIGroupValue::Horizontal:
+			case UIGroupVariant::Horizontal:
+				ImGui::BeginGroup();
 				for (unsigned i = 0; i < children.size(); i++)
 					render_node(children[i], i > 0);
+				ImGui::EndGroup();
+				break;
+
+			case UIGroupVariant::List:
+				if (ImGui::BeginListBox(id.c_str()))
+				{
+					for (const auto& child : children)
+						render_node(child);
+
+					ImGui::EndListBox();
+				}
 				break;
 
 			default:
+				ImGui::BeginGroup();
 				for (const auto& child : children)
 					render_node(child);
+				ImGui::EndGroup();
 				break;
 			}
-			ImGui::EndGroup();
 			render_node_footer(node);
 			return true;
 
@@ -267,18 +278,6 @@ namespace unicore
 				ImGui::EndTooltip();
 			}
 			return false;
-
-		case UINodeType::List:
-			render_node_header(node, same_line);
-			if (ImGui::BeginListBox(id.c_str()))
-			{
-				for (const auto& child : children)
-					render_node(child);
-
-				ImGui::EndListBox();
-			}
-			render_node_footer(node);
-			return true;
 
 		case UINodeType::Item:
 			bool_value = node.value().get_bool();

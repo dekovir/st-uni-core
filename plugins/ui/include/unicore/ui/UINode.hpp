@@ -32,7 +32,6 @@ namespace unicore
 		Image,
 		Input,
 		Tooltip,
-		List,
 		Item,
 		Tree,
 		Combo,

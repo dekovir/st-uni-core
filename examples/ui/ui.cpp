@@ -33,7 +33,7 @@ namespace unicore
 			_test_view->set_document(_test_doc);
 			_test_view->set_title(U"Test UI");
 			_test_view->set_size(Vector2f(300, 0));
-			_test_view->set_position(Vector2f(50, 50.f));
+			_test_view->set_position(Vector2f(10, 10));
 
 			_test_position_id = _test_doc->find_by_id("position");
 			const auto slider_id = _test_doc->find_by_id("slider");
@@ -112,7 +112,7 @@ namespace unicore
 			_inventory_view = std::make_shared<UIViewImGui>(_context, _context_logger);
 			_inventory_view->set_document(_inventory_doc);
 			_inventory_view->set_title(U"Inventory");
-			_inventory_view->set_position(Vector2f(400, 50.f));
+			_inventory_view->set_position(Vector2f(320, 10));
 
 			_inventory = std::make_shared<Inventory>(_items_db);
 			_inventory_ui = std::make_shared<InventoryUI>(
