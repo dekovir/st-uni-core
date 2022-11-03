@@ -22,6 +22,7 @@ namespace unicore
 		{"th", UINodeType::TableHeader},
 		{"tr", UINodeType::TableRow},
 		{"td", UINodeType::TableCell},
+		{"progress", UINodeType::Progress},
 	};
 
 	static const Dictionary<StringView, UIAttributeType> s_attr_name =

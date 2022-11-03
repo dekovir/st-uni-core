@@ -43,6 +43,7 @@ namespace unicore
 		TableHeader,
 		TableRow,
 		TableCell,
+		Progress,
 	};
 
 	class UIDocument;
@@ -113,6 +114,8 @@ namespace unicore
 
 		UC_NODISCARD UINode querry(const Predicate<const UINode&>& predicate) const;
 		Size querry_all(const Predicate<const UINode&>& predicate, List<UINode>& list) const;
+
+		static const UINode Empty;
 
 	private:
 		const UIDocument* _document;

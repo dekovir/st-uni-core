@@ -29,9 +29,8 @@ namespace unicore
 
 		void apply_money(UInt16 value);
 		void apply_item(const UINode& node, InventoryIndex index);
-		void apply_value(const UINode& node, InventoryIndex index);
-
-		void apply_tooltip(ItemId id);
+		void apply_item_value(const UINode& node, InventoryIndex index);
+		void apply_tooltip(InventoryIndex index);
 
 		static StringView type_to_string(ItemType type);
 		static String weight_to_string(UInt16 weight);

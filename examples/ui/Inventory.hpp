@@ -18,7 +18,7 @@ namespace unicore
 
 		UC_NODISCARD auto items_count() const { return _items.size(); }
 
-		InventoryIndex add_item(ItemId id, ItemValue value = 1);
+		InventoryIndex add_item(ItemId id, ItemValue value = 0);
 
 		UC_NODISCARD ItemId get_index_id(InventoryIndex index) const;
 		UC_NODISCARD ItemValue get_index_value(InventoryIndex index) const;

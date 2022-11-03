@@ -2,7 +2,7 @@
 	<text name="money" />
 	<text>Items</text>
 
-	<table name="item_group" value="6">
+	<table name="item_group" value="4">
 		<tr>
 			<th>Icon</th>
 			<th>Name</th>
@@ -22,6 +22,10 @@
 		<text name="title">title</text>
 		<text name="type">Value</text>
 		<text name="damage">+0</text>
+		<group value="2" name="status_group">
+			<text>Status:</text>
+			<progress name="status_value" value="0.8" w="80" h="16"/>
+		</group>
 		<text name="armor">+0</text>
 		<text name="desc">description</text>
 	</tooltip>

@@ -123,6 +123,8 @@ namespace unicore
 				const auto item = _inventory->database().get(it.first);
 				if (item->is_stackable())
 					_inventory->add_item(it.first, 10);
+				else if (item->has_status())
+					_inventory->add_item(it.first, 200);
 				else _inventory->add_item(it.first);
 			}
 		}
@@ -158,7 +160,7 @@ namespace unicore
 		_context.frame_begin();
 
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
-		static bool show_demo_window = true;
+		static bool show_demo_window = false;
 		ImGui::ShowDemoWindow(&show_demo_window);
 #endif
 

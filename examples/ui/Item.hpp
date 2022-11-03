@@ -36,6 +36,13 @@ namespace unicore
 		}
 
 		UC_NODISCARD constexpr bool is_stackable() const { return type == ItemType::Consumable; }
+		UC_NODISCARD constexpr bool has_status() const
+		{
+			return
+				type == ItemType::Weapon ||
+				type == ItemType::Shield ||
+				type == ItemType::Armor;
+		}
 
 		static Item make_weapon(StringView32 title, UInt16 price, UInt16 weight, Rangei damage, const Shared<Sprite>& icon)
 		{
@@ -96,7 +103,7 @@ namespace unicore
 		}
 	};
 
-	using ItemValue = UInt16;
+	using ItemValue = UInt8;
 
 	class ItemDatabase
 	{

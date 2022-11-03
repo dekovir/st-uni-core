@@ -16,7 +16,7 @@ namespace unicore
 				{
 					if (info.id == id)
 					{
-						info.value += value;
+						info.value += value > 0 ? value : 1;
 						_event_changed.invoke(index);
 						return index;
 					}
@@ -24,7 +24,7 @@ namespace unicore
 			}
 
 			const InventoryIndex index(_last_index++);
-			_items[index] = { id, value };
+			_items[index] = { id, value > 0 ? value : std::numeric_limits<ItemValue>::max() };
 			_event_add.invoke(index);
 			return index;
 		}

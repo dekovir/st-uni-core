@@ -3,6 +3,8 @@
 
 namespace unicore
 {
+	const UINode UINode::Empty;
+
 	static List<UINode> s_nodes;
 
 	Bool UINode::valid() const

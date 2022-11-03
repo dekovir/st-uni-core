@@ -269,13 +269,15 @@ namespace unicore
 
 		case UINodeType::Combo:
 			str = node.value().get_string();
+			render_node_header(node, same_line);
 			if (ImGui::BeginCombo(title.c_str(), str.c_str()))
 			{
 				for (const auto& child : children)
 					render_node(child);
 
 				ImGui::EndCombo();
-			}
+
+			render_node_footer(node);}
 			return true;
 
 		case UINodeType::Table:
@@ -320,6 +322,14 @@ namespace unicore
 			}
 
 			return true;
+
+		case UINodeType::Progress:
+			render_node_header(node, same_line);
+			if (node.attribute(UIAttributeType::Text).try_get_string(str))
+				ImGui::ProgressBar(node.value().get_float(), {width, height}, str.c_str());
+			else ImGui::ProgressBar(node.value().get_float(), {width, height});
+			render_node_footer(node);
+			break;
 		}
 
 		return false;
