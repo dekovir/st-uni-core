@@ -49,6 +49,8 @@ namespace unicore
 		{"button", UIInputVariant::Button},
 		{"number", UIInputVariant::Number},
 		{"slider", UIInputVariant::Range},
+		{"vector2", UIInputVariant::Vector2},
+		{"vector3", UIInputVariant::Vector3},
 		{"color3", UIInputVariant::Color3},
 		{"color4", UIInputVariant::Color4},
 	};

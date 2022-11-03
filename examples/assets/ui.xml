@@ -33,6 +33,16 @@
 	</group>
 
 	<group variant="1">
+		<text>Vector2</text>
+		<input variant="vector2" />
+	</group>
+
+	<group variant="1">
+		<text>Vector3</text>
+		<input variant="vector3" />
+	</group>
+
+	<group variant="1">
 		<text>Color3</text>
 		<input variant="color3" />
 	</group>

@@ -133,6 +133,9 @@ namespace unicore
 		Bool bool_value;
 		Int int_value;
 		Float float_value;
+
+		Vector2f vec2_value;
+		Vector3f vec3_value;
 		Color3f col3_value;
 		Color4f col4_value;
 
@@ -244,6 +247,20 @@ namespace unicore
 				float_value = node.value().get_float();
 				if (ImGui::SliderFloat(id.c_str(), &float_value, range_f.min, range_f.max, str.c_str()))
 					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
+				break;
+
+			case UIInputVariant::Vector2:
+				// TODO: Implement ImGui::InputInt2()
+				vec2_value = node.value().get_vec2f();
+				if (ImGui::InputFloat2(id.c_str(), &vec2_value.x))
+					_update_events.push_back({ node, UIEventType::ValueChanged, vec2_value });
+				break;
+
+			case UIInputVariant::Vector3:
+				// TODO: Implement ImGui::InputInt3()
+				vec3_value = node.value().get_vec3f();
+				if (ImGui::InputFloat3(id.c_str(), &vec3_value.x))
+					_update_events.push_back({ node, UIEventType::ValueChanged, vec3_value });
 				break;
 
 			case UIInputVariant::Color3:

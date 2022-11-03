@@ -32,6 +32,8 @@ namespace unicore
 		Button,
 		Number,
 		Range,
+		Vector2,
+		Vector3,
 		Color3,
 		Color4,
 	};
