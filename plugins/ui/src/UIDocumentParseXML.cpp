@@ -38,6 +38,7 @@ namespace unicore
 
 	static const Dictionary<StringView, UIInputVariant> s_input_variant =
 	{
+		{"textarea", UIInputVariant::TextArea},
 		{"toggle", UIInputVariant::Toggle},
 		{"radio", UIInputVariant::Radio},
 		{"button", UIInputVariant::Button},

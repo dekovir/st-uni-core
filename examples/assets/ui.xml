@@ -13,6 +13,9 @@
 		<input value="quick brown fox" />
 	</group>
 
+	<text>Multi line input</text>
+	<textarea height="50" value="first line&#10;second line" />
+
 	<group value="2" tooltip="Tooltip text">
 		<text>Input</text>
 		<input variant="number" value="10" />
@@ -87,7 +90,7 @@
 	<!-- Progressbar -->
 	<text>Progress bars</text>
 	<progress value="0.2" />
-	<progress value="0.5" />
-	<progress value="0.7" />
+	<progress value="0" min="-50" max="50"/>
+	<progress value="75" max="100"/>
 	<progress value="1">Completed</progress>
 </group>

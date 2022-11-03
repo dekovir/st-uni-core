@@ -26,6 +26,7 @@ namespace unicore
 	enum class UIInputVariant
 	{
 		Text,
+		TextArea,
 		Toggle,
 		Radio,
 		Button,

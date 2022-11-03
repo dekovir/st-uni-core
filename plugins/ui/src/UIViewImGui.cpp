@@ -195,6 +195,12 @@ namespace unicore
 					_update_events.push_back({ node, UIEventType::ValueChanged, str });
 				break;
 
+			case UIInputVariant::TextArea:
+				str = node.value().get_string();
+				if (ImGui::InputTextMultiline(id.c_str(), &str, { width, height }))
+					_update_events.push_back({ node, UIEventType::ValueChanged, str });
+				break;
+
 			case UIInputVariant::Toggle:
 				bool_value = node.value().get_bool();
 				if (ImGui::Checkbox(id.c_str(), &bool_value))
@@ -368,10 +374,15 @@ namespace unicore
 			return true;
 
 		case UINodeType::Progress:
+			range_f = {
+				node.attribute(UIAttributeType::MinValue).get_float(0),
+				node.attribute(UIAttributeType::MaxValue).get_float(1)
+			};
+			float_value = Math::inverse_lerp(range_f.min, range_f.max, node.value().get_float());
 			render_node_header(node, same_line);
 			if (node.attribute(UIAttributeType::Text).try_get_string(str))
-				ImGui::ProgressBar(node.value().get_float(), { width, height }, str.c_str());
-			else ImGui::ProgressBar(node.value().get_float(), { width, height });
+				ImGui::ProgressBar(float_value, { width, height }, str.c_str());
+			else ImGui::ProgressBar(float_value, { width, height });
 			render_node_footer(node);
 			break;
 		}
