@@ -149,6 +149,13 @@ namespace unicore
 			render_node_header(node, same_line);
 			switch (get_group_variant(node.variant()))
 			{
+			case UIGroupVariant::Vertical:
+				ImGui::BeginGroup();
+				for (const auto& child : children)
+					render_node(child);
+				ImGui::EndGroup();
+				break;
+
 			case UIGroupVariant::Horizontal:
 				ImGui::BeginGroup();
 				for (unsigned i = 0; i < children.size(); i++)
@@ -161,16 +168,8 @@ namespace unicore
 				{
 					for (const auto& child : children)
 						render_node(child);
-
 					ImGui::EndListBox();
 				}
-				break;
-
-			default:
-				ImGui::BeginGroup();
-				for (const auto& child : children)
-					render_node(child);
-				ImGui::EndGroup();
 				break;
 			}
 			render_node_footer(node);
@@ -185,16 +184,15 @@ namespace unicore
 			return true;
 
 		case UINodeType::Image:
+			render_node_header(node, same_line);
 			if (get_texture(node.value(), texture_id, size, uv0, uv1))
 			{
 				const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
-
-				render_node_header(node, same_line);
 				ImGui::Image(texture_id, s, uv0, uv1);
-				render_node_footer(node);
-				return true;
 			}
-			break;
+			else ImGui::Image(nullptr, { width, height });
+			render_node_footer(node);
+			return true;
 
 		case UINodeType::Input:
 			render_node_header(node, same_line);
@@ -290,6 +288,7 @@ namespace unicore
 		case UINodeType::Tree:
 			bool_value = node.value().get_bool();
 			ImGui::SetNextItemOpen(bool_value);
+			render_node_header(node, same_line);
 			if (ImGui::TreeNode(title.c_str()))
 			{
 				if (!bool_value)
@@ -302,7 +301,7 @@ namespace unicore
 			}
 			else if (bool_value)
 				_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
-
+			render_node_footer(node);
 			return true;
 
 		case UINodeType::Combo:
@@ -312,11 +311,9 @@ namespace unicore
 			{
 				for (const auto& child : children)
 					render_node(child);
-
 				ImGui::EndCombo();
-
-				render_node_footer(node);
 			}
+			render_node_footer(node);
 			return true;
 
 		case UINodeType::Table:
@@ -326,7 +323,6 @@ namespace unicore
 			{
 				for (const auto& child : children)
 					render_node(child);
-
 				ImGui::EndTable();
 			}
 			render_node_footer(node);
@@ -335,15 +331,15 @@ namespace unicore
 		case UINodeType::TableHeader:
 			str = node.text().get_string();
 
-			render_node_header(node, same_line);
 			ImGui::TableNextColumn();
+			render_node_header(node, same_line);
 			ImGui::TableHeader(str.c_str());
 			render_node_footer(node);
 			return true;
 
 		case UINodeType::TableRow:
-			render_node_header(node, same_line);
 			ImGui::TableNextRow();
+			render_node_header(node, same_line);
 			ImGui::BeginGroup();
 			for (const auto& child : children)
 				render_node(child);
@@ -362,10 +358,8 @@ namespace unicore
 
 			if (!children.empty())
 			{
-				ImGui::BeginGroup();
 				for (const auto& child : children)
 					render_node(child);
-				ImGui::EndGroup();
 			}
 			ImGui::EndGroup();
 			render_node_footer(node);
