@@ -194,5 +194,11 @@ namespace unicore
 		{
 			return static_cast<Float>(t - a) / static_cast<Float>(b - a);
 		}
+
+		template<typename T, std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>>* = nullptr>
+		static constexpr Float inverse_lerp_numeric(T value)
+		{
+			return inverse_lerp(std::numeric_limits<T>::min(), std::numeric_limits<T>::max(), value);
+		}
 	}
 }

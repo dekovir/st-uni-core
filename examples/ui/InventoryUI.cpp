@@ -186,9 +186,7 @@ namespace unicore
 		if (const auto [find, group] = find_node(_item_tooltip, "status"); find.valid())
 		{
 			_document.set_node_visible(group, item->has_status());
-			const auto value = Math::inverse_lerp<ItemValue>(0,
-				std::numeric_limits<ItemValue>::max(),
-				_inventory.get_index_value(index));
+			const auto value = Math::inverse_lerp_numeric(_inventory.get_index_value(index));
 			_document.set_node_attribute(find, UIAttributeType::Value, value);
 		}
 	}
