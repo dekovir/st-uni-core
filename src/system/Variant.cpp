@@ -268,31 +268,41 @@ namespace unicore
 		builder << value.data().index();
 		builder << ":";
 
-		Bool b;
-		Int64 i64;
-		Double d;
-		Vector2i vec2i;
-		Vector2f vec2f;
-		String32 s32;
-		Color3b col3;
-		Color4b col4;
+		if (Bool tmp; value.try_get_bool(tmp))
+			builder << tmp;
+		else if (Int64 tmp; value.try_get_integral(tmp))
+			builder << tmp;
+		else if (Double tmp; value.try_get_floating_point(tmp))
+			builder << tmp;
 
-		if (value.try_get_bool(b))
-			builder << b;
-		else if (value.try_get_integral(i64))
-			builder << i64;
-		else if (value.try_get_floating_point(d))
-			builder << d;
-		else if (value.try_get_string32(s32))
-			builder << s32;
-		else if (value.try_get_vec2i(vec2i))
-			builder << "[" << vec2i << "]";
-		else if (value.try_get_vec2f(vec2f))
-			builder << "[" << vec2f << "]";
-		else if (value.try_get_color3b(col3))
-			builder << "[" << col3 << "]";
-		else if (value.try_get_color4b(col4))
-			builder << "[" << col4 << "]";
+		else if (String32 tmp; value.try_get_string32(tmp))
+			builder << tmp;
+
+		else if (Vector2i tmp; value.try_get_vec2i(tmp))
+			builder << "[" << tmp << "]";
+		else if (Vector2f tmp; value.try_get_vec2f(tmp))
+			builder << "[" << tmp << "]";
+		else if (Vector3i tmp; value.try_get_vec3i(tmp))
+			builder << "[" << tmp << "]";
+		else if (Vector3f tmp; value.try_get_vec3f(tmp))
+			builder << "[" << tmp << "]";
+
+		else if (Rangei tmp; value.try_get_rangei(tmp))
+			builder << "[" << tmp << "]";
+		else if (Rangef tmp; value.try_get_rangef(tmp))
+			builder << "[" << tmp << "]";
+
+		else if (Recti tmp; value.try_get_recti(tmp))
+			builder << "[" << tmp << "]";
+		else if (Rectf tmp; value.try_get_rectf(tmp))
+			builder << "[" << tmp << "]";
+
+		else if (Color3b tmp; value.try_get_color3b(tmp))
+			builder << "[" << tmp << "]";
+		else if (Color4b tmp; value.try_get_color4b(tmp))
+			builder << "[" << tmp << "]";
+		else if (Shared<Object> tmp; value.try_get_object(tmp))
+			tmp ? builder << tmp->type() : builder << "null";
 		else builder << "?";
 
 		return builder << ")";

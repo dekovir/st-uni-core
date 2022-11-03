@@ -249,8 +249,8 @@ namespace unicore
 	extern UNICODE_STRING_BUILDER_FORMAT(const Rect<T>&)
 	{
 		return builder
-			<< '(' << value.x << ',' << value.y << ','
-			<< value.w << ',' << value.h << ')';
+			<< value.x << 'x' << value.y << ';'
+			<< value.w << 'x' << value.h;
 	}
 
 	UNICORE_MAKE_HASH(Recti)

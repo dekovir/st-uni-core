@@ -138,6 +138,7 @@ namespace unicore
 		Vector3f vec3_value;
 		Color3f col3_value;
 		Color4f col4_value;
+		Rectf rect_value;
 
 		String str;
 		String32 str32;
@@ -232,9 +233,10 @@ namespace unicore
 
 			case UIInputVariant::Number:
 				// TODO: Implement min/max
-				int_value = node.variant().get_int();
-				if (ImGui::InputInt(id.c_str(), &int_value, node.attribute(UIAttributeType::StepValue).get_int(1)))
-					_update_events.push_back({ node, UIEventType::ValueChanged, int_value });
+				// TODO: Implement ImGui::InputInt
+				float_value = node.variant().get_float();
+				if (ImGui::InputFloat(id.c_str(), &float_value, node.attribute(UIAttributeType::StepValue).get_float(1)))
+					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
 				break;
 
 			case UIInputVariant::Range:

@@ -14,7 +14,8 @@ namespace unicore
 			Bool, Int, Int64,
 			Float, Double,
 			String, String32,
-			Vector2i, Vector2f, Vector3i, Vector3f, Recti, Rectf,
+			Vector2i, Vector2f, Vector3i, Vector3f,
+			Rangei, Rangef, Recti, Rectf,
 			Color3b, Color3f, Color4b, Color4f,
 			Shared<Object>
 		>;
@@ -39,7 +40,7 @@ namespace unicore
 		Variant(T value) noexcept : _data(value) {}
 
 		template<typename T,
-			std::enable_if_t<!std::is_constructible_v<DataType, T> && std::is_integral_v<T>>* = nullptr>
+			std::enable_if_t<!std::is_constructible_v<DataType, T>&& std::is_integral_v<T>>* = nullptr>
 		Variant(T value) noexcept : _data(static_cast<Int64>(value)) {}
 
 		template<typename T, std::enable_if_t<std::is_base_of_v<Object, T>>* = nullptr>
@@ -252,6 +253,41 @@ namespace unicore
 		// VECTOR3F //////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_vec3f(Vector3f& value) const { return try_get_vec3(value); }
 		UC_NODISCARD Vector3f get_vec3f(const Vector3f& default_value = VectorConst3f::Zero) const { return get_vec3(default_value); }
+
+		// RANGE /////////////////////////////////////////////////////////////////////
+		template<typename T>
+		bool try_get_range(Range<T>& value) const
+		{
+			if (const auto ptr = std::get_if<Rangei>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			if (const auto ptr = std::get_if<Rangef>(&_data))
+			{
+				value = ptr->cast<T>();
+				return true;
+			}
+
+			return false;
+		}
+
+		template<typename T>
+		UC_NODISCARD Range<T> get_range(
+			const Range<T>& default_value = details::RangeConst<T>::Zero) const
+		{
+			Range<T> value{};
+			return try_get_range(value) ? value : default_value;
+		}
+
+		// RANGEI ////////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_rangei(Rangei& value) const { return try_get_range(value); }
+		UC_NODISCARD Rangei get_rangei(const Rangei& default_value = RangeConsti::Zero) const { return get_range(default_value); }
+
+		// RANGEF ////////////////////////////////////////////////////////////////////
+		UC_NODISCARD bool try_get_rangef(Rangef& value) const { return try_get_range(value); }
+		UC_NODISCARD Rangef get_rangef(const Rangef& default_value = RangeConstf::Zero) const { return get_range(default_value); }
 
 		// RECT //////////////////////////////////////////////////////////////////////
 		template<typename T>

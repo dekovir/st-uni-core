@@ -23,6 +23,18 @@ namespace unicore
 		Range& operator=(Range&& other) noexcept = default;
 
 		UC_NODISCARD constexpr T size() const { return max - min; }
+
+		template<typename U>
+		UC_NODISCARD constexpr Range<U> cast() const
+		{
+			if constexpr (std::is_same_v<T, U>)
+				return *this;
+
+			return {
+				static_cast<U>(min),
+				static_cast<U>(max),
+			};
+		}
 	};
 
 	template<typename T>
@@ -61,5 +73,11 @@ namespace unicore
 	UNICORE_MAKE_HASH(Rangef)
 	{
 		return make(value.min, value.max);
+	}
+
+	template<typename T>
+	extern UNICODE_STRING_BUILDER_FORMAT(const Range<T>&)
+	{
+		return builder << value.min << "-" << value.max;
 	}
 }

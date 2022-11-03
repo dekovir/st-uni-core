@@ -48,11 +48,20 @@ namespace unicore
 		{"radio", UIInputVariant::Radio},
 		{"button", UIInputVariant::Button},
 		{"number", UIInputVariant::Number},
-		{"slider", UIInputVariant::Range},
+		{"range", UIInputVariant::Range},
 		{"vector2", UIInputVariant::Vector2},
 		{"vector3", UIInputVariant::Vector3},
 		{"color3", UIInputVariant::Color3},
 		{"color4", UIInputVariant::Color4},
+	};
+
+	static const Dictionary<StringView, UIInputVariant> s_input_synonum =
+	{
+		{"textarea", UIInputVariant::TextArea},
+		{"toggle", UIInputVariant::Toggle},
+		{"radio", UIInputVariant::Radio},
+		{"button", UIInputVariant::Button},
+		{"slider", UIInputVariant::Range},
 	};
 
 	using VariantType = StdVariant<std::nullopt_t, UIGroupVariant, UIInputVariant>;
@@ -77,7 +86,7 @@ namespace unicore
 			}
 		}
 
-		for (const auto& it : s_input_variant)
+		for (const auto& it : s_input_synonum)
 		{
 			if (StringHelper::equals(it.first, tag, true))
 			{
