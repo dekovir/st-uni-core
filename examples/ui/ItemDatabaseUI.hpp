@@ -23,7 +23,9 @@ namespace unicore
 
 		ItemId _selected = ItemId_Invalid;
 
-		UINode _items_list_node;
+		UINode _item_group_node;
+		UINode _item_template_node;
+
 		UINode _inspector_node;
 		UINode _icon_items_node;
 

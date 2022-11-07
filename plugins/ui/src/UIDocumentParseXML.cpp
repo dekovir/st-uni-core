@@ -38,6 +38,7 @@ namespace unicore
 	static const Dictionary<StringView, UIGroupVariant> s_group_variant = {
 		{"vertical", UIGroupVariant::Vertical},
 		{"horizontal", UIGroupVariant::Horizontal},
+		{"child", UIGroupVariant::Child},
 		{"list", UIGroupVariant::List},
 		{"flex", UIGroupVariant::Flex},
 		{"popup", UIGroupVariant::Popup},

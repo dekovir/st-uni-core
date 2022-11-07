@@ -11,7 +11,8 @@ namespace unicore
 		, _document(document)
 		, _logger(logger)
 	{
-		_items_list_node = document.find_by_name("items_list", parent);
+		_item_group_node = document.find_by_name("item_group", parent);
+		_item_template_node = document.find_by_name("item_template", parent);
 		_inspector_node = document.find_by_name("item_edit", parent);
 
 		_icon_items_node = document.find_by_name("icon_popup", _inspector_node);
@@ -71,7 +72,7 @@ namespace unicore
 			}
 		}
 
-		if (!_items_list_node.empty())
+		if (!_item_group_node.empty())
 		{
 			for (const auto& it : *_database)
 				on_add_item(it.first, *it.second);
@@ -90,18 +91,22 @@ namespace unicore
 
 	void ItemDatabaseUI::on_add_item(ItemId id, const Item& item)
 	{
-		if (_items_list_node.empty()) return;
+		if (_item_group_node.empty() || _item_template_node.empty()) return;
 
 		UINodeOptions options;
 
-		const auto stored_id = id;
-		options.actions[UIActionType::OnClick] =
-			[this, stored_id] { set_selected(stored_id); };
-
-		if (auto node = _document.create_node(
-			UINodeType::Item, options, _items_list_node); !node.empty())
+		if (auto node = _document.duplicate(_item_template_node, _item_group_node); !node.empty())
 		{
 			_item_nodes[id] = node;
+
+			if (const auto find = node.find_by_name("item_name"); !find.empty())
+			{
+				const auto stored_id = id;
+				_document.set_node_action(find, UIActionType::OnClick,
+					[this, stored_id] { set_selected(stored_id); });
+			}
+			_document.set_node_visible(node, true);
+
 			apply_item(node, id);
 		}
 	}
@@ -114,7 +119,10 @@ namespace unicore
 
 		_selected = id;
 		for (const auto& it : _item_nodes)
-			_document.set_node_attribute(it.second, UIAttributeType::Value, it.first == _selected);
+		{
+			if (const auto find = it.second.find_by_name("item_name"); !find.empty())
+				_document.set_node_attribute(find, UIAttributeType::Value, it.first == _selected);
+		}
 		apply_inspector();
 	}
 
@@ -123,8 +131,14 @@ namespace unicore
 		const auto item = _database->get(id);
 		if (!item) return;
 
-		const auto str = StringBuilder::format("{}: {}", id.value, item->title);
-		_document.set_node_attribute(node, UIAttributeType::Text, str);
+		if (const auto find = node.find_by_name("item_id"); !find.empty())
+			_document.set_node_attribute(find, UIAttributeType::Text, id.value);
+
+		if (const auto find = node.find_by_name("item_icon"); !find.empty())
+			_document.set_node_attribute(find, UIAttributeType::Value, item->sprite);
+
+		if (const auto find = node.find_by_name("item_name"); !find.empty())
+			_document.set_node_attribute(find, UIAttributeType::Text, item->title);
 	}
 
 	void ItemDatabaseUI::apply_inspector()
@@ -186,6 +200,9 @@ namespace unicore
 			it->second->sprite = value;
 			apply_inspector_icon(*it->second);
 		}
+
+		if (const auto it = _item_nodes.find(_selected); it != _item_nodes.end())
+			apply_item(it->second, it->first);
 	}
 
 	void ItemDatabaseUI::item_set_title(StringView32 value)

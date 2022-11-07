@@ -1,9 +1,31 @@
 <horizontal>
 	<!-- Items list -->
 	<group>
-		<text>Items:</text>
-		<list name="items_list" w="200" />
-		<button>Create</button>
+		<horizontal>
+			<text>Items</text>
+			<button>+</button>
+		</horizontal>
+		<list w="200" h="-1">
+			<table name="item_group" value="3">
+				<tr>
+					<th>Id</th>
+					<th>Ico</th>
+					<th>Name</th>
+				</tr>
+			</table>
+		</list>
+
+		<tr name="item_template" visible="0">
+			<td>
+				<text name="item_id" />
+			</td>
+			<td>
+				<img name="item_icon" />
+			</td>
+			<td>
+				<item name="item_name" />
+			</td>
+		</tr>
 	</group>
 
 	<!-- Edit item -->

@@ -176,6 +176,17 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
+			case UIGroupVariant::Child:
+				render_node_header(node, layout_option);
+				if (ImGui::BeginChild(id.c_str(), { width, height }))
+				{
+					for (const auto& child : children)
+						render_node(child);
+					ImGui::EndChild();
+				}
+				render_node_footer(node);
+				return true;
+
 			case UIGroupVariant::List:
 				render_node_header(node, layout_option);
 				if (ImGui::BeginListBox(id.c_str(), { width, height }))
@@ -489,6 +500,9 @@ namespace unicore
 	{
 		switch (layout_option)
 		{
+		case LayoutOption::None:
+			break;
+
 		case LayoutOption::SameLine:
 			ImGui::SameLine();
 			break;

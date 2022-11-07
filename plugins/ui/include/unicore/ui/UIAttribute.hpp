@@ -20,6 +20,7 @@ namespace unicore
 	{
 		Vertical,
 		Horizontal,
+		Child,
 		List,
 		Flex,
 		Popup,
