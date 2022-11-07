@@ -12,7 +12,9 @@ namespace unicore
 	UIViewImGui::UIViewImGui(ImGuiContext& context, Logger& logger)
 		: _logger(logger)
 		, _context(context)
-		, _id(s_last_id)
+		, _pos(0, 0)
+		, _size(0, 0)
+		, _id(s_last_id++)
 	{
 	}
 
@@ -180,7 +182,7 @@ namespace unicore
 				if (node.value().get_bool())
 				{
 					ImGui::OpenPopup(id.c_str());
-					//_document->set_node_visible(node, false);
+					_document->set_node_attribute(node, UIAttributeType::Value, false);
 				}
 
 				if (ImGui::BeginPopup(id.c_str()))

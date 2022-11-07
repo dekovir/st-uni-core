@@ -14,7 +14,7 @@
 				<text>Icon</text>
 				<img name="icon" />
 				<button name="icon_change">Select</button>
-				<popup name="icon_popup" visible="0">
+				<popup name="icon_popup">
 					<text>Test text</text>
 				</popup>
 			</horizontal>
