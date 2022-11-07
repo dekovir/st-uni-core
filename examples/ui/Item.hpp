@@ -1,12 +1,11 @@
 #pragma once
 #include "unicore/system/Index.hpp"
+#include "unicore/resource/Resource.hpp"
 #include "unicore/renderer/Sprite.hpp"
 
 namespace unicore
 {
-	UNICORE_MAKE_INDEX_WITH_INVALID(ItemId, UInt16);
-
-	enum class ItemType
+	enum class ItemType : uint8_t
 	{
 		Weapon,
 		Shield,
@@ -15,9 +14,15 @@ namespace unicore
 		Consumable,
 	};
 
-	struct Item
+	class Item : public Resource
 	{
-		ItemType type = ItemType::Consumable;
+		UC_OBJECT(Item, Resource)
+	public:
+
+		UC_NODISCARD size_t get_system_memory_use() const override;
+		UC_NODISCARD size_t get_used_resources(Set<Shared<Resource>>& resources) override;
+
+		ItemType item_type = ItemType::Consumable;
 		String32 title;
 		Shared<Sprite> sprite;
 		UInt16 price = 0;
@@ -26,28 +31,14 @@ namespace unicore
 		Rangei damage = RangeConsti::Zero;
 		UInt16 armor = 0;
 
-		UC_NODISCARD constexpr bool is_wearable() const
-		{
-			return
-				type == ItemType::Weapon ||
-				type == ItemType::Shield ||
-				type == ItemType::Armor ||
-				type == ItemType::Accessory;
-		}
-
-		UC_NODISCARD constexpr bool is_stackable() const { return type == ItemType::Consumable; }
-		UC_NODISCARD constexpr bool has_status() const
-		{
-			return
-				type == ItemType::Weapon ||
-				type == ItemType::Shield ||
-				type == ItemType::Armor;
-		}
+		UC_NODISCARD bool is_wearable() const;
+		UC_NODISCARD bool is_stackable() const;
+		UC_NODISCARD bool has_status() const;
 
 		static Item make_weapon(StringView32 title, UInt16 price, UInt16 weight, Rangei damage, const Shared<Sprite>& icon)
 		{
 			Item item;
-			item.type = ItemType::Weapon;
+			item.item_type = ItemType::Weapon;
 			item.title = title;
 			item.price = price;
 			item.weight = weight;
@@ -59,7 +50,7 @@ namespace unicore
 		static Item make_shield(StringView32 title, UInt16 price, UInt16 weight, UInt16 armor, const Shared<Sprite>& icon)
 		{
 			Item item;
-			item.type = ItemType::Shield;
+			item.item_type = ItemType::Shield;
 			item.title = title;
 			item.price = price;
 			item.weight = weight;
@@ -71,7 +62,7 @@ namespace unicore
 		static Item make_armor(StringView32 title, UInt16 price, UInt16 weight, UInt16 armor, const Shared<Sprite>& icon)
 		{
 			Item item;
-			item.type = ItemType::Armor;
+			item.item_type = ItemType::Armor;
 			item.title = title;
 			item.price = price;
 			item.weight = weight;
@@ -83,7 +74,7 @@ namespace unicore
 		static Item make_accessory(StringView32 title, UInt16 price, UInt16 weight, const Shared<Sprite>& icon)
 		{
 			Item item;
-			item.type = ItemType::Accessory;
+			item.item_type = ItemType::Accessory;
 			item.title = title;
 			item.price = price;
 			item.weight = weight;
@@ -94,7 +85,7 @@ namespace unicore
 		static Item make_consumable(StringView32 title, UInt16 price, UInt16 weight, const Shared<Sprite>& icon)
 		{
 			Item item;
-			item.type = ItemType::Consumable;
+			item.item_type = ItemType::Consumable;
 			item.title = title;
 			item.price = price;
 			item.weight = weight;
@@ -104,6 +95,4 @@ namespace unicore
 	};
 
 	using ItemValue = UInt8;
-
-	
 }

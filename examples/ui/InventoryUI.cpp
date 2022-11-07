@@ -148,7 +148,7 @@ namespace unicore
 			_document.set_node_attribute(find, UIAttributeType::Text, item->title);
 
 		if (const auto find = _item_tooltip.find_by_name("type"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Text, type_to_string(item->type));
+			_document.set_node_attribute(find, UIAttributeType::Text, type_to_string(item->item_type));
 
 		if (const auto [find, group] = find_node(_item_tooltip, "damage"); find.valid())
 		{

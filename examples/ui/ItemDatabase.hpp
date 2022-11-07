@@ -1,11 +1,20 @@
 #pragma once
+#include "unicore/resource/Resource.hpp"
+#include "unicore/system/Event.hpp"
 #include "Item.hpp"
 
 namespace unicore
 {
-	class ItemDatabase
+	UNICORE_MAKE_INDEX_WITH_INVALID(ItemId, UInt16);
+
+	class ItemDatabase : public Resource
 	{
+		UC_OBJECT_EVENT(add, ItemId, const Item&);
+		//UC_OBJECT_EVENT(remove, ItemId);
 	public:
+		UC_NODISCARD size_t get_system_memory_use() const override;
+		UC_NODISCARD size_t get_used_resources(Set<Shared<Resource>>& resources) override;
+
 		UC_NODISCARD Size size() const { return _items.size(); }
 
 		ItemId add(const Item& item);
@@ -19,6 +28,6 @@ namespace unicore
 
 	protected:
 		ItemId::TypeValue _last_index = 0;
-		Dictionary<ItemId, Item> _items;
+		Dictionary<ItemId, Shared<Item>> _items;
 	};
 }

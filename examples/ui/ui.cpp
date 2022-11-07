@@ -119,7 +119,7 @@ namespace unicore
 				for (unsigned i = 0; i < 5; i++)
 				{
 					Item item;
-					item.type = ItemType::Accessory;
+					item.item_type = ItemType::Accessory;
 					item.price = random.range(100, 900);
 					item.weight = random.range(100, 15000);
 					item.title = StringBuilder::format(U"Item {}", i + 1);
