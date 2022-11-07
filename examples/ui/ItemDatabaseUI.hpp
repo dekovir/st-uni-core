@@ -25,7 +25,9 @@ namespace unicore
 
 		UINode _items_list_node;
 		UINode _inspector_node;
+		UINode _icon_items_node;
 
+		UINode _icon_node;
 		UINode _title_node;
 		UINode _type_node;
 		UINode _price_node;
@@ -41,13 +43,16 @@ namespace unicore
 		void apply_item(UINode& node, ItemId id);
 
 		void apply_inspector();
+
+		void apply_inspector_icon(const Item& item);
 		void apply_inspector_title(const Item& item);
 		void apply_inspector_type(const Item& item);
 		void apply_inspector_price(const Item& item);
 		void apply_inspector_weight(const Item& item);
 
+		void item_set_icon(const Shared<Sprite>& value);
 		void item_set_title(StringView32 value);
-		void item_set_type(ItemType type);
+		void item_set_type(ItemType value);
 		void item_set_price(UInt16 value);
 		void item_set_weight(UInt16 value);
 	};

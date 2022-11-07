@@ -14,6 +14,13 @@ namespace unicore
 		_items_list_node = document.find_by_name("items_list", parent);
 		_inspector_node = document.find_by_name("item_edit", parent);
 
+		const auto icon_change = document.find_by_name("icon_change", _inspector_node);
+		_icon_items_node = document.find_by_name("icon_popup", _inspector_node);
+
+		_document.set_node_action(icon_change, UIActionType::OnClick,
+			[this] { _document.set_node_attribute(_icon_items_node, UIAttributeType::Value, true); });
+
+		_icon_node = document.find_by_name("icon", _inspector_node);
 		_title_node = document.find_by_name("title", _inspector_node);
 		_type_node = document.find_by_name("type", _inspector_node);
 		_price_node = document.find_by_name("price", _inspector_node);
@@ -112,10 +119,17 @@ namespace unicore
 
 		_document.set_node_visible(_inspector_node, true);
 
+		apply_inspector_icon(*item);
 		apply_inspector_title(*item);
 		apply_inspector_type(*item);
 		apply_inspector_price(*item);
 		apply_inspector_weight(*item);
+	}
+
+	void ItemDatabaseUI::apply_inspector_icon(const Item& item)
+	{
+		_document.set_node_attribute(_icon_node,
+			UIAttributeType::Value, item.sprite);
 	}
 
 	void ItemDatabaseUI::apply_inspector_title(const Item& item)
@@ -146,6 +160,15 @@ namespace unicore
 			UIAttributeType::Value, item.weight);
 	}
 
+	void ItemDatabaseUI::item_set_icon(const Shared<Sprite>& value)
+	{
+		if (const auto it = _database->items().find(_selected); it != _database->items().end())
+		{
+			it->second->sprite = value;
+			apply_inspector_icon(*it->second);
+		}
+	}
+
 	void ItemDatabaseUI::item_set_title(StringView32 value)
 	{
 		if (const auto it = _database->items().find(_selected); it != _database->items().end())
@@ -158,12 +181,12 @@ namespace unicore
 			apply_item(it->second, it->first);
 	}
 
-	void ItemDatabaseUI::item_set_type(ItemType type)
+	void ItemDatabaseUI::item_set_type(ItemType value)
 	{
 		const auto it = _database->items().find(_selected);
 		if (it != _database->items().end())
 		{
-			it->second->item_type = type;
+			it->second->item_type = value;
 			apply_inspector_type(*it->second);
 		}
 	}

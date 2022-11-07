@@ -142,7 +142,7 @@ namespace unicore
 
 		template<typename T,
 			std::enable_if_t<std::is_enum_v<T>>* = nullptr>
-		T get_enum(T default_value = {}) const
+		T get_enum(T default_value = static_cast<T>(0)) const
 		{
 			T value;
 			return try_get_enum(value) ? value : default_value;

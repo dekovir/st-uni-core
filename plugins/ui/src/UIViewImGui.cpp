@@ -151,7 +151,7 @@ namespace unicore
 		{
 		case UINodeType::Group:
 			render_node_header(node, same_line);
-			switch (get_group_variant(node.variant()))
+			switch (node.variant().get_enum<UIGroupVariant>())
 			{
 			case UIGroupVariant::Vertical:
 				ImGui::BeginGroup();
@@ -173,6 +173,22 @@ namespace unicore
 					for (const auto& child : children)
 						render_node(child);
 					ImGui::EndListBox();
+				}
+				break;
+
+			case UIGroupVariant::Popup:
+				if (node.value().get_bool())
+				{
+					ImGui::OpenPopup(id.c_str());
+					//_document->set_node_visible(node, false);
+				}
+
+				if (ImGui::BeginPopup(id.c_str()))
+				{
+					for (const auto& child : children)
+						render_node(child);
+
+					ImGui::EndPopup();
 				}
 				break;
 			}
@@ -200,7 +216,7 @@ namespace unicore
 
 		case UINodeType::Input:
 			render_node_header(node, same_line);
-			switch (get_input_variant(node.variant()))
+			switch (node.variant().get_enum<UIInputVariant>())
 			{
 			case UIInputVariant::Text:
 				str = node.value().get_string();

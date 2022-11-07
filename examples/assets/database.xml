@@ -10,6 +10,14 @@
 	<group>
 		<text>Inspector</text>
 		<group name="item_edit">
+			<horizontal>
+				<text>Icon</text>
+				<img name="icon" />
+				<button name="icon_change">Select</button>
+				<popup name="icon_popup" visible="0">
+					<text>Test text</text>
+				</popup>
+			</horizontal>
 
 			<horizontal>
 				<text>Title</text>

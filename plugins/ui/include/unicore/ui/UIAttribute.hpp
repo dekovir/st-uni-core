@@ -20,7 +20,8 @@ namespace unicore
 	{
 		Vertical,
 		Horizontal,
-		List
+		List,
+		Popup,
 	};
 
 	enum class UIInputVariant
