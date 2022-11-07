@@ -7,16 +7,20 @@ namespace unicore
 	class ItemDatabaseUI
 	{
 	public:
-		ItemDatabaseUI(ItemDatabase& database, UIDocument& document,
+		ItemDatabaseUI(const Shared<ItemDatabase>& database,
+			const Shared<SpriteList>& sprites, UIDocument& document,
 			const UINode& parent = UINode::Empty, Logger* logger = nullptr);
 
-		ItemDatabaseUI(ItemDatabase& database,
+		ItemDatabaseUI(const Shared<ItemDatabase>& database,
+			const Shared<SpriteList>& sprites,
 			UIDocument& document, Logger* logger = nullptr);
 
 	protected:
-		ItemDatabase& _database;
+		Shared<ItemDatabase> _database;
+		Shared<SpriteList> _sprites;
 		UIDocument& _document;
 		Logger* _logger;
+
 		ItemId _selected = ItemId_Invalid;
 
 		UINode _items_list_node;

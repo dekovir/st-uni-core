@@ -1,4 +1,5 @@
 #pragma once
+#include "unicore/system/Index.hpp"
 #include "unicore/resource/Resource.hpp"
 #include "unicore/system/Event.hpp"
 #include "Item.hpp"

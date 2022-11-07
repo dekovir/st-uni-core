@@ -1,7 +1,7 @@
 #pragma once
-#include "unicore/system/Index.hpp"
 #include "unicore/resource/Resource.hpp"
 #include "unicore/renderer/Sprite.hpp"
+#include "unicore/xml/XMLNode.hpp"
 
 namespace unicore
 {

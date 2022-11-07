@@ -3,9 +3,11 @@
 
 namespace unicore
 {
-	ItemDatabaseUI::ItemDatabaseUI(ItemDatabase& database,
-		UIDocument& document, const UINode& parent, Logger* logger)
+	ItemDatabaseUI::ItemDatabaseUI(const Shared<ItemDatabase>& database,
+		const Shared<SpriteList>& sprites, UIDocument& document,
+		const UINode& parent, Logger* logger)
 		: _database(database)
+		, _sprites(sprites)
 		, _document(document)
 		, _logger(logger)
 	{
@@ -17,7 +19,7 @@ namespace unicore
 		_price_node = document.find_by_name("price", _inspector_node);
 		_weight_node = document.find_by_name("weigth", _inspector_node);
 
-		_database.on_add() += [&](auto id, auto& item) {on_add_item(id, item); };
+		_database->on_add() += [&](auto id, auto& item) {on_add_item(id, item); };
 
 		_document.set_node_action(_title_node, UIActionType::OnChange,
 			[this](const Variant& value) { item_set_title(value.get_string32()); });
@@ -45,18 +47,18 @@ namespace unicore
 
 		if (!_items_list_node.empty())
 		{
-			for (const auto& it : _database)
+			for (const auto& it : *_database)
 				on_add_item(it.first, *it.second);
 		}
 
-		if (_database.begin() != _database.end())
-			set_selected(_database.begin()->first);
+		if (_database->begin() != _database->end())
+			set_selected(_database->begin()->first);
 		else apply_inspector();
 	}
 
-	ItemDatabaseUI::ItemDatabaseUI(ItemDatabase& database,
-		UIDocument& document, Logger* logger)
-		: ItemDatabaseUI(database, document, UINode::Empty, logger)
+	ItemDatabaseUI::ItemDatabaseUI(const Shared<ItemDatabase>& database,
+		const Shared<SpriteList>& sprites, UIDocument& document, Logger* logger)
+		: ItemDatabaseUI(database, sprites, document, UINode::Empty, logger)
 	{
 	}
 
@@ -92,7 +94,7 @@ namespace unicore
 
 	void ItemDatabaseUI::apply_item(UINode& node, ItemId id)
 	{
-		const auto item = _database.get(id);
+		const auto item = _database->get(id);
 		if (!item) return;
 
 		const auto str = StringBuilder::format("{}: {}", id.value, item->title);
@@ -101,7 +103,7 @@ namespace unicore
 
 	void ItemDatabaseUI::apply_inspector()
 	{
-		const auto item = _database.get(_selected);
+		const auto item = _database->get(_selected);
 		if (!item)
 		{
 			_document.set_node_visible(_inspector_node, false);
@@ -146,7 +148,7 @@ namespace unicore
 
 	void ItemDatabaseUI::item_set_title(StringView32 value)
 	{
-		if (const auto it = _database.items().find(_selected); it != _database.items().end())
+		if (const auto it = _database->items().find(_selected); it != _database->items().end())
 		{
 			it->second->title = value;
 			apply_inspector_title(*it->second);
@@ -158,8 +160,8 @@ namespace unicore
 
 	void ItemDatabaseUI::item_set_type(ItemType type)
 	{
-		const auto it = _database.items().find(_selected);
-		if (it != _database.items().end())
+		const auto it = _database->items().find(_selected);
+		if (it != _database->items().end())
 		{
 			it->second->item_type = type;
 			apply_inspector_type(*it->second);
@@ -168,8 +170,8 @@ namespace unicore
 
 	void ItemDatabaseUI::item_set_price(UInt16 value)
 	{
-		const auto it = _database.items().find(_selected);
-		if (it != _database.items().end())
+		const auto it = _database->items().find(_selected);
+		if (it != _database->items().end())
 		{
 			it->second->price = value;
 			apply_inspector_price(*it->second);
@@ -178,8 +180,8 @@ namespace unicore
 
 	void ItemDatabaseUI::item_set_weight(UInt16 value)
 	{
-		const auto it = _database.items().find(_selected);
-		if (it != _database.items().end())
+		const auto it = _database->items().find(_selected);
+		if (it != _database->items().end())
 		{
 			it->second->weight = value;
 			apply_inspector_weight(*it->second);

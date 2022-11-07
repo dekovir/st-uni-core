@@ -83,31 +83,29 @@ namespace unicore
 		}
 #endif
 
+		_database = std::make_shared<ItemDatabase>();
+
 		// GENERATE ITEMS
-		_item_sprites = resources.load<SpriteList>("items.png"_path, TileSetOptions({ 16, 16 }));
-		if (_item_sprites && _item_sprites->size() == 64)
+		_sprites = resources.load<SpriteList>("items.png"_path, TileSetOptions({ 16, 16 }));
+		if (_sprites && _sprites->size() == 64)
 		{
-			_items_db.add(Item::make_weapon(U"Staff", 50, 1500, { 5, 10 }, _item_sprites->get(33)));
-			_items_db.add(Item::make_weapon(U"Dagger", 150, 1000, { 2, 5 }, _item_sprites->get(1)));
-			_items_db.add(Item::make_weapon(U"Sword", 350, 2000, { 7, 14 }, _item_sprites->get(2)));
-			_items_db.add(Item::make_weapon(U"Crossbow", 500, 4000, { 5, 12 }, _item_sprites->get(48)));
-			_items_db.add(Item::make_weapon(U"Spear", 150, 5000, { 8,  16 }, _item_sprites->get(50)));
-
-			_items_db.add(Item::make_shield(U"Shield", 250, 1500, 5, _item_sprites->get(43)));
-
-			_items_db.add(Item::make_consumable(U"Potion of Mana", 75, 150, _item_sprites->get(3)));
-			_items_db.add(Item::make_consumable(U"Potion of Health", 50, 150, _item_sprites->get(4)));
-			_items_db.add(Item::make_consumable(U"Potion of Stamina", 25, 150, _item_sprites->get(5)));
-
-			_items_db.add(Item::make_armor(U"Cloak", 100, 300, 1, _item_sprites->get(52)));
-			_items_db.add(Item::make_armor(U"Brass Plate", 500, 15000, 15, _item_sprites->get(8)));
-			_items_db.add(Item::make_armor(U"Steel Plate", 1000, 13000, 25, _item_sprites->get(9)));
-			_items_db.add(Item::make_armor(U"Dwarven Plate", 5000, 14000, 40, _item_sprites->get(10)));
-
-			_items_db.add(Item::make_accessory(U"Necklace", 100, 300, _item_sprites->get(14)));
-			_items_db.add(Item::make_accessory(U"Magic orb", 500, 1100, _item_sprites->get(36)));
-			_items_db.add(Item::make_accessory(U"Ring of Health", 1500, 100, _item_sprites->get(38)));
-			_items_db.add(Item::make_accessory(U"Ring of Mana", 1500, 100, _item_sprites->get(39)));
+			_database->add(Item::make_weapon(U"Staff", 50, 1500, { 5, 10 }, _sprites->get(33)));
+			_database->add(Item::make_weapon(U"Dagger", 150, 1000, { 2, 5 }, _sprites->get(1)));
+			_database->add(Item::make_weapon(U"Sword", 350, 2000, { 7, 14 }, _sprites->get(2)));
+			_database->add(Item::make_weapon(U"Crossbow", 500, 4000, { 5, 12 }, _sprites->get(48)));
+			_database->add(Item::make_weapon(U"Spear", 150, 5000, { 8,  16 }, _sprites->get(50)));
+			_database->add(Item::make_shield(U"Shield", 250, 1500, 5, _sprites->get(43)));
+			_database->add(Item::make_consumable(U"Potion of Mana", 75, 150, _sprites->get(3)));
+			_database->add(Item::make_consumable(U"Potion of Health", 50, 150, _sprites->get(4)));
+			_database->add(Item::make_consumable(U"Potion of Stamina", 25, 150, _sprites->get(5)));
+			_database->add(Item::make_armor(U"Cloak", 100, 300, 1, _sprites->get(52)));
+			_database->add(Item::make_armor(U"Brass Plate", 500, 15000, 15, _sprites->get(8)));
+			_database->add(Item::make_armor(U"Steel Plate", 1000, 13000, 25, _sprites->get(9)));
+			_database->add(Item::make_armor(U"Dwarven Plate", 5000, 14000, 40, _sprites->get(10)));
+			_database->add(Item::make_accessory(U"Necklace", 100, 300, _sprites->get(14)));
+			_database->add(Item::make_accessory(U"Magic orb", 500, 1100, _sprites->get(36)));
+			_database->add(Item::make_accessory(U"Ring of Health", 1500, 100, _sprites->get(38)));
+			_database->add(Item::make_accessory(U"Ring of Mana", 1500, 100, _sprites->get(39)));
 		}
 		else
 		{
@@ -116,14 +114,14 @@ namespace unicore
 			{
 				Item item;
 				item.item_type = ItemType::Accessory;
-				item.price = random.range(100, 900);
-				item.weight = random.range(100, 15000);
+				item.price = random.range<UInt16>(100, 900);
+				item.weight = random.range<UInt16>(100, 15000);
 				item.title = StringBuilder::format(U"Item {}", i + 1);
-				_items_db.add(item);
+				_database->add(item);
 			}
 		}
 
-		_inventory = std::make_shared<Inventory>(_items_db);
+		_inventory = std::make_shared<Inventory>(*_database);
 
 		// Database UI
 #if 1
@@ -136,7 +134,7 @@ namespace unicore
 			_database_view->set_size({500, 0});
 			_database_view->set_position({650, 10});
 
-			_database_ui = std::make_shared<ItemDatabaseUI>(_items_db, *_database_doc, &_context_logger);
+			_database_ui = std::make_shared<ItemDatabaseUI>(_database, _sprites, *_database_doc, &_context_logger);
 		}
 #endif
 
@@ -153,7 +151,7 @@ namespace unicore
 			_inventory_ui = std::make_shared<InventoryUI>(
 				*_inventory, *_inventory_doc, &_context_logger);
 
-			for (const auto& it : _items_db)
+			for (const auto& it : *_database)
 			{
 				const auto item = _inventory->database().get(it.first);
 				if (item->is_stackable())

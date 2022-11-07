@@ -19,13 +19,13 @@ namespace unicore
 		ImGuiRender2D _contex_render;
 		ImGuiContext _context;
 
-		Shared<SpriteList> _item_sprites;
+		Shared<SpriteList> _sprites;
 
 		Shared<UIDocument> _test_doc;
 		Shared<UIViewImGui> _test_view;
 		Optional<UINode> _test_position_id;
 
-		ItemDatabase _items_db;
+		Shared<ItemDatabase> _database;
 		Shared<UIDocument> _database_doc;
 		Shared<ItemDatabaseUI> _database_ui;
 		Shared<UIViewImGui> _database_view;
