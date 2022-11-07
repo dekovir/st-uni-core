@@ -1,5 +1,5 @@
 #pragma once
-#include "Item.hpp"
+#include "ItemDatabase.hpp"
 #include "unicore/system/Event.hpp"
 
 namespace unicore
