@@ -14,17 +14,36 @@ namespace unicore
 		_items_list_node = document.find_by_name("items_list", parent);
 		_inspector_node = document.find_by_name("item_edit", parent);
 
-		const auto icon_change = document.find_by_name("icon_change", _inspector_node);
 		_icon_items_node = document.find_by_name("icon_popup", _inspector_node);
-
-		_document.set_node_action(icon_change, UIActionType::OnClick,
-			[this] { _document.set_node_attribute(_icon_items_node, UIAttributeType::Value, true); });
+		const auto icon_list_node = document.find_by_name("icon_list", _inspector_node);
 
 		_icon_node = document.find_by_name("icon", _inspector_node);
 		_title_node = document.find_by_name("title", _inspector_node);
 		_type_node = document.find_by_name("type", _inspector_node);
 		_price_node = document.find_by_name("price", _inspector_node);
-		_weight_node = document.find_by_name("weigth", _inspector_node);
+		_weight_node = document.find_by_name("weight", _inspector_node);
+
+		_document.set_node_action(_icon_node, UIActionType::OnClick,
+			[this] { _document.set_node_attribute(_icon_items_node, UIAttributeType::Value, true); });
+
+		if (!icon_list_node.empty() && _sprites && !_sprites->empty())
+		{
+			for (unsigned i = 0; i < _sprites->size(); i++)
+			{
+				auto spr = _sprites->get(i);
+
+				UINodeOptions options;
+				options.attributes[UIAttributeType::Value] = spr;
+				//options.attributes[UIAttributeType::Text] = StringBuilder::format("{}", i + 1);
+				options.attributes[UIAttributeType::Variant] = UIInputVariant::Image;
+				options.attributes[UIAttributeType::Width] = 32;
+				options.attributes[UIAttributeType::Height] = 32;
+				options.actions[UIActionType::OnClick] =
+					[this, spr] { item_set_icon(spr); };
+
+				_document.create_node(UINodeType::Input, options, icon_list_node);
+			}
+		}
 
 		_database->on_add() += [&](auto id, auto& item) {on_add_item(id, item); };
 

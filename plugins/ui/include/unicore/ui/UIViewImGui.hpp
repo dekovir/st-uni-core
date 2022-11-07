@@ -37,6 +37,13 @@ namespace unicore
 		UC_NODISCARD bool is_mouse_over() const;
 
 	protected:
+		enum class LayoutOption
+		{
+			None,
+			SameLine,
+			SameLineFlex,
+		};
+
 		Logger& _logger;
 		ImGuiContext& _context;
 		List<UIEvent> _update_events;
@@ -63,9 +70,9 @@ namespace unicore
 		void on_set_attribute(const UINode& node,
 			UIAttributeType type, const Optional<Variant>& value) override;
 
-		Bool render_node(const UINode& node, Bool same_line = false);
+		Bool render_node(const UINode& node, LayoutOption layout_option = LayoutOption::None);
 
-		void render_node_header(const UINode& node, Bool same_line = false);
+		void render_node_header(const UINode& node, LayoutOption layout_option);
 		void render_node_footer(const UINode& node);
 
 		UC_NODISCARD CachedInfo* get_info(UINode::IndexType index);

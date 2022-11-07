@@ -111,7 +111,7 @@ namespace unicore
 		}
 	}
 
-	Bool UIViewImGui::render_node(const UINode& node, Bool same_line)
+	Bool UIViewImGui::render_node(const UINode& node, LayoutOption layout_option)
 	{
 		if (!node.visible()) return false;
 
@@ -152,31 +152,51 @@ namespace unicore
 		switch (type)
 		{
 		case UINodeType::Group:
-			render_node_header(node, same_line);
 			switch (node.variant().get_enum<UIGroupVariant>())
 			{
 			case UIGroupVariant::Vertical:
+				render_node_header(node, layout_option);
 				ImGui::BeginGroup();
 				for (const auto& child : children)
 					render_node(child);
 				ImGui::EndGroup();
-				break;
+				render_node_footer(node);
+				return true;
 
 			case UIGroupVariant::Horizontal:
+				render_node_header(node, layout_option);
 				ImGui::BeginGroup();
 				for (unsigned i = 0; i < children.size(); i++)
-					render_node(children[i], i > 0);
+				{
+					const auto option = i > 0
+						? LayoutOption::SameLine : LayoutOption::None;
+					render_node(children[i], option);
+				}
 				ImGui::EndGroup();
-				break;
+				render_node_footer(node);
+				return true;
 
 			case UIGroupVariant::List:
+				render_node_header(node, layout_option);
 				if (ImGui::BeginListBox(id.c_str(), { width, height }))
 				{
 					for (const auto& child : children)
 						render_node(child);
 					ImGui::EndListBox();
 				}
-				break;
+				render_node_footer(node);
+				return true;
+
+			case UIGroupVariant::Flex:
+				render_node_header(node, layout_option);
+				if (ImGui::BeginListBox(id.c_str(), { width, height }))
+				{
+					for (const auto& child : children)
+						render_node(child, LayoutOption::SameLineFlex);
+					ImGui::EndListBox();
+				}
+				render_node_footer(node);
+				return true;
 
 			case UIGroupVariant::Popup:
 				if (node.value().get_bool())
@@ -193,20 +213,35 @@ namespace unicore
 					ImGui::EndPopup();
 				}
 				break;
+
+			case UIGroupVariant::Modal:
+				if (node.value().get_bool())
+				{
+					ImGui::OpenPopup(id.c_str());
+					_document->set_node_attribute(node, UIAttributeType::Value, false);
+				}
+
+				if (ImGui::BeginPopupModal(id.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					for (const auto& child : children)
+						render_node(child);
+
+					ImGui::EndPopup();
+				}
+				break;
 			}
-			render_node_footer(node);
-			return true;
+			break;
 
 		case UINodeType::Text:
 			str = node.attribute(UIAttributeType::Text).get_string();
 
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			ImGui::Text("%s", str.c_str());
 			render_node_footer(node);
 			return true;
 
 		case UINodeType::Image:
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			if (get_texture(node.value(), texture_id, size, uv0, uv1))
 			{
 				const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
@@ -217,7 +252,7 @@ namespace unicore
 			return true;
 
 		case UINodeType::Input:
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			switch (node.variant().get_enum<UIInputVariant>())
 			{
 			case UIInputVariant::Text:
@@ -241,13 +276,43 @@ namespace unicore
 			case UIInputVariant::Radio:
 				bool_value = node.value().get_bool();
 				if (ImGui::RadioButton(id.c_str(), bool_value))
+				{
 					_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+					ImGui::CloseCurrentPopup();
+				}
 				break;
 
 			case UIInputVariant::Button:
 				if (ImGui::Button(title.c_str(), { width, height }))
+				{
 					_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+					ImGui::CloseCurrentPopup();
+				}
 				break;
+
+			case UIInputVariant::Image:
+				render_node_header(node, layout_option);
+				ImGui::PushID(id.c_str());
+				if (get_texture(node.value(), texture_id, size, uv0, uv1))
+				{
+					const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
+					if (ImGui::ImageButton(texture_id, s, uv0, uv1))
+					{
+						_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+						ImGui::CloseCurrentPopup();
+					}
+				}
+				else
+				{
+					if (ImGui::ImageButton(nullptr, { width, height }))
+					{
+						_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+						ImGui::CloseCurrentPopup();
+					}
+				}
+				ImGui::PopID();
+				render_node_footer(node);
+				return true;
 
 			case UIInputVariant::Number:
 				// TODO: Implement min/max
@@ -316,7 +381,7 @@ namespace unicore
 
 		case UINodeType::Item:
 			bool_value = node.value().get_bool();
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			if (ImGui::Selectable(title.c_str(), bool_value))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
 			render_node_footer(node);
@@ -325,7 +390,7 @@ namespace unicore
 		case UINodeType::Tree:
 			bool_value = node.value().get_bool();
 			ImGui::SetNextItemOpen(bool_value);
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			if (ImGui::TreeNode(title.c_str()))
 			{
 				if (!bool_value)
@@ -343,7 +408,7 @@ namespace unicore
 
 		case UINodeType::Combo:
 			str = node.value().get_string();
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			if (ImGui::BeginCombo(title.c_str(), str.c_str()))
 			{
 				for (const auto& child : children)
@@ -354,7 +419,7 @@ namespace unicore
 			return true;
 
 		case UINodeType::Table:
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
 				ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
 			{
@@ -369,14 +434,14 @@ namespace unicore
 			str = node.text().get_string();
 
 			ImGui::TableNextColumn();
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			ImGui::TableHeader(str.c_str());
 			render_node_footer(node);
 			return true;
 
 		case UINodeType::TableRow:
 			ImGui::TableNextRow();
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			ImGui::BeginGroup();
 			for (const auto& child : children)
 				render_node(child);
@@ -388,7 +453,7 @@ namespace unicore
 		case UINodeType::TableCell:
 			ImGui::TableNextColumn();
 
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			ImGui::BeginGroup();
 			if (node.attribute(UIAttributeType::Text).try_get_string(str))
 				ImGui::Text("%s", str.c_str());
@@ -409,7 +474,7 @@ namespace unicore
 				node.attribute(UIAttributeType::MaxValue).get_float(1)
 			};
 			float_value = Math::inverse_lerp(range_f.min, range_f.max, node.value().get_float());
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			if (node.attribute(UIAttributeType::Text).try_get_string(str))
 				ImGui::ProgressBar(float_value, { width, height }, str.c_str());
 			else ImGui::ProgressBar(float_value, { width, height });
@@ -420,9 +485,24 @@ namespace unicore
 		return false;
 	}
 
-	void UIViewImGui::render_node_header(const UINode& node, Bool same_line)
+	void UIViewImGui::render_node_header(const UINode& node, LayoutOption layout_option)
 	{
-		if (same_line) ImGui::SameLine();
+		switch (layout_option)
+		{
+		case LayoutOption::SameLine:
+			ImGui::SameLine();
+			break;
+
+		case LayoutOption::SameLineFlex:
+			const auto size = ImGui::GetItemRectSize();
+			const ImGuiStyle& style = ImGui::GetStyle();
+			const float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+			const float last_button_x2 = ImGui::GetItemRectMax().x;
+			const float next_button_x2 = last_button_x2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
+			if (next_button_x2 < window_visible_x2)
+				ImGui::SameLine();
+			break;
+		}
 	}
 
 	void UIViewImGui::render_node_footer(const UINode& node)

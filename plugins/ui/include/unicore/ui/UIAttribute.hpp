@@ -21,7 +21,9 @@ namespace unicore
 		Vertical,
 		Horizontal,
 		List,
+		Flex,
 		Popup,
+		Modal,
 	};
 
 	enum class UIInputVariant
@@ -31,6 +33,7 @@ namespace unicore
 		Toggle,
 		Radio,
 		Button,
+		Image,
 		Number,
 		Range,
 		Vector2,

@@ -39,7 +39,9 @@ namespace unicore
 		{"vertical", UIGroupVariant::Vertical},
 		{"horizontal", UIGroupVariant::Horizontal},
 		{"list", UIGroupVariant::List},
+		{"flex", UIGroupVariant::Flex},
 		{"popup", UIGroupVariant::Popup},
+		{"modal", UIGroupVariant::Modal},
 	};
 
 	static const Dictionary<StringView, UIInputVariant> s_input_variant =
@@ -48,6 +50,7 @@ namespace unicore
 		{"toggle", UIInputVariant::Toggle},
 		{"radio", UIInputVariant::Radio},
 		{"button", UIInputVariant::Button},
+		{"image", UIInputVariant::Image},
 		{"number", UIInputVariant::Number},
 		{"range", UIInputVariant::Range},
 		{"vector2", UIInputVariant::Vector2},
