@@ -148,7 +148,7 @@ namespace unicore
 			_document.set_node_attribute(find, UIAttributeType::Text, item->title);
 
 		if (const auto find = _item_tooltip.find_by_name("type"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Text, type_to_string(item->item_type));
+			_document.set_node_attribute(find, UIAttributeType::Text, Item::type_to_string(item->item_type));
 
 		if (const auto [find, group] = find_node(_item_tooltip, "damage"); find.valid())
 		{
@@ -183,19 +183,6 @@ namespace unicore
 			const auto value = Math::inverse_lerp_numeric(_inventory.get_index_value(index));
 			_document.set_node_attribute(find, UIAttributeType::Value, value);
 		}
-	}
-
-	StringView InventoryUI::type_to_string(ItemType type)
-	{
-		switch (type)
-		{
-		case ItemType::Weapon: return "Weapon";
-		case ItemType::Shield: return "Shield";
-		case ItemType::Armor: return "Armor";
-		case ItemType::Accessory: return "Accessory";
-		case ItemType::Consumable: return "Consumable";
-		}
-		return "Error";
 	}
 
 	String InventoryUI::weight_to_string(UInt16 weight)

@@ -1,113 +1,36 @@
-<group>
-	<text id="position" />
-	<text>Sample text</text>
-
-	<!-- Button -->
-	<group variant="1">
-		<button>Default</button>
+<horizontal>
+	<!-- Items list -->
+	<group>
+		<text>Items:</text>
+		<list name="items_list" w="200" />
+		<button>Create</button>
 	</group>
 
-	<!-- Inputs -->
-	<horizontal>
-		<text>Input</text>
-		<input value="quick brown fox" />
-	</horizontal>
+	<!-- Edit item -->
+	<group>
+		<text>Inspector</text>
+		<group name="item_edit">
 
-	<text>Multi line input</text>
-	<textarea height="50" value="first line&#10;second line" />
+			<horizontal>
+				<text>Title</text>
+				<input name="title" />
+			</horizontal>
 
-	<group variant="1" tooltip="Tooltip text">
-		<text>Input</text>
-		<input variant="number" value="10" />
+			<horizontal>
+				<text>Type</text>
+				<combo name="type" />
+			</horizontal>
+
+			<horizontal>
+				<text>Price</text>
+				<input variant="number" name="price" />
+			</horizontal>
+
+			<horizontal>
+				<text>Weight</text>
+				<input variant="number" name="weight" />
+			</horizontal>
+
+		</group>
 	</group>
-
-	<group variant="1">
-		<text>Slider</text>
-		<slider value="50.50" max="100">Value %.1f</slider>
-	</group>
-
-	<group variant="1">
-		<text>Toggle</text>
-		<toggle value="true" />
-		<radio value="true" />
-	</group>
-
-	<group variant="1">
-		<text>Vector2</text>
-		<input variant="vector2" />
-	</group>
-
-	<group variant="1">
-		<text>Vector3</text>
-		<input variant="vector3" />
-	</group>
-
-	<group variant="1">
-		<text>Color3</text>
-		<input variant="color3" />
-	</group>
-
-	<group variant="1">
-		<text>Color4</text>
-		<input variant="color4" />
-	</group>
-
-	<!-- Combobox -->
-	<group variant="1">
-		<text>Combo 1</text>
-		<combo value="Item 1">
-			<text>Text inside combo</text>
-			<slider />
-			<item>Item 1</item>
-			<item>Item 2</item>
-			<item>Item 3</item>
-			<item>Item 4</item>
-		</combo>
-	</group>
-
-	<group variant="1">
-		<text tooltip="Combobox with logic">Combo 2</text>
-		<combo id="combo">
-		</combo>
-	</group>
-
-	<!-- List -->
-	<text>Items</text>
-	<list id="group" />
-	<button id="add_item">Add item</button>
-
-	<!-- Table -->
-	<text>Table</text>
-	<table value="2">
-		<tr>
-			<td><button>Cell 0</button></td>
-			<td>Cell 1</td>
-		</tr>
-		<tr>
-			<td>Cell 2</td>
-			<td>Cell 3</td>
-		</tr>
-		<tr>
-			<td>Cell 4</td>
-			<td><item>Cell 5</item></td>
-		</tr>
-	</table>
-
-	<!-- Tree -->
-	<text>Tree</text>
-	<tree value="1">Item 1
-		<text>Text 1</text>
-		<text>Text 2</text>
-		<tree>Item 2
-			<text>Text 3</text>
-			<text>Text 4</text>
-		</tree>
-	</tree>
-
-	<!-- Progressbar -->
-	<text>Progress bars</text>
-	<progress value="0.2" />
-	<progress value="0" min="-50" max="50"/>
-	<progress value="75" max="100"/>
-	<progress value="1">Completed</progress>
-</group>
+</horizontal>

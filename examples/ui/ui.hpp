@@ -5,6 +5,7 @@
 #include "unicore/ui/UIDocument.hpp"
 #include "unicore/ui/UIViewImGui.hpp"
 #include "InventoryUI.hpp"
+#include "ItemDatabaseUI.hpp"
 
 namespace unicore
 {
@@ -25,6 +26,9 @@ namespace unicore
 		Optional<UINode> _test_position_id;
 
 		ItemDatabase _items_db;
+		Shared<UIDocument> _database_doc;
+		Shared<ItemDatabaseUI> _database_ui;
+		Shared<UIViewImGui> _database_view;
 
 		Shared<Inventory> _inventory;
 		Shared<UIDocument> _inventory_doc;

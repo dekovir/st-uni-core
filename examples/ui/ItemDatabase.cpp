@@ -19,6 +19,7 @@ namespace unicore
 		const auto index = ItemId(_last_index++);
 
 		auto item = std::make_shared<Item>(data);
+
 		_items.insert({ index, item });
 		_event_add.invoke(index, *item);
 		return index;

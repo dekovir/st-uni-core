@@ -92,6 +92,9 @@ namespace unicore
 			item.sprite = icon;
 			return item;
 		}
+
+		static StringView type_to_string(ItemType type);
+		static const Dictionary<ItemType, StringView> TypeNames;
 	};
 
 	using ItemValue = UInt8;
