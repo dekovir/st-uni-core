@@ -28,12 +28,23 @@ namespace unicore
 		UINode _weight_node;
 
 		Dictionary<ItemId, UINode> _item_nodes;
+		Dictionary<ItemType, UINode> _type_nodes;
 
 		void on_add_item(ItemId id, const Item& item);
 
 		void set_selected(ItemId id);
 
 		void apply_item(UINode& node, ItemId id);
+
 		void apply_inspector();
+		void apply_inspector_title(const Item& item);
+		void apply_inspector_type(const Item& item);
+		void apply_inspector_price(const Item& item);
+		void apply_inspector_weight(const Item& item);
+
+		void item_set_title(StringView32 value);
+		void item_set_type(ItemType type);
+		void item_set_price(UInt16 value);
+		void item_set_weight(UInt16 value);
 	};
 }

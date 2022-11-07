@@ -23,14 +23,16 @@
 
 			<horizontal>
 				<text>Price</text>
-				<input variant="number" name="price" />
+				<input name="price" variant="number" />
 			</horizontal>
 
 			<horizontal>
 				<text>Weight</text>
-				<input variant="number" name="weight" />
+				<input name="weight" variant="number" />
 			</horizontal>
 
+			<text>Description</text>
+			<textarea name="desc" height="50" />
 		</group>
 	</group>
 </horizontal>

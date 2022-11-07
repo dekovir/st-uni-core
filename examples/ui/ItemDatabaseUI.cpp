@@ -19,13 +19,27 @@ namespace unicore
 
 		_database.on_add() += [&](auto id, auto& item) {on_add_item(id, item); };
 
+		_document.set_node_action(_title_node, UIActionType::OnChange,
+			[this](const Variant& value) { item_set_title(value.get_string32()); });
+
+		_document.set_node_action(_price_node, UIActionType::OnChange,
+			[this](const Variant& value) { item_set_price(value.get_int_type<UInt16>()); });
+
+		_document.set_node_action(_weight_node, UIActionType::OnChange,
+			[this](const Variant& value) { item_set_weight(value.get_int_type<UInt16>()); });
+
 		if (!_type_node.empty())
 		{
 			for (const auto& it : Item::TypeNames)
 			{
+				const auto store_type = it.first;
+
 				UINodeOptions options;
 				options.attributes[UIAttributeType::Text] = it.second;
-				_document.create_node(UINodeType::Item, options, _type_node);
+				options.actions[UIActionType::OnClick] =
+					[this, store_type] { item_set_type(store_type); };
+				_type_nodes[store_type] = _document.create_node(
+					UINodeType::Item, options, _type_node);
 			}
 		}
 
@@ -96,9 +110,79 @@ namespace unicore
 
 		_document.set_node_visible(_inspector_node, true);
 
-		_document.set_node_attribute(_title_node, UIAttributeType::Value, item->title);
-		_document.set_node_attribute(_type_node, UIAttributeType::Value, Item::type_to_string(item->item_type));
-		_document.set_node_attribute(_price_node, UIAttributeType::Value, item->price);
-		_document.set_node_attribute(_weight_node, UIAttributeType::Value, item->weight);
+		apply_inspector_title(*item);
+		apply_inspector_type(*item);
+		apply_inspector_price(*item);
+		apply_inspector_weight(*item);
+	}
+
+	void ItemDatabaseUI::apply_inspector_title(const Item& item)
+	{
+		_document.set_node_attribute(_title_node,
+			UIAttributeType::Value, item.title);
+	}
+
+	void ItemDatabaseUI::apply_inspector_type(const Item& item)
+	{
+		_document.set_node_attribute(_type_node,
+			UIAttributeType::Value, Item::type_to_string(item.item_type));
+
+		for (const auto& it : _type_nodes)
+			_document.set_node_attribute(it.second,
+				UIAttributeType::Value, it.first == item.item_type);
+	}
+
+	void ItemDatabaseUI::apply_inspector_price(const Item& item)
+	{
+		_document.set_node_attribute(_price_node,
+			UIAttributeType::Value, item.price);
+	}
+
+	void ItemDatabaseUI::apply_inspector_weight(const Item& item)
+	{
+		_document.set_node_attribute(_weight_node,
+			UIAttributeType::Value, item.weight);
+	}
+
+	void ItemDatabaseUI::item_set_title(StringView32 value)
+	{
+		if (const auto it = _database.items().find(_selected); it != _database.items().end())
+		{
+			it->second->title = value;
+			apply_inspector_title(*it->second);
+		}
+
+		if (const auto it = _item_nodes.find(_selected); it != _item_nodes.end())
+			apply_item(it->second, it->first);
+	}
+
+	void ItemDatabaseUI::item_set_type(ItemType type)
+	{
+		const auto it = _database.items().find(_selected);
+		if (it != _database.items().end())
+		{
+			it->second->item_type = type;
+			apply_inspector_type(*it->second);
+		}
+	}
+
+	void ItemDatabaseUI::item_set_price(UInt16 value)
+	{
+		const auto it = _database.items().find(_selected);
+		if (it != _database.items().end())
+		{
+			it->second->price = value;
+			apply_inspector_price(*it->second);
+		}
+	}
+
+	void ItemDatabaseUI::item_set_weight(UInt16 value)
+	{
+		const auto it = _database.items().find(_selected);
+		if (it != _database.items().end())
+		{
+			it->second->weight = value;
+			apply_inspector_weight(*it->second);
+		}
 	}
 }

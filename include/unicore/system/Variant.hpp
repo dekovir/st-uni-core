@@ -148,35 +148,61 @@ namespace unicore
 			return try_get_enum(value) ? value : default_value;
 		}
 
-		// BOOL //////////////////////////////////////////////////////////////////////
+		// BOOL ////////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_bool(Bool& value) const;
 		UC_NODISCARD Bool get_bool(Bool default_value = false) const;
 
-		// INT ///////////////////////////////////////////////////////////////////////
+		// INT_TYPE ////////////////////////////////////////////////////////////////
+		template<typename T,
+			std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+		UC_NODISCARD bool try_get_int_type(T& value) const
+		{
+			if (try_get_integral(value))
+				return true;
+
+			Double d;
+			if (try_get_floating_point(d))
+			{
+				value = static_cast<T>(d);
+				return true;
+			}
+
+			return false;
+		}
+
+		template<typename T,
+			std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+		UC_NODISCARD T get_int_type(T default_value = 0) const
+		{
+			T value;
+			return try_get_int_type<T>(value) ? value : default_value;
+		}
+
+		// INT /////////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_int(Int& value) const;
 		UC_NODISCARD Int get_int(Int default_value = 0) const;
 
-		// INT64 /////////////////////////////////////////////////////////////////////
+		// INT64 ///////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_int64(Int64& value) const;
 		UC_NODISCARD Int64 get_int64(Int64 default_value = 0) const;
 
-		// FLOAT /////////////////////////////////////////////////////////////////////
+		// FLOAT ///////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_float(Float& value) const;
 		UC_NODISCARD Float get_float(Float default_value = 0) const;
 
-		// DOUBLE ////////////////////////////////////////////////////////////////////
+		// DOUBLE //////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_double(Double& value) const;
 		UC_NODISCARD Double get_double(Double default_value = 0) const;
 
-		// STRING ////////////////////////////////////////////////////////////////////
+		// STRING //////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_string(String& value) const;
 		UC_NODISCARD String get_string(StringView default_value = "") const;
 
-		// STRING32 //////////////////////////////////////////////////////////////////
+		// STRING32 ////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_string32(String32& value) const;
 		UC_NODISCARD String32 get_string32(StringView32 default_value = U"") const;
 
-		// VECTOR2 ///////////////////////////////////////////////////////////////////
+		// VECTOR2 /////////////////////////////////////////////////////////////////
 		template<typename T>
 		bool try_get_vector2(Vector2<T>& value) const
 		{
@@ -203,7 +229,7 @@ namespace unicore
 			return try_get_vector2(value) ? value : default_value;
 		}
 
-		// VECTOR2I //////////////////////////////////////////////////////////////////
+		// VECTOR2I ////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_vec2i(Vector2i& value) const { return try_get_vector2(value); }
 		UC_NODISCARD Vector2i get_vec2i(const Vector2i& default_value = VectorConst2i::Zero) const { return get_vector2(default_value); }
 
@@ -211,7 +237,7 @@ namespace unicore
 		UC_NODISCARD bool try_get_vec2f(Vector2f& value) const { return try_get_vector2(value); }
 		UC_NODISCARD Vector2f get_vec2f(const Vector2f& default_value = VectorConst2f::Zero) const { return get_vector2(default_value); }
 
-		// VECTOR3 ///////////////////////////////////////////////////////////////////
+		// VECTOR3 /////////////////////////////////////////////////////////////////
 		template<typename T>
 		bool try_get_vec3(Vector3<T>& value) const
 		{
@@ -246,15 +272,15 @@ namespace unicore
 			return try_get_vec3(value) ? value : default_value;
 		}
 
-		// VECTOR3I //////////////////////////////////////////////////////////////////
+		// VECTOR3I ////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_vec3i(Vector3i& value) const { return try_get_vec3(value); }
 		UC_NODISCARD Vector3i get_vec3i(const Vector3i& default_value = VectorConst3i::Zero) const { return get_vec3(default_value); }
 
-		// VECTOR3F //////////////////////////////////////////////////////////////////
+		// VECTOR3F ////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_vec3f(Vector3f& value) const { return try_get_vec3(value); }
 		UC_NODISCARD Vector3f get_vec3f(const Vector3f& default_value = VectorConst3f::Zero) const { return get_vec3(default_value); }
 
-		// RANGE /////////////////////////////////////////////////////////////////////
+		// RANGE ///////////////////////////////////////////////////////////////////
 		template<typename T>
 		bool try_get_range(Range<T>& value) const
 		{
@@ -281,15 +307,15 @@ namespace unicore
 			return try_get_range(value) ? value : default_value;
 		}
 
-		// RANGEI ////////////////////////////////////////////////////////////////////
+		// RANGEI //////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_rangei(Rangei& value) const { return try_get_range(value); }
 		UC_NODISCARD Rangei get_rangei(const Rangei& default_value = RangeConsti::Zero) const { return get_range(default_value); }
 
-		// RANGEF ////////////////////////////////////////////////////////////////////
+		// RANGEF //////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_rangef(Rangef& value) const { return try_get_range(value); }
 		UC_NODISCARD Rangef get_rangef(const Rangef& default_value = RangeConstf::Zero) const { return get_range(default_value); }
 
-		// RECT //////////////////////////////////////////////////////////////////////
+		// RECT ////////////////////////////////////////////////////////////////////
 		template<typename T>
 		bool try_get_rect(Rect<T>& value) const
 		{
@@ -316,15 +342,15 @@ namespace unicore
 			return try_get_rect(value) ? value : default_value;
 		}
 
-		// RECTI /////////////////////////////////////////////////////////////////////
+		// RECTI ///////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_recti(Recti& value) const { return try_get_rect(value); }
 		UC_NODISCARD Recti get_recti(const Recti& default_value = RectConsti::Zero) const { return get_rect(default_value); }
 
-		// RECTF /////////////////////////////////////////////////////////////////////
+		// RECTF ///////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_rectf(Rectf& value) const { return try_get_rect(value); }
 		UC_NODISCARD Rectf get_rectf(const Rectf& default_value = RectConstf::Zero) const { return get_rect(default_value); }
 
-		// COLOR3 ////////////////////////////////////////////////////////////////////
+		// COLOR3 //////////////////////////////////////////////////////////////////
 		template<typename T>
 		bool try_get_color3(Color3<T>& value) const
 		{
@@ -353,15 +379,15 @@ namespace unicore
 			return try_get_color3(value) ? value : default_value;
 		}
 
-		// COLOR3B ///////////////////////////////////////////////////////////////////
+		// COLOR3B /////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_color3b(Color3b& value) const { return try_get_color3(value); }
 		UC_NODISCARD Color3b get_color3b(const Color3b& default_value = ColorConst3b::White) const { return get_color3(default_value); }
 
-		// COLOR3F ///////////////////////////////////////////////////////////////////
+		// COLOR3F /////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_color3f(Color3f& value) const { return try_get_color3(value); }
 		UC_NODISCARD Color3f get_color3f(const Color3f& default_value = ColorConst3f::White) const { return get_color3(default_value); }
 
-		// COLOR4 ////////////////////////////////////////////////////////////////////
+		// COLOR4 //////////////////////////////////////////////////////////////////
 		template<typename T>
 		bool try_get_color4(Color4<T>& value) const
 		{
@@ -390,15 +416,15 @@ namespace unicore
 			return try_get_color4(value) ? value : default_value;
 		}
 
-		// COLOR4B ///////////////////////////////////////////////////////////////////
+		// COLOR4B /////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_color4b(Color4b& value) const { return try_get_color4(value); }
 		UC_NODISCARD Color4b get_color4b(const Color4b& default_value = ColorConst4b::White) const { return get_color4(default_value); }
 
-		// COLOR4F ///////////////////////////////////////////////////////////////////
+		// COLOR4F /////////////////////////////////////////////////////////////////
 		UC_NODISCARD bool try_get_color4f(Color4f& value) const { return try_get_color4(value); }
 		UC_NODISCARD Color4f get_color4f(const Color4f& default_value = ColorConst4f::White) const { return get_color4(default_value); }
 
-		// OBJECT ////////////////////////////////////////////////////////////////////
+		// OBJECT //////////////////////////////////////////////////////////////////
 		bool try_get_object(Shared<Object>& value) const;
 		UC_NODISCARD Shared<Object> get_object(const Shared<Object>& default_value = nullptr) const;
 

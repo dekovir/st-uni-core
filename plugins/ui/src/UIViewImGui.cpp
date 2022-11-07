@@ -168,7 +168,7 @@ namespace unicore
 				break;
 
 			case UIGroupVariant::List:
-				if (ImGui::BeginListBox(id.c_str()))
+				if (ImGui::BeginListBox(id.c_str(), { width, height }))
 				{
 					for (const auto& child : children)
 						render_node(child);
@@ -234,7 +234,7 @@ namespace unicore
 			case UIInputVariant::Number:
 				// TODO: Implement min/max
 				// TODO: Implement ImGui::InputInt
-				float_value = node.variant().get_float();
+				float_value = node.value().get_float();
 				if (ImGui::InputFloat(id.c_str(), &float_value, node.attribute(UIAttributeType::StepValue).get_float(1)))
 					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
 				break;

@@ -36,7 +36,7 @@ namespace unicore
 			_test_view->set_position(Vector2f(10, 10));
 
 			_test_position_id = _test_doc->find_by_id("position");
-			const auto slider_node = _test_doc->find_by_id("slider");
+
 			const auto group_node = _test_doc->find_by_id("group");
 			const auto add_node = _test_doc->find_by_id("add_item");
 			const auto combo_node = _test_doc->find_by_id("combo");
@@ -134,7 +134,7 @@ namespace unicore
 			_database_view->set_document(_database_doc);
 			_database_view->set_title(U"Database");
 			_database_view->set_size({500, 0});
-			_database_view->set_position({720, 10});
+			_database_view->set_position({650, 10});
 
 			_database_ui = std::make_shared<ItemDatabaseUI>(_items_db, *_database_doc, &_context_logger);
 		}

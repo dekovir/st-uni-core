@@ -23,6 +23,7 @@ namespace unicore
 
 		UC_NODISCARD const Item* get(ItemId id) const;
 
+		UC_NODISCARD const auto& items() const { return _items; }
 		UC_NODISCARD auto begin() const { return _items.begin(); }
 		UC_NODISCARD auto end() const { return _items.end(); }
 
