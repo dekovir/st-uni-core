@@ -278,6 +278,16 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
+		case UINodeTag::Color: // COLOR ////////////////////////////////////////////
+			col4_value = node.value().get_color4f();
+
+			render_node_header(node, layout_option);
+			if (ImGui::ColorButton(id.c_str(), ImGuiConvert::convert_color(col4_value)))
+				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+
+			render_node_footer(node);
+			return true;
+
 		case UINodeTag::Image: // IMAGE ////////////////////////////////////////////
 			render_node_header(node, layout_option);
 			if (get_texture(node.value(), texture_id, size, uv0, uv1))

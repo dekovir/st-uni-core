@@ -57,6 +57,14 @@
 		<input type="color4" />
 	</group>
 
+	<group type="1">
+		<text>Palette</text>
+		<color value="0xFFFFFF" />
+		<color value="0xFF0000" />
+		<color value="0x00FF00" />
+		<color value="0x0000FF" />
+	</group>
+
 	<!-- Combobox -->
 	<group type="1">
 		<text>Combo 1</text>

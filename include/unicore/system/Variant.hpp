@@ -366,6 +366,16 @@ namespace unicore
 				return true;
 			}
 
+			uint32_t i;
+			if (try_get_integral(i))
+			{
+				if (i > 0xFF000000)
+					value = Color3b::from_rgb(i >> 16).cast<T>();
+				else
+					value = Color3b::from_rgb(i).cast<T>();
+				return true;
+			}
+
 			// TODO: Cast from Vector3?
 
 			return false;
@@ -403,7 +413,18 @@ namespace unicore
 				return true;
 			}
 
+			uint32_t i;
+			if (try_get_integral(i))
+			{
+				if (i > 0xFF000000)
+					value = Color4b::from_argb(i).cast<T>();
+				else
+					value = Color4b::from_rgb(i).cast<T>();
+				return true;
+			}
+
 			// TODO: Cast from Vector3?
+			// TODO: Cast from Vector4?
 
 			return false;
 		}

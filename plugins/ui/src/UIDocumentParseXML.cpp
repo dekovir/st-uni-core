@@ -8,6 +8,7 @@ namespace unicore
 	{
 		{"group", UINodeTag::Group},
 		{"text", UINodeTag::Text},
+		{"color", UINodeTag::Color},
 		{"image", UINodeTag::Image},
 		{"img", UINodeTag::Image},
 		{"input", UINodeTag::Input},
@@ -59,13 +60,6 @@ namespace unicore
 		{"color4", UIInputType::Color4},
 	};
 
-	static const Dictionary<StringView, UITableType> s_table_type =
-	{
-		{"th", UITableType::Header},
-		{"tr", UITableType::Row},
-		{"td", UITableType::Cell},
-	};
-
 	static const Dictionary<StringView, UIInputType> s_input_synonum =
 	{
 		{"textarea", UIInputType::TextArea},
@@ -73,6 +67,13 @@ namespace unicore
 		{"radio", UIInputType::Radio},
 		{"button", UIInputType::Button},
 		{"slider", UIInputType::Range},
+	};
+
+	static const Dictionary<StringView, UITableType> s_table_type =
+	{
+		{"th", UITableType::Header},
+		{"tr", UITableType::Row},
+		{"td", UITableType::Cell},
 	};
 
 	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UIInputType, UITableType>;
@@ -122,6 +123,12 @@ namespace unicore
 	{
 		char* end;
 
+		if (StringHelper::starts_with(StringView(str), "0x"sv))
+		{
+			const auto hex = strtoll(str + 2, &end, 16);
+			return hex;
+		}
+
 		const auto i = strtoll(str, &end, 10);
 		if (end[0] == 0)
 			return i;
@@ -129,7 +136,6 @@ namespace unicore
 		const auto d = strtod(str, &end);
 		if (end[0] == 0)
 			return d;
-
 		return str;
 	}
 

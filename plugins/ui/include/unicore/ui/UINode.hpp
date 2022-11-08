@@ -22,6 +22,7 @@ namespace unicore
 	{
 		Group,
 		Text,
+		Color,
 		Image,
 		Input,
 		Item,
