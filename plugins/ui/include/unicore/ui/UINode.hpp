@@ -109,8 +109,8 @@ namespace unicore
 		UC_NODISCARD Optional<String> style() const;
 		UC_NODISCARD Bool visible() const;
 
+		// ATTRIBUTES //////////////////////////////////////////////////////////////
 		UC_NODISCARD UIAttributeDict get_attributes() const;
-		UC_NODISCARD UIActionDict get_actions() const;
 
 		UC_NODISCARD Variant get(UIAttribute attribute) const;
 
@@ -118,8 +118,11 @@ namespace unicore
 		UC_NODISCARD Variant type() const { return get(UIAttribute::Type); }
 		UC_NODISCARD Variant text() const { return get(UIAttribute::Text); }
 
+		// ACTIONS /////////////////////////////////////////////////////////////////
+		UC_NODISCARD UIActionDict get_actions() const;
 		UC_NODISCARD Optional<UIAction> action(UIActionType type) const;
 
+		// HIERARCHY ///////////////////////////////////////////////////////////////
 		size_t get_children(List<UINode>& children) const;
 		UC_NODISCARD List<UINode> get_children() const;
 		UC_NODISCARD Size get_children_count() const;
@@ -128,7 +131,7 @@ namespace unicore
 		UC_NODISCARD UINode get_next_sibling() const;
 		UC_NODISCARD UINode get_prev_sibling() const;
 
-		// FIND //////////////////////////////////////////////////////////////////////
+		// FIND ////////////////////////////////////////////////////////////////////
 		UC_NODISCARD UINode find_by_type(UINodeTag tag) const;
 		Size find_all_by_type(UINodeTag tag, List<UINode>& list) const;
 

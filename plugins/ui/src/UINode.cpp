@@ -81,17 +81,6 @@ namespace unicore
 		return {};
 	}
 
-	UIActionDict UINode::get_actions() const
-	{
-		if (_document)
-		{
-			if (const auto result = _document->get_node_actions(*this); result.has_value())
-				return result.value();
-		}
-
-		return {};
-	}
-
 	Variant UINode::get(UIAttribute attribute) const
 	{
 		if (_document)
@@ -101,6 +90,17 @@ namespace unicore
 		}
 
 		return Variant::Empty;
+	}
+
+	UIActionDict UINode::get_actions() const
+	{
+		if (_document)
+		{
+			if (const auto result = _document->get_node_actions(*this); result.has_value())
+				return result.value();
+		}
+
+		return {};
 	}
 
 	Optional<UIAction> UINode::action(UIActionType type) const
