@@ -196,7 +196,7 @@ namespace unicore
 		{
 			auto& info = ExampleCatalog::get_all()[index];
 
-			auto example = info.factory({ logger, _random, time, input, renderer, platform, _font });
+			auto example = info.factory({ logger, _random, time, input, renderer, platform, _font, _ui_context });
 			if (!example)
 			{
 				UC_LOG_ERROR(logger) << "Failed to create example " << info.title << ":" << index;

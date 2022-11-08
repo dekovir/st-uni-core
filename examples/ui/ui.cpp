@@ -24,65 +24,6 @@ namespace unicore
 	{
 		_contex_render.init(renderer);
 
-		// Test UI
-#if 1
-		_test_doc = resources.load<UIDocument>("ui.xml"_path, LoggerOption{ _context_logger });
-		if (_test_doc)
-		{
-			_test_view = std::make_shared<UIViewImGui>(_context, _context_logger);
-			_test_view->set_document(_test_doc);
-			_test_view->set_title(U"Test UI");
-			_test_view->set_size(Vector2f(300, 0));
-			_test_view->set_position(Vector2f(10, 10));
-
-			_test_position_id = _test_doc->find_by_id("position");
-
-			const auto group_node = _test_doc->find_by_id("group");
-			const auto add_node = _test_doc->find_by_id("add_item");
-			const auto combo_node = _test_doc->find_by_id("combo");
-
-			if (!group_node.empty() && !add_node.empty())
-			{
-				_test_doc->set_node_action(add_node, UIActionType::OnClick,
-					[this, group_node]
-					{
-						const auto count = group_node.get_children_count();
-						const auto text = StringBuilder::format("Item {}", count + 1);
-
-						UINodeOptions options;
-						options.attributes[UIAttribute::Text] = text;
-						_test_doc->create_node(UINodeTag::Item, options, group_node);
-					});
-			}
-
-			if (!combo_node.empty())
-			{
-				for (unsigned i = 0; i < 5; i++)
-				{
-					const auto str = StringBuilder::format("Item {}", i + 1);
-					UINodeOptions options;
-					options.attributes[UIAttribute::Text] = str;
-					options.attributes[UIAttribute::Value] = (i == 0);
-
-					auto node = _test_doc->create_node(UINodeTag::Item, options, combo_node);
-					_test_doc->set_node_action(node, UIActionType::OnClick,
-						[this, combo_node, node]
-						{
-							for (const auto& child : combo_node.get_children())
-							{
-								if (child.tag() == UINodeTag::Item)
-									_test_doc->set_node_attribute(child, UIAttribute::Value, false);
-							}
-
-							_test_doc->set_node_attribute(node, UIAttribute::Value, true);
-							_test_doc->set_node_attribute(combo_node, UIAttribute::Value, node.text());
-						});
-				}
-				_test_doc->set_node_attribute(combo_node, UIAttribute::Value, "Item 1");
-			}
-		}
-#endif
-
 		_database = std::make_shared<ItemDatabase>();
 
 		// GENERATE ITEMS
@@ -131,8 +72,8 @@ namespace unicore
 			_database_view = std::make_shared<UIViewImGui>(_context, _context_logger);
 			_database_view->set_document(_database_doc);
 			_database_view->set_title(U"Database");
-			_database_view->set_size({500, 0});
-			_database_view->set_position({650, 10});
+			_database_view->set_size({ 500, 0 });
+			_database_view->set_position({ 10, 10 });
 
 			_database_ui = std::make_shared<ItemDatabaseUI>(_database, _sprites, *_database_doc, &_context_logger);
 		}
@@ -146,7 +87,7 @@ namespace unicore
 			_inventory_view = std::make_shared<UIViewImGui>(_context, _context_logger);
 			_inventory_view->set_document(_inventory_doc);
 			_inventory_view->set_title(U"Inventory");
-			_inventory_view->set_position(Vector2f(320, 10));
+			_inventory_view->set_position(Vector2f(10, 300));
 
 			_inventory_ui = std::make_shared<InventoryUI>(
 				*_inventory, *_inventory_doc, &_context_logger);
@@ -182,13 +123,6 @@ namespace unicore
 		}
 #endif
 
-		if (_test_doc && _test_view && _test_position_id.has_value())
-		{
-			auto text = StringBuilder::format("Pos {}, Size {}",
-				_test_view->position().cast<Int>(), _test_view->size().cast<Int>());
-			_test_doc->set_node_attribute(_test_position_id.value(), UIAttribute::Text, text);
-		}
-
 		// ImGui //////////////////////////////////////////////////////////////////
 		_context.frame_begin();
 
@@ -196,9 +130,6 @@ namespace unicore
 		static bool show_demo_window = false;
 		ImGui::ShowDemoWindow(&show_demo_window);
 #endif
-
-		if (_test_view)
-			_test_view->render();
 
 		if (_database_view)
 			_database_view->render();

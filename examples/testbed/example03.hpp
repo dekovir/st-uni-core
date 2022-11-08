@@ -1,7 +1,5 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/io/Logger.hpp"
-#include "unicore/imgui/ImGuiContext.hpp"
 
 namespace unicore
 {

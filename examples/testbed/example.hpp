@@ -12,6 +12,7 @@ namespace unicore
 	class Time;
 	class Input;
 	class IResourceCache;
+	class ImGuiContext;
 
 	class Font;
 
@@ -24,6 +25,7 @@ namespace unicore
 		sdl2::Pipeline& renderer;
 		Platform& platform;
 		Shared<Font> font;
+		ImGuiContext& imgui;
 	};
 
 	class Example : public Object

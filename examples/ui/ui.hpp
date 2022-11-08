@@ -21,10 +21,6 @@ namespace unicore
 
 		Shared<SpriteList> _sprites;
 
-		Shared<UIDocument> _test_doc;
-		Shared<UIViewImGui> _test_view;
-		Optional<UINode> _test_position_id;
-
 		Shared<ItemDatabase> _database;
 		Shared<UIDocument> _database_doc;
 		Shared<ItemDatabaseUI> _database_ui;
