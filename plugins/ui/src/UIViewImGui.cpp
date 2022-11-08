@@ -356,15 +356,15 @@ namespace unicore
 				// TODO: Implement min/max
 				// TODO: Implement ImGui::InputInt
 				float_value = node.value().get_float();
-				if (ImGui::InputFloat(id.c_str(), &float_value, node.attribute(UIAttributeType::StepValue).get_float(1)))
+				if (ImGui::InputFloat(id.c_str(), &float_value, node.attribute(UIAttributeType::Step).get_float(1)))
 					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
 				break;
 
 			case UIInputType::Range:
 				// TODO: Implement step
 				range_f = {
-					node.attribute(UIAttributeType::MinValue).get_float(0),
-					node.attribute(UIAttributeType::MaxValue).get_float(1)
+					node.attribute(UIAttributeType::Min).get_float(0),
+					node.attribute(UIAttributeType::Max).get_float(1)
 				};
 				str = node.attribute(UIAttributeType::Text).get_string("%.2f");
 				float_value = node.value().get_float();
@@ -477,8 +477,8 @@ namespace unicore
 
 		case UINodeTag::Progress: // PROGRESS //////////////////////////////////////
 			range_f = {
-				node.attribute(UIAttributeType::MinValue).get_float(0),
-				node.attribute(UIAttributeType::MaxValue).get_float(1)
+				node.attribute(UIAttributeType::Min).get_float(0),
+				node.attribute(UIAttributeType::Max).get_float(1)
 			};
 			float_value = Math::inverse_lerp(range_f.min, range_f.max, node.value().get_float());
 			render_node_header(node, layout_option);

@@ -11,9 +11,9 @@ namespace unicore
 		Height,
 		Tooltip,
 		Text,
-		StepValue,
-		MinValue,
-		MaxValue,
+		Step,
+		Min,
+		Max,
 	};
 
 	using UIAttributeDict = Dictionary<UIAttributeType, Variant>;

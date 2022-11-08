@@ -26,9 +26,9 @@ namespace unicore
 		{"height", UIAttributeType::Height},
 		{"h", UIAttributeType::Height},
 		{"tooltip", UIAttributeType::Tooltip},
-		{"step", UIAttributeType::StepValue},
-		{"min", UIAttributeType::MinValue},
-		{"max", UIAttributeType::MaxValue},
+		{"step", UIAttributeType::Step},
+		{"min", UIAttributeType::Min},
+		{"max", UIAttributeType::Max},
 	};
 
 	static const Dictionary<StringView, UIGroupType> s_group_type = {
