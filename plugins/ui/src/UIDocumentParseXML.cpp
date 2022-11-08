@@ -44,6 +44,15 @@ namespace unicore
 		{"modal", UIGroupType::Modal},
 	};
 
+	static const Dictionary<StringView, UITextType> s_text_type = {
+		{"h1", UITextType::Heading1},
+		{"h2", UITextType::Heading2},
+		{"h3", UITextType::Heading3},
+		{"h4", UITextType::Heading4},
+		{"h5", UITextType::Heading5},
+		{"h6", UITextType::Heading6},
+	};
+
 	static const Dictionary<StringView, UIInputType> s_input_type =
 	{
 		{"textarea", UIInputType::TextArea},
@@ -76,7 +85,7 @@ namespace unicore
 		{"td", UITableType::Cell},
 	};
 
-	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UIInputType, UITableType>;
+	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UITextType, UIInputType, UITableType>;
 
 	static Optional<UINodeTag> parse_tag(StringView tag, VariantType& variant)
 	{
@@ -95,6 +104,15 @@ namespace unicore
 			{
 				variant = it.second;
 				return UINodeTag::Group;
+			}
+		}
+
+		for (const auto& it : s_text_type)
+		{
+			if (StringHelper::equals(it.first, tag, true))
+			{
+				variant = it.second;
+				return UINodeTag::Text;
 			}
 		}
 
@@ -170,6 +188,12 @@ namespace unicore
 				input_variant = parse_enum_variant<UIGroupType>(str, s_group_type);
 		}
 
+		if (node_tag.value() == UINodeTag::Text)
+		{
+			if (const auto str = node->Attribute("type"); str != nullptr)
+				input_variant = parse_enum_variant<UITextType>(str, s_text_type);
+		}
+
 		if (node_tag.value() == UINodeTag::Input)
 		{
 			if (const auto str = node->Attribute("type"); str != nullptr)
@@ -186,6 +210,9 @@ namespace unicore
 		UINodeOptions options;
 
 		if (const auto ptr = std::get_if<UIGroupType>(&input_variant))
+			options.attributes[UIAttribute::Type] = *ptr;
+
+		if (const auto ptr = std::get_if<UITextType>(&input_variant))
 			options.attributes[UIAttribute::Type] = *ptr;
 
 		if (const auto ptr = std::get_if<UIInputType>(&input_variant))
