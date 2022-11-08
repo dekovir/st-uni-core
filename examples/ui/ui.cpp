@@ -50,7 +50,7 @@ namespace unicore
 						const auto text = StringBuilder::format("Item {}", count + 1);
 
 						UINodeOptions options;
-						options.attributes[UIAttributeType::Text] = text;
+						options.attributes[UIAttribute::Text] = text;
 						_test_doc->create_node(UINodeTag::Item, options, group_node);
 					});
 			}
@@ -61,8 +61,8 @@ namespace unicore
 				{
 					const auto str = StringBuilder::format("Item {}", i + 1);
 					UINodeOptions options;
-					options.attributes[UIAttributeType::Text] = str;
-					options.attributes[UIAttributeType::Value] = (i == 0);
+					options.attributes[UIAttribute::Text] = str;
+					options.attributes[UIAttribute::Value] = (i == 0);
 
 					auto node = _test_doc->create_node(UINodeTag::Item, options, combo_node);
 					_test_doc->set_node_action(node, UIActionType::OnClick,
@@ -71,14 +71,14 @@ namespace unicore
 							for (const auto& child : combo_node.get_children())
 							{
 								if (child.tag() == UINodeTag::Item)
-									_test_doc->set_node_attribute(child, UIAttributeType::Value, false);
+									_test_doc->set_node_attribute(child, UIAttribute::Value, false);
 							}
 
-							_test_doc->set_node_attribute(node, UIAttributeType::Value, true);
-							_test_doc->set_node_attribute(combo_node, UIAttributeType::Value, node.text());
+							_test_doc->set_node_attribute(node, UIAttribute::Value, true);
+							_test_doc->set_node_attribute(combo_node, UIAttribute::Value, node.text());
 						});
 				}
-				_test_doc->set_node_attribute(combo_node, UIAttributeType::Value, "Item 1");
+				_test_doc->set_node_attribute(combo_node, UIAttribute::Value, "Item 1");
 			}
 		}
 #endif
@@ -186,7 +186,7 @@ namespace unicore
 		{
 			auto text = StringBuilder::format("Pos {}, Size {}",
 				_test_view->position().cast<Int>(), _test_view->size().cast<Int>());
-			_test_doc->set_node_attribute(_test_position_id.value(), UIAttributeType::Text, text);
+			_test_doc->set_node_attribute(_test_position_id.value(), UIAttribute::Text, text);
 		}
 
 		// ImGui //////////////////////////////////////////////////////////////////

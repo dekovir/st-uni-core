@@ -25,7 +25,7 @@ namespace unicore
 		_weight_node = document.find_by_name("weight", _inspector_node);
 
 		_document.set_node_action(_icon_node, UIActionType::OnClick,
-			[this] { _document.set_node_attribute(_icon_items_node, UIAttributeType::Value, true); });
+			[this] { _document.set_node_attribute(_icon_items_node, UIAttribute::Value, true); });
 
 		if (!icon_list_node.empty() && _sprites && !_sprites->empty())
 		{
@@ -34,11 +34,11 @@ namespace unicore
 				auto spr = _sprites->get(i);
 
 				UINodeOptions options;
-				options.attributes[UIAttributeType::Value] = spr;
-				//options.attributes[UIAttributeType::Text] = StringBuilder::format("{}", i + 1);
-				options.attributes[UIAttributeType::Type] = UIInputType::Image;
-				options.attributes[UIAttributeType::Width] = 32;
-				options.attributes[UIAttributeType::Height] = 32;
+				options.attributes[UIAttribute::Value] = spr;
+				//options.attributes[UIAttribute::Text] = StringBuilder::format("{}", i + 1);
+				options.attributes[UIAttribute::Type] = UIInputType::Image;
+				options.attributes[UIAttribute::Width] = 32;
+				options.attributes[UIAttribute::Height] = 32;
 				options.actions[UIActionType::OnClick] =
 					[this, spr] { item_set_icon(spr); };
 
@@ -64,7 +64,7 @@ namespace unicore
 				const auto store_type = it.first;
 
 				UINodeOptions options;
-				options.attributes[UIAttributeType::Text] = it.second;
+				options.attributes[UIAttribute::Text] = it.second;
 				options.actions[UIActionType::OnClick] =
 					[this, store_type] { item_set_type(store_type); };
 				_type_nodes[store_type] = _document.create_node(
@@ -121,7 +121,7 @@ namespace unicore
 		for (const auto& it : _item_nodes)
 		{
 			if (const auto find = it.second.find_by_name("item_name"); !find.empty())
-				_document.set_node_attribute(find, UIAttributeType::Value, it.first == _selected);
+				_document.set_node_attribute(find, UIAttribute::Value, it.first == _selected);
 		}
 		apply_inspector();
 	}
@@ -132,13 +132,13 @@ namespace unicore
 		if (!item) return;
 
 		if (const auto find = node.find_by_name("item_id"); !find.empty())
-			_document.set_node_attribute(find, UIAttributeType::Text, id.value);
+			_document.set_node_attribute(find, UIAttribute::Text, id.value);
 
 		if (const auto find = node.find_by_name("item_icon"); !find.empty())
-			_document.set_node_attribute(find, UIAttributeType::Value, item->sprite);
+			_document.set_node_attribute(find, UIAttribute::Value, item->sprite);
 
 		if (const auto find = node.find_by_name("item_name"); !find.empty())
-			_document.set_node_attribute(find, UIAttributeType::Text, item->title);
+			_document.set_node_attribute(find, UIAttribute::Text, item->title);
 	}
 
 	void ItemDatabaseUI::apply_inspector()
@@ -162,35 +162,35 @@ namespace unicore
 	void ItemDatabaseUI::apply_inspector_icon(const Item& item)
 	{
 		_document.set_node_attribute(_icon_node,
-			UIAttributeType::Value, item.sprite);
+			UIAttribute::Value, item.sprite);
 	}
 
 	void ItemDatabaseUI::apply_inspector_title(const Item& item)
 	{
 		_document.set_node_attribute(_title_node,
-			UIAttributeType::Value, item.title);
+			UIAttribute::Value, item.title);
 	}
 
 	void ItemDatabaseUI::apply_inspector_type(const Item& item)
 	{
 		_document.set_node_attribute(_type_node,
-			UIAttributeType::Value, Item::type_to_string(item.item_type));
+			UIAttribute::Value, Item::type_to_string(item.item_type));
 
 		for (const auto& it : _type_nodes)
 			_document.set_node_attribute(it.second,
-				UIAttributeType::Value, it.first == item.item_type);
+				UIAttribute::Value, it.first == item.item_type);
 	}
 
 	void ItemDatabaseUI::apply_inspector_price(const Item& item)
 	{
 		_document.set_node_attribute(_price_node,
-			UIAttributeType::Value, item.price);
+			UIAttribute::Value, item.price);
 	}
 
 	void ItemDatabaseUI::apply_inspector_weight(const Item& item)
 	{
 		_document.set_node_attribute(_weight_node,
-			UIAttributeType::Value, item.weight);
+			UIAttribute::Value, item.weight);
 	}
 
 	void ItemDatabaseUI::item_set_icon(const Shared<Sprite>& value)

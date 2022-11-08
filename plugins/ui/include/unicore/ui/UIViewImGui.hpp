@@ -68,7 +68,7 @@ namespace unicore
 
 		void on_create_node(const UINode& node) override;
 		void on_set_attribute(const UINode& node,
-			UIAttributeType type, const Optional<Variant>& value) override;
+			UIAttribute type, const Optional<Variant>& value) override;
 
 		Bool render_node(const UINode& node, LayoutOption layout_option = LayoutOption::None);
 

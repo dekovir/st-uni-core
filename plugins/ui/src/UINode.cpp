@@ -92,11 +92,11 @@ namespace unicore
 		return {};
 	}
 
-	Variant UINode::attribute(UIAttributeType type) const
+	Variant UINode::get(UIAttribute attribute) const
 	{
 		if (_document)
 		{
-			if (const auto result = _document->get_node_attribute(*this, type); result.has_value())
+			if (const auto result = _document->get_node_attribute(*this, attribute); result.has_value())
 				return result.value();
 		}
 

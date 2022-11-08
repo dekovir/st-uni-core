@@ -100,11 +100,11 @@ namespace unicore
 	}
 
 	void UIViewImGui::on_set_attribute(const UINode& node,
-		UIAttributeType type, const Optional<Variant>& value)
+		UIAttribute type, const Optional<Variant>& value)
 	{
 		UIView::on_set_attribute(node, type, value);
 
-		if (type == UIAttributeType::Text)
+		if (type == UIAttribute::Text)
 		{
 			if (const auto info = get_info(node.index()))
 				info->title = value->get_string() + info->id;
@@ -129,8 +129,8 @@ namespace unicore
 		List<UINode> children;
 		node.get_children(children);
 
-		const auto width = node.attribute(UIAttributeType::Width).get_float();
-		const auto height = node.attribute(UIAttributeType::Height).get_float();
+		const auto width = node.get(UIAttribute::Width).get_float();
+		const auto height = node.get(UIAttribute::Height).get_float();
 
 		Bool bool_value;
 		Int int_value;
@@ -225,7 +225,7 @@ namespace unicore
 				if (node.value().get_bool())
 				{
 					ImGui::OpenPopup(id.c_str());
-					_document->set_node_attribute(node, UIAttributeType::Value, false);
+					_document->set_node_attribute(node, UIAttribute::Value, false);
 				}
 
 				if (ImGui::BeginPopup(id.c_str()))
@@ -242,7 +242,7 @@ namespace unicore
 				{
 					ImGui::BeginTooltip();
 
-					str = node.attribute(UIAttributeType::Text).get_string();
+					str = node.get(UIAttribute::Text).get_string();
 					if (!str.empty())
 						ImGui::Text("%s", str.c_str());
 
@@ -256,7 +256,7 @@ namespace unicore
 				if (node.value().get_bool())
 				{
 					ImGui::OpenPopup(id.c_str());
-					_document->set_node_attribute(node, UIAttributeType::Value, false);
+					_document->set_node_attribute(node, UIAttribute::Value, false);
 				}
 
 				if (ImGui::BeginPopupModal(id.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -271,7 +271,7 @@ namespace unicore
 			break;
 
 		case UINodeTag::Text: // TEXT //////////////////////////////////////////////
-			str = node.attribute(UIAttributeType::Text).get_string();
+			str = node.get(UIAttribute::Text).get_string();
 
 			render_node_header(node, layout_option);
 			ImGui::Text("%s", str.c_str());
@@ -356,17 +356,17 @@ namespace unicore
 				// TODO: Implement min/max
 				// TODO: Implement ImGui::InputInt
 				float_value = node.value().get_float();
-				if (ImGui::InputFloat(id.c_str(), &float_value, node.attribute(UIAttributeType::Step).get_float(1)))
+				if (ImGui::InputFloat(id.c_str(), &float_value, node.get(UIAttribute::Step).get_float(1)))
 					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
 				break;
 
 			case UIInputType::Range:
 				// TODO: Implement step
 				range_f = {
-					node.attribute(UIAttributeType::Min).get_float(0),
-					node.attribute(UIAttributeType::Max).get_float(1)
+					node.get(UIAttribute::Min).get_float(0),
+					node.get(UIAttribute::Max).get_float(1)
 				};
-				str = node.attribute(UIAttributeType::Text).get_string("%.2f");
+				str = node.get(UIAttribute::Text).get_string("%.2f");
 				float_value = node.value().get_float();
 				if (ImGui::SliderFloat(id.c_str(), &float_value, range_f.min, range_f.max, str.c_str()))
 					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
@@ -460,7 +460,7 @@ namespace unicore
 			case UITableType::Cell:
 				ImGui::TableNextColumn();
 				ImGui::BeginGroup();
-				if (node.attribute(UIAttributeType::Text).try_get_string(str))
+				if (node.get(UIAttribute::Text).try_get_string(str))
 					ImGui::Text("%s", str.c_str());
 
 				if (!children.empty())
@@ -477,12 +477,12 @@ namespace unicore
 
 		case UINodeTag::Progress: // PROGRESS //////////////////////////////////////
 			range_f = {
-				node.attribute(UIAttributeType::Min).get_float(0),
-				node.attribute(UIAttributeType::Max).get_float(1)
+				node.get(UIAttribute::Min).get_float(0),
+				node.get(UIAttribute::Max).get_float(1)
 			};
 			float_value = Math::inverse_lerp(range_f.min, range_f.max, node.value().get_float());
 			render_node_header(node, layout_option);
-			if (node.attribute(UIAttributeType::Text).try_get_string(str))
+			if (node.get(UIAttribute::Text).try_get_string(str))
 				ImGui::ProgressBar(float_value, { width, height }, str.c_str());
 			else ImGui::ProgressBar(float_value, { width, height });
 			render_node_footer(node);
@@ -531,7 +531,7 @@ namespace unicore
 		}
 
 		String tooltip;
-		if (node.attribute(UIAttributeType::Tooltip).try_get_string(tooltip))
+		if (node.get(UIAttribute::Tooltip).try_get_string(tooltip))
 		{
 			if (is_item_hovered)
 				ImGui::SetTooltip("%s", tooltip.c_str());

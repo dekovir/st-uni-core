@@ -3,7 +3,7 @@
 
 namespace unicore
 {
-	enum class UIAttributeType
+	enum class UIAttribute
 	{
 		Type,
 		Value,
@@ -16,7 +16,7 @@ namespace unicore
 		Max,
 	};
 
-	using UIAttributeDict = Dictionary<UIAttributeType, Variant>;
+	using UIAttributeDict = Dictionary<UIAttribute, Variant>;
 
 	enum class UINodeTag
 	{
@@ -112,11 +112,11 @@ namespace unicore
 		UC_NODISCARD UIAttributeDict get_attributes() const;
 		UC_NODISCARD UIActionDict get_actions() const;
 
-		UC_NODISCARD Variant attribute(UIAttributeType type) const;
+		UC_NODISCARD Variant get(UIAttribute attribute) const;
 
-		UC_NODISCARD Variant value() const { return attribute(UIAttributeType::Value); }
-		UC_NODISCARD Variant type() const { return attribute(UIAttributeType::Type); }
-		UC_NODISCARD Variant text() const { return attribute(UIAttributeType::Text); }
+		UC_NODISCARD Variant value() const { return get(UIAttribute::Value); }
+		UC_NODISCARD Variant type() const { return get(UIAttribute::Type); }
+		UC_NODISCARD Variant text() const { return get(UIAttribute::Text); }
 
 		UC_NODISCARD Optional<UIAction> action(UIActionType type) const;
 

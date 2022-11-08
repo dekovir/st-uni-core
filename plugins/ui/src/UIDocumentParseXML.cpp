@@ -18,17 +18,17 @@ namespace unicore
 		{"progress", UINodeTag::Progress},
 	};
 
-	static const Dictionary<StringView, UIAttributeType> s_attr_name =
+	static const Dictionary<StringView, UIAttribute> s_attr_name =
 	{
-		{"value", UIAttributeType::Value},
-		{"width", UIAttributeType::Width},
-		{"w", UIAttributeType::Width},
-		{"height", UIAttributeType::Height},
-		{"h", UIAttributeType::Height},
-		{"tooltip", UIAttributeType::Tooltip},
-		{"step", UIAttributeType::Step},
-		{"min", UIAttributeType::Min},
-		{"max", UIAttributeType::Max},
+		{"value", UIAttribute::Value},
+		{"width", UIAttribute::Width},
+		{"w", UIAttribute::Width},
+		{"height", UIAttribute::Height},
+		{"h", UIAttribute::Height},
+		{"tooltip", UIAttribute::Tooltip},
+		{"step", UIAttribute::Step},
+		{"min", UIAttribute::Min},
+		{"max", UIAttribute::Max},
 	};
 
 	static const Dictionary<StringView, UIGroupType> s_group_type = {
@@ -179,18 +179,18 @@ namespace unicore
 		UINodeOptions options;
 
 		if (const auto ptr = std::get_if<UIGroupType>(&input_variant))
-			options.attributes[UIAttributeType::Type] = *ptr;
+			options.attributes[UIAttribute::Type] = *ptr;
 
 		if (const auto ptr = std::get_if<UIInputType>(&input_variant))
-			options.attributes[UIAttributeType::Type] = *ptr;
+			options.attributes[UIAttribute::Type] = *ptr;
 
 		if (const auto ptr = std::get_if<UITableType>(&input_variant))
-			options.attributes[UIAttributeType::Type] = *ptr;
+			options.attributes[UIAttribute::Type] = *ptr;
 
 		if (const auto value = node->GetText(); value != nullptr)
 		{
 			const auto s = StringHelper::rtrim(StringView(value));
-			options.attributes[UIAttributeType::Text] = s;
+			options.attributes[UIAttribute::Text] = s;
 		}
 
 		if (const auto str = node->Attribute("id"); str != nullptr)

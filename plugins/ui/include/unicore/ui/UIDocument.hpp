@@ -30,7 +30,7 @@ namespace unicore
 		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_style, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_visible, const UINode&, Bool);
-		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttributeType, const Optional<Variant>&);
+		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttribute, const Optional<Variant>&);
 		UC_OBJECT_EVENT(set_action, const UINode&, UIActionType, const Optional<UIAction>&);
 	public:
 		explicit UIDocument(Logger* logger = nullptr);
@@ -40,7 +40,7 @@ namespace unicore
 		Size get_roots(List<UINode>& list) const;
 		UC_NODISCARD List<UINode> get_roots() const;
 
-		// FIND //////////////////////////////////////////////////////////////////////
+		// FIND ////////////////////////////////////////////////////////////////////
 		UC_NODISCARD UINode find_by_id(StringView id) const;
 
 		UC_NODISCARD UINode find_by_type(UINodeTag tag,
@@ -60,10 +60,10 @@ namespace unicore
 		Size querry_all(const Predicate<const UINode&>& predicate,
 			List<UINode>& list, const UINode& parent = UINode::Empty) const;
 
-		// EVENTS ////////////////////////////////////////////////////////////////////
+		// EVENTS //////////////////////////////////////////////////////////////////
 		void send_event(const UIEvent& evt);
 
-		// CREATE ////////////////////////////////////////////////////////////////////
+		// CREATE //////////////////////////////////////////////////////////////////
 		UINode create_node(UINodeTag tag, const UINodeOptions& options,
 			const UINode& parent = UINode::Empty);
 
@@ -71,7 +71,7 @@ namespace unicore
 
 		Bool remove_node(const UINode& node);
 
-		// VALUES ////////////////////////////////////////////////////////////////////
+		// VALUES //////////////////////////////////////////////////////////////////
 		UC_NODISCARD Bool is_node_valid(const UINode& node) const;
 
 		UC_NODISCARD Bool get_node_tag(const UINode& node, UINodeTag& value) const;
@@ -87,7 +87,7 @@ namespace unicore
 		UC_NODISCARD Bool get_node_visible(const UINode& node, Bool& value) const;
 		Bool set_node_visible(const UINode& node, Bool value);
 
-		// HIERARCHY /////////////////////////////////////////////////////////////////
+		// HIERARCHY ///////////////////////////////////////////////////////////////
 		UC_NODISCARD UINode get_node_parent(const UINode& node) const;
 
 		Size get_node_children(List<UINode>& list, const UINode& node) const;
@@ -100,17 +100,17 @@ namespace unicore
 		UC_NODISCARD UINode get_node_next_sibling(const UINode& node) const;
 		UC_NODISCARD UINode get_node_prev_sibling(const UINode& node) const;
 
-		// ATTRIBUTES ////////////////////////////////////////////////////////////////
+		// ATTRIBUTES //////////////////////////////////////////////////////////////
 		void set_node_attribute(const UINode& node,
-			UIAttributeType type, const Optional<Variant>& value);
+			UIAttribute attribute, const Optional<Variant>& value);
 
 		UC_NODISCARD Optional<Variant> get_node_attribute(
-			const UINode& node, UIAttributeType type) const;
+			const UINode& node, UIAttribute attribute) const;
 
 		UC_NODISCARD Optional<UIAttributeDict> get_node_attributes(const UINode& node) const;
 		UC_NODISCARD Bool get_node_attributes(const UINode& node, UIAttributeDict& dict) const;
 
-		// ACTIONS ///////////////////////////////////////////////////////////////////
+		// ACTIONS /////////////////////////////////////////////////////////////////
 		void set_node_action(const UINode& node, UIActionType type, const Optional<UIAction>& action);
 
 		UC_NODISCARD Optional<UIAction> get_node_action(const UINode& node, UIActionType type) const;

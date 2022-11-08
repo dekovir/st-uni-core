@@ -66,7 +66,7 @@ namespace unicore
 	void InventoryUI::apply_money(UInt16 value)
 	{
 		if (!_money_text.empty())
-			_document.set_node_attribute(_money_text, UIAttributeType::Text, value);
+			_document.set_node_attribute(_money_text, UIAttribute::Text, value);
 	}
 
 	static std::pair<UINode, UINode> find_node(const UINode& node, StringView name)
@@ -99,13 +99,13 @@ namespace unicore
 		}
 
 		if (const auto find = node.find_by_name("icon"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Value, item.sprite);
+			_document.set_node_attribute(find, UIAttribute::Value, item.sprite);
 
 		if (const auto find = node.find_by_name("price"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Text, item.price);
+			_document.set_node_attribute(find, UIAttribute::Text, item.price);
 
 		if (const auto find = node.find_by_name("weight"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Text, weight_to_string(item.weight));
+			_document.set_node_attribute(find, UIAttribute::Text, weight_to_string(item.weight));
 
 		apply_item_value(node, index);
 	}
@@ -123,9 +123,9 @@ namespace unicore
 			{
 				const auto amount = _inventory.get_index_value(index);
 				const auto str = StringBuilder::format("{} ({})", item.title, amount);
-				_document.set_node_attribute(find, UIAttributeType::Text, str);
+				_document.set_node_attribute(find, UIAttribute::Text, str);
 			}
-			else _document.set_node_attribute(find, UIAttributeType::Text, item.title);
+			else _document.set_node_attribute(find, UIAttribute::Text, item.title);
 		}
 	}
 
@@ -145,10 +145,10 @@ namespace unicore
 		_document.set_node_visible(_item_tooltip, true);
 
 		if (const auto find = _item_tooltip.find_by_name("title"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Text, item->title);
+			_document.set_node_attribute(find, UIAttribute::Text, item->title);
 
 		if (const auto find = _item_tooltip.find_by_name("type"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Text, Item::type_to_string(item->item_type));
+			_document.set_node_attribute(find, UIAttribute::Text, Item::type_to_string(item->item_type));
 
 		if (const auto [find, group] = find_node(_item_tooltip, "damage"); find.valid())
 		{
@@ -157,7 +157,7 @@ namespace unicore
 				const auto str = StringBuilder::format(U"{}-{}", item->damage.min, item->damage.max);
 
 				_document.set_node_visible(group, true);
-				_document.set_node_attribute(find, UIAttributeType::Text, str);
+				_document.set_node_attribute(find, UIAttribute::Text, str);
 			}
 			else _document.set_node_visible(group, false);
 		}
@@ -169,7 +169,7 @@ namespace unicore
 				const auto str = StringBuilder::format(U"+{}", item->armor);
 
 				_document.set_node_visible(group, true);
-				_document.set_node_attribute(find, UIAttributeType::Text, str);
+				_document.set_node_attribute(find, UIAttribute::Text, str);
 			}
 			else _document.set_node_visible(group, false);
 		}
@@ -181,7 +181,7 @@ namespace unicore
 		{
 			_document.set_node_visible(group, item->has_status());
 			const auto value = Math::inverse_lerp_numeric(_inventory.get_index_value(index));
-			_document.set_node_attribute(find, UIAttributeType::Value, value);
+			_document.set_node_attribute(find, UIAttribute::Value, value);
 		}
 	}
 

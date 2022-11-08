@@ -232,7 +232,7 @@ namespace unicore
 			break;
 
 		case UIEventType::ValueChanged:
-			info->attributes[UIAttributeType::Value] = evt.value;
+			info->attributes[UIAttribute::Value] = evt.value;
 			UC_LOG_DEBUG(_logger) << "Node " << evt.node << " value changed to " << evt.value;
 
 			if (const auto action = get_node_action(evt.node, UIActionType::OnChange); action.has_value())
@@ -600,12 +600,12 @@ namespace unicore
 
 	// ATTRIBUTES ////////////////////////////////////////////////////////////////
 	void UIDocument::set_node_attribute(const UINode& node,
-		UIAttributeType type, const Optional<Variant>& value)
+		UIAttribute attribute, const Optional<Variant>& value)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
 		if (const auto info = get_info(node))
 		{
-			if (const auto it = info->attributes.find(type); it != info->attributes.end())
+			if (const auto it = info->attributes.find(attribute); it != info->attributes.end())
 			{
 				if (value.has_value())
 				{
@@ -613,31 +613,31 @@ namespace unicore
 					{
 						it->second = value.value();
 						if (!_event_set_attribute.empty())
-							_event_set_attribute.invoke(node, type, value);
+							_event_set_attribute.invoke(node, attribute, value);
 					}
 				}
 				else
 				{
 					info->attributes.erase(it);
 					if (!_event_set_attribute.empty())
-						_event_set_attribute.invoke(node, type, std::nullopt);
+						_event_set_attribute.invoke(node, attribute, std::nullopt);
 				}
 			}
 			else if (value.has_value())
 			{
-				info->attributes[type] = value.value();
+				info->attributes[attribute] = value.value();
 				if (!_event_set_attribute.empty())
-					_event_set_attribute.invoke(node, type, value);
+					_event_set_attribute.invoke(node, attribute, value);
 			}
 		}
 	}
 
 	Optional<Variant> UIDocument::get_node_attribute(
-		const UINode& node, UIAttributeType type) const
+		const UINode& node, UIAttribute attribute) const
 	{
 		if (const auto info = get_info(node))
 		{
-			if (const auto it = info->attributes.find(type); it != info->attributes.end())
+			if (const auto it = info->attributes.find(attribute); it != info->attributes.end())
 				return it->second;
 		}
 		return std::nullopt;
