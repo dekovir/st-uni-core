@@ -7,6 +7,53 @@ namespace unicore
 {
 	UC_EXAMPLE_REGISTER(Example07, "UI");
 
+	template<typename T>
+	static Bool init_combo_logic(UIDocument& document, const UINode& combo_node,
+		const Dictionary<T, StringView>& items, const T start_value,
+		const Action<T>& callback = nullptr)
+	{
+		if (combo_node.empty()) return false;
+
+		for (const auto& it : items)
+		{
+			const auto value = it.first;
+
+			UINodeOptions options;
+			options.attributes[UIAttribute::Text] = it.second;
+			options.attributes[UIAttribute::Value] = value == start_value;
+
+			auto node = document.create_node(UINodeTag::Item, options, combo_node);
+			document.set_node_action(node, UIActionType::OnClick,
+				[&document, combo_node, node, value, callback]
+				{
+					for (const auto& child : combo_node.get_children())
+					{
+						if (child.tag() == UINodeTag::Item)
+							document.set_node_attribute(child, UIAttribute::Value, false);
+					}
+
+					document.set_node_attribute(node, UIAttribute::Value, true);
+					document.set_node_attribute(combo_node, UIAttribute::Value, node.text());
+
+					if (callback != nullptr)
+						callback(value);
+				});
+		}
+
+		if (const auto it = items.find(start_value); it != items.end())
+			document.set_node_attribute(combo_node, UIAttribute::Value, it->second);
+
+		return true;
+	}
+
+	static const Dictionary<int, StringView> s_items = {
+		{0, "Item 1"},
+		{1, "Item 2"},
+		{2, "Item 3"},
+		{3, "Item 4"},
+		{4, "Item 5"},
+	};
+
 	Example07::Example07(const ExampleContext& context)
 		: Example(context)
 		, _context(context.imgui)
@@ -48,31 +95,13 @@ namespace unicore
 					});
 			}
 
-			if (!combo_node.empty())
-			{
-				for (unsigned i = 0; i < 5; i++)
+			init_combo_logic<int>(*_document, combo_node, s_items, 0,
+				[this](int value)
 				{
-					const auto str = StringBuilder::format("Item {}", i + 1);
-					UINodeOptions options;
-					options.attributes[UIAttribute::Text] = str;
-					options.attributes[UIAttribute::Value] = (i == 0);
-
-					auto node = _document->create_node(UINodeTag::Item, options, combo_node);
-					_document->set_node_action(node, UIActionType::OnClick,
-						[this, combo_node, node]
-						{
-							for (const auto& child : combo_node.get_children())
-							{
-								if (child.tag() == UINodeTag::Item)
-									_document->set_node_attribute(child, UIAttribute::Value, false);
-							}
-
-							_document->set_node_attribute(node, UIAttribute::Value, true);
-							_document->set_node_attribute(combo_node, UIAttribute::Value, node.text());
-						});
-				}
-				_document->set_node_attribute(combo_node, UIAttribute::Value, "Item 1");
-			}
+					if (const auto it = s_items.find(value); it != s_items.end())
+						UC_LOG_DEBUG(logger) << "Select " << it->second;
+					else UC_LOG_DEBUG(logger) << "Select " << value;
+				});
 		}
 	}
 
