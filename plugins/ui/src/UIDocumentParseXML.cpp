@@ -14,9 +14,7 @@ namespace unicore
 		{"item", UINodeTag::Item},
 		{"tree", UINodeTag::Tree},
 		{"table", UINodeTag::Table},
-		{"th", UINodeTag::TableHeader},
-		{"tr", UINodeTag::TableRow},
-		{"td", UINodeTag::TableCell},
+
 		{"progress", UINodeTag::Progress},
 	};
 
@@ -60,6 +58,13 @@ namespace unicore
 		{"color4", UIInputType::Color4},
 	};
 
+	static const Dictionary<StringView, UITableType> s_table_type =
+	{
+		{"th", UITableType::Header},
+		{"tr", UITableType::Row},
+		{"td", UITableType::Cell},
+	};
+
 	static const Dictionary<StringView, UIInputType> s_input_synonum =
 	{
 		{"textarea", UIInputType::TextArea},
@@ -69,7 +74,7 @@ namespace unicore
 		{"slider", UIInputType::Range},
 	};
 
-	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UIInputType>;
+	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UIInputType, UITableType>;
 
 	static Optional<UINodeTag> parse_tag(StringView tag, VariantType& variant)
 	{
@@ -97,6 +102,15 @@ namespace unicore
 			{
 				variant = it.second;
 				return UINodeTag::Input;
+			}
+		}
+
+		for (const auto& it : s_table_type)
+		{
+			if (StringHelper::equals(it.first, tag, true))
+			{
+				variant = it.second;
+				return UINodeTag::Table;
 			}
 		}
 
@@ -155,6 +169,12 @@ namespace unicore
 				input_variant = parse_enum_variant<UIInputType>(str, s_input_type);
 		}
 
+		if (node_tag.value() == UINodeTag::Table)
+		{
+			if (const auto str = node->Attribute("type"); str != nullptr)
+				input_variant = parse_enum_variant<UITableType>(str, s_table_type);
+		}
+
 		// Fill options
 		UINodeOptions options;
 
@@ -162,6 +182,9 @@ namespace unicore
 			options.attributes[UIAttributeType::Type] = *ptr;
 
 		if (const auto ptr = std::get_if<UIInputType>(&input_variant))
+			options.attributes[UIAttributeType::Type] = *ptr;
+
+		if (const auto ptr = std::get_if<UITableType>(&input_variant))
 			options.attributes[UIAttributeType::Type] = *ptr;
 
 		if (const auto value = node->GetText(); value != nullptr)

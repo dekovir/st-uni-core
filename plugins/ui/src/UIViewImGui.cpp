@@ -431,55 +431,51 @@ namespace unicore
 
 		case UINodeTag::Table: // TABLE ////////////////////////////////////////////
 			render_node_header(node, layout_option);
-			if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
-				ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
+			switch (node.type().get_enum<UITableType>())
 			{
+			case UITableType::Body:
+				if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
+					ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
+				{
+					for (const auto& child : children)
+						render_node(child);
+					ImGui::EndTable();
+				}
+				break;
+
+			case UITableType::Header:
+				str = node.text().get_string();
+				ImGui::TableNextColumn();
+				ImGui::TableHeader(str.c_str());
+				break;
+
+			case UITableType::Row:
+				ImGui::TableNextRow();
+				ImGui::BeginGroup();
 				for (const auto& child : children)
 					render_node(child);
-				ImGui::EndTable();
+				ImGui::EndGroup();
+				break;
+
+			case UITableType::Cell:
+				ImGui::TableNextColumn();
+				ImGui::BeginGroup();
+				if (node.attribute(UIAttributeType::Text).try_get_string(str))
+					ImGui::Text("%s", str.c_str());
+
+				if (!children.empty())
+				{
+					for (const auto& child : children)
+						render_node(child);
+				}
+				ImGui::EndGroup();
+				break;
 			}
+
 			render_node_footer(node);
 			return true;
 
-		case UINodeTag::TableHeader:
-			str = node.text().get_string();
-
-			ImGui::TableNextColumn();
-			render_node_header(node, layout_option);
-			ImGui::TableHeader(str.c_str());
-			render_node_footer(node);
-			return true;
-
-		case UINodeTag::TableRow:
-			ImGui::TableNextRow();
-			render_node_header(node, layout_option);
-			ImGui::BeginGroup();
-			for (const auto& child : children)
-				render_node(child);
-			ImGui::EndGroup();
-			render_node_footer(node);
-
-			return true;
-
-		case UINodeTag::TableCell:
-			ImGui::TableNextColumn();
-
-			render_node_header(node, layout_option);
-			ImGui::BeginGroup();
-			if (node.attribute(UIAttributeType::Text).try_get_string(str))
-				ImGui::Text("%s", str.c_str());
-
-			if (!children.empty())
-			{
-				for (const auto& child : children)
-					render_node(child);
-			}
-			ImGui::EndGroup();
-			render_node_footer(node);
-
-			return true;
-
-		case UINodeTag::Progress:
+		case UINodeTag::Progress: // PROGRESS //////////////////////////////////////
 			range_f = {
 				node.attribute(UIAttributeType::MinValue).get_float(0),
 				node.attribute(UIAttributeType::MaxValue).get_float(1)

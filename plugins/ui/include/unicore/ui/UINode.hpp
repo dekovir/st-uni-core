@@ -27,9 +27,6 @@ namespace unicore
 		Item,
 		Tree,
 		Table,
-		TableHeader,
-		TableRow,
-		TableCell,
 		Progress,
 	};
 
@@ -60,6 +57,14 @@ namespace unicore
 		Vector3,
 		Color3,
 		Color4,
+	};
+
+	enum class UITableType
+	{
+		Body,
+		Header,
+		Row,
+		Cell,
 	};
 
 	class UIDocument;
