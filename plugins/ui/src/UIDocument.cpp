@@ -35,7 +35,7 @@ namespace unicore
 		return UINode::Empty;
 	}
 
-	UINode UIDocument::find_by_type(UINodeType type, const UINode& parent) const
+	UINode UIDocument::find_by_type(UINodeTag tag, const UINode& parent) const
 	{
 		WriteProtectionGuard guard(_write_protection);
 		if (parent.valid())
@@ -47,13 +47,13 @@ namespace unicore
 			}
 
 			const auto& info = get_info(parent.index());
-			if (info->type == type)
+			if (info->tag == tag)
 				return parent;
 
 			for (const auto child_index : info->children)
 			{
 				const auto child = node_from_index(child_index);
-				if (auto find = find_by_type(type, child); find.valid())
+				if (auto find = find_by_type(tag, child); find.valid())
 					return find;
 			}
 		}
@@ -62,7 +62,7 @@ namespace unicore
 			for (const auto& root_index : _roots)
 			{
 				const auto root = node_from_index(root_index);
-				if (auto find = find_by_type(type, root); find.valid())
+				if (auto find = find_by_type(tag, root); find.valid())
 					return find;
 			}
 		}
@@ -70,7 +70,7 @@ namespace unicore
 		return UINode::Empty;
 	}
 
-	Size UIDocument::find_all_by_type(UINodeType type,
+	Size UIDocument::find_all_by_type(UINodeTag tag,
 		List<UINode>& list, const UINode& parent) const
 	{
 		Size count = 0;
@@ -84,12 +84,12 @@ namespace unicore
 				return 0;
 			}
 
-			internal_find_all_by_type(parent.index(), type, list, count);
+			internal_find_all_by_type(parent.index(), tag, list, count);
 		}
 		else
 		{
 			for (const auto& root_index : _roots)
-				internal_find_all_by_type(root_index, type, list, count);
+				internal_find_all_by_type(root_index, tag, list, count);
 		}
 
 		return count;
@@ -263,7 +263,7 @@ namespace unicore
 	}
 
 	// RAW INDEX /////////////////////////////////////////////////////////////////
-	UINode UIDocument::create_node(UINodeType type,
+	UINode UIDocument::create_node(UINodeTag tag,
 		const UINodeOptions& options, const UINode& parent)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
@@ -277,7 +277,7 @@ namespace unicore
 		const auto index = create_index();
 		auto& info = _nodes[index];
 
-		info.type = type;
+		info.tag = tag;
 		info.uid = StringHelper::to_lower(options.uid);
 		info.name = options.name;
 		info.visible = options.visible;
@@ -339,11 +339,11 @@ namespace unicore
 			get_info(node.index()) != nullptr;
 	}
 
-	Bool UIDocument::get_node_type(const UINode& node, UINodeType& value) const
+	Bool UIDocument::get_node_tag(const UINode& node, UINodeTag& value) const
 	{
 		if (const auto info = get_info(node))
 		{
-			value = info->type;
+			value = info->tag;
 			return true;
 		}
 
@@ -747,19 +747,19 @@ namespace unicore
 	}
 
 	void UIDocument::internal_find_all_by_type(UINode::IndexType index,
-		UINodeType type, List<UINode>& list, Size& count) const
+		UINodeTag tag, List<UINode>& list, Size& count) const
 	{
 		const auto info = get_info(index);
 		if (!info) return;
 
-		if (info->type == type)
+		if (info->tag == tag)
 		{
 			list.push_back(node_from_index(index));
 			count++;
 		}
 
 		for (const auto child_index : info->children)
-			internal_find_all_by_type(child_index, type, list, count);
+			internal_find_all_by_type(child_index, tag, list, count);
 	}
 
 	void UIDocument::internal_find_all_by_name(UINode::IndexType index,
@@ -824,7 +824,7 @@ namespace unicore
 			options.actions = info->actions;
 
 			const auto children = info->children;
-			const auto new_node = create_node(info->type, options, parent);
+			const auto new_node = create_node(info->tag, options, parent);
 
 			if (new_node.valid())
 			{

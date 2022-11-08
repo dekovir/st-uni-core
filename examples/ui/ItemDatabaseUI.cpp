@@ -42,7 +42,7 @@ namespace unicore
 				options.actions[UIActionType::OnClick] =
 					[this, spr] { item_set_icon(spr); };
 
-				_document.create_node(UINodeType::Input, options, icon_list_node);
+				_document.create_node(UINodeTag::Input, options, icon_list_node);
 			}
 		}
 
@@ -68,7 +68,7 @@ namespace unicore
 				options.actions[UIActionType::OnClick] =
 					[this, store_type] { item_set_type(store_type); };
 				_type_nodes[store_type] = _document.create_node(
-					UINodeType::Item, options, _type_node);
+					UINodeTag::Item, options, _type_node);
 			}
 		}
 

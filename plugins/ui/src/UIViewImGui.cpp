@@ -122,7 +122,7 @@ namespace unicore
 			return false;
 		}
 
-		const auto type = node.type();
+		const auto tag = node.tag();
 		const auto& id = cached_info->id;
 		const auto& title = cached_info->title;
 
@@ -149,9 +149,9 @@ namespace unicore
 		ImTextureID texture_id;
 		ImVec2 size, uv0, uv1;
 
-		switch (type)
+		switch (tag)
 		{
-		case UINodeType::Group:
+		case UINodeTag::Group:
 			switch (node.variant().get_enum<UIGroupVariant>())
 			{
 			case UIGroupVariant::Vertical:
@@ -243,7 +243,7 @@ namespace unicore
 			}
 			break;
 
-		case UINodeType::Text:
+		case UINodeTag::Text:
 			str = node.attribute(UIAttributeType::Text).get_string();
 
 			render_node_header(node, layout_option);
@@ -251,7 +251,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::Image:
+		case UINodeTag::Image:
 			render_node_header(node, layout_option);
 			if (get_texture(node.value(), texture_id, size, uv0, uv1))
 			{
@@ -262,7 +262,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::Input:
+		case UINodeTag::Input:
 			render_node_header(node, layout_option);
 			switch (node.variant().get_enum<UIInputVariant>())
 			{
@@ -375,7 +375,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::Tooltip:
+		case UINodeTag::Tooltip:
 			if (node.visible())
 			{
 				ImGui::BeginTooltip();
@@ -390,7 +390,7 @@ namespace unicore
 			}
 			return false;
 
-		case UINodeType::Item:
+		case UINodeTag::Item:
 			bool_value = node.value().get_bool();
 			render_node_header(node, layout_option);
 			if (ImGui::Selectable(title.c_str(), bool_value))
@@ -398,7 +398,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::Tree:
+		case UINodeTag::Tree:
 			bool_value = node.value().get_bool();
 			ImGui::SetNextItemOpen(bool_value);
 			render_node_header(node, layout_option);
@@ -417,7 +417,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::Combo:
+		case UINodeTag::Combo:
 			str = node.value().get_string();
 			render_node_header(node, layout_option);
 			if (ImGui::BeginCombo(title.c_str(), str.c_str()))
@@ -429,7 +429,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::Table:
+		case UINodeTag::Table:
 			render_node_header(node, layout_option);
 			if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
 				ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
@@ -441,7 +441,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::TableHeader:
+		case UINodeTag::TableHeader:
 			str = node.text().get_string();
 
 			ImGui::TableNextColumn();
@@ -450,7 +450,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::TableRow:
+		case UINodeTag::TableRow:
 			ImGui::TableNextRow();
 			render_node_header(node, layout_option);
 			ImGui::BeginGroup();
@@ -461,7 +461,7 @@ namespace unicore
 
 			return true;
 
-		case UINodeType::TableCell:
+		case UINodeTag::TableCell:
 			ImGui::TableNextColumn();
 
 			render_node_header(node, layout_option);
@@ -479,7 +479,7 @@ namespace unicore
 
 			return true;
 
-		case UINodeType::Progress:
+		case UINodeTag::Progress:
 			range_f = {
 				node.attribute(UIAttributeType::MinValue).get_float(0),
 				node.attribute(UIAttributeType::MaxValue).get_float(1)

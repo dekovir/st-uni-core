@@ -43,9 +43,9 @@ namespace unicore
 		// FIND //////////////////////////////////////////////////////////////////////
 		UC_NODISCARD UINode find_by_id(StringView id) const;
 
-		UC_NODISCARD UINode find_by_type(UINodeType type,
+		UC_NODISCARD UINode find_by_type(UINodeTag tag,
 			const UINode& parent = UINode::Empty) const;
-		Size find_all_by_type(UINodeType type, List<UINode>& list,
+		Size find_all_by_type(UINodeTag tag, List<UINode>& list,
 			const UINode& parent = UINode::Empty) const;
 
 		UC_NODISCARD UINode find_by_name(StringView name,
@@ -64,7 +64,7 @@ namespace unicore
 		void send_event(const UIEvent& evt);
 
 		// CREATE ////////////////////////////////////////////////////////////////////
-		UINode create_node(UINodeType type, const UINodeOptions& options,
+		UINode create_node(UINodeTag tag, const UINodeOptions& options,
 			const UINode& parent = UINode::Empty);
 
 		UINode duplicate(const UINode& node, const UINode& at_parent = UINode::Empty);
@@ -74,7 +74,7 @@ namespace unicore
 		// VALUES ////////////////////////////////////////////////////////////////////
 		UC_NODISCARD Bool is_node_valid(const UINode& node) const;
 
-		UC_NODISCARD Bool get_node_type(const UINode& node, UINodeType& value) const;
+		UC_NODISCARD Bool get_node_tag(const UINode& node, UINodeTag& value) const;
 
 		UC_NODISCARD Bool get_node_uid(const UINode& node, String& value) const;
 
@@ -121,7 +121,7 @@ namespace unicore
 	protected:
 		struct NodeInfo
 		{
-			UINodeType type = UINodeType::Group;
+			UINodeTag tag = UINodeTag::Group;
 			String uid;
 			String name;
 			String style;
@@ -167,7 +167,7 @@ namespace unicore
 		UC_NODISCARD UINode node_from_index(UINode::IndexType index) const;
 
 		void internal_find_all_by_type(UINode::IndexType index,
-			UINodeType type, List<UINode>& list, Size& count) const;
+			UINodeTag tag, List<UINode>& list, Size& count) const;
 		void internal_find_all_by_name(UINode::IndexType index,
 			StringView name, List<UINode>& list, Size& count) const;
 

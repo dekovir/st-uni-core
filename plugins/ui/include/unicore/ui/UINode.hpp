@@ -4,7 +4,7 @@
 
 namespace unicore
 {
-	enum class UINodeType
+	enum class UINodeTag
 	{
 		Group,
 		Text,
@@ -55,7 +55,7 @@ namespace unicore
 
 		UC_NODISCARD Bool empty() const;
 		UC_NODISCARD Bool valid() const;
-		UC_NODISCARD UINodeType type() const;
+		UC_NODISCARD UINodeTag tag() const;
 		UC_NODISCARD UINode parent() const;
 
 		UC_NODISCARD Optional<String> uid() const;
@@ -83,8 +83,8 @@ namespace unicore
 		UC_NODISCARD UINode get_prev_sibling() const;
 
 		// FIND //////////////////////////////////////////////////////////////////////
-		UC_NODISCARD UINode find_by_type(UINodeType type) const;
-		Size find_all_by_type(UINodeType type, List<UINode>& list) const;
+		UC_NODISCARD UINode find_by_type(UINodeTag tag) const;
+		Size find_all_by_type(UINodeTag tag, List<UINode>& list) const;
 
 		UC_NODISCARD UINode find_by_name(StringView name) const;
 		Size find_all_by_name(StringView name, List<UINode>& list) const;

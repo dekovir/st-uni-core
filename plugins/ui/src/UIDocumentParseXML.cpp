@@ -4,22 +4,22 @@
 
 namespace unicore
 {
-	static const Dictionary<StringView, UINodeType> s_tag_type =
+	static const Dictionary<StringView, UINodeTag> s_tag_type =
 	{
-		{"group", UINodeType::Group},
-		{"text", UINodeType::Text},
-		{"image", UINodeType::Image},
-		{"img", UINodeType::Image},
-		{"input", UINodeType::Input},
-		{"tooltip", UINodeType::Tooltip},
-		{"item", UINodeType::Item},
-		{"tree", UINodeType::Tree},
-		{"combo", UINodeType::Combo},
-		{"table", UINodeType::Table},
-		{"th", UINodeType::TableHeader},
-		{"tr", UINodeType::TableRow},
-		{"td", UINodeType::TableCell},
-		{"progress", UINodeType::Progress},
+		{"group", UINodeTag::Group},
+		{"text", UINodeTag::Text},
+		{"image", UINodeTag::Image},
+		{"img", UINodeTag::Image},
+		{"input", UINodeTag::Input},
+		{"tooltip", UINodeTag::Tooltip},
+		{"item", UINodeTag::Item},
+		{"tree", UINodeTag::Tree},
+		{"combo", UINodeTag::Combo},
+		{"table", UINodeTag::Table},
+		{"th", UINodeTag::TableHeader},
+		{"tr", UINodeTag::TableRow},
+		{"td", UINodeTag::TableCell},
+		{"progress", UINodeTag::Progress},
 	};
 
 	static const Dictionary<StringView, UIAttributeType> s_attr_name =
@@ -71,7 +71,7 @@ namespace unicore
 
 	using VariantType = StdVariant<std::nullopt_t, UIGroupVariant, UIInputVariant>;
 
-	static Optional<UINodeType> parse_tag(StringView tag, VariantType& variant)
+	static Optional<UINodeTag> parse_tag(StringView tag, VariantType& variant)
 	{
 		for (const auto& it : s_tag_type)
 		{
@@ -87,7 +87,7 @@ namespace unicore
 			if (StringHelper::equals(it.first, tag, true))
 			{
 				variant = it.second;
-				return UINodeType::Group;
+				return UINodeTag::Group;
 			}
 		}
 
@@ -96,7 +96,7 @@ namespace unicore
 			if (StringHelper::equals(it.first, tag, true))
 			{
 				variant = it.second;
-				return UINodeType::Input;
+				return UINodeTag::Input;
 			}
 		}
 
@@ -135,21 +135,21 @@ namespace unicore
 	{
 		VariantType input_variant = std::nullopt;
 		const auto tag = StringView(node->Value());
-		const auto node_type = parse_tag(tag, input_variant);
+		const auto node_tag = parse_tag(tag, input_variant);
 
-		if (!node_type.has_value())
+		if (!node_tag.has_value())
 		{
 			UC_LOG_WARNING(logger) << "Failed to parse '" << tag << "' tag at line " << node->GetLineNum();
 			return;
 		}
 
-		if (node_type.value() == UINodeType::Group)
+		if (node_tag.value() == UINodeTag::Group)
 		{
 			if (const auto str = node->Attribute("variant"); str != nullptr)
 				input_variant = parse_enum_variant<UIGroupVariant>(str, s_group_variant);
 		}
 
-		if (node_type.value() == UINodeType::Input)
+		if (node_tag.value() == UINodeTag::Input)
 		{
 			if (const auto str = node->Attribute("variant"); str != nullptr)
 				input_variant = parse_enum_variant<UIInputVariant>(str, s_input_variant);
@@ -185,7 +185,7 @@ namespace unicore
 				options.attributes[type] = parse_value(t);
 		}
 
-		const auto index = doc.create_node(node_type.value(), options, parent);
+		const auto index = doc.create_node(node_tag.value(), options, parent);
 		for (auto child = node->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
 			parse_node_recurse(child, doc, index, logger);
 	}

@@ -51,7 +51,7 @@ namespace unicore
 
 						UINodeOptions options;
 						options.attributes[UIAttributeType::Text] = text;
-						_test_doc->create_node(UINodeType::Item, options, group_node);
+						_test_doc->create_node(UINodeTag::Item, options, group_node);
 					});
 			}
 
@@ -64,13 +64,13 @@ namespace unicore
 					options.attributes[UIAttributeType::Text] = str;
 					options.attributes[UIAttributeType::Value] = (i == 0);
 
-					auto node = _test_doc->create_node(UINodeType::Item, options, combo_node);
+					auto node = _test_doc->create_node(UINodeTag::Item, options, combo_node);
 					_test_doc->set_node_action(node, UIActionType::OnClick,
 						[this, combo_node, node]
 						{
 							for (const auto& child : combo_node.get_children())
 							{
-								if (child.type() == UINodeType::Item)
+								if (child.tag() == UINodeTag::Item)
 									_test_doc->set_node_attribute(child, UIAttributeType::Value, false);
 							}
 

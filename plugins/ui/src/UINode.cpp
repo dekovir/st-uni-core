@@ -17,16 +17,16 @@ namespace unicore
 		return _document && _document->is_node_valid(*this);
 	}
 
-	UINodeType UINode::type() const
+	UINodeTag UINode::tag() const
 	{
 		if (_document)
 		{
-			UINodeType type;
-			if (_document->get_node_type(*this, type))
+			UINodeTag type;
+			if (_document->get_node_tag(*this, type))
 				return type;
 		}
 
-		return UINodeType::Group;
+		return UINodeTag::Group;
 	}
 
 	UINode UINode::parent() const
@@ -153,14 +153,14 @@ namespace unicore
 	}
 
 	// FIND //////////////////////////////////////////////////////////////////////
-	UINode UINode::find_by_type(UINodeType type) const
+	UINode UINode::find_by_type(UINodeTag tag) const
 	{
-		return _document ? _document->find_by_type(type, *this) : Empty;
+		return _document ? _document->find_by_type(tag, *this) : Empty;
 	}
 
-	Size UINode::find_all_by_type(UINodeType type, List<UINode>& list) const
+	Size UINode::find_all_by_type(UINodeTag tag, List<UINode>& list) const
 	{
-		return _document ? _document->find_all_by_type(type, list, *this) : 0;
+		return _document ? _document->find_all_by_type(tag, list, *this) : 0;
 	}
 
 	UINode UINode::find_by_name(StringView name) const
@@ -185,6 +185,6 @@ namespace unicore
 
 	UNICODE_STRING_BUILDER_FORMAT(const UINode&)
 	{
-		return builder << "N(" << value.type() << ":" << value.index() << ")";
+		return builder << "N(" << value.tag() << ":" << value.index() << ")";
 	}
 }
