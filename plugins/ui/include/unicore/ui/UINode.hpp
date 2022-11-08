@@ -24,10 +24,8 @@ namespace unicore
 		Text,
 		Image,
 		Input,
-		Tooltip,
 		Item,
 		Tree,
-		Combo,
 		Table,
 		TableHeader,
 		TableRow,
@@ -41,8 +39,10 @@ namespace unicore
 		Horizontal,
 		Child,
 		List,
+		Combo,
 		Flex,
 		Popup,
+		Tooltip,
 		Modal,
 	};
 

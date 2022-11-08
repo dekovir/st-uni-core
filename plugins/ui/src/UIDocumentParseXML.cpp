@@ -11,10 +11,8 @@ namespace unicore
 		{"image", UINodeTag::Image},
 		{"img", UINodeTag::Image},
 		{"input", UINodeTag::Input},
-		{"tooltip", UINodeTag::Tooltip},
 		{"item", UINodeTag::Item},
 		{"tree", UINodeTag::Tree},
-		{"combo", UINodeTag::Combo},
 		{"table", UINodeTag::Table},
 		{"th", UINodeTag::TableHeader},
 		{"tr", UINodeTag::TableRow},
@@ -40,8 +38,10 @@ namespace unicore
 		{"horizontal", UIGroupType::Horizontal},
 		{"child", UIGroupType::Child},
 		{"list", UIGroupType::List},
+		{"combo", UIGroupType::Combo},
 		{"flex", UIGroupType::Flex},
 		{"popup", UIGroupType::Popup},
+		{"tooltip", UIGroupType::Tooltip},
 		{"modal", UIGroupType::Modal},
 	};
 

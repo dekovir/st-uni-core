@@ -151,7 +151,7 @@ namespace unicore
 
 		switch (tag)
 		{
-		case UINodeTag::Group:
+		case UINodeTag::Group: // GROUP ////////////////////////////////////////////
 			switch (node.type().get_enum<UIGroupType>())
 			{
 			case UIGroupType::Vertical:
@@ -198,6 +198,18 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
+			case UIGroupType::Combo:
+				str = node.value().get_string();
+				render_node_header(node, layout_option);
+				if (ImGui::BeginCombo(title.c_str(), str.c_str()))
+				{
+					for (const auto& child : children)
+						render_node(child);
+					ImGui::EndCombo();
+				}
+				render_node_footer(node);
+				return true;
+
 			case UIGroupType::Flex:
 				render_node_header(node, layout_option);
 				if (ImGui::BeginListBox(id.c_str(), { width, height }))
@@ -225,6 +237,21 @@ namespace unicore
 				}
 				break;
 
+			case UIGroupType::Tooltip:
+				if (node.visible())
+				{
+					ImGui::BeginTooltip();
+
+					str = node.attribute(UIAttributeType::Text).get_string();
+					if (!str.empty())
+						ImGui::Text("%s", str.c_str());
+
+					for (const auto& child : children)
+						render_node(child);
+					ImGui::EndTooltip();
+				}
+				break;
+
 			case UIGroupType::Modal:
 				if (node.value().get_bool())
 				{
@@ -243,7 +270,7 @@ namespace unicore
 			}
 			break;
 
-		case UINodeTag::Text:
+		case UINodeTag::Text: // TEXT //////////////////////////////////////////////
 			str = node.attribute(UIAttributeType::Text).get_string();
 
 			render_node_header(node, layout_option);
@@ -251,7 +278,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeTag::Image:
+		case UINodeTag::Image: // IMAGE ////////////////////////////////////////////
 			render_node_header(node, layout_option);
 			if (get_texture(node.value(), texture_id, size, uv0, uv1))
 			{
@@ -262,7 +289,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeTag::Input:
+		case UINodeTag::Input: // INPUT ////////////////////////////////////////////
 			render_node_header(node, layout_option);
 			switch (node.type().get_enum<UIInputType>())
 			{
@@ -375,22 +402,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeTag::Tooltip:
-			if (node.visible())
-			{
-				ImGui::BeginTooltip();
-
-				str = node.attribute(UIAttributeType::Text).get_string();
-				if (!str.empty())
-					ImGui::Text("%s", str.c_str());
-
-				for (const auto& child : children)
-					render_node(child);
-				ImGui::EndTooltip();
-			}
-			return false;
-
-		case UINodeTag::Item:
+		case UINodeTag::Item: // ITEM //////////////////////////////////////////////
 			bool_value = node.value().get_bool();
 			render_node_header(node, layout_option);
 			if (ImGui::Selectable(title.c_str(), bool_value))
@@ -398,7 +410,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeTag::Tree:
+		case UINodeTag::Tree: // TREE //////////////////////////////////////////////
 			bool_value = node.value().get_bool();
 			ImGui::SetNextItemOpen(bool_value);
 			render_node_header(node, layout_option);
@@ -417,19 +429,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UINodeTag::Combo:
-			str = node.value().get_string();
-			render_node_header(node, layout_option);
-			if (ImGui::BeginCombo(title.c_str(), str.c_str()))
-			{
-				for (const auto& child : children)
-					render_node(child);
-				ImGui::EndCombo();
-			}
-			render_node_footer(node);
-			return true;
-
-		case UINodeTag::Table:
+		case UINodeTag::Table: // TABLE ////////////////////////////////////////////
 			render_node_header(node, layout_option);
 			if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
 				ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
