@@ -20,13 +20,12 @@ namespace unicore
 
 	enum class UINodeTag
 	{
-		Group,
+		Group, // Can have children
 		Text,
 		Color,
 		Image,
 		Input,
 		Item,
-		Table,
 		Progress,
 	};
 
@@ -39,6 +38,10 @@ namespace unicore
 		Tree,
 		Combo,
 		Flex,
+		Table,
+		TableHeader,
+		TableRow,
+		TableCell,
 		Popup,
 		Tooltip,
 		Modal,
@@ -70,14 +73,6 @@ namespace unicore
 		Vector3,
 		Color3,
 		Color4,
-	};
-
-	enum class UITableType
-	{
-		Body,
-		Header,
-		Row,
-		Cell,
 	};
 
 	class UIDocument;

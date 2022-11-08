@@ -274,6 +274,12 @@ namespace unicore
 			return UINode::Empty;
 		}
 
+		if (parent.valid() && parent.tag() != UINodeTag::Group)
+		{
+			UC_LOG_ERROR(_logger) << "Failed to create node. Only group tag can have children";
+			return UINode::Empty;
+		}
+
 		const auto index = create_index();
 		auto& info = _nodes[index];
 
@@ -815,6 +821,12 @@ namespace unicore
 
 	UINode UIDocument::internal_duplicate_recurse(const UINode& node, const UINode& parent)
 	{
+		if (parent.valid() && parent.tag() != UINodeTag::Group)
+		{
+			UC_LOG_ERROR(_logger) << "Failed to duplicate node. Only group tag can have children";
+			return UINode::Empty;
+		}
+
 		if (const auto info = get_info(node))
 		{
 			UINodeOptions options;

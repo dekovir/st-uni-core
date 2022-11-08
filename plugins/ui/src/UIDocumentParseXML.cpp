@@ -13,8 +13,6 @@ namespace unicore
 		{"img", UINodeTag::Image},
 		{"input", UINodeTag::Input},
 		{"item", UINodeTag::Item},
-		{"table", UINodeTag::Table},
-
 		{"progress", UINodeTag::Progress},
 	};
 
@@ -39,6 +37,10 @@ namespace unicore
 		{"tree", UIGroupType::Tree},
 		{"combo", UIGroupType::Combo},
 		{"flex", UIGroupType::Flex},
+		{"table", UIGroupType::Table},
+		{"th", UIGroupType::TableHeader},
+		{"tr", UIGroupType::TableRow},
+		{"td", UIGroupType::TableCell},
 		{"popup", UIGroupType::Popup},
 		{"tooltip", UIGroupType::Tooltip},
 		{"modal", UIGroupType::Modal},
@@ -78,14 +80,7 @@ namespace unicore
 		{"slider", UIInputType::Range},
 	};
 
-	static const Dictionary<StringView, UITableType> s_table_type =
-	{
-		{"th", UITableType::Header},
-		{"tr", UITableType::Row},
-		{"td", UITableType::Cell},
-	};
-
-	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UITextType, UIInputType, UITableType>;
+	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UITextType, UIInputType>;
 
 	static Optional<UINodeTag> parse_tag(StringView tag, VariantType& variant)
 	{
@@ -122,15 +117,6 @@ namespace unicore
 			{
 				variant = it.second;
 				return UINodeTag::Input;
-			}
-		}
-
-		for (const auto& it : s_table_type)
-		{
-			if (StringHelper::equals(it.first, tag, true))
-			{
-				variant = it.second;
-				return UINodeTag::Table;
 			}
 		}
 
@@ -207,12 +193,6 @@ namespace unicore
 				input_variant = parse_enum_variant<UIInputType>(str, s_input_type);
 		}
 
-		if (node_tag.value() == UINodeTag::Table)
-		{
-			if (const auto str = node->Attribute("type"); str != nullptr)
-				input_variant = parse_enum_variant<UITableType>(str, s_table_type);
-		}
-
 		// Fill options
 		UINodeOptions options;
 
@@ -223,9 +203,6 @@ namespace unicore
 			options.attributes[UIAttribute::Type] = *ptr;
 
 		if (const auto ptr = std::get_if<UIInputType>(&input_variant))
-			options.attributes[UIAttribute::Type] = *ptr;
-
-		if (const auto ptr = std::get_if<UITableType>(&input_variant))
 			options.attributes[UIAttribute::Type] = *ptr;
 
 		if (const auto value = node->GetText(); value != nullptr)

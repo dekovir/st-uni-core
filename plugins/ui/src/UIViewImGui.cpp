@@ -240,6 +240,52 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
+			case UIGroupType::Table:
+				render_node_header(node, layout_option);
+				if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
+					ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
+				{
+					for (const auto& child : children)
+						render_node(child);
+					ImGui::EndTable();
+				}
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::TableHeader:
+				render_node_header(node, layout_option);
+				str = node.text().get_string();
+				ImGui::TableNextColumn();
+				ImGui::TableHeader(str.c_str());
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::TableRow:
+				render_node_header(node, layout_option);
+				ImGui::TableNextRow();
+				ImGui::BeginGroup();
+				for (const auto& child : children)
+					render_node(child);
+				ImGui::EndGroup();
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::TableCell:
+				render_node_header(node, layout_option);
+				ImGui::TableNextColumn();
+				ImGui::BeginGroup();
+				if (node.get(UIAttribute::Text).try_get_string(str))
+					ImGui::Text("%s", str.c_str());
+
+				if (!children.empty())
+				{
+					for (const auto& child : children)
+						render_node(child);
+				}
+				ImGui::EndGroup();
+				render_node_footer(node);
+				return true;
+
 			case UIGroupType::Popup:
 				if (node.value().get_bool())
 				{
@@ -456,52 +502,6 @@ namespace unicore
 			render_node_header(node, layout_option);
 			if (ImGui::Selectable(title.c_str(), bool_value))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
-			render_node_footer(node);
-			return true;
-
-		case UINodeTag::Table: // TABLE ////////////////////////////////////////////
-			render_node_header(node, layout_option);
-			switch (node.type().get_enum<UITableType>())
-			{
-			case UITableType::Body:
-				if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
-					ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
-				{
-					for (const auto& child : children)
-						render_node(child);
-					ImGui::EndTable();
-				}
-				break;
-
-			case UITableType::Header:
-				str = node.text().get_string();
-				ImGui::TableNextColumn();
-				ImGui::TableHeader(str.c_str());
-				break;
-
-			case UITableType::Row:
-				ImGui::TableNextRow();
-				ImGui::BeginGroup();
-				for (const auto& child : children)
-					render_node(child);
-				ImGui::EndGroup();
-				break;
-
-			case UITableType::Cell:
-				ImGui::TableNextColumn();
-				ImGui::BeginGroup();
-				if (node.get(UIAttribute::Text).try_get_string(str))
-					ImGui::Text("%s", str.c_str());
-
-				if (!children.empty())
-				{
-					for (const auto& child : children)
-						render_node(child);
-				}
-				ImGui::EndGroup();
-				break;
-			}
-
 			render_node_footer(node);
 			return true;
 
