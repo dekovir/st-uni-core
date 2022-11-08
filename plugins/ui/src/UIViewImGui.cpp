@@ -198,6 +198,25 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
+			case UIGroupType::Tree:
+				bool_value = node.value().get_bool();
+				ImGui::SetNextItemOpen(bool_value);
+				render_node_header(node, layout_option);
+				if (ImGui::TreeNode(title.c_str()))
+				{
+					if (!bool_value)
+						_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+
+					for (const auto& child : children)
+						render_node(child);
+
+					ImGui::TreePop();
+				}
+				else if (bool_value)
+					_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+				render_node_footer(node);
+				return true;
+
 			case UIGroupType::Combo:
 				str = node.value().get_string();
 				render_node_header(node, layout_option);
@@ -437,25 +456,6 @@ namespace unicore
 			render_node_header(node, layout_option);
 			if (ImGui::Selectable(title.c_str(), bool_value))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
-			render_node_footer(node);
-			return true;
-
-		case UINodeTag::Tree: // TREE //////////////////////////////////////////////
-			bool_value = node.value().get_bool();
-			ImGui::SetNextItemOpen(bool_value);
-			render_node_header(node, layout_option);
-			if (ImGui::TreeNode(title.c_str()))
-			{
-				if (!bool_value)
-					_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
-
-				for (const auto& child : children)
-					render_node(child);
-
-				ImGui::TreePop();
-			}
-			else if (bool_value)
-				_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
 			render_node_footer(node);
 			return true;
 

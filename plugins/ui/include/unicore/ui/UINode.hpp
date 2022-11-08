@@ -26,7 +26,6 @@ namespace unicore
 		Image,
 		Input,
 		Item,
-		Tree,
 		Table,
 		Progress,
 	};
@@ -37,6 +36,7 @@ namespace unicore
 		Horizontal,
 		Child,
 		List,
+		Tree,
 		Combo,
 		Flex,
 		Popup,

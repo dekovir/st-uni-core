@@ -13,7 +13,6 @@ namespace unicore
 		{"img", UINodeTag::Image},
 		{"input", UINodeTag::Input},
 		{"item", UINodeTag::Item},
-		{"tree", UINodeTag::Tree},
 		{"table", UINodeTag::Table},
 
 		{"progress", UINodeTag::Progress},
@@ -37,6 +36,7 @@ namespace unicore
 		{"horizontal", UIGroupType::Horizontal},
 		{"child", UIGroupType::Child},
 		{"list", UIGroupType::List},
+		{"tree", UIGroupType::Tree},
 		{"combo", UIGroupType::Combo},
 		{"flex", UIGroupType::Flex},
 		{"popup", UIGroupType::Popup},
