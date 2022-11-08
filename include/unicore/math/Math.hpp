@@ -13,7 +13,12 @@ namespace unicore
 		struct has_lerp_static_method<T, std::void_t<decltype(T::lerp)>> : std::true_type {};
 
 		template <class T>
-		inline constexpr bool has_lerp_static_method_t = has_lerp_static_method<T>::value;
+		inline constexpr bool has_lerp_static_method_v =
+			has_lerp_static_method<T>::value;
+
+		template<class T>
+		inline constexpr bool is_numeric_v =
+			std::is_integral_v<T> || std::is_floating_point_v<T>;
 	}
 
 	namespace Math
@@ -35,7 +40,7 @@ namespace unicore
 			template<> struct floating_to_integral<double> { using Type = Int64; };
 		}
 
-		// EVENT, ODD, ABS, SIGN, MOD ////////////////////////////////////////////////
+		// EVENT, ODD, ABS, SIGN, MOD //////////////////////////////////////////////
 		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 		static constexpr bool even(T value) { return (value % 2) == 0; }
 
@@ -57,68 +62,99 @@ namespace unicore
 		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 		static constexpr T mod(T value, T length) { return value % length; }
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static constexpr T mod(T a, T b)
 		{
-			return a - b * static_cast<typename internal::floating_to_integral<T>::Type>(a / b);
+			using ResultType = typename internal::floating_to_integral<T>::Type;
+			return a - b * static_cast<ResultType>(a / b);
 		}
 
-		// ROUND, CEIL, FLOOR ////////////////////////////////////////////////////////
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		// ROUND, CEIL, FLOOR, TRUNC, FRAC /////////////////////////////////////////
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T round(T value) { return std::round(value); }
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T ceil(T value) { return std::ceil(value); }
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T floor(T value) { return std::floor(value); }
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline auto round_to_int(T value)
 		{
-			return static_cast<typename internal::floating_to_integral<T>::Type>(round(value));
+			using ResultType = typename internal::floating_to_integral<T>::Type;
+			return static_cast<ResultType>(round(value));
 		}
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline auto ceil_to_int(T value)
 		{
-			return static_cast<typename internal::floating_to_integral<T>::Type>(ceil(value));
+			using ResultType = typename internal::floating_to_integral<T>::Type;
+			return static_cast<ResultType>(ceil(value));
 		}
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline auto floor_to_int(T value)
 		{
-			return static_cast<typename internal::floating_to_integral<T>::Type>(floor(value));
+			using ResultType = typename internal::floating_to_integral<T>::Type;
+			return static_cast<ResultType>(floor(value));
 		}
 
-		// MIN, MAX //////////////////////////////////////////////////////////////////
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static inline T trunc(T value)
+		{
+			return std::trunc(value);
+		}
+
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static inline T frac(T value)
+		{
+			return value - std::trunc(value);
+		}
+
+		// MIN, MAX ////////////////////////////////////////////////////////////////
 		template<typename T>
 		static constexpr T min(T a, T b) { return a < b ? a : b; }
 
 		template<typename T>
 		static constexpr T max(T a, T b) { return a > b ? a : b; }
 
-		// SIN, COS, ASIN, ACOS //////////////////////////////////////////////////////
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		// SIN, COS, ASIN, ACOS ////////////////////////////////////////////////////
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T sin(T value) { return std::sin(value); }
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T cos(T value) { return std::cos(value); }
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T asin(T value) { return std::asin(value); }
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T acos(T value) { return std::acos(value); }
 
-		// POW, SQRT /////////////////////////////////////////////////////////////////
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		// POW, SQRT ///////////////////////////////////////////////////////////////
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T pow(T value, T count = 2) { return std::pow(value, count); }
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T sqrt(T value) { return std::sqrt(value); }
 
-		// EQUALS, COMPARE ///////////////////////////////////////////////////////////
+		// EQUALS, COMPARE /////////////////////////////////////////////////////////
 		template<typename T>
 		static constexpr bool equals(T a, T b)
 		{
@@ -139,7 +175,21 @@ namespace unicore
 			return 0;
 		}
 
-		// CLAMP /////////////////////////////////////////////////////////////////////
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static inline bool has_frac(T value)
+		{
+			return abs(frac(value)) > 0;
+		}
+
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static inline bool is_integral(T value)
+		{
+			return !has_frac(value);
+		}
+
+		// CLAMP /////////////////////////////////////////////////////////////////
 		template<typename T>
 		static constexpr T clamp(T value, T min_value, T max_value)
 		{
@@ -148,7 +198,8 @@ namespace unicore
 			return value;
 		}
 
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static constexpr T clamp_01(T value)
 		{
 			return clamp(value, static_cast<T>(0), static_cast<T>(1));
@@ -168,22 +219,25 @@ namespace unicore
 			return value;
 		}
 
-		// SNAP //////////////////////////////////////////////////////////////////////
-		template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-		static T snap(T value, T snap)
+		// SNAP ////////////////////////////////////////////////////////////////////
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static inline T snap(T value, T snap)
 		{
 			if (equals(value, 0)) return value;
 			return snap * round(value / snap);
 		}
 
-		// LERP //////////////////////////////////////////////////////////////////////
-		template<typename T, std::enable_if_t<sfinae::has_lerp_static_method_t<T>>* = nullptr>
+		// LERP ////////////////////////////////////////////////////////////////////
+		template<typename T,
+			std::enable_if_t<sfinae::has_lerp_static_method_v<T>>* = nullptr>
 		static constexpr T lerp(const T& a, const T& b, float t)
 		{
 			return T::lerp(a, b, t);
 		}
 
-		template<typename T, std::enable_if_t<!sfinae::has_lerp_static_method_t<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<!sfinae::has_lerp_static_method_v<T>>* = nullptr>
 		static constexpr T lerp(T a, T b, float t)
 		{
 			return static_cast<T>((b - a) * t + a);
@@ -195,10 +249,13 @@ namespace unicore
 			return static_cast<Float>(t - a) / static_cast<Float>(b - a);
 		}
 
-		template<typename T, std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>>* = nullptr>
+		template<typename T,
+			std::enable_if_t<sfinae::is_numeric_v<T>>* = nullptr>
 		static constexpr Float inverse_lerp_numeric(T value)
 		{
-			return inverse_lerp(std::numeric_limits<T>::min(), std::numeric_limits<T>::max(), value);
+			return inverse_lerp(
+				std::numeric_limits<T>::min(),
+				std::numeric_limits<T>::max(), value);
 		}
 	}
 }

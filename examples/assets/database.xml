@@ -52,12 +52,12 @@
 
 			<horizontal>
 				<text>Price</text>
-				<input name="price" type="number" />
+				<input name="price" type="integer" min="0" max="99999" />
 			</horizontal>
 
 			<horizontal>
 				<text>Weight</text>
-				<input name="weight" type="number" />
+				<input name="weight" type="integer" min="0" max="99999" />
 			</horizontal>
 
 			<text>Description</text>

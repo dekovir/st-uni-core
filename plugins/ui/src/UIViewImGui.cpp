@@ -140,11 +140,11 @@ namespace unicore
 		Vector3f vec3_value;
 		Color3f col3_value;
 		Color4f col4_value;
-		Rectf rect_value;
 
 		String str;
 		String32 str32;
 		Rangef range_f;
+		Rangei range_i;
 
 		ImTextureID texture_id;
 		ImVec2 size, uv0, uv1;
@@ -178,12 +178,12 @@ namespace unicore
 
 			case UIGroupType::Child:
 				render_node_header(node, layout_option);
-				if (ImGui::BeginChild(id.c_str(), { width, height }))
+				if (ImGui::BeginChild(id.c_str(), { width, height }, false, ImGuiWindowFlags_AlwaysAutoResize))
 				{
 					for (const auto& child : children)
 						render_node(child);
-					ImGui::EndChild();
 				}
+				ImGui::EndChild();
 				render_node_footer(node);
 				return true;
 
@@ -352,12 +352,32 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
-			case UIInputType::Number:
-				// TODO: Implement min/max
-				// TODO: Implement ImGui::InputInt
+			case UIInputType::Integer:
+				range_i = {
+					node.get(UIAttribute::Min).get_int(std::numeric_limits<Int>::min()),
+					node.get(UIAttribute::Max).get_int(std::numeric_limits<Int>::max())
+				};
+
+				int_value = node.value().get_int();
+				if (ImGui::InputInt(id.c_str(), &int_value, node.get(UIAttribute::Step).get_int(1)))
+				{
+					int_value = range_i.clamp(int_value);
+					_update_events.push_back({ node, UIEventType::ValueChanged, int_value });
+				}
+				break;
+
+			case UIInputType::Float:
+				range_f = {
+					node.get(UIAttribute::Min).get_float(-std::numeric_limits<Float>::max()),
+					node.get(UIAttribute::Max).get_float(+std::numeric_limits<Float>::max())
+				};
 				float_value = node.value().get_float();
 				if (ImGui::InputFloat(id.c_str(), &float_value, node.get(UIAttribute::Step).get_float(1)))
+				{
+					float_value = range_f.clamp(float_value);
 					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
+				}
+
 				break;
 
 			case UIInputType::Range:

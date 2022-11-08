@@ -92,6 +92,17 @@ namespace unicore
 		return Variant::Empty;
 	}
 
+	Bool UINode::has(UIAttribute attribute) const
+	{
+		if (_document)
+		{
+			if (const auto result = _document->get_node_attribute(*this, attribute))
+				return result.has_value();
+		}
+
+		return false;
+	}
+
 	UIActionDict UINode::get_actions() const
 	{
 		if (_document)

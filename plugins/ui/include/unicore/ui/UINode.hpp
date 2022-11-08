@@ -51,7 +51,8 @@ namespace unicore
 		Radio,
 		Button,
 		Image,
-		Number,
+		Integer,
+		Float,
 		Range,
 		Vector2,
 		Vector3,
@@ -113,6 +114,7 @@ namespace unicore
 		UC_NODISCARD UIAttributeDict get_attributes() const;
 
 		UC_NODISCARD Variant get(UIAttribute attribute) const;
+		UC_NODISCARD Bool has(UIAttribute attribute) const;
 
 		UC_NODISCARD Variant value() const { return get(UIAttribute::Value); }
 		UC_NODISCARD Variant type() const { return get(UIAttribute::Type); }

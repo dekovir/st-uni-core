@@ -24,6 +24,11 @@ namespace unicore
 
 		UC_NODISCARD constexpr T size() const { return max - min; }
 
+		UC_NODISCARD constexpr T clamp(T value) const
+		{
+			return Math::clamp(value, min, max);
+		}
+
 		template<typename U>
 		UC_NODISCARD constexpr Range<U> cast() const
 		{
