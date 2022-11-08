@@ -35,7 +35,7 @@
 			<text name="damage_value">0</text>
 		</horizontal>
 		<!-- Status -->
-		<group variant="1" name="status_group">
+		<group type="1" name="status_group">
 			<text>Status:</text>
 			<progress name="status_value" value="0.8" w="80" h="16"/>
 		</group>

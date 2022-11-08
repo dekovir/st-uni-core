@@ -34,7 +34,7 @@
 		<group name="item_edit">
 			<horizontal>
 				<text>Icon</text>
-				<input name="icon" variant="image" />
+				<input name="icon" type="image" />
 				<popup name="icon_popup">
 					<flex name="icon_list" w="256" />
 				</popup>
@@ -52,12 +52,12 @@
 
 			<horizontal>
 				<text>Price</text>
-				<input name="price" variant="number" />
+				<input name="price" type="number" />
 			</horizontal>
 
 			<horizontal>
 				<text>Weight</text>
-				<input name="weight" variant="number" />
+				<input name="weight" type="number" />
 			</horizontal>
 
 			<text>Description</text>

@@ -5,8 +5,8 @@ namespace unicore
 {
 	enum class UIAttributeType
 	{
+		Type,
 		Value,
-		Variant,
 		Width,
 		Height,
 		Tooltip,
@@ -16,7 +16,7 @@ namespace unicore
 		MaxValue,
 	};
 
-	enum class UIGroupVariant
+	enum class UIGroupType
 	{
 		Vertical,
 		Horizontal,
@@ -27,7 +27,7 @@ namespace unicore
 		Modal,
 	};
 
-	enum class UIInputVariant
+	enum class UIInputType
 	{
 		Text,
 		TextArea,

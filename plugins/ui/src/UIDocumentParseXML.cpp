@@ -35,41 +35,41 @@ namespace unicore
 		{"max", UIAttributeType::MaxValue},
 	};
 
-	static const Dictionary<StringView, UIGroupVariant> s_group_variant = {
-		{"vertical", UIGroupVariant::Vertical},
-		{"horizontal", UIGroupVariant::Horizontal},
-		{"child", UIGroupVariant::Child},
-		{"list", UIGroupVariant::List},
-		{"flex", UIGroupVariant::Flex},
-		{"popup", UIGroupVariant::Popup},
-		{"modal", UIGroupVariant::Modal},
+	static const Dictionary<StringView, UIGroupType> s_group_type = {
+		{"vertical", UIGroupType::Vertical},
+		{"horizontal", UIGroupType::Horizontal},
+		{"child", UIGroupType::Child},
+		{"list", UIGroupType::List},
+		{"flex", UIGroupType::Flex},
+		{"popup", UIGroupType::Popup},
+		{"modal", UIGroupType::Modal},
 	};
 
-	static const Dictionary<StringView, UIInputVariant> s_input_variant =
+	static const Dictionary<StringView, UIInputType> s_input_type =
 	{
-		{"textarea", UIInputVariant::TextArea},
-		{"toggle", UIInputVariant::Toggle},
-		{"radio", UIInputVariant::Radio},
-		{"button", UIInputVariant::Button},
-		{"image", UIInputVariant::Image},
-		{"number", UIInputVariant::Number},
-		{"range", UIInputVariant::Range},
-		{"vector2", UIInputVariant::Vector2},
-		{"vector3", UIInputVariant::Vector3},
-		{"color3", UIInputVariant::Color3},
-		{"color4", UIInputVariant::Color4},
+		{"textarea", UIInputType::TextArea},
+		{"toggle", UIInputType::Toggle},
+		{"radio", UIInputType::Radio},
+		{"button", UIInputType::Button},
+		{"image", UIInputType::Image},
+		{"number", UIInputType::Number},
+		{"range", UIInputType::Range},
+		{"vector2", UIInputType::Vector2},
+		{"vector3", UIInputType::Vector3},
+		{"color3", UIInputType::Color3},
+		{"color4", UIInputType::Color4},
 	};
 
-	static const Dictionary<StringView, UIInputVariant> s_input_synonum =
+	static const Dictionary<StringView, UIInputType> s_input_synonum =
 	{
-		{"textarea", UIInputVariant::TextArea},
-		{"toggle", UIInputVariant::Toggle},
-		{"radio", UIInputVariant::Radio},
-		{"button", UIInputVariant::Button},
-		{"slider", UIInputVariant::Range},
+		{"textarea", UIInputType::TextArea},
+		{"toggle", UIInputType::Toggle},
+		{"radio", UIInputType::Radio},
+		{"button", UIInputType::Button},
+		{"slider", UIInputType::Range},
 	};
 
-	using VariantType = StdVariant<std::nullopt_t, UIGroupVariant, UIInputVariant>;
+	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UIInputType>;
 
 	static Optional<UINodeTag> parse_tag(StringView tag, VariantType& variant)
 	{
@@ -77,12 +77,12 @@ namespace unicore
 		{
 			if (StringHelper::equals(it.first, tag, true))
 			{
-				variant = UIInputVariant::Text;
+				variant = UIInputType::Text;
 				return it.second;
 			}
 		}
 
-		for (const auto& it : s_group_variant)
+		for (const auto& it : s_group_type)
 		{
 			if (StringHelper::equals(it.first, tag, true))
 			{
@@ -145,24 +145,24 @@ namespace unicore
 
 		if (node_tag.value() == UINodeTag::Group)
 		{
-			if (const auto str = node->Attribute("variant"); str != nullptr)
-				input_variant = parse_enum_variant<UIGroupVariant>(str, s_group_variant);
+			if (const auto str = node->Attribute("type"); str != nullptr)
+				input_variant = parse_enum_variant<UIGroupType>(str, s_group_type);
 		}
 
 		if (node_tag.value() == UINodeTag::Input)
 		{
-			if (const auto str = node->Attribute("variant"); str != nullptr)
-				input_variant = parse_enum_variant<UIInputVariant>(str, s_input_variant);
+			if (const auto str = node->Attribute("type"); str != nullptr)
+				input_variant = parse_enum_variant<UIInputType>(str, s_input_type);
 		}
 
 		// Fill options
 		UINodeOptions options;
 
-		if (const auto ptr = std::get_if<UIGroupVariant>(&input_variant))
-			options.attributes[UIAttributeType::Variant] = *ptr;
+		if (const auto ptr = std::get_if<UIGroupType>(&input_variant))
+			options.attributes[UIAttributeType::Type] = *ptr;
 
-		if (const auto ptr = std::get_if<UIInputVariant>(&input_variant))
-			options.attributes[UIAttributeType::Variant] = *ptr;
+		if (const auto ptr = std::get_if<UIInputType>(&input_variant))
+			options.attributes[UIAttributeType::Type] = *ptr;
 
 		if (const auto value = node->GetText(); value != nullptr)
 		{

@@ -152,9 +152,9 @@ namespace unicore
 		switch (tag)
 		{
 		case UINodeTag::Group:
-			switch (node.variant().get_enum<UIGroupVariant>())
+			switch (node.type().get_enum<UIGroupType>())
 			{
-			case UIGroupVariant::Vertical:
+			case UIGroupType::Vertical:
 				render_node_header(node, layout_option);
 				ImGui::BeginGroup();
 				for (const auto& child : children)
@@ -163,7 +163,7 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
-			case UIGroupVariant::Horizontal:
+			case UIGroupType::Horizontal:
 				render_node_header(node, layout_option);
 				ImGui::BeginGroup();
 				for (unsigned i = 0; i < children.size(); i++)
@@ -176,7 +176,7 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
-			case UIGroupVariant::Child:
+			case UIGroupType::Child:
 				render_node_header(node, layout_option);
 				if (ImGui::BeginChild(id.c_str(), { width, height }))
 				{
@@ -187,7 +187,7 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
-			case UIGroupVariant::List:
+			case UIGroupType::List:
 				render_node_header(node, layout_option);
 				if (ImGui::BeginListBox(id.c_str(), { width, height }))
 				{
@@ -198,7 +198,7 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
-			case UIGroupVariant::Flex:
+			case UIGroupType::Flex:
 				render_node_header(node, layout_option);
 				if (ImGui::BeginListBox(id.c_str(), { width, height }))
 				{
@@ -209,7 +209,7 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
-			case UIGroupVariant::Popup:
+			case UIGroupType::Popup:
 				if (node.value().get_bool())
 				{
 					ImGui::OpenPopup(id.c_str());
@@ -225,7 +225,7 @@ namespace unicore
 				}
 				break;
 
-			case UIGroupVariant::Modal:
+			case UIGroupType::Modal:
 				if (node.value().get_bool())
 				{
 					ImGui::OpenPopup(id.c_str());
@@ -264,27 +264,27 @@ namespace unicore
 
 		case UINodeTag::Input:
 			render_node_header(node, layout_option);
-			switch (node.variant().get_enum<UIInputVariant>())
+			switch (node.type().get_enum<UIInputType>())
 			{
-			case UIInputVariant::Text:
+			case UIInputType::Text:
 				str = node.value().get_string();
 				if (ImGui::InputText(id.c_str(), &str))
 					_update_events.push_back({ node, UIEventType::ValueChanged, str });
 				break;
 
-			case UIInputVariant::TextArea:
+			case UIInputType::TextArea:
 				str = node.value().get_string();
 				if (ImGui::InputTextMultiline(id.c_str(), &str, { width, height }))
 					_update_events.push_back({ node, UIEventType::ValueChanged, str });
 				break;
 
-			case UIInputVariant::Toggle:
+			case UIInputType::Toggle:
 				bool_value = node.value().get_bool();
 				if (ImGui::Checkbox(id.c_str(), &bool_value))
 					_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
 				break;
 
-			case UIInputVariant::Radio:
+			case UIInputType::Radio:
 				bool_value = node.value().get_bool();
 				if (ImGui::RadioButton(id.c_str(), bool_value))
 				{
@@ -293,7 +293,7 @@ namespace unicore
 				}
 				break;
 
-			case UIInputVariant::Button:
+			case UIInputType::Button:
 				if (ImGui::Button(title.c_str(), { width, height }))
 				{
 					_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
@@ -301,7 +301,7 @@ namespace unicore
 				}
 				break;
 
-			case UIInputVariant::Image:
+			case UIInputType::Image:
 				render_node_header(node, layout_option);
 				ImGui::PushID(id.c_str());
 				if (get_texture(node.value(), texture_id, size, uv0, uv1))
@@ -325,7 +325,7 @@ namespace unicore
 				render_node_footer(node);
 				return true;
 
-			case UIInputVariant::Number:
+			case UIInputType::Number:
 				// TODO: Implement min/max
 				// TODO: Implement ImGui::InputInt
 				float_value = node.value().get_float();
@@ -333,7 +333,7 @@ namespace unicore
 					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
 				break;
 
-			case UIInputVariant::Range:
+			case UIInputType::Range:
 				// TODO: Implement step
 				range_f = {
 					node.attribute(UIAttributeType::MinValue).get_float(0),
@@ -345,27 +345,27 @@ namespace unicore
 					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
 				break;
 
-			case UIInputVariant::Vector2:
+			case UIInputType::Vector2:
 				// TODO: Implement ImGui::InputInt2()
 				vec2_value = node.value().get_vec2f();
 				if (ImGui::InputFloat2(id.c_str(), &vec2_value.x))
 					_update_events.push_back({ node, UIEventType::ValueChanged, vec2_value });
 				break;
 
-			case UIInputVariant::Vector3:
+			case UIInputType::Vector3:
 				// TODO: Implement ImGui::InputInt3()
 				vec3_value = node.value().get_vec3f();
 				if (ImGui::InputFloat3(id.c_str(), &vec3_value.x))
 					_update_events.push_back({ node, UIEventType::ValueChanged, vec3_value });
 				break;
 
-			case UIInputVariant::Color3:
+			case UIInputType::Color3:
 				col3_value = node.value().get_color3f();
 				if (ImGui::ColorEdit3(id.c_str(), &col3_value.r))
 					_update_events.push_back({ node, UIEventType::ValueChanged, col3_value });
 				break;
 
-			case UIInputVariant::Color4:
+			case UIInputType::Color4:
 				col4_value = node.value().get_color4f();
 				if (ImGui::ColorEdit4(id.c_str(), &col4_value.r))
 					_update_events.push_back({ node, UIEventType::ValueChanged, col4_value });

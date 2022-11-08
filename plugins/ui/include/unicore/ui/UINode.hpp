@@ -69,7 +69,7 @@ namespace unicore
 		UC_NODISCARD Variant attribute(UIAttributeType type) const;
 
 		UC_NODISCARD Variant value() const { return attribute(UIAttributeType::Value); }
-		UC_NODISCARD Variant variant() const { return attribute(UIAttributeType::Variant); }
+		UC_NODISCARD Variant type() const { return attribute(UIAttributeType::Type); }
 		UC_NODISCARD Variant text() const { return attribute(UIAttributeType::Text); }
 
 		UC_NODISCARD Optional<UIAction> action(UIActionType type) const;

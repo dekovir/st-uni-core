@@ -3,7 +3,7 @@
 	<text>Sample text</text>
 
 	<!-- Button -->
-	<group variant="1">
+	<group type="1">
 		<button>Default</button>
 	</group>
 
@@ -16,44 +16,44 @@
 	<text>Multi line input</text>
 	<textarea height="50" value="first line&#10;second line" />
 
-	<group variant="1" tooltip="Tooltip text">
+	<group type="1" tooltip="Tooltip text">
 		<text>Input</text>
-		<input variant="number" value="10" />
+		<input type="number" value="10" />
 	</group>
 
-	<group variant="1">
+	<group type="1">
 		<text>Slider</text>
 		<slider value="50.50" max="100">Value %.1f</slider>
 	</group>
 
-	<group variant="1">
+	<group type="1">
 		<text>Toggle</text>
 		<toggle value="true" />
 		<radio value="true" />
 	</group>
 
-	<group variant="1">
+	<group type="1">
 		<text>Vector2</text>
-		<input variant="vector2" />
+		<input type="vector2" />
 	</group>
 
-	<group variant="1">
+	<group type="1">
 		<text>Vector3</text>
-		<input variant="vector3" />
+		<input type="vector3" />
 	</group>
 
-	<group variant="1">
+	<group type="1">
 		<text>Color3</text>
-		<input variant="color3" />
+		<input type="color3" />
 	</group>
 
-	<group variant="1">
+	<group type="1">
 		<text>Color4</text>
-		<input variant="color4" />
+		<input type="color4" />
 	</group>
 
 	<!-- Combobox -->
-	<group variant="1">
+	<group type="1">
 		<text>Combo 1</text>
 		<combo value="Item 1">
 			<text>Text inside combo</text>
@@ -65,7 +65,7 @@
 		</combo>
 	</group>
 
-	<group variant="1">
+	<group type="1">
 		<text tooltip="Combobox with logic">Combo 2</text>
 		<combo id="combo">
 		</combo>

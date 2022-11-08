@@ -36,7 +36,7 @@ namespace unicore
 				UINodeOptions options;
 				options.attributes[UIAttributeType::Value] = spr;
 				//options.attributes[UIAttributeType::Text] = StringBuilder::format("{}", i + 1);
-				options.attributes[UIAttributeType::Variant] = UIInputVariant::Image;
+				options.attributes[UIAttributeType::Type] = UIInputType::Image;
 				options.attributes[UIAttributeType::Width] = 32;
 				options.attributes[UIAttributeType::Height] = 32;
 				options.actions[UIActionType::OnClick] =
