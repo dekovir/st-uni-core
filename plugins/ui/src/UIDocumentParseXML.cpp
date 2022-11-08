@@ -137,28 +137,35 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	static Variant parse_value(const char* str)
+	static Variant parse_value(StringView str)
 	{
 		char* end;
 
-		if (StringHelper::starts_with(StringView(str), "0x"sv))
+		if (StringHelper::equals(str, "true", true))
+			return true;
+
+		if (StringHelper::equals(str, "false", true))
+			return false;
+
+		if (StringHelper::starts_with(str, "0x"sv))
 		{
-			const auto hex = strtoll(str + 2, &end, 16);
+			const auto hex = strtoll(str.data() + 2, &end, 16);
 			return hex;
 		}
 
-		const auto i = strtoll(str, &end, 10);
-		if (end[0] == 0)
+		const auto i = strtoll(str.data(), &end, 10);
+		if (end - str.data() <= str.size())
 			return i;
 
-		const auto d = strtod(str, &end);
-		if (end[0] == 0)
+		const auto d = strtod(str.data(), &end);
+		if (end - str.data() <= str.size())
 			return d;
+
 		return str;
 	}
 
 	template<typename T>
-	static T parse_enum_variant(const char* str, const Dictionary<StringView, T>& dict)
+	static T parse_enum_variant(StringView str, const Dictionary<StringView, T>& dict)
 	{
 		for (const auto& it : dict)
 		{

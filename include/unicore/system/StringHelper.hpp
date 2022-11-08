@@ -59,8 +59,8 @@ namespace unicore::StringHelper
 	}
 
 	template<typename Char>
-	extern Bool starts_with(const BasicStringView<Char> string,
-		const BasicStringView<Char> prefix)
+	extern Bool starts_with(BasicStringView<Char> string,
+		BasicStringView<Char> prefix)
 	{
 		if (string.length() >= prefix.length())
 			return string.substr(0, prefix.length()) == prefix;
@@ -69,8 +69,8 @@ namespace unicore::StringHelper
 	}
 
 	template<typename Char>
-	extern Bool ends_with(const BasicStringView<Char> string,
-		const BasicStringView<Char> ending)
+	extern Bool ends_with(BasicStringView<Char> string,
+		BasicStringView<Char> ending)
 	{
 		if (string.length() >= ending.length())
 		{
@@ -79,6 +79,28 @@ namespace unicore::StringHelper
 		}
 
 		return false;
+	}
+
+	template<typename Char>
+	extern void split(BasicStringView<Char> str, Char separator, List<BasicStringView<Char>>& output)
+	{
+		typename BasicStringView<Char>::size_type prev_pos = 0, pos = 0;
+
+		while ((pos = str.find(separator, pos)) != std::string::npos)
+		{
+			output.push_back(str.substr(prev_pos, pos - prev_pos));
+			prev_pos = ++pos;
+		}
+
+		output.push_back(str.substr(prev_pos, pos - prev_pos));
+	}
+
+	template<typename Char>
+	UC_NODISCARD extern List<BasicStringView<Char>> split(BasicStringView<Char> str, Char separator)
+	{
+		List<BasicStringView<Char>> output;
+		split(str, separator, output);
+		return output;
 	}
 
 	template<typename TChar>
