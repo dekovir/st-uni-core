@@ -1,9 +1,23 @@
 #pragma once
-#include "unicore/ui/UIAttribute.hpp"
 #include "unicore/ui/UIAction.hpp"
 
 namespace unicore
 {
+	enum class UIAttributeType
+	{
+		Type,
+		Value,
+		Width,
+		Height,
+		Tooltip,
+		Text,
+		StepValue,
+		MinValue,
+		MaxValue,
+	};
+
+	using UIAttributeDict = Dictionary<UIAttributeType, Variant>;
+
 	enum class UINodeTag
 	{
 		Group,
@@ -19,6 +33,33 @@ namespace unicore
 		TableRow,
 		TableCell,
 		Progress,
+	};
+
+	enum class UIGroupType
+	{
+		Vertical,
+		Horizontal,
+		Child,
+		List,
+		Flex,
+		Popup,
+		Modal,
+	};
+
+	enum class UIInputType
+	{
+		Text,
+		TextArea,
+		Toggle,
+		Radio,
+		Button,
+		Image,
+		Number,
+		Range,
+		Vector2,
+		Vector3,
+		Color3,
+		Color4,
 	};
 
 	class UIDocument;
