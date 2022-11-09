@@ -3,7 +3,7 @@
 
 namespace unicore
 {
-	enum class UIAttribute
+	enum class UIAttribute : UInt8
 	{
 		Type,
 		Value,
@@ -18,7 +18,7 @@ namespace unicore
 
 	using UIAttributeDict = Dictionary<UIAttribute, Variant>;
 
-	enum class UINodeTag
+	enum class UINodeTag : UInt8
 	{
 		Group, // Can have children
 		Text,
@@ -29,7 +29,7 @@ namespace unicore
 		Progress,
 	};
 
-	enum class UIGroupType
+	enum class UIGroupType : UInt8
 	{
 		Vertical,
 		Horizontal,
@@ -47,7 +47,7 @@ namespace unicore
 		Modal,
 	};
 
-	enum class UITextType
+	enum class UITextType : UInt8
 	{
 		Normal,
 		Heading1,
@@ -58,7 +58,7 @@ namespace unicore
 		Heading6,
 	};
 
-	enum class UIInputType
+	enum class UIInputType : UInt8
 	{
 		Text,
 		TextArea,
