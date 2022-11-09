@@ -472,6 +472,51 @@ namespace unicore
 			return try_get_object_cast(value) ? value : default_value;
 		}
 
+		// UNIVERSAL GET ///////////////////////////////////////////////////////////
+		template<typename T>
+		Bool try_get(T& value)
+		{
+			if constexpr (std::is_same_v<T, Bool>)
+				return try_get_bool(value);
+
+			if constexpr (std::is_integral_v<T>)
+				return try_get_integral(value);
+
+			if constexpr (std::is_floating_point_v<T>)
+				return try_get_floating_point(value);
+
+			if constexpr (std::is_same_v<T, String>)
+				return try_get_string(value);
+
+			if constexpr (std::is_same_v<T, String32>)
+				return try_get_string32(value);
+
+			UC_ASSERT_ALWAYS_MSG("Not implemented");
+			return false;
+		}
+
+		template<typename T>
+		T get(const T& default_value)
+		{
+			if constexpr (std::is_same_v<T, Bool>)
+				return get_bool(default_value);
+
+			if constexpr (std::is_integral_v<T>)
+				return get_integral(default_value);
+
+			if constexpr (std::is_floating_point_v<T>)
+				return get_floating_point(default_value);
+
+			if constexpr (std::is_same_v<T, String>)
+				return get_string(default_value);
+
+			if constexpr (std::is_same_v<T, String32>)
+				return get_string32(default_value);
+
+			UC_ASSERT_ALWAYS_MSG("Not implemented");
+			return false;
+		}
+
 		static const Variant Empty;
 
 	protected:

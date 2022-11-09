@@ -37,6 +37,6 @@ namespace unicore
 	{
 		static constexpr auto MaxValue = T::MaxValue;
 
-		static constexpr auto Clear = T(0, 0, 0, MaxValue);
+		static constexpr auto Clear = T(0, 0, 0, 0);
 	};
 }

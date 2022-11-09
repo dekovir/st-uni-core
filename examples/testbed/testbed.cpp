@@ -15,7 +15,7 @@ namespace unicore
 	static const auto xml = R"(
 	<group>
 		<text>Examples</text>
-		<list id="group" />
+		<list id="group" w="-1" h="-1" />
 		<group id="template" visible="0">
 			<item name="name">Title</item>
 		</group>
@@ -118,17 +118,27 @@ namespace unicore
 
 		_ui_context.frame_begin();
 
+		const auto fps_str = StringBuilder::format(U"FPS: {}", fps());
+		const auto draw_str = StringBuilder::format(U"Draw: {}", _draw_calls);
+		const auto screen_str = StringBuilder::format(U"Screen: {}", screen_size);
+
+		if (_font)
+		{
+			const float height = _font->get_height();
+
+			_sprite_batch
+				.print(_font, { 0, 0 }, fps_str)
+				.print(_font, { 0, height * 1 }, draw_str)
+				.print(_font, { 0, height * 2 }, screen_str);
+		}
+
 		// EXAMPLE ////////////////////////////////////////////////////////////
 		if (_example)
 		{
 			_example->update();
 
 			const auto& example_info = examples[_example_index];
-
 			const auto title_str = StringBuilder::format(U"Example: {}", example_info.title);
-			const auto fps_str = StringBuilder::format(U"FPS: {}", fps());
-			const auto draw_str = StringBuilder::format(U"Draw: {}", _draw_calls);
-			const auto screen_str = StringBuilder::format(U"Screen: {}", screen_size);
 
 			_lines.clear();
 			_example->get_text(_lines);
@@ -139,11 +149,6 @@ namespace unicore
 			if (_font)
 			{
 				const float height = _font->get_height();
-
-				_sprite_batch
-					.print(_font, { 0, 0 }, fps_str)
-					.print(_font, { 0, height * 1 }, draw_str)
-					.print(_font, { 0, height * 2 }, screen_str);
 
 				_sprite_batch
 					.print(_font, { 250, 0 }, title_str);

@@ -226,6 +226,17 @@ namespace unicore
 		return Vector2<T>(a.x / value, a.y / value);
 	}
 
+	template<typename T>
+	struct Vector2SortX
+	{
+		bool operator()(const Vector2<T>& lhs, const Vector2<T>& rhs) const
+		{
+			if (Math::equals(lhs.x, rhs.x))
+				return lhs.y < rhs.y;
+			return lhs.x < rhs.x;
+		}
+	};
+
 	// CONST /////////////////////////////////////////////////////////////////////
 	namespace details
 	{

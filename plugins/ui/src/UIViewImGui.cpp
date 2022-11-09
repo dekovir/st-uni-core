@@ -455,7 +455,19 @@ namespace unicore
 
 				break;
 
-			case UIInputType::Range:
+			case UIInputType::RangeI:
+				// TODO: Implement step
+				range_i = {
+					node.get(UIAttribute::Min).get_int(0),
+					node.get(UIAttribute::Max).get_int(100)
+				};
+				str = node.get(UIAttribute::Text).get_string("%d");
+				int_value = node.value().get_int();
+				if (ImGui::SliderInt(id.c_str(), &int_value, range_i.min, range_i.max, str.c_str()))
+					_update_events.push_back({ node, UIEventType::ValueChanged, int_value });
+				break;
+
+			case UIInputType::RangeF:
 				// TODO: Implement step
 				range_f = {
 					node.get(UIAttribute::Min).get_float(0),

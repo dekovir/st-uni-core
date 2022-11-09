@@ -873,11 +873,6 @@ namespace unicore
 			(*ptr)();
 			return true;
 		}
-		if (const auto ptr = std::get_if<UIActionNodeDefault>(&action))
-		{
-			(*ptr)(node);
-			return true;
-		}
 
 		return false;
 	}
@@ -889,9 +884,10 @@ namespace unicore
 			(*ptr)(value);
 			return true;
 		}
-		if (const auto ptr = std::get_if<UIActionNodeValue>(&action))
+
+		if (const auto ptr = std::get_if<UIActionDefault>(&action))
 		{
-			(*ptr)(node, value);
+			(*ptr)();
 			return true;
 		}
 

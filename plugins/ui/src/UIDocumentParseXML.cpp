@@ -64,7 +64,9 @@ namespace unicore
 		{"image", UIInputType::Image},
 		{"integer", UIInputType::Integer},
 		{"float", UIInputType::Float},
-		{"range", UIInputType::Range},
+		{"range", UIInputType::RangeF},
+		{"rangei", UIInputType::RangeI},
+		{"rangef", UIInputType::RangeF},
 		{"vector2", UIInputType::Vector2},
 		{"vector3", UIInputType::Vector3},
 		{"color3", UIInputType::Color3},
@@ -77,7 +79,7 @@ namespace unicore
 		{"toggle", UIInputType::Toggle},
 		{"radio", UIInputType::Radio},
 		{"button", UIInputType::Button},
-		{"slider", UIInputType::Range},
+		{"slider", UIInputType::RangeF},
 	};
 
 	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UITextType, UIInputType>;
@@ -209,6 +211,10 @@ namespace unicore
 		{
 			const auto s = StringHelper::rtrim(StringView(value));
 			options.attributes[UIAttribute::Text] = s;
+		}
+		else if (const auto str = node->Attribute("text"); str != nullptr)
+		{
+			options.attributes[UIAttribute::Text] = str;
 		}
 
 		if (const auto str = node->Attribute("id"); str != nullptr)
