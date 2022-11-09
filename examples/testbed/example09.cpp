@@ -191,6 +191,71 @@ namespace unicore
 			}
 		};
 
+		template<UIInputType Type>
+		class InputElement : public Element
+		{
+		public:
+			UINode create(UIDocument& document, const UINode& parent) const override
+			{
+				UINodeOptions options;
+				apply_options(options);
+				options.attributes[UIAttribute::Type] = Type;
+				return document.create_node(UINodeTag::Input, options, parent);
+			}
+
+		protected:
+			virtual void apply_options(UINodeOptions& options) const = 0;
+		};
+
+		class TextInput : public InputElement<UIInputType::Text>
+		{
+		public:
+			String32 text;
+
+			TextInput() = default;
+			explicit TextInput(StringView32 text) : text(text) {}
+
+		protected:
+			void apply_options(UINodeOptions& options) const override
+			{
+				options.attributes[UIAttribute::Value] = text;
+			}
+		};
+
+		template<UIInputType Type>
+		class BoolInputElement : public InputElement<Type>
+		{
+		public:
+			Bool value = false;
+
+			BoolInputElement() = default;
+			explicit BoolInputElement(Bool value) : value(value) {}
+
+		protected:
+			void apply_options(UINodeOptions& options) const override
+			{
+				options.attributes[UIAttribute::Value] = value;
+			}
+		};
+
+		using Toggle = BoolInputElement<UIInputType::Toggle>;
+		using Radio = BoolInputElement<UIInputType::Radio>;
+
+		class Button : public InputElement<UIInputType::Button>
+		{
+		public:
+			String32 label;
+
+			Button() = default;
+			explicit Button(StringView32 label) : label(label) {}
+
+		protected:
+			void apply_options(UINodeOptions& options) const override
+			{
+				options.attributes[UIAttribute::Text] = label;
+			}
+		};
+
 		/*struct Item1 : Element
 		{
 			int a;
@@ -229,18 +294,19 @@ namespace unicore
 		_view->set_size(Vector2f(300, 0));
 		_view->set_position(Vector2f(size.x / 2 - 150, 50));
 
-		UInt8 buf[100];
-
-		auto tmp1 = new test::Text(U"Test string");
-		auto tmp2 = new(buf) test::Text(U"Test string");
-
 		const auto layout = test::VLayout
 		{
 			test::HLayout
 			{
 				test::Text{ U"Text" },
-				test::Text{ U"Value" },
-			}
+				test::TextInput{ U"Lorem ipsum dolor" },
+			},
+			test::HLayout
+			{
+				test::Text{ U"Bool" },
+				test::Toggle{true},
+				test::Radio{}
+			},
 		};
 
 		layout.create(*_document, UINode::Empty);
