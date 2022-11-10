@@ -1,5 +1,6 @@
 #include "example09.hpp"
 #include <utility>
+#include "unicore/system/Memory.hpp"
 #include "unicore/io/Logger.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/imgui/ImGuiContext.hpp"
@@ -18,53 +19,70 @@ namespace unicore
 			virtual UINode create(UIDocument& document, const UINode& parent) const = 0;
 		};
 
-		class ElementList : public Element
+#pragma pack(1)
+		template<UIGroupType Type>
+		class GroupElement : public Element
 		{
 		public:
-			ElementList() = default;
+			GroupElement() = default;
+			GroupElement(GroupElement&& other) = default;
+			GroupElement(const GroupElement& other) = default;
 
 			template<typename ... Args>
-			explicit ElementList(Args&&... args)
+			explicit GroupElement(Args&&... args)
 			{
 				(push_back(std::forward<Args>(args)), ...);
 			}
 
-			UC_NODISCARD Size size() const { return _items.size(); }
-			UC_NODISCARD Bool empty() const { return _items.empty(); }
+			~GroupElement() override
+			{
+				for (const auto element : _elements)
+				{
+					element->~Element();
+					Memory::free(element);
+				}
+				_elements.clear();
+			}
 
-			UC_NODISCARD Size bytes_size() const { return _data.size(); }
+			UINode create(UIDocument& document, const UINode& parent) const override
+			{
+				UINodeOptions options;
+				options.attributes[UIAttribute::Type] = Type;
+				const auto node = document.create_node(UINodeTag::Group, options, parent);
+
+				for (unsigned i = 0; i < _elements.size(); i++)
+				{
+					const auto child = get_element(i);
+					child->create(document, node);
+				}
+
+				return node;
+			}
+
+			UC_NODISCARD Size size() const { return _elements.size(); }
+			UC_NODISCARD Bool empty() const { return _elements.empty(); }
 
 			template<typename T,
 				std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
 			void push_back(T&& item)
 			{
-				ItemInfo info;
-				info.offset = _data.size();
-				info.size = sizeof(T);
-				_items.push_back(info);
-
-				_data.resize(_data.size() + info.size);
-				new (_data.data() + info.offset) T(item);
+				auto ptr = Memory::alloc(sizeof(T));
+				auto element = new (ptr) T(std::forward<T>(item));
+				_elements.push_back(element);
 			}
 
 			UC_NODISCARD Element* get_element(Size index)
 			{
-				if (index < _items.size())
-				{
-					const auto& info = _items[index];
-					return reinterpret_cast<Element*>(_data.data() + info.offset);
-				}
+				if (index < _elements.size())
+					return _elements[index];
 
 				return nullptr;
 			}
 
 			UC_NODISCARD const Element* get_element(Size index) const
 			{
-				if (index < _items.size())
-				{
-					const auto& info = _items[index];
-					return reinterpret_cast<const Element*>(_data.data() + info.offset);
-				}
+				if (index < _elements.size())
+					return _elements[index];
 
 				return nullptr;
 			}
@@ -88,88 +106,7 @@ namespace unicore
 			}
 
 		protected:
-			struct ItemInfo
-			{
-				Size offset;
-				Size size;
-			};
-
-			List<uint8_t> _data;
-			List<ItemInfo> _items;
-		};
-
-#pragma pack(1)
-		template<UIGroupType Type>
-		class GroupElement : public Element
-		{
-		public:
-			GroupElement() = default;
-
-			template<typename ... Args>
-			explicit GroupElement(Args&&... args)
-			{
-				(push_back(std::forward<Args>(args)), ...);
-			}
-
-			UC_NODISCARD Element* get_element(Size index)
-			{
-				if (index < _items.size())
-				{
-					const auto& info = _items[index];
-					return reinterpret_cast<Element*>(_data.data() + info.offset);
-				}
-
-				return nullptr;
-			}
-
-			UC_NODISCARD const Element* get_element(Size index) const
-			{
-				if (index < _items.size())
-				{
-					const auto& info = _items[index];
-					return reinterpret_cast<const Element*>(_data.data() + info.offset);
-				}
-
-				return nullptr;
-			}
-
-			UINode create(UIDocument& document, const UINode& parent) const override
-			{
-				UINodeOptions options;
-				options.attributes[UIAttribute::Type] = Type;
-				const auto node = document.create_node(UINodeTag::Group, options, parent);
-
-				for (unsigned i = 0; i < _items.size(); i++)
-				{
-					const auto child = get_element(i);
-					child->create(document, node);
-				}
-
-				return node;
-			}
-
-		protected:
-			struct ItemInfo
-			{
-				Size offset;
-				Size size;
-			};
-
-			List<uint8_t> _data;
-			List<ItemInfo> _items;
-
-			template<typename T,
-				std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
-			void push_back(const T& item)
-			{
-				ItemInfo info;
-				info.offset = _data.size();
-				info.size = sizeof(T);
-				_items.push_back(info);
-
-				_data.resize(_data.size() + sizeof(T));
-				new (_data.data() + info.offset) T(item);
-			}
+			List<Element*> _elements;
 		};
 
 		using VLayout = GroupElement<UIGroupType::Vertical>;
@@ -227,52 +164,55 @@ namespace unicore
 		{
 		public:
 			Bool value = false;
+			Action<Bool> on_change;
 
 			BoolInputElement() = default;
 			explicit BoolInputElement(Bool value) : value(value) {}
+			BoolInputElement(Bool value, const Action<Bool>& callback)
+				: value(value)
+				, on_change(callback)
+			{}
 
 		protected:
 			void apply_options(UINodeOptions& options) const override
 			{
 				options.attributes[UIAttribute::Value] = value;
+				if (on_change != nullptr)
+				{
+					auto func = on_change;
+					options.actions[UIActionType::OnChange] =
+						[func](const Variant& change) { func(change.get_bool()); };
+				}
 			}
 		};
 
 		using Toggle = BoolInputElement<UIInputType::Toggle>;
 		using Radio = BoolInputElement<UIInputType::Radio>;
 
+		using ClickCallback = std::function<void()>;
+
 		class Button : public InputElement<UIInputType::Button>
 		{
 		public:
 			String32 label;
+			ClickCallback on_click = nullptr;
 
-			Button() = default;
 			explicit Button(StringView32 label) : label(label) {}
+			explicit Button(StringView32 label, ClickCallback callback)
+				: label(label), on_click(std::move(callback))
+			{
+				int a = 0;
+				a++;
+			}
 
 		protected:
 			void apply_options(UINodeOptions& options) const override
 			{
 				options.attributes[UIAttribute::Text] = label;
+				if (on_click != nullptr)
+					options.actions[UIActionType::OnClick] = on_click;
 			}
 		};
-
-		/*struct Item1 : Element
-		{
-			int a;
-			explicit Item1(int value) : a(value) {}
-		};
-
-		struct Item2 : Element
-		{
-			String text;
-			explicit Item2(StringView value) : text(value) {}
-		};
-
-		struct Item3 : Element
-		{
-			Bool value;
-			explicit Item3(Bool value) : value(value) {}
-		};*/
 	}
 
 	Example09::Example09(const ExampleContext& context)
@@ -304,8 +244,14 @@ namespace unicore
 			test::HLayout
 			{
 				test::Text{ U"Bool" },
-				test::Toggle{true},
+				test::Toggle{true, [this](Bool value) { UC_LOG_DEBUG(logger) << "Toggle value changed to " << value; }},
 				test::Radio{}
+			},
+			test::HLayout
+			{
+				test::Text{ U"Button" },
+				//test::Button{ U"Click" },
+				test::Button{ U"Click", [this] { UC_LOG_DEBUG(logger) << "Click"; } },
 			},
 		};
 
