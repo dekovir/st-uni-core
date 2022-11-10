@@ -205,7 +205,7 @@ namespace unicore
 				if (ImGui::TreeNode(title.c_str()))
 				{
 					if (!bool_value)
-						_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+						_update_events.push_back({ node, UIActionType::OnChange, !bool_value });
 
 					for (const auto& child : children)
 						render_node(child);
@@ -213,7 +213,7 @@ namespace unicore
 					ImGui::TreePop();
 				}
 				else if (bool_value)
-					_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+					_update_events.push_back({ node, UIActionType::OnChange, !bool_value });
 				render_node_footer(node);
 				return true;
 
@@ -348,7 +348,7 @@ namespace unicore
 
 			render_node_header(node, layout_option);
 			if (ImGui::ColorButton(id.c_str(), ImGuiConvert::convert_color(col4_value)))
-				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+				_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
 
 			render_node_footer(node);
 			return true;
@@ -371,26 +371,26 @@ namespace unicore
 			case UIInputType::Text:
 				str = node.value().get_string();
 				if (ImGui::InputText(id.c_str(), &str))
-					_update_events.push_back({ node, UIEventType::ValueChanged, str });
+					_update_events.push_back({ node, UIActionType::OnChange, str });
 				break;
 
 			case UIInputType::TextArea:
 				str = node.value().get_string();
 				if (ImGui::InputTextMultiline(id.c_str(), &str, { width, height }))
-					_update_events.push_back({ node, UIEventType::ValueChanged, str });
+					_update_events.push_back({ node, UIActionType::OnChange, str });
 				break;
 
 			case UIInputType::Toggle:
 				bool_value = node.value().get_bool();
 				if (ImGui::Checkbox(id.c_str(), &bool_value))
-					_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
+					_update_events.push_back({ node, UIActionType::OnChange, bool_value });
 				break;
 
 			case UIInputType::Radio:
 				bool_value = node.value().get_bool();
 				if (ImGui::RadioButton(id.c_str(), bool_value))
 				{
-					_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+					_update_events.push_back({ node, UIActionType::OnChange, !bool_value });
 					ImGui::CloseCurrentPopup();
 				}
 				break;
@@ -398,7 +398,7 @@ namespace unicore
 			case UIInputType::Button:
 				if (ImGui::Button(title.c_str(), { width, height }))
 				{
-					_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+					_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
 					ImGui::CloseCurrentPopup();
 				}
 				break;
@@ -411,7 +411,7 @@ namespace unicore
 					const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
 					if (ImGui::ImageButton(texture_id, s, uv0, uv1))
 					{
-						_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+						_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -419,7 +419,7 @@ namespace unicore
 				{
 					if (ImGui::ImageButton(nullptr, { width, height }))
 					{
-						_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+						_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
 						ImGui::CloseCurrentPopup();
 					}
 				}
@@ -437,7 +437,7 @@ namespace unicore
 				if (ImGui::InputInt(id.c_str(), &int_value, node.get(UIAttribute::Step).get_int(1)))
 				{
 					int_value = range_i.clamp(int_value);
-					_update_events.push_back({ node, UIEventType::ValueChanged, int_value });
+					_update_events.push_back({ node, UIActionType::OnChange, int_value });
 				}
 				break;
 
@@ -450,7 +450,7 @@ namespace unicore
 				if (ImGui::InputFloat(id.c_str(), &float_value, node.get(UIAttribute::Step).get_float(1)))
 				{
 					float_value = range_f.clamp(float_value);
-					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
+					_update_events.push_back({ node, UIActionType::OnChange, float_value });
 				}
 
 				break;
@@ -464,7 +464,7 @@ namespace unicore
 				str = node.get(UIAttribute::Text).get_string("%d");
 				int_value = node.value().get_int();
 				if (ImGui::SliderInt(id.c_str(), &int_value, range_i.min, range_i.max, str.c_str()))
-					_update_events.push_back({ node, UIEventType::ValueChanged, int_value });
+					_update_events.push_back({ node, UIActionType::OnChange, int_value });
 				break;
 
 			case UIInputType::RangeF:
@@ -476,33 +476,33 @@ namespace unicore
 				str = node.get(UIAttribute::Text).get_string("%.2f");
 				float_value = node.value().get_float();
 				if (ImGui::SliderFloat(id.c_str(), &float_value, range_f.min, range_f.max, str.c_str()))
-					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
+					_update_events.push_back({ node, UIActionType::OnChange, float_value });
 				break;
 
 			case UIInputType::Vector2:
 				// TODO: Implement ImGui::InputInt2()
 				vec2_value = node.value().get_vec2f();
 				if (ImGui::InputFloat2(id.c_str(), &vec2_value.x))
-					_update_events.push_back({ node, UIEventType::ValueChanged, vec2_value });
+					_update_events.push_back({ node, UIActionType::OnChange, vec2_value });
 				break;
 
 			case UIInputType::Vector3:
 				// TODO: Implement ImGui::InputInt3()
 				vec3_value = node.value().get_vec3f();
 				if (ImGui::InputFloat3(id.c_str(), &vec3_value.x))
-					_update_events.push_back({ node, UIEventType::ValueChanged, vec3_value });
+					_update_events.push_back({ node, UIActionType::OnChange, vec3_value });
 				break;
 
 			case UIInputType::Color3:
 				col3_value = node.value().get_color3f();
 				if (ImGui::ColorEdit3(id.c_str(), &col3_value.r))
-					_update_events.push_back({ node, UIEventType::ValueChanged, col3_value });
+					_update_events.push_back({ node, UIActionType::OnChange, col3_value });
 				break;
 
 			case UIInputType::Color4:
 				col4_value = node.value().get_color4f();
 				if (ImGui::ColorEdit4(id.c_str(), &col4_value.r))
-					_update_events.push_back({ node, UIEventType::ValueChanged, col4_value });
+					_update_events.push_back({ node, UIActionType::OnChange, col4_value });
 				break;
 			}
 
@@ -513,7 +513,7 @@ namespace unicore
 			bool_value = node.value().get_bool();
 			render_node_header(node, layout_option);
 			if (ImGui::Selectable(title.c_str(), bool_value))
-				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+				_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
 			render_node_footer(node);
 			return true;
 
@@ -565,7 +565,7 @@ namespace unicore
 		{
 			if (info->mouse_over != is_item_hovered)
 			{
-				const auto event_type = info->mouse_over ? UIEventType::MouseLeave : UIEventType::MouseEnter;
+				const auto event_type = info->mouse_over ? UIActionType::OnMouseLeave : UIActionType::OnMouseEnter;
 				_update_events.push_back({ node, event_type, Variant::Empty });
 				info->mouse_over = is_item_hovered;
 				//UC_LOG_DEBUG(_logger) << "Mouse " << event_type << " at " << node;

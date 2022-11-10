@@ -209,57 +209,63 @@ namespace unicore
 	}
 
 	// EVENTS ////////////////////////////////////////////////////////////////////
-	void UIDocument::send_event(const UIEvent& evt)
+	void UIDocument::send_event(const UINode node,
+		UIActionType type, const Variant& value)
 	{
-		if (evt.node.document() != this)
+		if (node.empty())
+		{
+			UC_LOG_WARNING(_logger) << "Can't send event - Node is empty";
 			return;
+		}
+
+		if (node.document() != this)
+		{
+			UC_LOG_ERROR(_logger) << "Can't send event - Node from other document";
+			return;
+		}
 
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
 
-		const auto info = get_info(evt.node.index());
+		const auto info = get_info(node.index());
 		if (!info)
 			return;
 
-		switch (evt.type)
+		const auto actions = get_actions(node.index());
+
+		switch (type)
 		{
-		case UIEventType::Clicked:
-			UC_LOG_DEBUG(_logger) << "Node " << evt.node << " value has clicked";
-			if (const auto action = get_node_action(evt.node, UIActionType::OnClick); action.has_value())
+		case UIActionType::OnClick:
+			UC_LOG_DEBUG(_logger) << "Node " << node << " value has clicked";
+		case UIActionType::OnMouseEnter:
+		case UIActionType::OnMouseLeave:
+			if (actions != nullptr)
 			{
-				if (!call_action_default(action.value(), evt.node))
-					UC_LOG_WARNING(_logger) << "Failed to call default action";
+				if (const auto it = actions->find(type); it != actions->end())
+				{
+					if (!call_action_default(it->second, node))
+						UC_LOG_WARNING(_logger) << "Failed to call default action";
+				}
 			}
 			break;
 
-		case UIEventType::ValueChanged:
-			info->attributes[UIAttribute::Value] = evt.value;
-			UC_LOG_DEBUG(_logger) << "Node " << evt.node << " value changed to " << evt.value;
-
-			if (const auto action = get_node_action(evt.node, UIActionType::OnChange); action.has_value())
+		case UIActionType::OnChange:
+			info->attributes[UIAttribute::Value] = value;
+			UC_LOG_DEBUG(_logger) << "Node " << node << " value changed to " << value;
+			if (actions != nullptr)
 			{
-				if (!call_action_value(action.value(), evt.node, evt.value))
-					UC_LOG_WARNING(_logger) << "Failed to call value action";
-			}
-			break;
-
-		case UIEventType::MouseEnter:
-			//UC_LOG_DEBUG(_logger) << "Mouse enters " << evt.node;
-			if (const auto action = get_node_action(evt.node, UIActionType::OnMouseEnter); action.has_value())
-			{
-				if (!call_action_default(action.value(), evt.node))
-					UC_LOG_WARNING(_logger) << "Failed to call default action";
-			}
-			break;
-
-		case UIEventType::MouseLeave:
-			//UC_LOG_DEBUG(_logger) << "Mouse leaves " << evt.node;
-			if (const auto action = get_node_action(evt.node, UIActionType::OnMouseLeave); action.has_value())
-			{
-				if (!call_action_default(action.value(), evt.node))
-					UC_LOG_WARNING(_logger) << "Failed to call default action";
+				if (const auto it = actions->find(UIActionType::OnChange); it != actions->end())
+				{
+					if (!call_action_value(it->second, node, value))
+						UC_LOG_WARNING(_logger) << "Failed to call value action";
+				}
 			}
 			break;
 		}
+	}
+
+	void UIDocument::send_event(const UIEvent& evt)
+	{
+		send_event(evt.node, evt.type, evt.value);
 	}
 
 	// RAW INDEX /////////////////////////////////////////////////////////////////
@@ -290,7 +296,9 @@ namespace unicore
 
 		info.parent = UINode::InvalidIndex;
 		info.attributes = options.attributes;
-		info.actions = options.actions;
+
+		if (!options.actions.empty())
+			_node_actions[index] = options.actions;
 
 		if (parent.valid())
 		{
@@ -669,52 +677,36 @@ namespace unicore
 	}
 
 	// ACTIONS ///////////////////////////////////////////////////////////////////
-	void UIDocument::set_node_action(const UINode& node,
-		UIActionType type, const Optional<UIAction>& action)
+	void UIDocument::subscribe_node(const UINode& node,
+		UIActionType type, const UIAction& action)
 	{
+		if (node.document() != this)
+		{
+			UC_LOG_ERROR(_logger) << "Wrong document";
+			return;
+		}
+
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
-		if (const auto info = get_info(node))
-		{
-			if (action.has_value())
-			{
-				info->actions[type] = action.value();
-			}
-			else
-			{
-				if (const auto it = info->actions.find(type); it != info->actions.end())
-					info->actions.erase(it);
-				else return;
-			}
 
-			_event_set_action.invoke(node, type, action);
-		}
+		_node_actions[node.index()][type] = action;
 	}
 
-	Optional<UIAction> UIDocument::get_node_action(const UINode& node, UIActionType type) const
+	Bool UIDocument::unsubscribe_node(const UINode& node, UIActionType type)
 	{
-		if (const auto info = get_info(node))
+		if (node.document() != this)
 		{
-			if (const auto it = info->actions.find(type); it != info->actions.end())
-				return it->second;
+			UC_LOG_ERROR(_logger) << "Wrong document";
+			return false;
 		}
 
-		return std::nullopt;
-	}
-
-	Optional<UIActionDict> UIDocument::get_node_actions(const UINode& node) const
-	{
-		if (const auto info = get_info(node))
-			return info->actions;
-
-		return std::nullopt;
-	}
-
-	Bool UIDocument::get_node_actions(const UINode& node, UIActionDict& dict) const
-	{
-		if (const auto info = get_info(node))
+		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
+		if (const auto actions = get_actions(node.index()); actions != nullptr)
 		{
-			dict = info->actions;
-			return true;
+			if (const auto it = actions->find(type); it != actions->end())
+			{
+				actions->erase(it);
+				return true;
+			}
 		}
 
 		return false;
@@ -740,6 +732,18 @@ namespace unicore
 	const UIDocument::NodeInfo* UIDocument::get_info(const UINode& node) const
 	{
 		return node.document() == this ? get_info(node.index()) : nullptr;
+	}
+
+	UIActionDict* UIDocument::get_actions(UINode::IndexType index)
+	{
+		const auto it = _node_actions.find(index);
+		return it != _node_actions.end() ? &it->second : nullptr;
+	}
+
+	const UIActionDict* UIDocument::get_actions(UINode::IndexType index) const
+	{
+		const auto it = _node_actions.find(index);
+		return it != _node_actions.end() ? &it->second : nullptr;
 	}
 
 	UINode::IndexType UIDocument::create_index()
@@ -833,7 +837,9 @@ namespace unicore
 			options.name = info->name;
 			options.visible = info->visible;
 			options.attributes = info->attributes;
-			options.actions = info->actions;
+
+			if (const auto actions = get_actions(node.index()); actions != nullptr)
+				options.actions = *actions;
 
 			const auto children = info->children;
 			const auto new_node = create_node(info->tag, options, parent);
@@ -864,6 +870,10 @@ namespace unicore
 		_event_remove_node.invoke(node_from_index(index));
 
 		_nodes.erase(index);
+
+		// REMOVE ACTIONS
+		if (const auto jt = _node_actions.find(index); jt != _node_actions.end())
+			_node_actions.erase(jt);
 	}
 
 	bool UIDocument::call_action_default(const UIAction& action, const UINode& node)

@@ -24,7 +24,7 @@ namespace unicore
 		_price_node = document.find_by_name("price", _inspector_node);
 		_weight_node = document.find_by_name("weight", _inspector_node);
 
-		_document.set_node_action(_icon_node, UIActionType::OnClick,
+		_document.subscribe_node(_icon_node, UIActionType::OnClick,
 			[this] { _document.set_node_attribute(_icon_items_node, UIAttribute::Value, true); });
 
 		if (!icon_list_node.empty() && _sprites && !_sprites->empty())
@@ -48,13 +48,13 @@ namespace unicore
 
 		_database->on_add() += [&](auto id, auto& item) {on_add_item(id, item); };
 
-		_document.set_node_action(_title_node, UIActionType::OnChange,
+		_document.subscribe_node(_title_node, UIActionType::OnChange,
 			[this](const Variant& value) { item_set_title(value.get_string32()); });
 
-		_document.set_node_action(_price_node, UIActionType::OnChange,
+		_document.subscribe_node(_price_node, UIActionType::OnChange,
 			[this](const Variant& value) { item_set_price(value.get_int_type<UInt16>()); });
 
-		_document.set_node_action(_weight_node, UIActionType::OnChange,
+		_document.subscribe_node(_weight_node, UIActionType::OnChange,
 			[this](const Variant& value) { item_set_weight(value.get_int_type<UInt16>()); });
 
 		if (!_type_node.empty())
@@ -102,7 +102,7 @@ namespace unicore
 			if (const auto find = node.find_by_name("item_name"); !find.empty())
 			{
 				const auto stored_id = id;
-				_document.set_node_action(find, UIActionType::OnClick,
+				_document.subscribe_node(find, UIActionType::OnClick,
 					[this, stored_id] { set_selected(stored_id); });
 			}
 			_document.set_node_visible(node, true);

@@ -9,7 +9,6 @@ namespace unicore
 		, _bind_set_style([this](auto& node, auto value) { on_set_style(node, value); })
 		, _bind_set_visible([this](auto& node, auto value) { on_set_visible(node, value); })
 		, _bind_set_attribute([this](auto& node, auto type, auto& value) { on_set_attribute(node, type, value); })
-		, _bind_set_action([this](auto& node, auto type, auto& value) { on_set_action(node, type, value); })
 	{
 	}
 
@@ -21,8 +20,11 @@ namespace unicore
 		if (_document)
 		{
 			_document->on_create_node() -= _bind_create_node;
+			_document->on_remove_node() -= _bind_remove_node;
+			_document->on_set_name() -= _bind_set_name;
+			_document->on_set_style() -= _bind_set_style;
+			_document->on_set_visible() -= _bind_set_visible;
 			_document->on_set_attribute() -= _bind_set_attribute;
-			_document->on_set_action() -= _bind_set_action;
 		}
 
 		_document = document;
@@ -30,8 +32,11 @@ namespace unicore
 		if (_document)
 		{
 			_document->on_create_node() += _bind_create_node;
+			_document->on_remove_node() += _bind_remove_node;
+			_document->on_set_name() += _bind_set_name;
+			_document->on_set_style() += _bind_set_style;
+			_document->on_set_visible() += _bind_set_visible;
 			_document->on_set_attribute() += _bind_set_attribute;
-			_document->on_set_action() += _bind_set_action;
 		}
 
 		on_rebuild();

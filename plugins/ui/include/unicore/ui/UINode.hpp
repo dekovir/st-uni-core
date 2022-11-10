@@ -128,10 +128,6 @@ namespace unicore
 		UC_NODISCARD Variant type() const { return get(UIAttribute::Type); }
 		UC_NODISCARD Variant text() const { return get(UIAttribute::Text); }
 
-		// ACTIONS /////////////////////////////////////////////////////////////////
-		UC_NODISCARD UIActionDict get_actions() const;
-		UC_NODISCARD Optional<UIAction> action(UIActionType type) const;
-
 		// HIERARCHY ///////////////////////////////////////////////////////////////
 		size_t get_children(List<UINode>& children) const;
 		UC_NODISCARD List<UINode> get_children() const;

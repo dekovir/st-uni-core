@@ -23,7 +23,7 @@ namespace unicore
 			options.attributes[UIAttribute::Value] = value == start_value;
 
 			auto node = document.create_node(UINodeTag::Item, options, combo_node);
-			document.set_node_action(node, UIActionType::OnClick,
+			document.subscribe_node(node, UIActionType::OnClick,
 				[&document, combo_node, node, value, callback]
 				{
 					for (const auto& child : combo_node.get_children())
@@ -83,7 +83,7 @@ namespace unicore
 
 			if (!group_node.empty() && !add_node.empty())
 			{
-				_document->set_node_action(add_node, UIActionType::OnClick,
+				_document->subscribe_node(add_node, UIActionType::OnClick,
 					[this, group_node]
 					{
 						const auto count = group_node.get_children_count();

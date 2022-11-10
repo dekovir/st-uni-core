@@ -71,12 +71,12 @@ namespace unicore
 
 						auto& info = example_infos[i];
 
-						const auto index = i;
+						const auto index = static_cast<int>(i);
 
 						if (auto find = node.find_by_name("name"); find.valid())
 						{
 							_ui_document->set_node_attribute(find, UIAttribute::Text, info.title);
-							_ui_document->set_node_action(find, UIActionType::OnClick,
+							_ui_document->subscribe_node(find, UIActionType::OnClick,
 								[this, index] { set_example(index); });
 						}
 					}

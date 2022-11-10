@@ -13,8 +13,8 @@ namespace unicore
 	{
 		OnClick,
 		OnChange, // Value changed
-		OnMouseEnter, // Mouse cursor enters node
-		OnMouseLeave, // Mouse cursor leaves node
+		OnMouseEnter, // Mouse cursor enters node TODO: Remove?
+		OnMouseLeave, // Mouse cursor leaves node TODO: Remove?
 	};
 	using UIActionDict = Dictionary<UIActionType, UIAction>;
 }

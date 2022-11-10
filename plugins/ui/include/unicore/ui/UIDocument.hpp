@@ -5,18 +5,10 @@
 
 namespace unicore
 {
-	enum class UIEventType
-	{
-		Clicked,
-		ValueChanged,
-		MouseEnter,
-		MouseLeave,
-	};
-
 	struct UIEvent
 	{
 		UINode node;
-		UIEventType type;
+		UIActionType type;
 		Variant value;
 	};
 
@@ -31,7 +23,6 @@ namespace unicore
 		UC_OBJECT_EVENT(set_style, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_visible, const UINode&, Bool);
 		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttribute, const Optional<Variant>&);
-		UC_OBJECT_EVENT(set_action, const UINode&, UIActionType, const Optional<UIAction>&);
 	public:
 		explicit UIDocument(Logger* logger = nullptr);
 
@@ -61,6 +52,8 @@ namespace unicore
 			List<UINode>& list, const UINode& parent = UINode::Empty) const;
 
 		// EVENTS //////////////////////////////////////////////////////////////////
+		void send_event(const UINode node, UIActionType type,
+			const Variant& value = Variant::Empty);
 		void send_event(const UIEvent& evt);
 
 		// CREATE //////////////////////////////////////////////////////////////////
@@ -111,12 +104,8 @@ namespace unicore
 		UC_NODISCARD Bool get_node_attributes(const UINode& node, UIAttributeDict& dict) const;
 
 		// ACTIONS /////////////////////////////////////////////////////////////////
-		void set_node_action(const UINode& node, UIActionType type, const Optional<UIAction>& action);
-
-		UC_NODISCARD Optional<UIAction> get_node_action(const UINode& node, UIActionType type) const;
-
-		UC_NODISCARD Optional<UIActionDict> get_node_actions(const UINode& node) const;
-		UC_NODISCARD Bool get_node_actions(const UINode& node, UIActionDict& dict) const;
+		void subscribe_node(const UINode& node, UIActionType type, const UIAction& action);
+		Bool unsubscribe_node(const UINode& node, UIActionType type);
 
 	protected:
 		struct NodeInfo
@@ -129,12 +118,12 @@ namespace unicore
 			UINode::IndexType parent = UINode::InvalidIndex;
 			List<UINode::IndexType> children;
 			UIAttributeDict attributes;
-			UIActionDict actions;
 		};
 
 		Logger* _logger;
 		List<UINode::IndexType> _roots;
 		Dictionary<UINode::IndexType, NodeInfo> _nodes;
+		Dictionary<UINode::IndexType, UIActionDict> _node_actions;
 		Dictionary<String, UINode::IndexType> _cached_id;
 
 		mutable bool _write_protection = false;
@@ -162,6 +151,9 @@ namespace unicore
 
 		NodeInfo* get_info(const UINode& node);
 		UC_NODISCARD const NodeInfo* get_info(const UINode& node) const;
+
+		UIActionDict* get_actions(UINode::IndexType index);
+		UC_NODISCARD const UIActionDict* get_actions(UINode::IndexType index) const;
 
 		UINode::IndexType create_index();
 		UC_NODISCARD UINode node_from_index(UINode::IndexType index) const;

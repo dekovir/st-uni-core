@@ -92,9 +92,9 @@ namespace unicore
 		if (const auto find = node.find_by_name("name"); find.valid())
 		{
 			const auto tmp_index = index;
-			_document.set_node_action(find, UIActionType::OnMouseEnter,
+			_document.subscribe_node(find, UIActionType::OnMouseEnter,
 				[this, tmp_index] { apply_tooltip(tmp_index); });
-			_document.set_node_action(find, UIActionType::OnMouseLeave,
+			_document.subscribe_node(find, UIActionType::OnMouseLeave,
 				[this] { apply_tooltip(InventoryIndex_Invalid); });
 		}
 

@@ -162,7 +162,7 @@ namespace unicore
 			{
 				_options.actions[type] = action;
 				if (_document)
-					_document->set_node_action(_node, type, action);
+					_document->subscribe_node(_node, type, action);
 			}
 
 		private:

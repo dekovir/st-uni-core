@@ -103,28 +103,6 @@ namespace unicore
 		return false;
 	}
 
-	UIActionDict UINode::get_actions() const
-	{
-		if (_document)
-		{
-			if (const auto result = _document->get_node_actions(*this); result.has_value())
-				return result.value();
-		}
-
-		return {};
-	}
-
-	Optional<UIAction> UINode::action(UIActionType type) const
-	{
-		if (_document)
-		{
-			if (const auto action = _document->get_node_action(*this, type); action.has_value())
-				return action.value();
-		}
-
-		return std::nullopt;
-	}
-
 	size_t UINode::get_children(List<UINode>& children) const
 	{
 		return _document ? _document->get_node_children(children, *this) : 0;
