@@ -142,11 +142,11 @@ namespace unicore
 		}
 
 		const auto i = strtoll(str.data(), &end, 10);
-		if (end - str.data() <= str.size())
+		if (end - str.data() == str.size())
 			return i;
 
 		const auto d = strtod(str.data(), &end);
-		if (end - str.data() <= str.size())
+		if (end - str.data() == str.size())
 			return d;
 
 		return str;

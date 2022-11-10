@@ -12,7 +12,7 @@ namespace unicore
 	{
 		return
 			sizeof(UIDocument) +
-			(sizeof(NodeInfo) + sizeof(UINode::IndexType)) * _nodes.size();
+			(sizeof(NodeInfo) + sizeof(UINode::IndexType)) * _node_infos.size();
 	}
 
 	Size UIDocument::get_roots(List<UINode>& list) const
@@ -49,20 +49,14 @@ namespace unicore
 			const auto& info = get_info(parent.index());
 			if (info->tag == tag)
 				return parent;
+		}
 
-			for (const auto child_index : info->children)
+		if (const auto children = get_children_index(parent.index()))
+		{
+			for (const auto child_index : *children)
 			{
 				const auto child = node_from_index(child_index);
 				if (auto find = find_by_type(tag, child); find.valid())
-					return find;
-			}
-		}
-		else
-		{
-			for (const auto& root_index : _roots)
-			{
-				const auto root = node_from_index(root_index);
-				if (auto find = find_by_type(tag, root); find.valid())
 					return find;
 			}
 		}
@@ -88,8 +82,7 @@ namespace unicore
 		}
 		else
 		{
-			for (const auto& root_index : _roots)
-				internal_find_all_by_type(root_index, tag, list, count);
+			internal_find_all_by_type(UINode::InvalidIndex, tag, list, count);
 		}
 
 		return count;
@@ -109,20 +102,14 @@ namespace unicore
 			const auto& info = get_info(parent.index());
 			if (StringHelper::equals(info->name, name))
 				return parent;
+		}
 
-			for (const auto child_index : info->children)
+		if (const auto children = get_children_index(parent.index()))
+		{
+			for (const auto child_index : *children)
 			{
 				const auto child = node_from_index(child_index);
 				if (auto find = find_by_name(name, child); find.valid())
-					return find;
-			}
-		}
-		else
-		{
-			for (const auto& root_index : _roots)
-			{
-				const auto node = node_from_index(root_index);
-				if (auto find = find_by_name(name, node); find.valid())
 					return find;
 			}
 		}
@@ -148,8 +135,7 @@ namespace unicore
 		}
 		else
 		{
-			for (const auto& root_index : _roots)
-				internal_find_all_by_name(root_index, name, list, count);
+			internal_find_all_by_name(UINode::InvalidIndex, name, list, count);
 		}
 
 		return count;
@@ -170,16 +156,8 @@ namespace unicore
 
 			return internal_querry(parent.index(), predicate);
 		}
-		else
-		{
-			for (const auto& root_index : _roots)
-			{
-				if (auto find = internal_querry(root_index, predicate); find.valid())
-					return find;
-			}
-		}
 
-		return UINode::Empty;
+		return internal_querry(UINode::InvalidIndex, predicate);
 	}
 
 	Size UIDocument::querry_all(const Predicate<const UINode&>& predicate,
@@ -201,8 +179,7 @@ namespace unicore
 		}
 		else
 		{
-			for (const auto& root_index : _roots)
-				internal_querry_all(root_index, predicate, list, count);
+			internal_querry_all(UINode::InvalidIndex, predicate, list, count);
 		}
 
 		return count;
@@ -274,75 +251,53 @@ namespace unicore
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
 
-		if (parent.valid() && !is_node_valid(parent))
+		if (!parent.empty() && parent.document() != this)
 		{
-			// TODO: Implement duplicate from other document
+			UC_LOG_ERROR(_logger) << "Failed to create node. Wrong document";
 			return UINode::Empty;
 		}
 
-		if (parent.valid() && parent.tag() != UINodeTag::Group)
+		if (!parent.empty() && parent.tag() != UINodeTag::Group)
 		{
 			UC_LOG_ERROR(_logger) << "Failed to create node. Only group tag can have children";
 			return UINode::Empty;
 		}
 
-		const auto index = create_index();
-		auto& info = _nodes[index];
-
-		info.tag = tag;
-		info.uid = StringHelper::to_lower(options.uid);
-		info.name = options.name;
-		info.visible = options.visible;
-
-		info.parent = UINode::InvalidIndex;
-		info.attributes = options.attributes;
-
-		if (!options.actions.empty())
-			_node_actions[index] = options.actions;
-
-		if (parent.valid())
-		{
-			info.parent = parent.index();
-
-			if (const auto parent_info = get_info(parent))
-				parent_info->children.push_back(index);
-		}
-		else
-		{
-			_roots.push_back(index);
-		}
-
-		if (!info.uid.empty())
-		{
-			if (_cached_id.find(info.uid) != _cached_id.end())
-				UC_LOG_ERROR(_logger) << "Duplicate uid '" << info.uid << "'";
-
-			_cached_id[info.uid] = index;
-			UC_LOG_DEBUG(_logger) << "Node at " << index
-				<< " registered with '" << info.uid << "' uid";
-		}
-
-		const auto node = node_from_index(index);
-		_event_create_node.invoke(node);
-
-		return node;
+		return node_from_index(internal_create_node(tag, options, parent.index()));
 	}
 
 	UINode UIDocument::duplicate(const UINode& node, const UINode& at_parent)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
-		return internal_duplicate_recurse(node, at_parent);
+
+		if (!is_node_valid(node))
+		{
+			UC_LOG_ERROR(_logger) << "Failed to duplicate node. Wrong node";
+			return UINode::Empty;
+		}
+
+		if (!at_parent.empty() && at_parent.tag() != UINodeTag::Group)
+		{
+			UC_LOG_ERROR(_logger) << "Failed to duplicate node. Only group tag can have children";
+			return UINode::Empty;
+		}
+
+		return node_from_index(internal_duplicate(node, at_parent.index()));
 	}
 
 	Bool UIDocument::remove_node(const UINode& node)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
+
 		if (!is_node_valid(node))
+		{
+			UC_LOG_WARNING(_logger) << "Failed to remove node. Node is invalid";
 			return false;
+		}
 
 		Size count = 0;
-		internal_remove_node_recurse(node.index(), count);
-		return count;
+		internal_remove_node(node.index(), count);
+		return count > 0;
 	}
 
 	// VALUES ////////////////////////////////////////////////////////////////////
@@ -389,6 +344,7 @@ namespace unicore
 	Bool UIDocument::set_node_name(const UINode& node, StringView value)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
+
 		if (const auto info = get_info(node))
 		{
 			info->name = value;
@@ -413,6 +369,7 @@ namespace unicore
 	Bool UIDocument::set_node_style(const UINode& node, StringView value)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
+
 		if (const auto info = get_info(node))
 		{
 			info->style = value;
@@ -437,6 +394,7 @@ namespace unicore
 	Bool UIDocument::set_node_visible(const UINode& node, Bool value)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
+
 		if (const auto info = get_info(node))
 		{
 			if (info->visible != value)
@@ -463,15 +421,19 @@ namespace unicore
 	{
 		if (node.valid())
 		{
-			if (const auto& info = get_info(node))
+			if (node.document() != this)
 			{
-				for (const auto child_index : info->children)
-					list.push_back(node_from_index(child_index));
-
-				return info->children.size();
+				UC_LOG_ERROR(_logger) << "Wrong document";
+				return 0;
 			}
 
-			UC_LOG_WARNING(_logger) << "Invalid node";
+			if (const auto children = get_children_index(node.index()))
+			{
+				for (const auto child_index : *children)
+					list.push_back(node_from_index(child_index));
+				return children->size();
+			}
+
 			return 0;
 		}
 
@@ -492,10 +454,15 @@ namespace unicore
 	{
 		if (node.valid())
 		{
-			if (const auto& info = get_info(node))
-				return info->children.size();
+			if (node.document() != this)
+			{
+				UC_LOG_ERROR(_logger) << "Wrong document";
+				return 0;
+			}
 
-			UC_LOG_WARNING(_logger) << "Invalid node";
+			if (const auto children = get_children_index(node.index()))
+				return children->size();
+
 			return 0;
 		}
 
@@ -506,17 +473,13 @@ namespace unicore
 	{
 		if (const auto& info = get_info(node); info != nullptr)
 		{
-			if (const auto& parent_info = get_info(info->parent))
-			{
-				auto& children = parent_info->children;
-				if (const auto it = std::find(children.begin(), children.end(), node.index()); it != children.end())
-					return it - children.begin();
-			}
-			else
-			{
-				if (const auto it = std::find(_roots.begin(), _roots.end(), node.index()); it != _roots.end())
-					return it - _roots.begin();
-			}
+			const auto children = get_children_index(info->parent);
+			UC_ASSERT_MSG(children != nullptr, "Children is null");
+
+			if (const auto it = std::find(children->begin(), children->end(), node.index()); it != children->end())
+				return it - children->begin();
+
+			UC_ASSERT_ALWAYS_MSG("Index not found");
 		}
 
 		return std::nullopt;
@@ -526,35 +489,22 @@ namespace unicore
 	{
 		if (const auto& info = get_info(node); info != nullptr)
 		{
-			if (const auto& parent_info = get_info(info->parent))
-			{
-				auto& children = parent_info->children;
-				if (const auto it = std::find(children.begin(), children.end(), node.index()); it != children.end())
-				{
-					if (const auto old_index = it - children.begin(); old_index != new_index)
-					{
-						children.erase(children.begin() + old_index);
-						children.insert(children.begin() + new_index, node.index());
+			const auto children = get_children_index(info->parent);
+			UC_ASSERT_MSG(children != nullptr, "Children is null");
 
-						_event_change_index.invoke(node_from_index(info->parent), old_index, new_index);
-					}
-					return true;
-				}
-			}
-			else
+			if (const auto it = std::find(children->begin(), children->end(), node.index()); it != children->end())
 			{
-				if (const auto it = std::find(_roots.begin(), _roots.end(), node.index()); it != _roots.end())
+				if (const auto old_index = it - children->begin(); old_index != new_index)
 				{
-					if (const auto old_index = it - _roots.begin(); old_index != new_index)
-					{
-						_roots.erase(_roots.begin() + old_index);
-						_roots.insert(_roots.begin() + new_index, node.index());
+					children->erase(children->begin() + old_index);
+					children->insert(children->begin() + new_index, node.index());
 
-						_event_change_index.invoke(node_from_index(UINode::InvalidIndex), old_index, new_index);
-					}
-					return true;
+					_event_change_index.invoke(node_from_index(info->parent), old_index, new_index);
 				}
+				return true;
 			}
+
+			UC_ASSERT_ALWAYS_MSG("Index not found");
 		}
 
 		return false;
@@ -564,23 +514,16 @@ namespace unicore
 	{
 		if (const auto& info = get_info(node); info != nullptr)
 		{
-			if (const auto& parent_info = get_info(info->parent))
+			const auto children = get_children_index(info->parent);
+			UC_ASSERT_MSG(children != nullptr, "Children is null");
+
+			if (const auto it = std::find(children->begin(), children->end(), node.index()); it != children->end())
 			{
-				auto& children = parent_info->children;
-				if (const auto it = std::find(children.begin(), children.end(), node.index()); it != children.end())
-				{
-					if (const auto index = it - children.begin(); index + 1 < children.size())
-						return node_from_index(children[index + 1]);
-				}
+				if (const auto index = it - children->begin(); index + 1 < children->size())
+					return node_from_index(children->at(index + 1));
 			}
-			else
-			{
-				if (const auto it = std::find(_roots.begin(), _roots.end(), node.index()); it != _roots.end())
-				{
-					if (const auto index = it - _roots.begin(); index + 1 < _roots.size())
-						return node_from_index(_roots[index + 1]);
-				}
-			}
+
+			UC_ASSERT_ALWAYS_MSG("Index not found");
 		}
 
 		return UINode::Empty;
@@ -590,23 +533,16 @@ namespace unicore
 	{
 		if (const auto& info = get_info(node); info != nullptr)
 		{
-			if (const auto& parent_info = get_info(info->parent))
+			const auto children = get_children_index(info->parent);
+			UC_ASSERT_MSG(children != nullptr, "Children is null");
+
+			if (const auto it = std::find(children->begin(), children->end(), node.index()); it != children->end())
 			{
-				auto& children = parent_info->children;
-				if (const auto it = std::find(children.begin(), children.end(), node.index()); it != children.end())
-				{
-					if (const auto index = it - children.end(); index > 0)
-						return node_from_index(children[index - 1]);
-				}
+				if (const auto index = it - children->end(); index > 0)
+					return node_from_index(children->at(index - 1));
 			}
-			else
-			{
-				if (const auto it = std::find(_roots.begin(), _roots.end(), node.index()); it != _roots.end())
-				{
-					if (const auto index = it - _roots.end(); index > 0)
-						return node_from_index(_roots[index - 1]);
-				}
-			}
+
+			UC_ASSERT_ALWAYS_MSG("Index not found");
 		}
 
 		return UINode::Empty;
@@ -680,26 +616,27 @@ namespace unicore
 	void UIDocument::subscribe_node(const UINode& node,
 		UIActionType type, const UIAction& action)
 	{
+		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
+
 		if (node.document() != this)
 		{
 			UC_LOG_ERROR(_logger) << "Wrong document";
 			return;
 		}
 
-		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
-
 		_node_actions[node.index()][type] = action;
 	}
 
 	Bool UIDocument::unsubscribe_node(const UINode& node, UIActionType type)
 	{
+		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
+
 		if (node.document() != this)
 		{
 			UC_LOG_ERROR(_logger) << "Wrong document";
 			return false;
 		}
 
-		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
 		if (const auto actions = get_actions(node.index()); actions != nullptr)
 		{
 			if (const auto it = actions->find(type); it != actions->end())
@@ -714,14 +651,14 @@ namespace unicore
 
 	UIDocument::NodeInfo* UIDocument::get_info(UINode::IndexType index)
 	{
-		const auto it = _nodes.find(index);
-		return it != _nodes.end() ? &it->second : nullptr;
+		const auto it = _node_infos.find(index);
+		return it != _node_infos.end() ? &it->second : nullptr;
 	}
 
 	const UIDocument::NodeInfo* UIDocument::get_info(UINode::IndexType index) const
 	{
-		const auto it = _nodes.find(index);
-		return it != _nodes.end() ? &it->second : nullptr;
+		const auto it = _node_infos.find(index);
+		return it != _node_infos.end() ? &it->second : nullptr;
 	}
 
 	UIDocument::NodeInfo* UIDocument::get_info(const UINode& node)
@@ -746,6 +683,28 @@ namespace unicore
 		return it != _node_actions.end() ? &it->second : nullptr;
 	}
 
+	UIDocument::NodeIndexList* UIDocument::get_children_index(UINode::IndexType index)
+	{
+		if (index != UINode::InvalidIndex)
+		{
+			const auto it = _node_children.find(index);
+			return it != _node_children.end() ? &it->second : nullptr;
+		}
+
+		return !_roots.empty() ? &_roots : nullptr;
+	}
+
+	const UIDocument::NodeIndexList* UIDocument::get_children_index(UINode::IndexType index) const
+	{
+		if (index != UINode::InvalidIndex)
+		{
+			const auto it = _node_children.find(index);
+			return it != _node_children.end() ? &it->second : nullptr;
+		}
+
+		return !_roots.empty() ? &_roots : nullptr;
+	}
+
 	UINode::IndexType UIDocument::create_index()
 	{
 		return _last_index++;
@@ -759,44 +718,48 @@ namespace unicore
 	void UIDocument::internal_find_all_by_type(UINode::IndexType index,
 		UINodeTag tag, List<UINode>& list, Size& count) const
 	{
-		const auto info = get_info(index);
-		if (!info) return;
-
-		if (info->tag == tag)
+		if (const auto info = get_info(index); info && info->tag == tag)
 		{
 			list.push_back(node_from_index(index));
 			count++;
 		}
 
-		for (const auto child_index : info->children)
-			internal_find_all_by_type(child_index, tag, list, count);
+		if (const auto children = get_children_index(index); children != nullptr)
+		{
+			for (const auto child_index : *children)
+				internal_find_all_by_type(child_index, tag, list, count);
+		}
 	}
 
 	void UIDocument::internal_find_all_by_name(UINode::IndexType index,
 		StringView name, List<UINode>& list, Size& count) const
 	{
-		const auto info = get_info(index);
-		if (!info) return;
-
-		if (StringHelper::equals(info->name, name))
+		if (const auto info = get_info(index);
+			info && StringHelper::equals(info->name, name))
 		{
 			list.push_back(node_from_index(index));
 			count++;
 		}
 
-		for (const auto child_index : info->children)
-			internal_find_all_by_name(child_index, name, list, count);
+		if (const auto children = get_children_index(index); children != nullptr)
+		{
+			for (const auto child_index : *children)
+				internal_find_all_by_name(child_index, name, list, count);
+		}
 	}
 
 	UINode UIDocument::internal_querry(UINode::IndexType index,
 		const Predicate<const UINode&>& predicate) const
 	{
-		if (const auto& info = get_info(index))
+		if (index != UINode::InvalidIndex)
 		{
 			if (const auto node = node_from_index(index); predicate(node))
 				return node;
+		}
 
-			for (const auto child_index : info->children)
+		if (const auto children = get_children_index(index); children != nullptr)
+		{
+			for (const auto child_index : *children)
 			{
 				if (auto find = internal_querry(child_index, predicate); find.valid())
 					return find;
@@ -810,27 +773,69 @@ namespace unicore
 		const Predicate<const UINode&>& predicate,
 		List<UINode>& list, Size& count) const
 	{
-		const auto info = get_info(index);
-		if (!info) return;
-
-		if (const auto node = node_from_index(index); predicate(node))
+		if (index != UINode::InvalidIndex)
 		{
-			list.push_back(node);
-			count++;
+			if (const auto node = node_from_index(index); predicate(node))
+			{
+				list.push_back(node);
+				count++;
+			}
 		}
 
-		for (const auto child_index : info->children)
-			internal_querry_all(child_index, predicate, list, count);
+		if (const auto children = get_children_index(index); children != nullptr)
+		{
+			for (const auto child_index : *children)
+				internal_querry_all(child_index, predicate, list, count);
+		}
 	}
 
-	UINode UIDocument::internal_duplicate_recurse(const UINode& node, const UINode& parent)
+	UINode::IndexType UIDocument::internal_create_node(UINodeTag tag,
+		const UINodeOptions& options, UINode::IndexType parent)
 	{
-		if (parent.valid() && parent.tag() != UINodeTag::Group)
+		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
+
+		const auto index = create_index();
+		auto& info = _node_infos[index];
+
+		info.tag = tag;
+		info.uid = StringHelper::to_lower(options.uid);
+		info.name = options.name;
+		info.visible = options.visible;
+
+		info.parent = UINode::InvalidIndex;
+		info.attributes = options.attributes;
+
+		if (!options.actions.empty())
+			_node_actions[index] = options.actions;
+
+		if (parent != UINode::InvalidIndex)
 		{
-			UC_LOG_ERROR(_logger) << "Failed to duplicate node. Only group tag can have children";
-			return UINode::Empty;
+			info.parent = parent;
+			_node_children[parent].push_back(index);
+		}
+		else
+		{
+			_roots.push_back(index);
 		}
 
+		if (!info.uid.empty())
+		{
+			if (_cached_id.find(info.uid) != _cached_id.end())
+				UC_LOG_ERROR(_logger) << "Duplicate uid '" << info.uid << "'";
+
+			_cached_id[info.uid] = index;
+			UC_LOG_DEBUG(_logger) << "Node at " << index
+				<< " registered with '" << info.uid << "' uid";
+		}
+
+		if (!_event_create_node.empty())
+			_event_create_node.invoke(node_from_index(index));
+
+		return index;
+	}
+
+	UINode::IndexType UIDocument::internal_duplicate(const UINode& node, UINode::IndexType parent)
+	{
 		if (const auto info = get_info(node))
 		{
 			UINodeOptions options;
@@ -841,39 +846,41 @@ namespace unicore
 			if (const auto actions = get_actions(node.index()); actions != nullptr)
 				options.actions = *actions;
 
-			const auto children = info->children;
-			const auto new_node = create_node(info->tag, options, parent);
-
-			if (new_node.valid())
+			const auto new_index = internal_create_node(info->tag, options, parent);
+			if (const auto children = get_children_index(node.index()); children != nullptr)
 			{
-				for (const auto& child : children)
-					internal_duplicate_recurse(node_from_index(child), new_node);
-
-				return new_node;
+				for (const auto& child : *children)
+					internal_duplicate(node_from_index(child), new_index);
 			}
+
+			return new_index;
 		}
 
-		return UINode::Empty;
+		return UINode::InvalidIndex;
 	}
 
-	void UIDocument::internal_remove_node_recurse(UINode::IndexType index, Size& count)
+	void UIDocument::internal_remove_node(UINode::IndexType index, Size& count)
 	{
-		const auto it = _nodes.find(index);
-		if (it == _nodes.end())
-			return;
+		// REMOVE CHILDREN
+		if (const auto it = _node_children.find(index); it != _node_children.end())
+		{
+			for (const auto child_index : it->second)
+				internal_remove_node(child_index, count);
 
-		const auto& info = it->second;
-
-		for (const auto& child : info.children)
-			internal_remove_node_recurse(child, count);
-
-		_event_remove_node.invoke(node_from_index(index));
-
-		_nodes.erase(index);
+			_node_children.erase(it);
+		}
 
 		// REMOVE ACTIONS
-		if (const auto jt = _node_actions.find(index); jt != _node_actions.end())
-			_node_actions.erase(jt);
+		if (const auto it = _node_actions.find(index); it != _node_actions.end())
+			_node_actions.erase(it);
+
+		if (const auto it = _node_infos.find(index); it != _node_infos.end())
+		{
+			if (!_event_remove_node.empty())
+				_event_remove_node.invoke(node_from_index(index));
+
+			_node_infos.erase(index);
+		}
 	}
 
 	bool UIDocument::call_action_default(const UIAction& action, const UINode& node)

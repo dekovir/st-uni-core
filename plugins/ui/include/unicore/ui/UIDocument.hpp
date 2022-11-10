@@ -116,14 +116,16 @@ namespace unicore
 			String style;
 			Bool visible = true;
 			UINode::IndexType parent = UINode::InvalidIndex;
-			List<UINode::IndexType> children;
 			UIAttributeDict attributes;
 		};
 
+		using NodeIndexList = List<UINode::IndexType>;
+
 		Logger* _logger;
-		List<UINode::IndexType> _roots;
-		Dictionary<UINode::IndexType, NodeInfo> _nodes;
+		NodeIndexList _roots;
+		Dictionary<UINode::IndexType, NodeInfo> _node_infos;
 		Dictionary<UINode::IndexType, UIActionDict> _node_actions;
+		Dictionary<UINode::IndexType, NodeIndexList> _node_children;
 		Dictionary<String, UINode::IndexType> _cached_id;
 
 		mutable bool _write_protection = false;
@@ -155,6 +157,9 @@ namespace unicore
 		UIActionDict* get_actions(UINode::IndexType index);
 		UC_NODISCARD const UIActionDict* get_actions(UINode::IndexType index) const;
 
+		NodeIndexList* get_children_index(UINode::IndexType index);
+		UC_NODISCARD const NodeIndexList* get_children_index(UINode::IndexType index) const;
+
 		UINode::IndexType create_index();
 		UC_NODISCARD UINode node_from_index(UINode::IndexType index) const;
 
@@ -170,8 +175,10 @@ namespace unicore
 			const Predicate<const UINode&>& predicate,
 			List<UINode>& list, Size& count) const;
 
-		UINode internal_duplicate_recurse(const UINode& node, const UINode& parent);
-		void internal_remove_node_recurse(UINode::IndexType index, Size& count);
+		UINode::IndexType internal_create_node(UINodeTag tag,
+			const UINodeOptions& options, UINode::IndexType parent);
+		UINode::IndexType internal_duplicate(const UINode& node, UINode::IndexType parent);
+		void internal_remove_node(UINode::IndexType index, Size& count);
 
 		static bool call_action_default(const UIAction& action, const UINode& node);
 		static bool call_action_value(const UIAction& action, const UINode& node, const Variant& value);
