@@ -28,11 +28,14 @@ namespace unicore::Unicode
 			return from;
 		}
 
-		BasicString<CharTo> result;
-		if (try_convert(from, result))
+		if (!from.empty())
 		{
-			if (success != nullptr) *success = true;
-			return result;
+			BasicString<CharTo> result;
+			if (try_convert(from, result))
+			{
+				if (success != nullptr) *success = true;
+				return result;
+			}
 		}
 
 		if (success != nullptr) *success = false;

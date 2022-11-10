@@ -487,7 +487,13 @@ namespace unicore
 
 	Bool UIDocument::set_node_sibling_index(const UINode& node, unsigned new_index)
 	{
-		if (const auto& info = get_info(node); info != nullptr)
+		if (!node.empty() && node.document() != this)
+		{
+			UC_LOG_ERROR(_logger) << "Failed to set node sibling index. Wrong document";
+			return false;
+		}
+
+		if (const auto& info = get_info(node.index()); info != nullptr)
 		{
 			const auto children = get_children_index(info->parent);
 			UC_ASSERT_MSG(children != nullptr, "Children is null");
@@ -499,7 +505,7 @@ namespace unicore
 					children->erase(children->begin() + old_index);
 					children->insert(children->begin() + new_index, node.index());
 
-					_event_change_index.invoke(node_from_index(info->parent), old_index, new_index);
+					_event_reorder_children.invoke(node_from_index(info->parent));
 				}
 				return true;
 			}

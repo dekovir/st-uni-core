@@ -28,21 +28,11 @@ namespace unicore
 			GroupElement(GroupElement&& other) = default;
 			GroupElement(const GroupElement& other) = default;
 
-			template<typename ... Args>
-			explicit GroupElement(Args&&... args)
-			{
-				(push_back(std::forward<Args>(args)), ...);
-			}
-
-			~GroupElement() override
-			{
-				for (const auto element : _elements)
-				{
-					element->~Element();
-					Memory::free(element);
-				}
-				_elements.clear();
-			}
+			//template<typename ... Args>
+			//explicit GroupElement(Args&&... args)
+			//{
+			//	(add(std::forward<Args>(args)), ...);
+			//}
 
 			UINode create(UIDocument& document, const UINode& parent) const override
 			{
@@ -64,17 +54,29 @@ namespace unicore
 
 			template<typename T,
 				std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
-			void push_back(T&& item)
+			void add(T&& item)
 			{
-				auto ptr = Memory::alloc(sizeof(T));
-				auto element = new (ptr) T(std::forward<T>(item));
-				_elements.push_back(element);
+				_elements.push_back(std::make_shared<T>(std::forward<T>(item)));
+			}
+
+			template<typename T,
+				std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
+			void add(const T& item)
+			{
+				_elements.push_back(std::make_shared<T>(item));
+			}
+
+			template<typename T,
+				std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
+			void add(const Shared<T>& item)
+			{
+				_elements.push_back(item);
 			}
 
 			UC_NODISCARD Element* get_element(Size index)
 			{
 				if (index < _elements.size())
-					return _elements[index];
+					return _elements[index].get();
 
 				return nullptr;
 			}
@@ -82,7 +84,7 @@ namespace unicore
 			UC_NODISCARD const Element* get_element(Size index) const
 			{
 				if (index < _elements.size())
-					return _elements[index];
+					return _elements[index].get();
 
 				return nullptr;
 			}
@@ -106,11 +108,55 @@ namespace unicore
 			}
 
 		protected:
-			List<Element*> _elements;
+			List<Shared<Element>> _elements;
 		};
 
-		using VLayout = GroupElement<UIGroupType::Vertical>;
-		using HLayout = GroupElement<UIGroupType::Horizontal>;
+		template<typename T,
+			std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
+		extern Shared<T> shared(T&& element)
+		{
+			return std::make_shared<T>(std::forward<T>(element));
+		}
+
+		template<typename T,
+			std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
+		extern Shared<T> ref(T&& element, Shared<T>& value)
+		{
+			value = std::make_shared<T>(std::forward<T>(element));
+			return value;
+		}
+
+		template<typename ... Args>
+		extern auto vlayout(Args&&... args)
+		{
+			GroupElement<UIGroupType::Vertical> layout;
+			(layout.add(std::forward<Args>(args)), ...);
+			return layout;
+		}
+
+		template<typename ... Args>
+		extern auto hlayout(Args&&... args)
+		{
+			GroupElement<UIGroupType::Horizontal> layout;
+			(layout.add(std::forward<Args>(args)), ...);
+			return layout;
+		}
+
+		template<typename ... Args>
+		extern auto list(Args&&... args)
+		{
+			GroupElement<UIGroupType::List> layout;
+			(layout.add(std::forward<Args>(args)), ...);
+			return layout;
+		}
+
+		template<typename ... Args>
+		extern auto tree(Args&&... args)
+		{
+			GroupElement<UIGroupType::Tree> layout;
+			(layout.add(std::forward<Args>(args)), ...);
+			return layout;
+		}
 
 		class Text : public Element
 		{
@@ -125,6 +171,24 @@ namespace unicore
 				UINodeOptions options;
 				options.attributes[UIAttribute::Text] = text;
 				return document.create_node(UINodeTag::Text, options, parent);
+			}
+		};
+
+		class Item : public Element
+		{
+		public:
+			String32 text;
+			Bool value;
+
+			explicit Item(String32 text, Bool value = false)
+				: text(std::move(text)), value(value) {}
+
+			UC_NODISCARD UINode create(UIDocument& document, const UINode& parent) const override
+			{
+				UINodeOptions options;
+				options.attributes[UIAttribute::Value] = value;
+				options.attributes[UIAttribute::Text] = text;
+				return document.create_node(UINodeTag::Item, options, parent);
 			}
 		};
 
@@ -144,21 +208,6 @@ namespace unicore
 			virtual void apply_options(UINodeOptions& options) const = 0;
 		};
 
-		class TextInput : public InputElement<UIInputType::Text>
-		{
-		public:
-			String32 text;
-
-			TextInput() = default;
-			explicit TextInput(StringView32 text) : text(text) {}
-
-		protected:
-			void apply_options(UINodeOptions& options) const override
-			{
-				options.attributes[UIAttribute::Value] = text;
-			}
-		};
-
 		using DefaultCallback = std::function<void()>;
 
 		template<typename T>
@@ -167,20 +216,22 @@ namespace unicore
 		template<typename T>
 		using InputCallback = StdVariant<DefaultCallback, ValueCallback<T>>;
 
-		template<UIInputType Type>
-		class BoolInputElement : public InputElement<Type>
+		template<UIInputType Type, typename TValue>
+		class ValueInputElement : public InputElement<Type>
 		{
 		public:
-			using CallbackType = InputCallback<Bool>;
+			using CallbackType = InputCallback<TValue>;
 
-			Bool value = false;
+			TValue value = {};
 			Optional<CallbackType> on_change;
 
-			BoolInputElement() = default;
-			explicit BoolInputElement(Bool value) : value(value) {}
-			BoolInputElement(Bool value, const CallbackType& callback)
-				: value(value)
-				, on_change(callback)
+			ValueInputElement() = default;
+
+			explicit ValueInputElement(TValue value)
+				: value(std::move(value)) {}
+
+			ValueInputElement(TValue value, const CallbackType& callback)
+				: value(std::move(value)), on_change(callback)
 			{}
 
 		protected:
@@ -189,20 +240,21 @@ namespace unicore
 				options.attributes[UIAttribute::Value] = value;
 				if (on_change.has_value())
 				{
-					if (const auto ptr = std::get_if<DefaultCallback>(&on_change.value()))
-						options.actions[UIActionType::OnChange] = *ptr;
-					else if (const auto ptr = std::get_if<ValueCallback<Bool>>(&on_change.value()))
+					if (const auto value_action = std::get_if<ValueCallback<TValue>>(&on_change.value()))
 					{
-						auto func = *ptr;
+						auto func = *value_action;
 						options.actions[UIActionType::OnChange] =
-							[func](const Variant& change) { func(change.get_bool()); };
+							[func](const Variant& change) { func(change.get<TValue>()); };
 					}
+					else if (const auto default_action = std::get_if<DefaultCallback>(&on_change.value()))
+						options.actions[UIActionType::OnChange] = *default_action;
 				}
 			}
 		};
 
-		using Toggle = BoolInputElement<UIInputType::Toggle>;
-		using Radio = BoolInputElement<UIInputType::Radio>;
+		using Toggle = ValueInputElement<UIInputType::Toggle, Bool>;
+		using Radio = ValueInputElement<UIInputType::Radio, Bool>;
+		using TextInput = ValueInputElement<UIInputType::Text, String32>;
 
 		class Button : public InputElement<UIInputType::Button>
 		{
@@ -214,8 +266,6 @@ namespace unicore
 			explicit Button(StringView32 label, DefaultCallback callback)
 				: label(label), on_click(std::move(callback))
 			{
-				int a = 0;
-				a++;
 			}
 
 		protected:
@@ -224,6 +274,91 @@ namespace unicore
 				options.attributes[UIAttribute::Text] = label;
 				if (on_click != nullptr)
 					options.actions[UIActionType::OnClick] = on_click;
+			}
+		};
+
+		class Component : public Element
+		{
+		public:
+			//virtual ~Component() = default;
+
+			UC_NODISCARD virtual Shared<Element> render() = 0;
+
+			void update()
+			{
+				if (_need_rebuild)
+				{
+					_element = render();
+					_need_rebuild = false;
+				}
+
+				on_update();
+			}
+
+			void rebuild()
+			{
+				_need_rebuild = true;
+			}
+
+			UINode create(UIDocument& document, const UINode& parent) const override
+			{
+				if (_element != nullptr)
+					return _element->create(document, parent);
+
+				return UINode::Empty;
+			}
+
+		protected:
+			Shared<Element> _element;
+
+			virtual void on_update() {}
+
+		private:
+			Bool _need_rebuild = true;
+		};
+
+		class Property : public Component
+		{
+		public:
+			explicit Property(StringView32 name)
+				: _name(name)
+			{}
+
+			UC_NODISCARD Shared<Element> render() override
+			{
+				return shared(hlayout(
+					Text(_name),
+					TextInput()
+				));
+			}
+
+		protected:
+			String32 _name;
+		};
+
+		class TestCompoent : public Component
+		{
+		public:
+			UC_NODISCARD Shared<Element> render() override
+			{
+				auto list_element = list();
+				for (const auto& item : items)
+					list_element.add(Item(item));
+
+				return shared(vlayout(
+					Text(U"Items:"),
+					list_element,
+					Button(U"Click", [this] { on_add(); })
+				));
+			}
+
+		protected:
+			List<String32> items;
+
+			void on_add()
+			{
+				items.push_back(StringBuilder::format(U"Item {}", items.size() + 1));
+				rebuild();
 			}
 		};
 	}
@@ -247,27 +382,30 @@ namespace unicore
 		_view->set_size(Vector2f(300, 0));
 		_view->set_position(Vector2f(size.x / 2 - 150, 50));
 
-		const auto layout = test::VLayout
-		{
-			test::HLayout
-			{
-				test::Text{ U"Text" },
-				test::TextInput{ U"Lorem ipsum dolor" },
-			},
-			test::HLayout
-			{
-				test::Text{ U"Bool" },
-				//test::Toggle{true, [this](Bool value) { UC_LOG_DEBUG(logger) << "Toggle value changed to " << value; }},
-				test::Toggle{true, [this] { UC_LOG_DEBUG(logger) << "Toggle value changed "; }},
-				test::Radio{}
-			},
-			test::HLayout
-			{
-				test::Text{ U"Button" },
-				//test::Button{ U"Click" },
-				test::Button{ U"Click", [this] { UC_LOG_DEBUG(logger) << "Click"; } },
-			},
-		};
+		Shared<test::GroupElement<UIGroupType::List>> list_ref;
+		Shared<test::Radio> radio_ref;
+
+		const auto layout = test::vlayout(
+			test::hlayout(
+				test::Text(U"Text"),
+				test::TextInput(U"Lorem ipsum dolor")
+			),
+			test::hlayout(
+				test::Text(U"Text"),
+				test::Toggle(true, [this] { UC_LOG_DEBUG(logger) << "Test"; }),
+				test::ref(test::Radio(), radio_ref)
+			),
+			test::hlayout(
+				test::Text(U"Text"),
+				test::Button(U"Click", [this] { UC_LOG_DEBUG(logger) << "Test"; })
+			),
+			test::Text(U"Items"),
+			test::ref(test::list(), list_ref),
+			test::Button(U"Click", [this] {})
+		);
+
+		if (radio_ref)
+			radio_ref->on_change = [this] { UC_LOG_DEBUG(logger) << "Test"; };
 
 		layout.create(*_document, UINode::Empty);
 	}

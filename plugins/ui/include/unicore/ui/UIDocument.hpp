@@ -16,8 +16,7 @@ namespace unicore
 	{
 		UC_OBJECT_EVENT(create_node, const UINode&);
 		UC_OBJECT_EVENT(remove_node, const UINode&);
-
-		UC_OBJECT_EVENT(change_index, const UINode& /* parent */, unsigned /* old */, unsigned /* new */);
+		UC_OBJECT_EVENT(reorder_children, const UINode&);
 
 		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_style, const UINode&, StringView);
