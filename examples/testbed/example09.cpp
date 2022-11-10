@@ -159,16 +159,26 @@ namespace unicore
 			}
 		};
 
+		using DefaultCallback = std::function<void()>;
+
+		template<typename T>
+		using ValueCallback = std::function<void(T)>;
+
+		template<typename T>
+		using InputCallback = StdVariant<DefaultCallback, ValueCallback<T>>;
+
 		template<UIInputType Type>
 		class BoolInputElement : public InputElement<Type>
 		{
 		public:
+			using CallbackType = InputCallback<Bool>;
+
 			Bool value = false;
-			Action<Bool> on_change;
+			Optional<CallbackType> on_change;
 
 			BoolInputElement() = default;
 			explicit BoolInputElement(Bool value) : value(value) {}
-			BoolInputElement(Bool value, const Action<Bool>& callback)
+			BoolInputElement(Bool value, const CallbackType& callback)
 				: value(value)
 				, on_change(callback)
 			{}
@@ -177,11 +187,16 @@ namespace unicore
 			void apply_options(UINodeOptions& options) const override
 			{
 				options.attributes[UIAttribute::Value] = value;
-				if (on_change != nullptr)
+				if (on_change.has_value())
 				{
-					auto func = on_change;
-					options.actions[UIActionType::OnChange] =
-						[func](const Variant& change) { func(change.get_bool()); };
+					if (const auto ptr = std::get_if<DefaultCallback>(&on_change.value()))
+						options.actions[UIActionType::OnChange] = *ptr;
+					else if (const auto ptr = std::get_if<ValueCallback<Bool>>(&on_change.value()))
+					{
+						auto func = *ptr;
+						options.actions[UIActionType::OnChange] =
+							[func](const Variant& change) { func(change.get_bool()); };
+					}
 				}
 			}
 		};
@@ -189,16 +204,14 @@ namespace unicore
 		using Toggle = BoolInputElement<UIInputType::Toggle>;
 		using Radio = BoolInputElement<UIInputType::Radio>;
 
-		using ClickCallback = std::function<void()>;
-
 		class Button : public InputElement<UIInputType::Button>
 		{
 		public:
 			String32 label;
-			ClickCallback on_click = nullptr;
+			DefaultCallback on_click = nullptr;
 
 			explicit Button(StringView32 label) : label(label) {}
-			explicit Button(StringView32 label, ClickCallback callback)
+			explicit Button(StringView32 label, DefaultCallback callback)
 				: label(label), on_click(std::move(callback))
 			{
 				int a = 0;
@@ -244,7 +257,8 @@ namespace unicore
 			test::HLayout
 			{
 				test::Text{ U"Bool" },
-				test::Toggle{true, [this](Bool value) { UC_LOG_DEBUG(logger) << "Toggle value changed to " << value; }},
+				//test::Toggle{true, [this](Bool value) { UC_LOG_DEBUG(logger) << "Toggle value changed to " << value; }},
+				test::Toggle{true, [this] { UC_LOG_DEBUG(logger) << "Toggle value changed "; }},
 				test::Radio{}
 			},
 			test::HLayout
