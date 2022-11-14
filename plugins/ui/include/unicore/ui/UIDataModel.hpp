@@ -34,7 +34,7 @@ namespace unicore::ui
 		{
 			_keys.reserve(_data.size());
 			for (const auto& it : _data)
-				_keys.push_back(it->first);
+				_keys.push_back(it.first);
 		}
 
 		UC_NODISCARD Size size() const override { return _data.size(); }

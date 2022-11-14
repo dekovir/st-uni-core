@@ -359,9 +359,9 @@ namespace unicore::ui
 	{
 		UC_OBJECT_EVENT(changed, TKey);
 	public:
-		explicit ComboBox(const Dictionary<TKey, String32>& items, TKey value)
+		explicit ComboBox(const Shared<DictionaryDataModel<TKey, String32>>& model, TKey value)
 			: LayoutComponent(UIGroupType::Combo)
-			, _items(items)
+			, _model(model)
 			, _value(value)
 		{
 			update_text();
@@ -383,21 +383,23 @@ namespace unicore::ui
 		UC_NODISCARD TKey get_value() const { return _value; }
 
 	protected:
-		Dictionary<TKey, String32> _items;
+		Shared<DictionaryDataModel<TKey, String32>> _model;
 		Dictionary<TKey, Shared<Item>> _nodes;
 		TKey _value;
 
 		void on_mount() override
 		{
-			for (const auto& it : _items)
+			for (const auto& key : _model->keys())
 			{
-				const auto key = it.first;
+				String32 text;
+				if (_model->try_get(key, text))
+				{
+					auto item = add(Item(text));
+					_nodes[key] = item;
 
-				auto item = add(Item(it.second));
-				_nodes[it.first] = item;
-
-				item->set_value(key == _value);
-				item->set_click_action([this, key] { set_value(key); });
+					item->set_value(key == _value);
+					item->set_click_action([this, key] { set_value(key); });
+				}
 			}
 		}
 
@@ -408,9 +410,9 @@ namespace unicore::ui
 
 		void update_text()
 		{
-			auto it = _items.find(_value);
-			if (it != _items.end())
-				set_attribute(UIAttribute::Value, it->second);
+			String32 text;
+			if (_model->try_get(_value, text))
+				set_attribute(UIAttribute::Value, text);
 		}
 	};
 

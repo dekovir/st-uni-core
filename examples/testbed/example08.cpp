@@ -7,6 +7,48 @@ namespace unicore
 {
 	UC_EXAMPLE_REGISTER(Example08, "UI Components");
 
+	static const Dictionary<int, String32> items = {
+			{0, U"Item 1"},
+			{1, U"Item 2"},
+			{2, U"Item 3"},
+			{3, U"Item 4"},
+			{4, U"Item 5"},
+	};
+
+	class TestTableModel : public ui::TableDataModel<Shared<ui::Component>>
+	{
+	public:
+		explicit TestTableModel(Size size)
+			: _size(size)
+		{
+		}
+
+		UC_NODISCARD Size size() const override { return _size; }
+		UC_NODISCARD Size col_count() const override { return 3; }
+
+		UC_NODISCARD StringView32 get_header(Size col) const override
+		{
+			switch (col)
+			{
+			case 0: return U"Col 1";
+			case 1: return U"Col 2";
+			case 2: return U"Col 3";
+			default: return U"Err";
+			}
+		}
+
+		UC_NODISCARD std::shared_ptr<ui::Component> get_at(Size row, Size column) const override
+		{
+			auto str = StringBuilder::format(U"Cell {} {}", row + 1, column + 1);
+			if (Math::even(row + column))
+				return std::make_shared<ui::Text>(str);
+			return std::make_shared<ui::Item>(str);
+		}
+
+	protected:
+		const Size _size;
+	};
+
 	Example08::Example08(const ExampleContext& context)
 		: Example(context)
 		, _context(context.imgui)
@@ -25,52 +67,6 @@ namespace unicore
 		_view->set_title(U"Test UI");
 		_view->set_size(Vector2f(300, 0));
 		_view->set_position(Vector2f(size.x / 2 - 150, 50));
-
-		static Shared<ui::VLayout> _root;
-
-		static const Dictionary<int, String32> items = {
-			{0, U"Item 1"},
-			{1, U"Item 2"},
-			{2, U"Item 3"},
-			{3, U"Item 4"},
-			{4, U"Item 5"},
-		};
-
-		class TestTableModel : public ui::TableDataModel<Shared<ui::Component>>
-		{
-		public:
-			explicit TestTableModel(Size size)
-				: _size(size)
-			{
-			}
-
-			UC_NODISCARD Size size() const override { return _size; }
-			UC_NODISCARD Size col_count() const override { return 3; }
-
-			UC_NODISCARD StringView32 get_header(Size col) const override
-			{
-				switch (col)
-				{
-				case 0: return U"Col 1";
-				case 1: return U"Col 2";
-				case 2: return U"Col 3";
-				default: return U"Err";
-				}
-			}
-
-			UC_NODISCARD std::shared_ptr<ui::Component> get_at(Size row, Size column) const override
-			{
-				auto str = StringBuilder::format(U"Cell {} {}", row + 1, column + 1);
-				if (Math::even(row + column))
-					return std::make_shared<ui::Text>(str);
-				return std::make_shared<ui::Item>(str);
-			}
-
-		protected:
-			const Size _size;
-		};
-
-		static const auto model = std::make_shared<TestTableModel>(3);
 
 		Shared<ui::Button> btn_ref;
 		Shared<ui::ComboBox<int>> combo_ref;
@@ -122,7 +118,7 @@ namespace unicore
 			),
 			ui::hlayout(
 				ui::Text(U"Combo"),
-				ui::ref(ui::ComboBox(items, 0), combo_ref)
+				ui::ref(ui::ComboBox<int>(std::make_shared<ui::ConstDictionaryDataModel<int, String32>>(items), 0), combo_ref)
 			),
 			ui::vlayout(
 				ui::Text(U"Items"),
@@ -131,7 +127,7 @@ namespace unicore
 			),
 			ui::vlayout(
 				ui::Text(U"Table"),
-				ui::Table(model)
+				ui::Table(std::make_shared<TestTableModel>(3))
 			)
 		);
 
