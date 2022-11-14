@@ -46,10 +46,10 @@ namespace unicore::ui
 		return value;
 	}
 
-	class LayoutComponent : public Component
+	class Group : public Component
 	{
 	public:
-		explicit LayoutComponent(UIGroupType type)
+		explicit Group(UIGroupType type)
 			: Component(UINodeTag::Group)
 		{
 			set_attribute(UIAttribute::Type, type);
@@ -103,28 +103,28 @@ namespace unicore::ui
 		}
 	};
 
-	class VLayout : public LayoutComponent
+	class VLayout : public Group
 	{
 	public:
-		VLayout() : LayoutComponent(UIGroupType::Vertical) {}
+		VLayout() : Group(UIGroupType::Vertical) {}
 	};
 
-	class HLayout : public LayoutComponent
+	class HLayout : public Group
 	{
 	public:
-		HLayout() : LayoutComponent(UIGroupType::Horizontal) {}
+		HLayout() : Group(UIGroupType::Horizontal) {}
 	};
 
-	class ListBox : public LayoutComponent
+	class ListBox : public Group
 	{
 	public:
-		ListBox() : LayoutComponent(UIGroupType::List) {}
+		ListBox() : Group(UIGroupType::List) {}
 	};
 
 	template<UIGroupType Type, typename ... Args>
-	extern auto layout_type(Args&&... args)
+	extern auto group(Args&&... args)
 	{
-		auto layout = std::make_shared<LayoutComponent>(Type);
+		auto layout = std::make_shared<Group>(Type);
 		((layout->add(std::forward<Args>(args))), ...);
 		return layout;
 	}
@@ -141,6 +141,14 @@ namespace unicore::ui
 	extern auto hlayout(Args&&... args)
 	{
 		auto layout = std::make_shared<HLayout>();
+		((layout->add(std::forward<Args>(args))), ...);
+		return layout;
+	}
+
+	template<typename ... Args>
+	extern auto list_box(Args&&... args)
+	{
+		auto layout = std::make_shared<ListBox>();
 		((layout->add(std::forward<Args>(args))), ...);
 		return layout;
 	}
@@ -355,12 +363,12 @@ namespace unicore::ui
 	};
 
 	template<typename TKey>
-	class ComboBox : public LayoutComponent
+	class ComboBox : public Group
 	{
 		UC_OBJECT_EVENT(changed, TKey);
 	public:
 		explicit ComboBox(const Shared<DictionaryDataModel<TKey, String32>>& model, TKey value)
-			: LayoutComponent(UIGroupType::Combo)
+			: Group(UIGroupType::Combo)
 			, _model(model)
 			, _value(value)
 		{
@@ -416,20 +424,20 @@ namespace unicore::ui
 		}
 	};
 
-	class Table : public LayoutComponent
+	class Table : public Group
 	{
 	public:
-		class Header : public LayoutComponent
+		class Header : public Group
 		{
 		public:
-			Header() : LayoutComponent(UIGroupType::TableHeader) {}
+			Header() : Group(UIGroupType::TableHeader) {}
 
 			void set_text(StringView32 text) { set_attribute(UIAttribute::Text, text); }
 			UC_NODISCARD String32 text() const { return get_attribute(UIAttribute::Text).get_string32(); }
 		};
 
 		explicit Table(const Shared<TableDataModel<Shared<Component>>>& model)
-			: LayoutComponent(UIGroupType::Table)
+			: Group(UIGroupType::Table)
 			, _model(model)
 		{
 		}
@@ -445,10 +453,10 @@ namespace unicore::ui
 
 			set_attribute(UIAttribute::Value, col_count);
 
-			add(layout_type<UIGroupType::TableRow>());
+			add(group<UIGroupType::TableRow>());
 
 			// Header row
-			if (const auto row_layout = add(layout_type<UIGroupType::TableRow>()))
+			if (const auto row_layout = add(group<UIGroupType::TableRow>()))
 			{
 				for (unsigned i = 0; i < col_count; i++)
 					row_layout->add(Header())->set_text(_model->get_header(i));
@@ -456,11 +464,11 @@ namespace unicore::ui
 
 			for (unsigned row = 0; row < row_count; row++)
 			{
-				if (const auto row_layout = add(layout_type<UIGroupType::TableRow>()))
+				if (const auto row_layout = add(group<UIGroupType::TableRow>()))
 				{
 					for (unsigned col = 0; col < col_count; col++)
 					{
-						if (const auto cell_layout = row_layout->add(layout_type<UIGroupType::TableCell>()))
+						if (const auto cell_layout = row_layout->add(group<UIGroupType::TableCell>()))
 						{
 							auto component = _model->get_at(row, col);
 
