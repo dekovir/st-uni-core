@@ -8,102 +8,6 @@ namespace unicore
 {
 	UC_EXAMPLE_REGISTER(Example08, "UI 2");
 
-	class UIWidget
-	{
-	public:
-		explicit UIWidget(UIDocument& document)
-			: _document(document)
-		{
-		}
-
-		UC_NODISCARD const UINode& node() const { return _node; }
-
-		void set(UIAttribute type, const Variant& value)
-		{
-			_document.set_node_attribute(_node, type, value);
-		}
-
-	protected:
-		UIDocument& _document;
-		UINode _node;
-	};
-
-	class UIText : public UIWidget
-	{
-	public:
-		explicit UIText(UIDocument& document, StringView text, const UINode& parent = UINode::Empty)
-			: UIWidget(document)
-		{
-			UINodeOptions options;
-			options.attributes[UIAttribute::Text] = text;
-			_node = document.create_node(UINodeTag::Text, options, parent);
-		}
-	};
-
-	class UIInput : public UIWidget
-	{
-	public:
-		explicit UIInput(UIDocument& document, UIInputType type, const UINode& parent = UINode::Empty)
-			: UIWidget(document)
-		{
-			UINodeOptions options;
-			options.attributes[UIAttribute::Type] = type;
-			_node = document.create_node(UINodeTag::Input, options, parent);
-		}
-
-		void set_value(const Variant& value)
-		{
-			_document.set_node_attribute(_node, UIAttribute::Value, value);
-		}
-	};
-
-	class UIGroup : public UIWidget
-	{
-	public:
-		UIGroup(UIDocument& document, UIGroupType type, const UINode& parent = UINode::Empty)
-			: UIWidget(document)
-		{
-			UINodeOptions options;
-			options.attributes[UIAttribute::Type] = type;
-			_node = document.create_node(UINodeTag::Group, options, parent);
-		}
-
-		explicit UIGroup(UIDocument& document, const UINode& parent = UINode::Empty)
-			: UIGroup(document, UIGroupType::Vertical, parent)
-		{
-		}
-
-		UIGroup group(UIGroupType type = UIGroupType::Vertical)
-		{
-			return UIGroup(_document, type);
-		}
-
-		UIGroup vertical() { return group(UIGroupType::Vertical); }
-		UIGroup horizontal() { return group(UIGroupType::Horizontal); }
-		UIGroup child() { return group(UIGroupType::Child); }
-		UIGroup list() { return group(UIGroupType::List); }
-		UIGroup tree() { return group(UIGroupType::Tree); }
-		UIGroup combo() { return group(UIGroupType::Combo); }
-		UIGroup flex() { return group(UIGroupType::Flex); }
-		UIGroup table() { return group(UIGroupType::Table); }
-		UIGroup table_header() { return group(UIGroupType::TableHeader); }
-		UIGroup table_row() { return group(UIGroupType::TableRow); }
-		UIGroup table_cell() { return group(UIGroupType::TableCell); }
-		UIGroup popup() { return group(UIGroupType::Popup); }
-		UIGroup tooltip() { return group(UIGroupType::Tooltip); }
-		UIGroup modal() { return group(UIGroupType::Modal); }
-
-		UIText text(StringView text)
-		{
-			return UIText(_document, text, _node);
-		}
-
-		UIInput input(UIInputType type)
-		{
-			return UIInput(_document, type, _node);
-		}
-	};
-
 	namespace ui
 	{
 		class Component
@@ -173,6 +77,14 @@ namespace unicore
 			UINode _node = UINode::Empty;
 		};
 
+		template<typename T,
+			std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
+		extern Shared<T> ref(T&& element, Shared<T>& value)
+		{
+			value = std::make_shared<T>(std::forward<T>(element));
+			return value;
+		}
+
 		class LayoutComponent : public Component
 		{
 		public:
@@ -182,6 +94,8 @@ namespace unicore
 				set_attribute(UIAttribute::Type, type);
 			}
 
+			UC_NODISCARD Size size() const { return _children.size(); }
+
 			Shared<Component> add(const Shared<Component>& component)
 			{
 				// TODO: Create/destroy
@@ -190,6 +104,22 @@ namespace unicore
 					component->mount(*document(), node());
 
 				return component;
+			}
+
+			template<typename T,
+				std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
+			void add(const T& component)
+			{
+				auto ptr = std::make_shared<T>(component);
+				add(ptr);
+			}
+
+			template<typename T,
+				std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
+			void add(T&& component)
+			{
+				auto ptr = std::make_shared<T>(std::move(component));
+				add(ptr);
 			}
 
 			template<typename T,
@@ -230,6 +160,28 @@ namespace unicore
 		public:
 			HLayout() : LayoutComponent(UIGroupType::Horizontal) {}
 		};
+
+		class ListBox : public LayoutComponent
+		{
+		public:
+			ListBox() : LayoutComponent(UIGroupType::List) {}
+		};
+
+		template<typename ... Args>
+		extern auto vlayout(Args&&... args)
+		{
+			auto layout = std::make_shared<VLayout>();
+			((layout->add(std::forward<Args>(args))), ...);
+			return layout;
+		}
+
+		template<typename ... Args>
+		extern auto hlayout(Args&&... args)
+		{
+			auto layout = std::make_shared<HLayout>();
+			((layout->add(std::forward<Args>(args))), ...);
+			return layout;
+		}
 
 		class Text : public Component
 		{
@@ -313,6 +265,11 @@ namespace unicore
 
 			void set_text(StringView32 text) { set_attribute(UIAttribute::Text, text); }
 			UC_NODISCARD String32 text() const { return get_attribute(UIAttribute::Text).get_string32(); }
+
+			void set_click_action(const UIAction& action)
+			{
+				set_action(UIActionType::OnClick, action);
+			}
 		};
 
 		template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
@@ -356,6 +313,13 @@ namespace unicore
 				: FlotingPointInput()
 			{
 				set_value(value);
+			}
+
+			explicit FlotingPointInput(T value, T step)
+				: FlotingPointInput()
+			{
+				set_value(value);
+				set_step(step);
 			}
 
 			void set_step(T value)
@@ -407,13 +371,11 @@ namespace unicore
 
 		class Item : public TypedComponent<Bool>
 		{
-			UC_OBJECT_EVENT(click, Item&);
 		public:
 			explicit Item(StringView32 text)
 				: TypedComponent(UINodeTag::Item)
 			{
 				set_attribute(UIAttribute::Text, text);
-				set_action(UIActionType::OnClick, [this] { _event_click.invoke(*this); });
 			}
 
 			Item(StringView32 text, Bool value)
@@ -424,6 +386,11 @@ namespace unicore
 
 			void set_text(StringView32 text) { set_attribute(UIAttribute::Text, text); }
 			UC_NODISCARD String32 text() const { return get_attribute(UIAttribute::Text).get_string32(); }
+
+			void set_click_action(const UIAction& action)
+			{
+				set_action(UIActionType::OnClick, action);
+			}
 		};
 
 		class DataModel
@@ -522,10 +489,7 @@ namespace unicore
 					_nodes[it.first] = item;
 
 					item->set_value(key == _value);
-					item->on_click() += [this, key](auto _)
-					{
-						set_value(key);
-					};
+					item->set_click_action([this, key] { set_value(key); });
 				}
 			}
 
@@ -631,134 +595,120 @@ namespace unicore
 		_view->set_size(Vector2f(300, 0));
 		_view->set_position(Vector2f(size.x / 2 - 150, 50));
 
-		UIGroup root(*_document);
-		_position_node = root.text("").node();
-
-		root.text("Values");
-
-		{
-			auto group = root.horizontal();
-			group.text("Input");
-			group.input(UIInputType::Integer);
-		}
-
 		static Shared<ui::VLayout> _root;
 
-		_root = std::make_shared<ui::VLayout>();
+		static const Dictionary<int, String32> items = {
+			{0, U"Item 1"},
+			{1, U"Item 2"},
+			{2, U"Item 3"},
+			{3, U"Item 4"},
+			{4, U"Item 5"},
+		};
 
-		if (const auto layout = _root->create<ui::HLayout>())
+		class Model : public ui::TableDataModel<Shared<ui::Component>>
 		{
-			layout->create<ui::Text>(U"Text");
-			layout->create<ui::TextInput>(U"Lorem ipsum dolor");
-		}
-
-		if (const auto layout = _root->create<ui::HLayout>())
-		{
-			layout->create<ui::Text>(U"Bool");
-			layout->create<ui::Toggle>();
-			layout->create<ui::RadioButton>();
-		}
-
-		if (const auto layout = _root->create<ui::HLayout>())
-		{
-			layout->create<ui::Text>(U"Button");
-			layout->create<ui::Button>(U"Text");
-		}
-
-		if (const auto layout = _root->create<ui::HLayout>())
-		{
-			layout->create<ui::Text>(U"Int16");
-			layout->create<ui::IntInput>();
-		}
-
-		if (const auto layout = _root->create<ui::HLayout>())
-		{
-			layout->create<ui::Text>(U"UInt8");
-			layout->create<ui::IntegralInput<UInt8>>();
-		}
-
-		if (const auto layout = _root->create<ui::HLayout>())
-		{
-			layout->create<ui::Text>(U"Float");
-			layout->create<ui::FloatInput>()->set_step(0.1f);
-		}
-
-		if (const auto layout = _root->create<ui::HLayout>())
-		{
-			layout->create<ui::Text>(U"IntRange");
-			layout->create<ui::IntRange>(Rangei(0, 100), 50);
-		}
-
-		if (const auto layout = _root->create<ui::HLayout>())
-		{
-			layout->create<ui::Text>(U"FloatRange");
-			layout->create<ui::FloatRange>(Rangef(0, 1), 0.5f);
-		}
-
-		if (const auto layout = _root->create<ui::HLayout>())
-		{
-			layout->create<ui::Text>(U"Items");
-
-			if (const auto layout2 = layout->create<ui::VLayout>())
+		public:
+			explicit Model(Size size)
+				: _size(size)
 			{
-				layout2->create<ui::Item>(U"Item 1");
-				layout2->create<ui::Item>(U"Item 2");
-				layout2->create<ui::Item>(U"Item 3");
 			}
-		}
 
-		if (const auto layout = _root->create<ui::HLayout>())
-		{
-			static const Dictionary<int, String32> items = {
-				{0, U"Item 1"},
-				{1, U"Item 2"},
-				{2, U"Item 3"},
-				{3, U"Item 4"},
-				{4, U"Item 5"},
-			};
-
-			layout->create<ui::Text>(U"Combo");
-			layout->create<ui::ComboBox<int>>(items, 0)->on_changed() +=
-				[this](auto value) { UC_LOG_DEBUG(logger) << "Combo value changed to " << value; };
-		}
-
-		if (const auto layout = _root->create<ui::VLayout>())
-		{
-			class Model : public ui::TableDataModel<Shared<ui::Component>>
+			UC_NODISCARD Size size() const override { return _size; }
+			UC_NODISCARD Size col_count() const override { return 3; }
+			UC_NODISCARD StringView32 get_header(Size col) const override
 			{
-			public:
-				explicit Model(Size size)
-					: _size(size)
+				switch (col)
 				{
+				case 0: return U"Col 1";
+				case 1: return U"Col 2";
+				case 2: return U"Col 3";
+				default: return U"Err";
 				}
+			}
 
-				UC_NODISCARD Size size() const override { return _size; }
-				UC_NODISCARD Size col_count() const override { return 3; }
-				UC_NODISCARD StringView32 get_header(Size col) const override
+			UC_NODISCARD std::shared_ptr<ui::Component> get_at(Size row, Size column) const override
+			{
+				auto str = StringBuilder::format(U"Cell {} {}", row + 1, column + 1);
+				return std::make_shared<ui::Text>(str);
+			}
+
+		protected:
+			const Size _size;
+		};
+
+		static const auto model = std::make_shared<Model>(3);
+
+		Shared<ui::ComboBox<int>> combo_ref;
+		Shared<ui::ListBox> list_ref;
+		Shared<ui::Button> add_ref;
+
+		_root = ui::vlayout(
+			ui::hlayout(
+				ui::Text(U"Text"),
+				ui::TextInput(U"Lorem ipsum dolor")
+			),
+			ui::hlayout(
+				ui::Text(U"Bool"),
+				ui::Toggle(true),
+				ui::RadioButton()
+			),
+			ui::hlayout(
+				ui::Text(U"Button"),
+				ui::Button(U"Label")
+			),
+			ui::hlayout(
+				ui::Text(U"Int16"),
+				ui::IntInput()
+			),
+			ui::hlayout(
+				ui::Text(U"UInt8"),
+				ui::IntegralInput<UInt8>()
+			),
+			ui::hlayout(
+				ui::Text(U"Float"),
+				ui::FloatInput(0, 0.1f)
+			),
+			ui::hlayout(
+				ui::Text(U"IntRange"),
+				ui::IntRange({ 0, 100 }, 50)
+			),
+			ui::hlayout(
+				ui::Text(U"FloatRange"),
+				ui::FloatRange({ 0, 1 }, 0.5f)
+			),
+			ui::hlayout(
+				ui::Text(U"Items"),
+				ui::vlayout(
+					ui::Item(U"Item 1"),
+					ui::Item(U"Item 2"),
+					ui::Item(U"Item 3")
+				)
+			),
+			ui::hlayout(
+				ui::Text(U"Combo"),
+				ui::ref(ui::ComboBox(items, 0), combo_ref)
+			),
+			ui::vlayout(
+				ui::Text(U"Items"),
+				ref(ui::ListBox(), list_ref),
+				ref(ui::Button(U"Add"), add_ref)
+			),
+			ui::vlayout(
+				ui::Text(U"Table"),
+				ui::Table(model)
+			)
+		);
+
+		combo_ref->on_changed() +=
+			[this](auto value) { UC_LOG_DEBUG(logger) << "Combo value changed to " << value; };
+
+		if (list_ref && add_ref)
+		{
+			add_ref->set_click_action([this, list_ref]
 				{
-					switch (col)
-					{
-					case 0: return U"Col 1";
-					case 1: return U"Col 2";
-					case 2: return U"Col 3";
-					default: return U"Err";
-					}
-				}
-
-				UC_NODISCARD std::shared_ptr<ui::Component> get_at(Size row, Size column) const override
-				{
-					auto str = StringBuilder::format(U"Cell {} {}", row + 1, column + 1);
-					return std::make_shared<ui::Text>(str);
-				}
-
-			protected:
-				const Size _size;
-			};
-
-			static const auto model = std::make_shared<Model>(3);
-
-			layout->create<ui::Text>(U"Table");
-			layout->create<ui::Table>(model);
+					const auto text = StringBuilder::format(U"Item {}", list_ref->size() + 1);
+					list_ref->add(ui::Item(text));
+				});
 		}
 
 		_root->mount(*_document, UINode::Empty);
