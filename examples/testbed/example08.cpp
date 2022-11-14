@@ -312,13 +312,12 @@ namespace unicore
 			explicit FlotingPointInput(T value)
 				: FlotingPointInput()
 			{
-				set_value(value);
+				TypedInputComponent<T>::set_value(value);
 			}
 
 			explicit FlotingPointInput(T value, T step)
-				: FlotingPointInput()
+				: FlotingPointInput(value)
 			{
-				set_value(value);
 				set_step(step);
 			}
 
@@ -605,16 +604,17 @@ namespace unicore
 			{4, U"Item 5"},
 		};
 
-		class Model : public ui::TableDataModel<Shared<ui::Component>>
+		class TestTableModel : public ui::TableDataModel<Shared<ui::Component>>
 		{
 		public:
-			explicit Model(Size size)
+			explicit TestTableModel(Size size)
 				: _size(size)
 			{
 			}
 
 			UC_NODISCARD Size size() const override { return _size; }
 			UC_NODISCARD Size col_count() const override { return 3; }
+
 			UC_NODISCARD StringView32 get_header(Size col) const override
 			{
 				switch (col)
@@ -629,15 +629,18 @@ namespace unicore
 			UC_NODISCARD std::shared_ptr<ui::Component> get_at(Size row, Size column) const override
 			{
 				auto str = StringBuilder::format(U"Cell {} {}", row + 1, column + 1);
-				return std::make_shared<ui::Text>(str);
+				if (Math::even(row + column))
+					return std::make_shared<ui::Text>(str);
+				return std::make_shared<ui::Item>(str);
 			}
 
 		protected:
 			const Size _size;
 		};
 
-		static const auto model = std::make_shared<Model>(3);
+		static const auto model = std::make_shared<TestTableModel>(3);
 
+		Shared<ui::Button> btn_ref;
 		Shared<ui::ComboBox<int>> combo_ref;
 		Shared<ui::ListBox> list_ref;
 		Shared<ui::Button> add_ref;
@@ -654,7 +657,7 @@ namespace unicore
 			),
 			ui::hlayout(
 				ui::Text(U"Button"),
-				ui::Button(U"Label")
+				ref(ui::Button(U"Label"), btn_ref)
 			),
 			ui::hlayout(
 				ui::Text(U"Int16"),
@@ -698,6 +701,9 @@ namespace unicore
 				ui::Table(model)
 			)
 		);
+
+		if (btn_ref)
+			btn_ref->set_click_action([btn_ref] { btn_ref->set_text(U"Clicked"); });
 
 		combo_ref->on_changed() +=
 			[this](auto value) { UC_LOG_DEBUG(logger) << "Combo value changed to " << value; };
