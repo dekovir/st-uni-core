@@ -41,8 +41,8 @@ namespace unicore
 		{
 			auto str = StringBuilder::format(U"Cell {} {}", row + 1, column + 1);
 			if (Math::even(row + column))
-				return std::make_shared<ui::Text>(str);
-			return std::make_shared<ui::Item>(str);
+				return std::make_shared<ui::TextComponent>(str);
+			return std::make_shared<ui::ItemComponent>(str);
 		}
 
 	protected:
@@ -68,69 +68,69 @@ namespace unicore
 		_view->set_size(Vector2f(300, 0));
 		_view->set_position(Vector2f(size.x / 2 - 150, 50));
 
-		Shared<ui::Button> btn_ref;
-		Shared<ui::ComboBox<int>> combo_ref;
+		Shared<ui::button> btn_ref;
+		Shared<ui::combo_box<int>> combo_ref;
 		Shared<ui::list_box> list_ref;
-		Shared<ui::Button> add_ref;
+		Shared<ui::button> add_ref;
 
 		const auto items_model = std::make_shared<ui::ConstDictionaryDataModel<int, String32>>(items);
 		const auto table_model = std::make_shared<TestTableModel>(3);
 
 		_root = ui::ptr(ui::vlayout(
-			ui::ref(ui::Text(U""), _position_node),
+			ui::ref(ui::text(U""), _position_node),
 			ui::hlayout(
-				ui::Text(U"Text"),
-				ui::TextInput(U"Lorem ipsum dolor")
+				ui::text(U"Text"),
+				ui::input_text(U"Lorem ipsum dolor")
 			),
 			ui::hlayout(
-				ui::Text(U"Bool"),
-				ui::Toggle(true),
-				ui::RadioButton()
+				ui::text(U"Bool"),
+				ui::toggle(true),
+				ui::radio_button()
 			),
 			ui::hlayout(
-				ui::Text(U"Button"),
-				ref(ui::Button(U"Label"), btn_ref)
+				ui::text(U"Button"),
+				ref(ui::button(U"Label"), btn_ref)
 			),
 			ui::hlayout(
-				ui::Text(U"Int16"),
-				ui::IntInput()
+				ui::text(U"Int16"),
+				ui::input_int()
 			),
 			ui::hlayout(
-				ui::Text(U"UInt8"),
-				ui::IntegralInput<UInt8>()
+				ui::text(U"UInt8"),
+				ui::input_int_t<UInt8>()
 			),
 			ui::hlayout(
-				ui::Text(U"Float"),
-				ui::FloatInput(0, 0.1f)
+				ui::text(U"Float"),
+				ui::input_float(0, 0.1f)
 			),
 			ui::hlayout(
-				ui::Text(U"IntRange"),
-				ui::IntRange({ 0, 100 }, 50)
+				ui::text(U"IntRange"),
+				ui::range_int({ 0, 100 }, 50)
 			),
 			ui::hlayout(
-				ui::Text(U"FloatRange"),
-				ui::FloatRange({ 0, 1 }, 0.5f)
+				ui::text(U"FloatRange"),
+				ui::range_float({ 0, 1 }, 0.5f)
 			),
 			ui::hlayout(
-				ui::Text(U"Items"),
+				ui::text(U"Items"),
 				ui::vlayout(
-					ui::Item(U"Item 1"),
-					ui::Item(U"Item 2"),
-					ui::Item(U"Item 3")
+					ui::item(U"Item 1"),
+					ui::item(U"Item 2"),
+					ui::item(U"Item 3")
 				)
 			),
 			ui::hlayout(
-				ui::Text(U"Combo"),
-				ui::ref(ui::ComboBox<int>(items_model, 0), combo_ref)
+				ui::text(U"Combo"),
+				ui::ref(ui::combo_box<int>(items_model, 0), combo_ref)
 			),
 			ui::vlayout(
-				ui::Text(U"Items"),
+				ui::text(U"Items"),
 				ref(ui::list_box(), list_ref),
-				ref(ui::Button(U"Add"), add_ref)
+				ref(ui::button(U"Add"), add_ref)
 			),
 			ui::vlayout(
-				ui::Text(U"Table"),
-				ui::Table(table_model)
+				ui::text(U"Table"),
+				ui::table(table_model)
 			)
 		));
 
@@ -143,10 +143,10 @@ namespace unicore
 
 		if (list_ref && add_ref)
 		{
-			add_ref->set_click_action([this, list_ref]
-				{
+			add_ref->set_click_action(
+				[this, list_ref] {
 					const auto text = StringBuilder::format(U"Item {}", list_ref->size() + 1);
-			list_ref->add(ui::Item(text));
+			list_ref->add(ui::item(text));
 				});
 		}
 

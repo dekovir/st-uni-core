@@ -20,6 +20,6 @@ namespace unicore
 		Shared<UIViewImGui> _view;
 
 		Shared<ui::Component> _root;
-		Shared<ui::Text> _position_node;
+		Shared<ui::text> _position_node;
 	};
 }

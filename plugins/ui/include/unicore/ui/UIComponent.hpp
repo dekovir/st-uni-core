@@ -38,6 +38,8 @@ namespace unicore::ui
 		UINode _node = UINode::Empty;
 	};
 
+	using component = Component;
+
 	namespace sfinae
 	{
 		template<typename T>
@@ -64,10 +66,10 @@ namespace unicore::ui
 		return value;
 	}
 
-	class Group : public Component
+	class GroupComponent : public Component
 	{
 	public:
-		explicit Group(UIGroupType type)
+		explicit GroupComponent(UIGroupType type)
 			: Component(UINodeTag::Group)
 		{
 			set_attribute(UIAttribute::Type, type);
@@ -118,44 +120,44 @@ namespace unicore::ui
 	};
 
 	template<UIGroupType Type>
-	class TypedGroup : public Group
+	class TypedGroupComponent : public GroupComponent
 	{
 	public:
-		TypedGroup() : Group(Type) {}
+		TypedGroupComponent() : GroupComponent(Type) {}
 
 		template<typename ... Args,
 			std::enable_if_t<sfinae::all_is_component_v<Args...>>* = nullptr>
-		explicit TypedGroup(Args&&... args)
-			: TypedGroup()
+		explicit TypedGroupComponent(Args&&... args)
+			: TypedGroupComponent()
 		{
 			((add(std::forward<Args>(args))), ...);
 		}
 	};
 
-	using vlayout = TypedGroup<UIGroupType::Vertical>;
-	using hlayout = TypedGroup<UIGroupType::Horizontal>;
+	using vlayout = TypedGroupComponent<UIGroupType::Vertical>;
+	using hlayout = TypedGroupComponent<UIGroupType::Horizontal>;
 
-	using child = TypedGroup<UIGroupType::Child>;
-	using list_box = TypedGroup<UIGroupType::List>;
-	using tree = TypedGroup<UIGroupType::Tree>;
-	using combo = TypedGroup<UIGroupType::Combo>;
-	using flex = TypedGroup<UIGroupType::Flex>;
+	using child = TypedGroupComponent<UIGroupType::Child>;
+	using list_box = TypedGroupComponent<UIGroupType::List>;
+	using tree = TypedGroupComponent<UIGroupType::Tree>;
+	using combo_group = TypedGroupComponent<UIGroupType::Combo>;
+	using flex = TypedGroupComponent<UIGroupType::Flex>;
 
-	using table = TypedGroup<UIGroupType::Table>;
-	using table_header = TypedGroup<UIGroupType::TableHeader>;
-	using table_row = TypedGroup<UIGroupType::TableRow>;
-	using table_cell = TypedGroup<UIGroupType::TableCell>;
+	using table_group = TypedGroupComponent<UIGroupType::Table>;
+	using table_header = TypedGroupComponent<UIGroupType::TableHeader>;
+	using table_row = TypedGroupComponent<UIGroupType::TableRow>;
+	using table_cell = TypedGroupComponent<UIGroupType::TableCell>;
 
-	using popup = TypedGroup<UIGroupType::Popup>;
-	using tooltip = TypedGroup<UIGroupType::Tooltip>;
-	using modal = TypedGroup<UIGroupType::Modal>;
+	using popup = TypedGroupComponent<UIGroupType::Popup>;
+	using tooltip = TypedGroupComponent<UIGroupType::Tooltip>;
+	using modal = TypedGroupComponent<UIGroupType::Modal>;
 
-	class Text : public Component
+	class TextComponent : public Component
 	{
 	public:
-		Text() : Component(UINodeTag::Text) {}
+		TextComponent() : Component(UINodeTag::Text) {}
 
-		explicit Text(StringView32 text) : Text()
+		explicit TextComponent(StringView32 text) : TextComponent()
 		{
 			set_attribute(UIAttribute::Text, text);
 		}
@@ -163,6 +165,8 @@ namespace unicore::ui
 		void set_text(StringView32 text) { set_attribute(UIAttribute::Text, text); }
 		UC_NODISCARD String32 text() const { return get_attribute(UIAttribute::Text).get_string32(); }
 	};
+
+	using text = TextComponent;
 
 	class InputComponent : public Component
 	{
@@ -172,17 +176,6 @@ namespace unicore::ui
 		{
 			set_attribute(UIAttribute::Type, type);
 		}
-	};
-
-	template<typename T>
-	class TypedComponent : public Component
-	{
-	public:
-		explicit TypedComponent(UINodeTag tag) : Component(tag) {}
-		TypedComponent(UINodeTag tag, T value) : TypedComponent(tag) { set_value(value); }
-
-		void set_value(T value) { set_attribute(UIAttribute::Value, value); }
-		UC_NODISCARD T get_value() const { return get_attribute(UIAttribute::Value).template get<T>(); }
 	};
 
 	template<typename T>
@@ -196,35 +189,42 @@ namespace unicore::ui
 		UC_NODISCARD T get_value() const { return get_attribute(UIAttribute::Value).template get<T>(); }
 	};
 
-	class TextInput : public InputComponent
+	class TextInputComponent : public InputComponent
 	{
 	public:
-		TextInput() : InputComponent(UIInputType::Text) {}
-		explicit TextInput(StringView32 text) : InputComponent(UIInputType::Text) { set_value(text); }
+		TextInputComponent() : InputComponent(UIInputType::Text) {}
+		explicit TextInputComponent(StringView32 text) : InputComponent(UIInputType::Text) { set_value(text); }
 
 		void set_value(StringView32 value) { set_attribute(UIAttribute::Value, value); }
 		UC_NODISCARD String32 get_value() const { return get_attribute(UIAttribute::Value).get_string32(); }
 	};
 
-	class Toggle : public TypedInputComponent<Bool>
+	using input_text = TextInputComponent;
+
+	class ToggleComponent : public TypedInputComponent<Bool>
 	{
 	public:
-		explicit Toggle(Bool value = false)
+		explicit ToggleComponent(Bool value = false)
 			: TypedInputComponent(UIInputType::Toggle, value) { }
 	};
 
-	class RadioButton : public TypedInputComponent<Bool>
+	using toggle = ToggleComponent;
+
+	class RadioButtonComponent : public TypedInputComponent<Bool>
 	{
 	public:
-		explicit RadioButton(Bool value = false)
+		explicit RadioButtonComponent(Bool value = false)
 			: TypedInputComponent(UIInputType::Radio, value) { }
 	};
 
-	class Button : public InputComponent
+	using radio_button = RadioButtonComponent;
+
+	class ButtonComponent : public InputComponent
 	{
 	public:
-		Button() : InputComponent(UIInputType::Button) {}
-		explicit Button(StringView32 text) : InputComponent(UIInputType::Button) { set_text(text); }
+
+		ButtonComponent() : InputComponent(UIInputType::Button) {}
+		explicit ButtonComponent(StringView32 text) : InputComponent(UIInputType::Button) { set_text(text); }
 
 		void set_text(StringView32 text) { set_attribute(UIAttribute::Text, text); }
 		UC_NODISCARD String32 text() const { return get_attribute(UIAttribute::Text).get_string32(); }
@@ -235,53 +235,38 @@ namespace unicore::ui
 		}
 	};
 
-	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-	class IntegralInput : public TypedInputComponent<T>
-	{
-	public:
-		explicit IntegralInput()
-			: TypedInputComponent<T>(UIInputType::Integer)
-		{
-			TypedInputComponent<T>::set_attribute(UIAttribute::Min, std::numeric_limits<T>::min());
-			TypedInputComponent<T>::set_attribute(UIAttribute::Max, std::numeric_limits<T>::max());
-		}
-
-		explicit IntegralInput(T value)
-			: IntegralInput()
-		{
-			set_value(value);
-		}
-
-		void set_step(T value) { set_attribute(UIAttribute::Step, value); }
-		UC_NODISCARD T get_step() const
-		{
-			return TypedInputComponent<T>::get_attribute(UIAttribute::Step).template get_integral<T>();
-		}
-	};
-
-	using IntInput = IntegralInput<Int>;
-	using Int64Input = IntegralInput<Int64>;
+	using button = ButtonComponent;
 
 	template<typename T,
-		std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-	class FlotingPointInput : public TypedInputComponent<T>
+		std::enable_if_t<unicore::sfinae::is_numeric_v<T>>* = nullptr>
+	class NumberInputComponent : public TypedInputComponent<T>
 	{
 	public:
-		explicit FlotingPointInput()
-			: TypedInputComponent<T>(UIInputType::Float)
-		{
-		}
+		static constexpr auto InputType = std::is_floating_point_v<T>
+			? UIInputType::Float : UIInputType::Integer;
 
-		explicit FlotingPointInput(T value)
-			: FlotingPointInput()
+		NumberInputComponent()
+			: TypedInputComponent<T>(InputType)
+		{}
+
+		explicit NumberInputComponent(T value)
+			: TypedInputComponent<T>(InputType)
 		{
 			TypedInputComponent<T>::set_value(value);
 		}
 
-		explicit FlotingPointInput(T value, T step)
-			: FlotingPointInput(value)
+		explicit NumberInputComponent(const Range<T>& range)
+			: NumberInputComponent()
 		{
-			set_step(step);
+			TypedInputComponent<T>::set_attribute(UIAttribute::Min, range.min);
+			TypedInputComponent<T>::set_attribute(UIAttribute::Max, range.max);
+		}
+
+		NumberInputComponent(const Range<T>& range, T value)
+			: NumberInputComponent(value)
+		{
+			TypedInputComponent<T>::set_attribute(UIAttribute::Min, range.min);
+			TypedInputComponent<T>::set_attribute(UIAttribute::Max, range.max);
 		}
 
 		void set_step(T value)
@@ -295,32 +280,59 @@ namespace unicore::ui
 		}
 	};
 
-	using FloatInput = FlotingPointInput<Float>;
-	using DoubleInput = FlotingPointInput<Double>;
-
-	template<typename T,
-		std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-	class IntegralRange : public TypedInputComponent<T>
+	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
+	class IntegerInputComponent : public NumberInputComponent<T>
 	{
 	public:
-		explicit IntegralRange(const Range<T>& range, T value)
-			: TypedInputComponent<T>(UIInputType::RangeI)
+		explicit IntegerInputComponent()
+			: NumberInputComponent<T>({ std::numeric_limits<T>::min(), std::numeric_limits<T>::max() })
 		{
-			TypedInputComponent<T>::set_value(value);
-			TypedInputComponent<T>::set_attribute(UIAttribute::Min, range.min);
-			TypedInputComponent<T>::set_attribute(UIAttribute::Max, range.max);
+		}
+
+		explicit IntegerInputComponent(T value)
+			: NumberInputComponent<T>({ std::numeric_limits<T>::min(), std::numeric_limits<T>::max() }, value)
+		{
 		}
 	};
 
-	using IntRange = IntegralRange<Int>;
+	template<typename T>
+	using input_int_t = IntegerInputComponent<T>;
+
+	using input_int = IntegerInputComponent<Int>;
+	using input_int64 = IntegerInputComponent<Int64>;
 
 	template<typename T,
 		std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-	class FloatingPointRange : public TypedInputComponent<T>
+	class FloatInputComponent : public NumberInputComponent<T>
 	{
 	public:
-		explicit FloatingPointRange(const Range<T>& range, T value)
-			: TypedInputComponent<T>(UIInputType::RangeF)
+		FloatInputComponent() = default;
+
+		explicit FloatInputComponent(T value)
+			: NumberInputComponent<T>(value)
+		{
+		}
+
+		explicit FloatInputComponent(T value, T step)
+			: NumberInputComponent<T>(value)
+		{
+			NumberInputComponent<T>::set_step(step);
+		}
+	};
+
+	using input_float = FloatInputComponent<Float>;
+	using input_double = FloatInputComponent<Double>;
+
+	template<typename T,
+		std::enable_if_t<unicore::sfinae::is_numeric_v<T>>* = nullptr>
+	class RangeComponent : public TypedInputComponent<T>
+	{
+	public:
+		static constexpr auto InputType = std::is_floating_point_v<T>
+			? UIInputType::RangeF : UIInputType::RangeI;
+
+		explicit RangeComponent(const Range<T>& range, T value)
+			: TypedInputComponent<T>(InputType)
 		{
 			TypedInputComponent<T>::set_value(value);
 			TypedInputComponent<T>::set_attribute(UIAttribute::Min, range.min);
@@ -328,20 +340,32 @@ namespace unicore::ui
 		}
 	};
 
-	using FloatRange = FloatingPointRange<Float>;
-	using DoubleRange = FloatingPointRange<Double>;
+	using range_int = RangeComponent<Int>;
+	using range_float = RangeComponent<Float>;
+	using range_double = RangeComponent<Double>;
 
-	class Item : public TypedComponent<Bool>
+	template<typename T>
+	class TypedComponent : public Component
 	{
 	public:
-		explicit Item(StringView32 text)
+		explicit TypedComponent(UINodeTag tag) : Component(tag) {}
+		TypedComponent(UINodeTag tag, T value) : TypedComponent(tag) { set_value(value); }
+
+		void set_value(T value) { set_attribute(UIAttribute::Value, value); }
+		UC_NODISCARD T get_value() const { return get_attribute(UIAttribute::Value).template get<T>(); }
+	};
+
+	class ItemComponent : public TypedComponent<Bool>
+	{
+	public:
+		explicit ItemComponent(StringView32 text)
 			: TypedComponent(UINodeTag::Item)
 		{
 			set_attribute(UIAttribute::Text, text);
 		}
 
-		Item(StringView32 text, Bool value)
-			: Item(text)
+		ItemComponent(StringView32 text, Bool value)
+			: ItemComponent(text)
 		{
 			set_attribute(UIAttribute::Value, value);
 		}
@@ -355,13 +379,15 @@ namespace unicore::ui
 		}
 	};
 
-	template<typename TKey>
-	class ComboBox : public Group
+	using item = ItemComponent;
+
+	template<typename TKey = Int>
+	class ComboBoxComponent : public GroupComponent
 	{
 		UC_OBJECT_EVENT(changed, TKey);
 	public:
-		explicit ComboBox(const Shared<DictionaryDataModel<TKey, String32>>& model, TKey value)
-			: Group(UIGroupType::Combo)
+		explicit ComboBoxComponent(const Shared<DictionaryDataModel<TKey, String32>>& model, TKey value)
+			: GroupComponent(UIGroupType::Combo)
 			, _model(model)
 			, _value(value)
 		{
@@ -385,7 +411,7 @@ namespace unicore::ui
 
 	protected:
 		Shared<DictionaryDataModel<TKey, String32>> _model;
-		Dictionary<TKey, Shared<Item>> _nodes;
+		Dictionary<TKey, Shared<ItemComponent>> _nodes;
 		TKey _value;
 
 		void on_mount() override
@@ -395,7 +421,7 @@ namespace unicore::ui
 				String32 text;
 				if (_model->try_get(key, text))
 				{
-					auto item = add(Item(text));
+					auto item = add(ItemComponent(text));
 					_nodes[key] = item;
 
 					item->set_value(key == _value);
@@ -417,10 +443,13 @@ namespace unicore::ui
 		}
 	};
 
-	class Table : public Group
+	template<typename TKey = Int>
+	using combo_box = ComboBoxComponent<TKey>;
+
+	class Table : public GroupComponent
 	{
 	public:
-		class Header : public TypedGroup<UIGroupType::TableHeader>
+		class Header : public TypedGroupComponent<UIGroupType::TableHeader>
 		{
 		public:
 			void set_text(StringView32 text) { set_attribute(UIAttribute::Text, text); }
@@ -428,7 +457,7 @@ namespace unicore::ui
 		};
 
 		explicit Table(const Shared<TableDataModel<Shared<Component>>>& model)
-			: Group(UIGroupType::Table)
+			: GroupComponent(UIGroupType::Table)
 			, _model(model)
 		{
 		}
@@ -474,4 +503,6 @@ namespace unicore::ui
 			_cells.clear();
 		}
 	};
+
+	using table = Table;
 }

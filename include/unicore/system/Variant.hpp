@@ -48,8 +48,9 @@ namespace unicore
 
 		UC_NODISCARD const DataType& data() const { return _data; }
 
+		// RAW GET /////////////////////////////////////////////////////////////////
 		template<typename T>
-		bool try_get(T& value) const
+		bool try_get_raw(T& value) const
 		{
 			if (const auto ptr = std::get_if<T>(&_data))
 			{
@@ -61,13 +62,13 @@ namespace unicore
 		}
 
 		template<typename T>
-		T get(T default_value = {}) const
+		T get_raw(T default_value = {}) const
 		{
 			T value;
 			return try_get(value) ? value : default_value;
 		}
 
-		// INTEGRAL //////////////////////////////////////////////////////////////////
+		// INTEGRAL ////////////////////////////////////////////////////////////////
 		template<typename T,
 			std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 		bool try_get_integral(T& value) const
@@ -95,7 +96,7 @@ namespace unicore
 			return try_get_integral(value) ? value : default_value;
 		}
 
-		// INTEGRAL //////////////////////////////////////////////////////////////////
+		// INTEGRAL ////////////////////////////////////////////////////////////////
 		template<typename T,
 			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		bool try_get_floating_point(T& value) const
@@ -123,7 +124,7 @@ namespace unicore
 			return try_get_floating_point(value) ? value : default_value;
 		}
 
-		// ENUM //////////////////////////////////////////////////////////////////////
+		// ENUM ////////////////////////////////////////////////////////////////////
 		template<typename T,
 			std::enable_if_t<std::is_enum_v<T>>* = nullptr>
 		bool try_get_enum(T& value) const
