@@ -79,9 +79,23 @@ namespace unicore
 	using Bool = bool;
 
 	using Char = char;
+	using Char8 = char;
 	using CharW = wchar_t;
 	using Char16 = char16_t;
 	using Char32 = char32_t;
+
+	namespace sfinae
+	{
+		template <class T>
+		inline constexpr bool is_char_v =
+			std::is_same_v<T, Char8> ||
+			std::is_same_v<T, CharW> ||
+			std::is_same_v<T, Char16> ||
+			std::is_same_v<T, Char32>;
+
+		template<typename ... T>
+		inline constexpr Bool all_is_char_v = (... && is_char_v<T>);
+	}
 
 	using Int = int;
 	using UInt = unsigned int;
@@ -102,6 +116,16 @@ namespace unicore
 
 	using Byte = UInt8;
 	using Size = size_t;
+
+	namespace sfinae
+	{
+		template<class T>
+		inline constexpr bool is_numeric_v =
+			std::is_integral_v<T> || std::is_floating_point_v<T>;
+
+		template<typename ... T>
+		inline constexpr Bool all_is_numeric_v = (... && is_numeric_v<T>);
+	}
 
 	namespace arithmetic
 	{
@@ -160,6 +184,7 @@ namespace unicore
 	template<typename T>
 	using BasicString = std::basic_string<T>;
 	using String = BasicString<Char>;
+	using String8 = BasicString<Char>;
 	using StringW = BasicString<CharW>;
 	using String16 = BasicString<Char16>;
 	using String32 = BasicString<Char32>;
@@ -167,6 +192,7 @@ namespace unicore
 	template<typename T>
 	using BasicStringView = std::basic_string_view<T>;
 	using StringView = BasicStringView<Char>;
+	using StringView8 = BasicStringView<Char>;
 	using StringViewW = BasicStringView<CharW>;
 	using StringView16 = BasicStringView<Char16>;
 	using StringView32 = BasicStringView<Char32>;

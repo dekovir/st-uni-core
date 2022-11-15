@@ -3,12 +3,6 @@
 
 namespace unicore::StringHelper
 {
-	namespace sfinae
-	{
-		template <class T>
-		constexpr bool is_char_v = std::is_same_v<T, char> || std::is_same_v<T, Char16> || std::is_same_v<T, Char32>;
-	}
-
 	template<typename TChar, typename Tag>
 	struct Data
 	{

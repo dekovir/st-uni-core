@@ -15,10 +15,6 @@ namespace unicore
 		template <class T>
 		inline constexpr bool has_lerp_static_method_v =
 			has_lerp_static_method<T>::value;
-
-		template<class T>
-		inline constexpr bool is_numeric_v =
-			std::is_integral_v<T> || std::is_floating_point_v<T>;
 	}
 
 	namespace Math
