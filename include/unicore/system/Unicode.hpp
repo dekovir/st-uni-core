@@ -42,19 +42,19 @@ namespace unicore::Unicode
 		return {};
 	}
 
-	extern String32 to_utf32(StringView16 from, bool* success = nullptr);
-	extern String32 to_utf32(StringViewW from, bool* success = nullptr);
-	extern String32 to_utf32(StringView from, bool* success = nullptr);
+	extern String32 to_utf32(StringView16 from, StringView32 default_value = U"");
+	extern String32 to_utf32(StringViewW from, StringView32 default_value = U"");
+	extern String32 to_utf32(StringView from, StringView32 default_value = U"");
 
-	extern String16 to_utf16(StringView32 from, bool* success = nullptr);
-	extern String16 to_utf16(StringViewW from, bool* success = nullptr);
-	extern String16 to_utf16(StringView from, bool* success = nullptr);
+	extern String16 to_utf16(StringView32 from, StringView16 default_value = u"");
+	extern String16 to_utf16(StringViewW from, StringView16 default_value = u"");
+	extern String16 to_utf16(StringView from, StringView16 default_value = u"");
 
-	extern StringW to_wcs(StringView32 from, bool* success = nullptr);
-	extern StringW to_wcs(StringView16 from, bool* success = nullptr);
-	extern StringW to_wcs(StringView from, bool* success = nullptr);
+	extern StringW to_wcs(StringView32 from, StringViewW default_value = L"");
+	extern StringW to_wcs(StringView16 from, StringViewW default_value = L"");
+	extern StringW to_wcs(StringView from, StringViewW default_value = L"");
 
-	extern String to_utf8(StringView32 from, bool* success = nullptr);
-	extern String to_utf8(StringView16 from, bool* success = nullptr);
-	extern String to_utf8(StringViewW from, bool* success = nullptr);
+	extern String to_utf8(StringView32 from, StringView default_value = "");
+	extern String to_utf8(StringView16 from, StringView default_value = "");
+	extern String to_utf8(StringViewW from, StringView default_value = "");
 }
