@@ -68,7 +68,16 @@ namespace unicore
 			return try_get(value) ? value : default_value;
 		}
 
+		// BOOL ////////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_bool() const;
+		UC_NODISCARD Bool try_get_bool(Bool& value) const;
+		UC_NODISCARD Bool get_bool(Bool default_value = false) const;
+
 		// INTEGRAL ////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_int() const;
+		UC_NODISCARD Bool is_int64() const;
+		UC_NODISCARD Bool is_integral() const;
+
 		template<typename T,
 			std::enable_if_t<std::is_integral_v<T>>* = nullptr>
 		bool try_get_integral(T& value) const
@@ -96,7 +105,11 @@ namespace unicore
 			return try_get_integral(value) ? value : default_value;
 		}
 
-		// INTEGRAL ////////////////////////////////////////////////////////////////
+		// FLOATING POINT //////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_float() const;
+		UC_NODISCARD Bool is_double() const;
+		UC_NODISCARD Bool is_floating_point() const;
+
 		template<typename T,
 			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		bool try_get_floating_point(T& value) const
@@ -149,10 +162,6 @@ namespace unicore
 			return try_get_enum(value) ? value : default_value;
 		}
 
-		// BOOL ////////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_bool(Bool& value) const;
-		UC_NODISCARD Bool get_bool(Bool default_value = false) const;
-
 		// INT_TYPE ////////////////////////////////////////////////////////////////
 		template<typename T,
 			std::enable_if_t<std::is_integral_v<T>>* = nullptr>
@@ -196,65 +205,93 @@ namespace unicore
 		UC_NODISCARD Double get_double(Double default_value = 0) const;
 
 		// STRING //////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_string() const;
 		UC_NODISCARD bool try_get_string(String& value) const;
 		UC_NODISCARD String get_string(StringView default_value = "") const;
 
 		// STRING32 ////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_string32() const;
 		UC_NODISCARD bool try_get_string32(String32& value) const;
 		UC_NODISCARD String32 get_string32(StringView32 default_value = U"") const;
 
+		UC_NODISCARD Bool is_any_string() const;
+
 		// VECTOR2 /////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_vec2i() const;
+		UC_NODISCARD Bool is_vec2f() const;
+		UC_NODISCARD Bool is_vec2() const;
+
 		template<typename T>
-		bool try_get_vector2(Vector2<T>& value) const
+		bool try_get_vec2(T& x, T& y) const
 		{
 			if (const auto ptr = std::get_if<Vector2i>(&_data))
 			{
-				value = ptr->cast<T>();
+				x = static_cast<T>(ptr->x);
+				y = static_cast<T>(ptr->y);
 				return true;
 			}
 
 			if (const auto ptr = std::get_if<Vector2f>(&_data))
 			{
-				value = ptr->cast<T>();
+				x = static_cast<T>(ptr->x);
+				y = static_cast<T>(ptr->y);
 				return true;
 			}
+
+			// TODO: Cast from Range?
 
 			return false;
 		}
 
 		template<typename T>
-		UC_NODISCARD Vector2<T> get_vector2(
+		bool try_get_vec2(Vector2<T>& value) const
+		{
+			return try_get_vec2(value.x, value.y);
+		}
+
+		template<typename T>
+		UC_NODISCARD Vector2<T> get_vec2(
 			const Vector2<T>& default_value = details::VectorConst2<T>::Zero) const
 		{
 			Vector2<T> value{};
-			return try_get_vector2(value) ? value : default_value;
+			return try_get_vec2(value) ? value : default_value;
 		}
 
 		// VECTOR2I ////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_vec2i(Vector2i& value) const { return try_get_vector2(value); }
-		UC_NODISCARD Vector2i get_vec2i(const Vector2i& default_value = VectorConst2i::Zero) const { return get_vector2(default_value); }
+		UC_NODISCARD bool try_get_vec2i(Vector2i& value) const;
+		UC_NODISCARD Vector2i get_vec2i(const Vector2i& default_value = VectorConst2i::Zero) const;
 
 		// VECTOR2F //////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_vec2f(Vector2f& value) const { return try_get_vector2(value); }
-		UC_NODISCARD Vector2f get_vec2f(const Vector2f& default_value = VectorConst2f::Zero) const { return get_vector2(default_value); }
+		UC_NODISCARD bool try_get_vec2f(Vector2f& value) const;
+		UC_NODISCARD Vector2f get_vec2f(const Vector2f& default_value = VectorConst2f::Zero) const;
 
 		// VECTOR3 /////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_vec3i() const;
+		UC_NODISCARD Bool is_vec3f() const;
+		UC_NODISCARD Bool is_vec3() const;
+
 		template<typename T>
-		bool try_get_vec3(Vector3<T>& value) const
+		bool try_get_vec3(T& x, T& y, T& z) const
 		{
 			if (const auto ptr = std::get_if<Vector3i>(&_data))
 			{
-				value = ptr->cast<T>();
+				x = static_cast<T>(ptr->x);
+				y = static_cast<T>(ptr->y);
+				z = static_cast<T>(ptr->z);
 				return true;
 			}
 
 			if (const auto ptr = std::get_if<Vector3f>(&_data))
 			{
-				value = ptr->cast<T>();
+				x = static_cast<T>(ptr->x);
+				y = static_cast<T>(ptr->y);
+				z = static_cast<T>(ptr->z);
 				return true;
 			}
 
-			// TODO: Cast from vector2?
+			// TODO: Cast from Vector2?
+			// TODO: Cast from Color3?
+
 			//Vector2<T> vec2;
 			//if (try_get_vector2(vec2))
 			//{
@@ -266,6 +303,12 @@ namespace unicore
 		}
 
 		template<typename T>
+		bool try_get_vec3(Vector3<T>& value) const
+		{
+			return try_get_vec3(value.x, value.y, value.z);
+		}
+
+		template<typename T>
 		UC_NODISCARD Vector3<T> get_vec3(
 			const Vector3<T>& default_value = details::VectorConst3<T>::Zero) const
 		{
@@ -274,30 +317,44 @@ namespace unicore
 		}
 
 		// VECTOR3I ////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_vec3i(Vector3i& value) const { return try_get_vec3(value); }
-		UC_NODISCARD Vector3i get_vec3i(const Vector3i& default_value = VectorConst3i::Zero) const { return get_vec3(default_value); }
+		UC_NODISCARD bool try_get_vec3i(Vector3i& value) const;
+		UC_NODISCARD Vector3i get_vec3i(const Vector3i& default_value = VectorConst3i::Zero) const;
 
 		// VECTOR3F ////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_vec3f(Vector3f& value) const { return try_get_vec3(value); }
-		UC_NODISCARD Vector3f get_vec3f(const Vector3f& default_value = VectorConst3f::Zero) const { return get_vec3(default_value); }
+		UC_NODISCARD bool try_get_vec3f(Vector3f& value) const;
+		UC_NODISCARD Vector3f get_vec3f(const Vector3f& default_value = VectorConst3f::Zero) const;
 
 		// RANGE ///////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_rangei() const;
+		UC_NODISCARD Bool is_rangef() const;
+		UC_NODISCARD Bool is_range() const;
+
 		template<typename T>
-		bool try_get_range(Range<T>& value) const
+		bool try_get_range(T& min, T& max) const
 		{
 			if (const auto ptr = std::get_if<Rangei>(&_data))
 			{
-				value = ptr->cast<T>();
+				min = static_cast<T>(ptr->min);
+				max = static_cast<T>(ptr->max);
 				return true;
 			}
 
 			if (const auto ptr = std::get_if<Rangef>(&_data))
 			{
-				value = ptr->cast<T>();
+				min = static_cast<T>(ptr->min);
+				max = static_cast<T>(ptr->max);
 				return true;
 			}
 
+			// TODO: Cast from Vector2?
+
 			return false;
+		}
+
+		template<typename T>
+		bool try_get_range(Range<T>& value) const
+		{
+			return try_get_range(value.min, value.max);
 		}
 
 		template<typename T>
@@ -309,30 +366,48 @@ namespace unicore
 		}
 
 		// RANGEI //////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_rangei(Rangei& value) const { return try_get_range(value); }
-		UC_NODISCARD Rangei get_rangei(const Rangei& default_value = RangeConsti::Zero) const { return get_range(default_value); }
+		UC_NODISCARD bool try_get_rangei(Rangei& value) const;
+		UC_NODISCARD Rangei get_rangei(const Rangei& default_value = RangeConsti::Zero) const;
 
 		// RANGEF //////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_rangef(Rangef& value) const { return try_get_range(value); }
-		UC_NODISCARD Rangef get_rangef(const Rangef& default_value = RangeConstf::Zero) const { return get_range(default_value); }
+		UC_NODISCARD bool try_get_rangef(Rangef& value) const;
+		UC_NODISCARD Rangef get_rangef(const Rangef& default_value = RangeConstf::Zero) const;
 
 		// RECT ////////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_recti() const;
+		UC_NODISCARD Bool is_rectf() const;
+		UC_NODISCARD Bool is_rect() const;
+
 		template<typename T>
-		bool try_get_rect(Rect<T>& value) const
+		bool try_get_rect(T& x, T& y, T& w, T& h) const
 		{
 			if (const auto ptr = std::get_if<Recti>(&_data))
 			{
-				value = ptr->cast<T>();
+				x = static_cast<T>(ptr->x);
+				y = static_cast<T>(ptr->y);
+				w = static_cast<T>(ptr->w);
+				h = static_cast<T>(ptr->h);
 				return true;
 			}
 
 			if (const auto ptr = std::get_if<Rectf>(&_data))
 			{
-				value = ptr->cast<T>();
+				x = static_cast<T>(ptr->x);
+				y = static_cast<T>(ptr->y);
+				w = static_cast<T>(ptr->w);
+				h = static_cast<T>(ptr->h);
 				return true;
 			}
 
+			// TODO: Cast from Vector4?
+
 			return false;
+		}
+
+		template<typename T>
+		bool try_get_rect(Rect<T>& value) const
+		{
+			return try_get_rect(value.x, value.y, value.w, value.h);
 		}
 
 		template<typename T>
@@ -344,26 +419,34 @@ namespace unicore
 		}
 
 		// RECTI ///////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_recti(Recti& value) const { return try_get_rect(value); }
-		UC_NODISCARD Recti get_recti(const Recti& default_value = RectConsti::Zero) const { return get_rect(default_value); }
+		UC_NODISCARD bool try_get_recti(Recti& value) const;
+		UC_NODISCARD Recti get_recti(const Recti& default_value = RectConsti::Zero) const;
 
 		// RECTF ///////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_rectf(Rectf& value) const { return try_get_rect(value); }
-		UC_NODISCARD Rectf get_rectf(const Rectf& default_value = RectConstf::Zero) const { return get_rect(default_value); }
+		UC_NODISCARD bool try_get_rectf(Rectf& value) const;
+		UC_NODISCARD Rectf get_rectf(const Rectf& default_value = RectConstf::Zero) const;
 
 		// COLOR3 //////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_color3b() const;
+		UC_NODISCARD Bool is_color3f() const;
+		UC_NODISCARD Bool is_color3() const;
+
 		template<typename T>
-		bool try_get_color3(Color3<T>& value) const
+		bool try_get_color3(T& r, T& g, T& b) const
 		{
 			if (const auto ptr = std::get_if<Color3b>(&_data))
 			{
-				value = ptr->cast<T>();
+				r = color_limits_convert::component<Byte, T>(ptr->r);
+				g = color_limits_convert::component<Byte, T>(ptr->g);
+				b = color_limits_convert::component<Byte, T>(ptr->b);
 				return true;
 			}
 
 			if (const auto ptr = std::get_if<Color3f>(&_data))
 			{
-				value = ptr->cast<T>();
+				r = color_limits_convert::component<Float, T>(ptr->r);
+				g = color_limits_convert::component<Float, T>(ptr->g);
+				b = color_limits_convert::component<Float, T>(ptr->b);
 				return true;
 			}
 
@@ -371,15 +454,32 @@ namespace unicore
 			if (try_get_integral(i))
 			{
 				if (i > 0xFF000000)
-					value = Color3b::from_rgb(i >> 16).cast<T>();
+				{
+					const auto tmp = Color3b::from_rgb(i >> 16).cast<T>();
+					r = tmp.r;
+					g = tmp.g;
+					b = tmp.b;
+				}
 				else
-					value = Color3b::from_rgb(i).cast<T>();
+				{
+					const auto tmp = Color3b::from_rgb(i).cast<T>();
+					r = tmp.r;
+					g = tmp.g;
+					b = tmp.b;
+				}
+
 				return true;
 			}
 
 			// TODO: Cast from Vector3?
 
 			return false;
+		}
+
+		template<typename T>
+		bool try_get_color3(Color3<T>& value) const
+		{
+			return try_get_color3(value.r, value.g, value.b);
 		}
 
 		template<typename T>
@@ -391,26 +491,36 @@ namespace unicore
 		}
 
 		// COLOR3B /////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_color3b(Color3b& value) const { return try_get_color3(value); }
-		UC_NODISCARD Color3b get_color3b(const Color3b& default_value = ColorConst3b::White) const { return get_color3(default_value); }
+		UC_NODISCARD bool try_get_color3b(Color3b& value) const;
+		UC_NODISCARD Color3b get_color3b(const Color3b& default_value = ColorConst3b::White) const;
 
 		// COLOR3F /////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_color3f(Color3f& value) const { return try_get_color3(value); }
-		UC_NODISCARD Color3f get_color3f(const Color3f& default_value = ColorConst3f::White) const { return get_color3(default_value); }
+		UC_NODISCARD bool try_get_color3f(Color3f& value) const;
+		UC_NODISCARD Color3f get_color3f(const Color3f& default_value = ColorConst3f::White) const;
 
 		// COLOR4 //////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_color4b() const;
+		UC_NODISCARD Bool is_color4f() const;
+		UC_NODISCARD Bool is_color4() const;
+
 		template<typename T>
-		bool try_get_color4(Color4<T>& value) const
+		bool try_get_color4(T& r, T& g, T& b, T& a) const
 		{
 			if (const auto ptr = std::get_if<Color4b>(&_data))
 			{
-				value = ptr->cast<T>();
+				r = color_limits_convert::component<Float, T>(ptr->r);
+				g = color_limits_convert::component<Float, T>(ptr->g);
+				b = color_limits_convert::component<Float, T>(ptr->b);
+				a = color_limits_convert::component<Float, T>(ptr->a);
 				return true;
 			}
 
 			if (const auto ptr = std::get_if<Color4f>(&_data))
 			{
-				value = ptr->cast<T>();
+				r = color_limits_convert::component<Float, T>(ptr->r);
+				g = color_limits_convert::component<Float, T>(ptr->g);
+				b = color_limits_convert::component<Float, T>(ptr->b);
+				a = color_limits_convert::component<Float, T>(ptr->a);
 				return true;
 			}
 
@@ -418,9 +528,22 @@ namespace unicore
 			if (try_get_integral(i))
 			{
 				if (i > 0xFF000000)
-					value = Color4b::from_argb(i).cast<T>();
+				{
+					const auto tmp = Color4b::from_argb(i).cast<T>();
+					r = tmp.r;
+					g = tmp.g;
+					b = tmp.b;
+					a = tmp.a;
+				}
 				else
-					value = Color4b::from_rgb(i).cast<T>();
+				{
+					const auto tmp = Color4b::from_rgb(i).cast<T>();
+					r = tmp.r;
+					g = tmp.g;
+					b = tmp.b;
+					a = tmp.a;
+				}
+
 				return true;
 			}
 
@@ -428,6 +551,12 @@ namespace unicore
 			// TODO: Cast from Vector4?
 
 			return false;
+		}
+
+		template<typename T>
+		bool try_get_color4(Color4<T>& value) const
+		{
+			return try_get_color4(value.r, value.g, value.b, value.a);
 		}
 
 		template<typename T>
@@ -439,14 +568,16 @@ namespace unicore
 		}
 
 		// COLOR4B /////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_color4b(Color4b& value) const { return try_get_color4(value); }
-		UC_NODISCARD Color4b get_color4b(const Color4b& default_value = ColorConst4b::White) const { return get_color4(default_value); }
+		UC_NODISCARD bool try_get_color4b(Color4b& value) const;
+		UC_NODISCARD Color4b get_color4b(const Color4b& default_value = ColorConst4b::White) const;
 
 		// COLOR4F /////////////////////////////////////////////////////////////////
-		UC_NODISCARD bool try_get_color4f(Color4f& value) const { return try_get_color4(value); }
-		UC_NODISCARD Color4f get_color4f(const Color4f& default_value = ColorConst4f::White) const { return get_color4(default_value); }
+		UC_NODISCARD bool try_get_color4f(Color4f& value) const;
+		UC_NODISCARD Color4f get_color4f(const Color4f& default_value = ColorConst4f::White) const;
 
 		// OBJECT //////////////////////////////////////////////////////////////////
+		UC_NODISCARD Bool is_object() const;
+
 		bool try_get_object(Shared<Object>& value) const;
 		UC_NODISCARD Shared<Object> get_object(const Shared<Object>& default_value = nullptr) const;
 
@@ -492,6 +623,18 @@ namespace unicore
 			if constexpr (std::is_same_v<T, String32>)
 				return try_get_string32(value);
 
+			if constexpr (std::is_same_v<T, Vector2i>)
+				return try_get_vec2i(value);
+
+			if constexpr (std::is_same_v<T, Vector2f>)
+				return try_get_vec2f(value);
+
+			if constexpr (std::is_same_v<T, Vector3i>)
+				return try_get_vec3i(value);
+
+			if constexpr (std::is_same_v<T, Vector3f>)
+				return try_get_vec3f(value);
+
 			UC_ASSERT_ALWAYS_MSG("Not implemented");
 			return false;
 		}
@@ -499,23 +642,8 @@ namespace unicore
 		template<typename T>
 		T get(const T& default_value)
 		{
-			if constexpr (std::is_same_v<T, Bool>)
-				return get_bool(default_value);
-
-			if constexpr (std::is_integral_v<T>)
-				return get_integral(default_value);
-
-			if constexpr (std::is_floating_point_v<T>)
-				return get_floating_point(default_value);
-
-			if constexpr (std::is_same_v<T, String>)
-				return get_string(default_value);
-
-			if constexpr (std::is_same_v<T, String32>)
-				return get_string32(default_value);
-
-			UC_ASSERT_ALWAYS_MSG("Not implemented");
-			return false;
+			T value;
+			return try_get(value) ? value : default_value;
 		}
 
 		static const Variant Empty;
