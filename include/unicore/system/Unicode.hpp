@@ -20,26 +20,22 @@ namespace unicore::Unicode
 	extern bool try_convert(StringView from, StringW& to);
 
 	template<typename CharTo, typename CharFrom>
-	static BasicString<CharTo> to(BasicStringView<CharFrom> from, bool* success = nullptr)
+	extern Bool try_to(BasicStringView<CharFrom> from, BasicString<CharTo>& to)
 	{
 		if constexpr (std::is_same_v<CharTo, CharFrom>)
 		{
-			if (success != nullptr) *success = true;
-			return from;
+			to = BasicString<CharTo>(from);
+			return true;
 		}
 
-		if (!from.empty())
-		{
-			BasicString<CharTo> result;
-			if (try_convert(from, result))
-			{
-				if (success != nullptr) *success = true;
-				return result;
-			}
-		}
+		return try_convert(from, to);
+	}
 
-		if (success != nullptr) *success = false;
-		return {};
+	template<typename CharTo, typename CharFrom>
+	extern BasicString<CharTo> to(BasicStringView<CharFrom> from, BasicStringView<CharTo> default_value = {})
+	{
+		BasicString<CharTo> to;
+		return try_to(from, to) ? to : BasicString<CharTo>(default_value);
 	}
 
 	extern String32 to_utf32(StringView16 from, StringView32 default_value = U"");
