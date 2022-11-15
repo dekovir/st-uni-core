@@ -38,6 +38,24 @@ namespace unicore::ui
 		UINode _node = UINode::Empty;
 	};
 
+	namespace sfinae
+	{
+		template<typename T>
+		inline constexpr Bool is_component_v =
+			std::is_base_of_v<Component, T> ||
+			std::is_convertible_v<T, Shared<Component>>;
+
+		template<typename ... T>
+		inline constexpr Bool all_is_component_v = (... && is_component_v<T>);
+	}
+
+	template<typename T,
+		std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
+	extern Shared<T> ptr(T&& element)
+	{
+		return std::make_shared<T>(std::forward<T>(element));
+	}
+
 	template<typename T,
 		std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
 	extern Shared<T> ref(T&& element, Shared<T>& value)
@@ -59,7 +77,7 @@ namespace unicore::ui
 
 		template<typename T = Component,
 			std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
-		Shared<T> add(const Shared<T>& component)
+		auto add(const Shared<T>& component)
 		{
 			// TODO: Create/destroy
 			_children.push_back(component);
@@ -73,18 +91,14 @@ namespace unicore::ui
 			std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
 		auto add(const T& component)
 		{
-			auto ptr = std::make_shared<T>(component);
-			add(ptr);
-			return ptr;
+			return add(std::make_shared<T>(component));
 		}
 
 		template<typename T,
 			std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
 		auto add(T&& component)
 		{
-			auto ptr = std::make_shared<T>(std::forward<T>(component));
-			add(ptr);
-			return ptr;
+			return add(std::make_shared<T>(std::forward<T>(component)));
 		}
 
 	protected:
@@ -103,66 +117,45 @@ namespace unicore::ui
 		}
 	};
 
-	class VLayout : public Group
+	template<UIGroupType Type>
+	class TypedGroup : public Group
 	{
 	public:
-		VLayout() : Group(UIGroupType::Vertical) {}
+		TypedGroup() : Group(Type) {}
+
+		template<typename ... Args,
+			std::enable_if_t<sfinae::all_is_component_v<Args...>>* = nullptr>
+		explicit TypedGroup(Args&&... args)
+			: TypedGroup()
+		{
+			((add(std::forward<Args>(args))), ...);
+		}
 	};
 
-	class HLayout : public Group
-	{
-	public:
-		HLayout() : Group(UIGroupType::Horizontal) {}
-	};
+	using vlayout = TypedGroup<UIGroupType::Vertical>;
+	using hlayout = TypedGroup<UIGroupType::Horizontal>;
 
-	class ListBox : public Group
-	{
-	public:
-		ListBox() : Group(UIGroupType::List) {}
-	};
+	using child = TypedGroup<UIGroupType::Child>;
+	using list_box = TypedGroup<UIGroupType::List>;
+	using tree = TypedGroup<UIGroupType::Tree>;
+	using combo = TypedGroup<UIGroupType::Combo>;
+	using flex = TypedGroup<UIGroupType::Flex>;
 
-	template<UIGroupType Type, typename ... Args>
-	extern auto group(Args&&... args)
-	{
-		auto layout = std::make_shared<Group>(Type);
-		((layout->add(std::forward<Args>(args))), ...);
-		return layout;
-	}
+	using table = TypedGroup<UIGroupType::Table>;
+	using table_header = TypedGroup<UIGroupType::TableHeader>;
+	using table_row = TypedGroup<UIGroupType::TableRow>;
+	using table_cell = TypedGroup<UIGroupType::TableCell>;
 
-	template<typename ... Args>
-	extern auto vlayout(Args&&... args)
-	{
-		auto layout = std::make_shared<VLayout>();
-		((layout->add(std::forward<Args>(args))), ...);
-		return layout;
-	}
-
-	template<typename ... Args>
-	extern auto hlayout(Args&&... args)
-	{
-		auto layout = std::make_shared<HLayout>();
-		((layout->add(std::forward<Args>(args))), ...);
-		return layout;
-	}
-
-	template<typename ... Args>
-	extern auto list_box(Args&&... args)
-	{
-		auto layout = std::make_shared<ListBox>();
-		((layout->add(std::forward<Args>(args))), ...);
-		return layout;
-	}
+	using popup = TypedGroup<UIGroupType::Popup>;
+	using tooltip = TypedGroup<UIGroupType::Tooltip>;
+	using modal = TypedGroup<UIGroupType::Modal>;
 
 	class Text : public Component
 	{
 	public:
-		Text()
-			: Component(UINodeTag::Text)
-		{
-		}
+		Text() : Component(UINodeTag::Text) {}
 
-		explicit Text(StringView32 text)
-			: Component(UINodeTag::Text)
+		explicit Text(StringView32 text) : Text()
 		{
 			set_attribute(UIAttribute::Text, text);
 		}
@@ -427,11 +420,9 @@ namespace unicore::ui
 	class Table : public Group
 	{
 	public:
-		class Header : public Group
+		class Header : public TypedGroup<UIGroupType::TableHeader>
 		{
 		public:
-			Header() : Group(UIGroupType::TableHeader) {}
-
 			void set_text(StringView32 text) { set_attribute(UIAttribute::Text, text); }
 			UC_NODISCARD String32 text() const { return get_attribute(UIAttribute::Text).get_string32(); }
 		};
@@ -453,10 +444,8 @@ namespace unicore::ui
 
 			set_attribute(UIAttribute::Value, col_count);
 
-			add(group<UIGroupType::TableRow>());
-
 			// Header row
-			if (const auto row_layout = add(group<UIGroupType::TableRow>()))
+			if (const auto row_layout = add(table_row()))
 			{
 				for (unsigned i = 0; i < col_count; i++)
 					row_layout->add(Header())->set_text(_model->get_header(i));
@@ -464,11 +453,11 @@ namespace unicore::ui
 
 			for (unsigned row = 0; row < row_count; row++)
 			{
-				if (const auto row_layout = add(group<UIGroupType::TableRow>()))
+				if (const auto row_layout = add(table_row()))
 				{
 					for (unsigned col = 0; col < col_count; col++)
 					{
-						if (const auto cell_layout = row_layout->add(group<UIGroupType::TableCell>()))
+						if (const auto cell_layout = row_layout->add(table_cell()))
 						{
 							auto component = _model->get_at(row, col);
 

@@ -70,10 +70,13 @@ namespace unicore
 
 		Shared<ui::Button> btn_ref;
 		Shared<ui::ComboBox<int>> combo_ref;
-		Shared<ui::ListBox> list_ref;
+		Shared<ui::list_box> list_ref;
 		Shared<ui::Button> add_ref;
 
-		_root = ui::vlayout(
+		const auto items_model = std::make_shared<ui::ConstDictionaryDataModel<int, String32>>(items);
+		const auto table_model = std::make_shared<TestTableModel>(3);
+
+		_root = ui::ptr(ui::vlayout(
 			ui::ref(ui::Text(U""), _position_node),
 			ui::hlayout(
 				ui::Text(U"Text"),
@@ -118,23 +121,24 @@ namespace unicore
 			),
 			ui::hlayout(
 				ui::Text(U"Combo"),
-				ui::ref(ui::ComboBox<int>(std::make_shared<ui::ConstDictionaryDataModel<int, String32>>(items), 0), combo_ref)
+				ui::ref(ui::ComboBox<int>(items_model, 0), combo_ref)
 			),
 			ui::vlayout(
 				ui::Text(U"Items"),
-				ref(ui::ListBox(), list_ref),
+				ref(ui::list_box(), list_ref),
 				ref(ui::Button(U"Add"), add_ref)
 			),
 			ui::vlayout(
 				ui::Text(U"Table"),
-				ui::Table(std::make_shared<TestTableModel>(3))
+				ui::Table(table_model)
 			)
-		);
+		));
 
 		if (btn_ref)
 			btn_ref->set_click_action([btn_ref] { btn_ref->set_text(U"Clicked"); });
 
-		combo_ref->on_changed() +=
+		if (combo_ref)
+			combo_ref->on_changed() +=
 			[this](auto value) { UC_LOG_DEBUG(logger) << "Combo value changed to " << value; };
 
 		if (list_ref && add_ref)
@@ -142,7 +146,7 @@ namespace unicore
 			add_ref->set_click_action([this, list_ref]
 				{
 					const auto text = StringBuilder::format(U"Item {}", list_ref->size() + 1);
-					list_ref->add(ui::Item(text));
+			list_ref->add(ui::Item(text));
 				});
 		}
 
