@@ -53,9 +53,16 @@ namespace unicore::ui
 
 	template<typename T,
 		std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
-	extern Shared<T> ptr(T&& element)
+	extern auto ptr(T&& element)
 	{
 		return std::make_shared<T>(std::forward<T>(element));
+	}
+
+	template<typename T,
+		std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
+	extern auto ptr(const Shared<T>& element)
+	{
+		return element;
 	}
 
 	template<typename T,
@@ -63,6 +70,14 @@ namespace unicore::ui
 	extern Shared<T> ref(T&& element, Shared<T>& value)
 	{
 		value = std::make_shared<T>(std::forward<T>(element));
+		return value;
+	}
+
+	template<typename T,
+		std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
+	extern Shared<T> ref(const Shared<T>& element, Shared<T>& value)
+	{
+		value = element;
 		return value;
 	}
 
