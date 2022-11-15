@@ -1,10 +1,11 @@
 #pragma once
-#include "unicore/Defs.hpp"
+#include "unicore/resource/Resource.hpp"
 
-namespace unicore::ui
+namespace unicore
 {
-	class DataModel
+	class DataModel : public Resource
 	{
+		UC_OBJECT(DataModel, Resource)
 	public:
 		virtual ~DataModel() = default;
 		UC_NODISCARD virtual Size size() const = 0;
@@ -35,6 +36,11 @@ namespace unicore::ui
 			_keys.reserve(_data.size());
 			for (const auto& it : _data)
 				_keys.push_back(it.first);
+		}
+
+		UC_NODISCARD Size get_system_memory_use() const override
+		{
+			return sizeof(ConstDictionaryDataModel<TKey, TValue>);
 		}
 
 		UC_NODISCARD Size size() const override { return _data.size(); }

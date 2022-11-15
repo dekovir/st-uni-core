@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/ui/components/GroupComponent.hpp"
-#include "unicore/ui/UIDataModel.hpp"
+#include "unicore/resource/DataModel.hpp"
 
 namespace unicore::ui
 {

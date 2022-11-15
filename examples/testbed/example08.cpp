@@ -15,12 +15,17 @@ namespace unicore
 			{4, U"Item 5"},
 	};
 
-	class TestTableModel : public ui::TableDataModel<Shared<ui::Component>>
+	class TestTableModel : public TableDataModel<Shared<ui::Component>>
 	{
 	public:
 		explicit TestTableModel(Size size)
 			: _size(size)
 		{
+		}
+
+		UC_NODISCARD Size get_system_memory_use() const override
+		{
+			return sizeof(TestTableModel);
 		}
 
 		UC_NODISCARD Size size() const override { return _size; }
@@ -73,7 +78,7 @@ namespace unicore
 		Shared<ui::list_box> list_ref;
 		Shared<ui::button> add_ref;
 
-		const auto items_model = std::make_shared<ui::ConstDictionaryDataModel<int, String32>>(items);
+		const auto items_model = std::make_shared<ConstDictionaryDataModel<int, String32>>(items);
 		const auto table_model = std::make_shared<TestTableModel>(3);
 
 		_root = ui::ptr(ui::vlayout(
