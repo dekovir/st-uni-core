@@ -1,4 +1,4 @@
-#include "unicore/ui/UIComponent.hpp"
+#include "unicore/ui/components/Component.hpp"
 
 namespace unicore::ui
 {
