@@ -7,13 +7,13 @@ namespace unicore
 	{
 		UC_OBJECT(DataModel, Resource)
 	public:
-		virtual ~DataModel() = default;
 		UC_NODISCARD virtual Size size() const = 0;
 	};
 
 	template<typename T>
 	class ListDataModel : public DataModel
 	{
+		UC_OBJECT(ListDataModel, DataModel)
 	public:
 		UC_NODISCARD virtual T get_at(Size index) const = 0;
 	};
@@ -21,6 +21,7 @@ namespace unicore
 	template<typename TKey, typename TValue>
 	class DictionaryDataModel : public DataModel
 	{
+		UC_OBJECT(DictionaryDataModel, DataModel)
 	public:
 		UC_NODISCARD virtual const List<TKey>& keys() const = 0;
 		UC_NODISCARD virtual Bool try_get(TKey key, TValue& value) const = 0;
@@ -65,6 +66,7 @@ namespace unicore
 	template<typename T>
 	class TableDataModel : public DataModel
 	{
+		UC_OBJECT(TableDataModel, DataModel)
 	public:
 		UC_NODISCARD virtual Size col_count() const = 0;
 		UC_NODISCARD virtual StringView32 get_header(Size col) const = 0;
