@@ -1,5 +1,6 @@
 #include "unicore/system/StringHelper.hpp"
-#include "unicore/system/ConstString.hpp"
+#include "unicore/system/AsciiTable.hpp"
+#include "unicore/system/UnicodeTable.hpp"
 #include <cstdarg>
 
 namespace unicore::StringHelper

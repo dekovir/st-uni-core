@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "unicore/resource/Resource.hpp"
-#include "unicore/system/ConstString.hpp"
+#include "unicore/system/UnicodeTable.hpp"
 #include "unicore/resource/ResourceLoader.hpp"
 #include "unicore/renderer/Vertex.hpp"
 #include "unicore/renderer/Texture.hpp"
