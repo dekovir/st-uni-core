@@ -42,7 +42,7 @@ namespace unicore
 	public:
 		float height = 16;
 		// TODO: Replace to Set
-		StringView32 chars = CharTable::Ascii.view();
+		StringView32 chars = UnicodeTable::Ascii.view();
 
 		TTFontOptions() = default;
 

@@ -21,7 +21,7 @@ namespace unicore
 		//_font = resources.load<Font>(L"ubuntu.regular.ttf"_path);
 
 		_font = resources.load<Font>("ubuntu.regular.ttf"_path,
-			TTFontOptions{ 32, (CharTable::Ascii + CharTable::Russian).view() });
+			TTFontOptions{ 32, (UnicodeTable::Ascii + UnicodeTable::Russian).view() });
 	}
 
 	void Example06::update()

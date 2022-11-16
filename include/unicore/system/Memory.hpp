@@ -6,10 +6,11 @@ namespace unicore
 	class Memory
 	{
 	public:
-		typedef void*(*AllocFunc)(size_t);
+		typedef void* (*AllocFunc)(size_t);
 		typedef void(*FreeFunc)(void*);
 
 		static void* alloc(size_t size);
+		static void* realloc(void* ptr, size_t size);
 		static void free(void* ptr);
 
 		static void set(void* dest, int value, size_t size);
@@ -26,26 +27,24 @@ namespace unicore
 	class MemoryView
 	{
 	public:
-		MemoryView()
-			: _data(nullptr), _size(0) {}
-		MemoryView(void* data, size_t size)
-			: _data(data), _size(size) {}
+		MemoryView() : _data(nullptr), _size(0) {}
+		MemoryView(void* data, Size size) : _data(data), _size(size) {}
 
-		UC_NODISCARD constexpr size_t size() const { return _size; }
+		UC_NODISCARD constexpr Size size() const { return _size; }
 		UC_NODISCARD constexpr bool empty() const { return _size == 0; }
-		UC_NODISCARD constexpr void* data() const { return _data; }
+		UC_NODISCARD constexpr void* ptr() const { return _data; }
 
 	protected:
 		void* _data;
-		size_t _size;
+		Size _size;
 	};
 
 	class MemoryChunk
 	{
 	public:
 		MemoryChunk();
-		explicit MemoryChunk(size_t size);
-		explicit MemoryChunk(void* data, size_t size, Memory::FreeFunc free);
+		explicit MemoryChunk(Size size);
+		explicit MemoryChunk(void* data, Size size, Memory::FreeFunc free);
 
 		MemoryChunk(const MemoryChunk& other);
 
@@ -62,7 +61,7 @@ namespace unicore
 		MemoryChunk& operator=(const MemoryChunk& other);
 		MemoryChunk& operator=(MemoryChunk&& other) noexcept;
 
-		UC_NODISCARD constexpr size_t size() const { return _size; }
+		UC_NODISCARD constexpr Size size() const { return _size; }
 		UC_NODISCARD constexpr bool empty() const { return _size == 0; }
 
 		UC_NODISCARD constexpr void* data() { return _data; }
@@ -72,11 +71,11 @@ namespace unicore
 
 		void set(uint8_t value = 0);
 
-		void swap(void** data, size_t* size, Memory::FreeFunc* free);
+		void swap(void** data, Size* size, Memory::FreeFunc* free);
 
 	protected:
 		void* _data;
-		size_t _size;
+		Size _size;
 		Memory::FreeFunc _free;
 
 		void internal_free();

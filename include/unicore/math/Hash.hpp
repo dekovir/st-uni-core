@@ -6,7 +6,9 @@ namespace unicore
 	class Crc32
 	{
 	public:
-		static constexpr uint32_t table[256] =
+		using DataType = UInt32;
+
+		static constexpr DataType table[256] =
 		{
 				0x00000000U, 0x77073096U, 0xEE0E612CU, 0x990951BAU, 0x076DC419U,
 				0x706AF48FU, 0xE963A535U, 0x9E6495A3U, 0x0EDB8832U, 0x79DCB8A4U,
@@ -63,7 +65,7 @@ namespace unicore
 		};
 
 		// TODO: Replace with span
-		static constexpr UInt32 compute_bytes(const Byte* data, size_t len, UInt32 crc = 0)
+		static constexpr DataType compute_bytes(const Byte* data, size_t len, DataType crc = 0)
 		{
 			crc = crc ^ 0xFFFFFFFFU;
 			for (size_t i = 0; i < len; i++)
@@ -77,7 +79,7 @@ namespace unicore
 		}
 
 		template<typename T, std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
-		static constexpr UInt32 compute_single(const T data, UInt32 crc)
+		static constexpr DataType compute_single(const T data, DataType crc)
 		{
 			constexpr size_t Bytes = sizeof(T);
 
@@ -102,7 +104,7 @@ namespace unicore
 		}
 
 		template<typename T>
-		static constexpr UInt32 compute(const T* data, size_t len, UInt32 crc = 0)
+		static constexpr DataType compute(const T* data, size_t len, DataType crc = 0)
 		{
 			crc = crc ^ 0xFFFFFFFFU;
 			for (size_t i = 0; i < len; i++)
@@ -115,7 +117,7 @@ namespace unicore
 		}
 
 		template<typename TChar>
-		static constexpr UInt32 compute(BasicStringView<TChar> view, UInt32 crc = 0)
+		static constexpr DataType compute(BasicStringView<TChar> view, DataType crc = 0)
 		{
 			return compute<TChar>(view.data(), view.size(), crc);
 		}
