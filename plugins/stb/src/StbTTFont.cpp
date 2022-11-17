@@ -93,7 +93,7 @@ namespace unicore
 			if (auto tex = get_char_print_info(c, cur, &rect, &uv))
 			{
 				QuadColorTexture2f quad;
-				rect.y += _height;
+				rect.pos.y += _height;
 
 				const float x1 = rect.min_x();
 				const float y1 = rect.min_y();

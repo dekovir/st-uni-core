@@ -234,13 +234,13 @@ namespace unicore
 
 		template<typename T,
 			std::enable_if_t<!sfinae::has_lerp_static_method_v<T>>* = nullptr>
-		static constexpr T lerp(T a, T b, float t)
+		static constexpr T lerp(const T& a, const T& b, float t)
 		{
 			return static_cast<T>((b - a) * t + a);
 		}
 
 		template<typename T>
-		static constexpr Float inverse_lerp(const T a, const T b, T t)
+		static constexpr Float inverse_lerp(const T& a, const T& b, T t)
 		{
 			return static_cast<Float>(t - a) / static_cast<Float>(b - a);
 		}

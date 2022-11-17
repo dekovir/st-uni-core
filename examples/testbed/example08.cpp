@@ -69,7 +69,7 @@ namespace unicore
 		_document = std::make_shared<UIDocument>(&logger);
 		_view = std::make_shared<UIViewImGui>(_context, logger);
 		_view->set_document(_document);
-		_view->set_title(U"Test UI");
+		_view->set_title(U"Component UI");
 		_view->set_size(Vector2f(300, 0));
 		_view->set_position(Vector2f(size.x / 2 - 150, 50));
 

@@ -9,8 +9,8 @@ namespace unicore
 	template<typename T>
 	struct Rect
 	{
-		T x, y;
-		T w, h;
+		Vector2<T> pos;
+		Vector2<T> size;
 
 		constexpr Rect() = default;
 		constexpr Rect(T x, T y, T w, T h);
@@ -23,7 +23,7 @@ namespace unicore
 
 		// Move constructor
 		constexpr Rect(Rect&& other) noexcept
-			: x(other.x), y(other.y), w(other.w), h(other.h) {}
+			: pos(other.pos), size(other.size) {}
 
 		~Rect() = default;
 
@@ -33,41 +33,52 @@ namespace unicore
 		// Move assignment operator
 		Rect& operator=(Rect&& other) noexcept
 		{
-			x = other.x;
-			y = other.y;
-			w = other.w;
-			h = other.h;
+			pos = other.pos;
+			size = other.size;
 			return *this;
 		}
 
-		void set(T x_, T y_, T w_, T h_)
+		void set(T x, T y, T w, T h)
 		{
-			x = x_; y = y_; w = w_; h = h_;
+			pos.set(x, y);
+			size.set(w, h);
 		}
 
-		UC_NODISCARD constexpr T min_x() const { return x; }
-		UC_NODISCARD constexpr T max_x() const { return x + w; }
+		void set(const Vector2<T>& pos_, const Vector2<T>& size_)
+		{
+			pos = pos_;
+			size = size_;
+		}
 
-		UC_NODISCARD constexpr T min_y() const { return y; }
-		UC_NODISCARD constexpr T max_y() const { return y + h; }
+		UC_NODISCARD constexpr T min_x() const { return pos.x; }
+		UC_NODISCARD constexpr T max_x() const { return pos.x + size.x; }
+
+		UC_NODISCARD constexpr T min_y() const { return pos.y; }
+		UC_NODISCARD constexpr T max_y() const { return pos.y + size.y; }
 
 		UC_NODISCARD constexpr Range<T> range_x() const { return { min_x(), max_x() }; }
 		UC_NODISCARD constexpr Range<T> range_y() const { return { min_y(), max_y() }; }
 
-		UC_NODISCARD constexpr T left() const { return x; }
-		UC_NODISCARD constexpr T right() const { return x + w; }
-		UC_NODISCARD constexpr T bottom() const { return y; }
-		UC_NODISCARD constexpr T top() const { return y + h; }
+		UC_NODISCARD constexpr T left() const { return pos.x; }
+		UC_NODISCARD constexpr T right() const { return pos.x + size.x; }
+		UC_NODISCARD constexpr T bottom() const { return pos.y; }
+		UC_NODISCARD constexpr T top() const { return pos.y + size.y; }
 
-		UC_NODISCARD constexpr Vector2<T> position() const { return Vector2<T>(x, y); }
-		UC_NODISCARD constexpr Vector2<T> size() const { return Vector2<T>(w, h); }
-		UC_NODISCARD constexpr Vector2<T> center() const { return Vector2<T>(x + w / 2, y + h / 2); }
+		UC_NODISCARD constexpr Vector2<T> center() const { return pos + size / 2; }
 
-		UC_NODISCARD constexpr Vector2<T> top_left() const { return Vector2<T>(x, y + h); }
-		UC_NODISCARD constexpr Vector2<T> top_right() const { return Vector2<T>(x + w, y + h); }
+		UC_NODISCARD constexpr Vector2<T> top_left() const { return Vector2<T>(pos.x, pos.y + size.y); }
+		UC_NODISCARD constexpr Vector2<T> top_right() const { return Vector2<T>(pos.x + size.x, pos.y + size.y); }
 
-		UC_NODISCARD constexpr Vector2<T> bottom_left() const { return Vector2<T>(x, y); }
-		UC_NODISCARD constexpr Vector2<T> bottom_right() const { return Vector2<T>(x + w, y); }
+		UC_NODISCARD constexpr Vector2<T> bottom_left() const { return Vector2<T>(pos.x, pos.y); }
+		UC_NODISCARD constexpr Vector2<T> bottom_right() const { return Vector2<T>(pos.x + size.x, pos.y); }
+
+		void push_points(List<Vector2<T>>& points) const
+		{
+			points.emplace_back(bottom_left());
+			points.emplace_back(bottom_right());
+			points.emplace_back(top_right());
+			points.emplace_back(top_left());
+		}
 
 		UC_NODISCARD constexpr bool contains(T x_, T y_) const
 		{
@@ -112,9 +123,7 @@ namespace unicore
 		{
 			if constexpr (std::is_same_v<U, T>) return *this;
 
-			return Rect<U>(
-				static_cast<U>(x), static_cast<U>(y),
-				static_cast<U>(w), static_cast<U>(h));
+			return Rect<U>(pos.template cast<U>(), size.template cast<U>());
 		}
 
 		//constexpr static Rect<T>& clip(const Rect<T>& a, const Rect<T>& b, Rect<T>& result)
@@ -133,15 +142,15 @@ namespace unicore
 
 		Rect<T>& operator+=(const Vector2<T>& vec)
 		{
-			x += vec.x;
-			y += vec.y;
+			pos.x += vec.x;
+			pos.y += vec.y;
 			return *this;
 		}
 
 		Rect<T>& operator-=(const Vector2<T>& vec)
 		{
-			x -= vec.x;
-			y -= vec.y;
+			pos.x -= vec.x;
+			pos.y -= vec.y;
 			return *this;
 		}
 
@@ -170,26 +179,26 @@ namespace unicore
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
 	template <typename T>
-	constexpr Rect<T>::Rect(T _x, T _y, T _w, T _h)
-		: x(_x), y(_y), w(_w), h(_h)
+	constexpr Rect<T>::Rect(T x, T y, T w, T h)
+		: pos(x, y), size(w, h)
 	{
 	}
 
 	template <typename T>
-	constexpr Rect<T>::Rect(T _x, T _y, const Vector2<T>& size)
-		: x(_x), y(_y), w(size.x), h(size.y)
+	constexpr Rect<T>::Rect(T x, T y, const Vector2<T>& size)
+		: pos(x, y), size(size)
 	{
 	}
 
 	template <typename T>
-	constexpr Rect<T>::Rect(const Vector2<T>& position, T _w, T _h)
-		: x(position.x), y(position.y), w(_w), h(_h)
+	constexpr Rect<T>::Rect(const Vector2<T>& pos, T w, T h)
+		: pos(pos), size(w, h)
 	{
 	}
 
 	template <typename T>
-	constexpr Rect<T>::Rect(const Vector2<T>& position, const Vector2<T>& size)
-		: x(position.x), y(position.y), w(size.x), h(size.y)
+	constexpr Rect<T>::Rect(const Vector2<T>& pos, const Vector2<T>& size)
+		: pos(pos), size(size)
 	{
 	}
 
@@ -210,8 +219,7 @@ namespace unicore
 	static constexpr bool operator == (const Rect<T>& a, const Rect<T>& b)
 	{
 		return
-			Math::equals(a.x, b.x) && Math::equals(a.y, b.y) &&
-			Math::equals(a.w, b.w) && Math::equals(a.h, b.h);
+			Math::equals(a.pos, b.pos) && Math::equals(a.size, b.size);
 	}
 
 	template<typename T>
@@ -223,13 +231,13 @@ namespace unicore
 	template<typename T>
 	static constexpr Rect<T> operator+ (const Rect<T>& rect, const Vector2<T>& vec)
 	{
-		return Rect<T>(rect.x + vec.x, rect.y + vec.y, rect.w, rect.h);
+		return Rect<T>(rect.pos + vec, rect.size);
 	}
 
 	template<typename T>
 	static constexpr Rect<T> operator- (const Rect<T>& rect, const Vector2<T>& vec)
 	{
-		return Rect<T>(rect.x - vec.x, rect.y - vec.y, rect.w, rect.h);
+		return Rect<T>(rect.pos - vec, rect.size);
 	}
 
 	// CONST /////////////////////////////////////////////////////////////////////
@@ -248,18 +256,16 @@ namespace unicore
 	template<typename T>
 	extern UNICODE_STRING_BUILDER_FORMAT(const Rect<T>&)
 	{
-		return builder
-			<< value.x << 'x' << value.y << ';'
-			<< value.w << 'x' << value.h;
+		return builder << "[" << value.pos << ';' << value.size << "]";
 	}
 
 	UNICORE_MAKE_HASH(Recti)
 	{
-		return make(value.x, value.y, value.w, value.h);
+		return make(value.pos, value.size);
 	}
 
 	UNICORE_MAKE_HASH(Rectf)
 	{
-		return make(value.x, value.y, value.w, value.h);
+		return make(value.pos, value.size);
 	}
 }

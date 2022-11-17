@@ -1,6 +1,7 @@
 #include "example01.hpp"
 #include "unicore/math/Transform2.hpp"
 #include "unicore/math/ShapePrimitive.hpp"
+#include "unicore/math/Curve.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/platform/Time.hpp"
 #include "unicore/renderer/Font.hpp"
@@ -138,6 +139,11 @@ namespace unicore
 		const auto rect_points = ShapePrimitive::create_rect({ 100, 800, 100, 100 });
 		const auto ellipse_points = ShapePrimitive::create_ellipse({ 900, 900 }, { 80, 50 });
 
+		const std::initializer_list<Vector2f> curve1 = { { 300, 100 }, { 400, 100 }, { 400, 200 } };
+		const std::initializer_list<Vector2f> curve2 = { { 400, 200 }, { 500, 300 }, { 600, 200 }, { 400, 200 } };
+
+		const List<Vector2f> spline = { { 300, 100 }, { 400, 50 }, { 500, 150 }, { 600, 50 }, {700, 150} };
+
 		_graphics
 			.clear()
 			// screen bounds
@@ -147,6 +153,11 @@ namespace unicore
 			// rect
 			.set_color(ColorConst4b::Cyan)
 			.draw_rect(Recti{ 600, 100, 200, 100 }, true)
+			// curves
+			.set_color(ColorConst4b::Red)
+			.draw_curve({ 300, 100 }, { 400, 100 }, { 400, 200 }, 16)
+			.draw_curve({ 400, 200 }, { 500, 300 }, { 600, 200 }, { 400, 200 }, 16)
+			.draw_spline(spline.data(), spline.size(), 20)
 			// point grid
 			.move({ 200, 200 })
 			.rotate(45_deg)

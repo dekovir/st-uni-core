@@ -85,13 +85,16 @@ namespace unicore
 			return vec;
 		}
 
+		UC_NODISCARD constexpr Vector2<T> yx() const { return { y, x }; }
+
 		UC_NODISCARD constexpr Vector2<T> perpendicular() const
 		{
 			//return Vector2(y, -x);
 			return Vector2(-y, x);
 		}
 
-		template<typename U>
+		template<typename U,
+			std::enable_if_t<sfinae::is_numeric_v<U>>* = nullptr>
 		UC_NODISCARD constexpr Vector2<U> cast() const
 		{
 			if constexpr (std::is_same_v<U, T>) return *this;
@@ -154,10 +157,10 @@ namespace unicore
 
 		static constexpr Vector2<T> lerp(const Vector2<T>& a, const Vector2<T>& b, float t)
 		{
-			return Vector2<T>(
+			return {
 				Math::lerp(a.x, b.x, t),
 				Math::lerp(a.y, b.y, t)
-				);
+			};
 		}
 	};
 
@@ -166,7 +169,7 @@ namespace unicore
 
 	static_assert(sizeof(Vector2f) == sizeof(float) * 2);
 
-	// IMPLEMENTATION //////////////////////////////////////////////////////////
+	// IMPLEMENTATION ////////////////////////////////////////////////////////////
 	template <typename T>
 	constexpr Vector2<T>::Vector2(T x_, T y_) noexcept
 		: x(x_), y(y_)
@@ -177,7 +180,7 @@ namespace unicore
 		: x(value), y(value)
 	{}
 
-	// OPERATORS ///////////////////////////////////////////////////////////////
+	// OPERATORS /////////////////////////////////////////////////////////////////
 	template<typename T>
 	static constexpr bool operator == (const Vector2<T>& a, const Vector2<T>& b)
 	{

@@ -50,10 +50,10 @@ namespace unicore
 			const auto code = static_cast<wchar_t>(element->Int64Attribute("code"));
 			BitmapFontGlyph glyph{};
 
-			glyph.rect.x = element->IntAttribute("x");
-			glyph.rect.y = element->IntAttribute("y");
-			glyph.rect.w = element->IntAttribute("w");
-			glyph.rect.h = element->IntAttribute("h");
+			glyph.rect.pos.x = element->IntAttribute("x");
+			glyph.rect.pos.y = element->IntAttribute("y");
+			glyph.rect.size.x = element->IntAttribute("w");
+			glyph.rect.size.y = element->IntAttribute("h");
 			glyph.xoffset = element->IntAttribute("dx");
 			glyph.yoffset = element->IntAttribute("dy");
 			glyph.xadvance = element->IntAttribute("advx");

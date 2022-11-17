@@ -604,9 +604,9 @@ namespace unicore
 			const auto rect = spr->rect().cast<Float>();
 
 			id = spr->texture().get();
-			size = { rect.w, rect.h };
-			uv0 = { rect.x / tex_size.x, rect.y / tex_size.y };
-			uv1 = { uv0.x + rect.w / tex_size.x, uv0.y + rect.h / tex_size.y };
+			size = ImGuiConvert::convert(rect.size);
+			uv0 = ImGuiConvert::convert(rect.pos / tex_size);
+			uv1 = { uv0.x + rect.size.x / tex_size.x, uv0.y + rect.size.y / tex_size.y };
 			return true;
 		}
 

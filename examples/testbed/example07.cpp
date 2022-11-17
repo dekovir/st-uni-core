@@ -5,7 +5,7 @@
 
 namespace unicore
 {
-	UC_EXAMPLE_REGISTER(Example07, "UI");
+	UC_EXAMPLE_REGISTER(Example07, "UI Native");
 
 	template<typename T>
 	static Bool init_combo_logic(UIDocument& document, const UINode& combo_node,

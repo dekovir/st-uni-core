@@ -37,7 +37,7 @@ namespace unicore
 
 		static SDL_Rect& convert(const Recti& src, SDL_Rect& dst)
 		{
-			dst = { src.x, src.y, src.w, src.h };
+			dst = { src.pos.x, src.pos.y, src.size.x, src.size.y };
 			return dst;
 		}
 
@@ -49,7 +49,7 @@ namespace unicore
 
 		static SDL_FRect& convert(const Rectf& src, SDL_FRect& dst)
 		{
-			dst = { src.x, src.y, src.w, src.h };
+			dst = { src.pos.x, src.pos.y, src.size.x, src.size.y };
 			return dst;
 		}
 

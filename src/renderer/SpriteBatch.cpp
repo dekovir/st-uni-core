@@ -130,18 +130,18 @@ namespace unicore
 	{
 		set_texture(texture);
 
-		s_quad[0].pos = Vector2f(rect.x, rect.y);
-		s_quad[1].pos = Vector2f(rect.x + rect.w, rect.y);
-		s_quad[2].pos = Vector2f(rect.x + rect.w, rect.y + rect.h);
-		s_quad[3].pos = Vector2f(rect.x, rect.y + rect.h);
+		s_quad[0].pos = rect.bottom_left();
+		s_quad[1].pos = rect.bottom_right();
+		s_quad[2].pos = rect.top_right();
+		s_quad[3].pos = rect.top_left();
 
 		if (uv.has_value())
 		{
 			const auto r = uv.value();
-			s_quad[0].uv = Vector2f(r.x, r.y);
-			s_quad[1].uv = Vector2f(r.x + r.w, r.y);
-			s_quad[2].uv = Vector2f(r.x + r.w, r.y + r.h);
-			s_quad[3].uv = Vector2f(r.x, r.y + r.h);
+			s_quad[0].uv = r.bottom_left();
+			s_quad[1].uv = r.bottom_right();
+			s_quad[2].uv = r.top_right();
+			s_quad[3].uv = r.top_left();
 		}
 		else
 		{
@@ -305,7 +305,7 @@ namespace unicore
 			auto& rect = sprite->rect();
 			auto& texture = sprite->texture();
 
-			calc_quad_position(center, rect.size(),
+			calc_quad_position(center, rect.size,
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 			calc_quad_uv(texture->size(), rect, effect,
 				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
@@ -330,7 +330,7 @@ namespace unicore
 			auto& rect = sprite->rect();
 			auto& texture = sprite->texture();
 
-			calc_quad_position(center, rect.size(), angle, scale,
+			calc_quad_position(center, rect.size, angle, scale,
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 			calc_quad_uv(texture->size(), rect, effect,
 				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
@@ -355,7 +355,7 @@ namespace unicore
 			auto& rect = sprite->rect();
 			auto& texture = sprite->texture();
 
-			calc_quad_position(center, rect.size(), tr,
+			calc_quad_position(center, rect.size, tr,
 				s_quad[0].pos, s_quad[1].pos, s_quad[2].pos, s_quad[3].pos);
 			calc_quad_uv(texture->size(), rect, effect,
 				s_quad[0].uv, s_quad[1].uv, s_quad[2].uv, s_quad[3].uv);
@@ -550,10 +550,10 @@ namespace unicore
 		const auto w = static_cast<float>(size.x);
 		const auto h = static_cast<float>(size.y);
 
-		const float tex_x0 = static_cast<float>(rect.x) / w;
-		const float tex_y0 = static_cast<float>(rect.y) / h;
-		const float tex_x1 = tex_x0 + static_cast<float>(rect.w) / w;
-		const float tex_y1 = tex_y0 + static_cast<float>(rect.h) / h;
+		const float tex_x0 = static_cast<float>(rect.pos.x) / w;
+		const float tex_y0 = static_cast<float>(rect.pos.y) / h;
+		const float tex_x1 = tex_x0 + static_cast<float>(rect.size.x) / w;
+		const float tex_y1 = tex_y0 + static_cast<float>(rect.size.y) / h;
 
 		const auto [x0, x1] =
 			effect == SpriteBatchEffect::FlipHorizontal || effect == SpriteBatchEffect::FlipBoth

@@ -4,10 +4,7 @@ namespace unicore
 {
 	void ShapePrimitive::create_rect(List<Vector2f>& points, const Rectf& rect)
 	{
-		points.emplace_back(rect.x, rect.y);
-		points.emplace_back(rect.x + rect.w, rect.y);
-		points.emplace_back(rect.x + rect.w, rect.y + rect.h);
-		points.emplace_back(rect.x, rect.y + rect.h);
+		rect.push_points(points);
 	}
 
 	List<Vector2f> ShapePrimitive::create_rect(const Rectf& rect)

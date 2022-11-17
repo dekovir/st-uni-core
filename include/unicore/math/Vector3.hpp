@@ -1,6 +1,5 @@
 #pragma once
-#include "unicore/math/Math.hpp"
-#include "unicore/math/Hash.hpp"
+#include "unicore/math/Vector2.hpp"
 
 namespace unicore
 {
@@ -74,6 +73,10 @@ namespace unicore
 			vec.normalize();
 			return vec;
 		}
+
+		UC_NODISCARD constexpr Vector2<T> xy() const { return { x, y }; }
+		UC_NODISCARD constexpr Vector2<T> xz() const { return { x, z }; }
+		UC_NODISCARD constexpr Vector2<T> yz() const { return { y, z }; }
 
 		template<typename U>
 		UC_NODISCARD constexpr Vector3<U> cast() const

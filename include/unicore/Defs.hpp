@@ -115,6 +115,8 @@ namespace unicore
 	using Double = double;
 
 	using Byte = UInt8;
+	using Word = UInt16;
+	using DWord = UInt32;
 	using Size = size_t;
 
 	namespace sfinae

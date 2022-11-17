@@ -379,23 +379,19 @@ namespace unicore
 		UC_NODISCARD Bool is_rect() const;
 
 		template<typename T>
-		bool try_get_rect(T& x, T& y, T& w, T& h) const
+		bool try_get_rect(Vector2<T>& pos, Vector2<T>& size) const
 		{
 			if (const auto ptr = std::get_if<Recti>(&_data))
 			{
-				x = static_cast<T>(ptr->x);
-				y = static_cast<T>(ptr->y);
-				w = static_cast<T>(ptr->w);
-				h = static_cast<T>(ptr->h);
+				pos = ptr->pos.cast<T>();
+				size = ptr->size.cast<T>();
 				return true;
 			}
 
 			if (const auto ptr = std::get_if<Rectf>(&_data))
 			{
-				x = static_cast<T>(ptr->x);
-				y = static_cast<T>(ptr->y);
-				w = static_cast<T>(ptr->w);
-				h = static_cast<T>(ptr->h);
+				pos = ptr->pos.cast<T>();
+				size = ptr->size.cast<T>();
 				return true;
 			}
 
@@ -407,7 +403,7 @@ namespace unicore
 		template<typename T>
 		bool try_get_rect(Rect<T>& value) const
 		{
-			return try_get_rect(value.x, value.y, value.w, value.h);
+			return try_get_rect(value.pos, value.size);
 		}
 
 		template<typename T>
