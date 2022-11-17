@@ -59,7 +59,7 @@ namespace unicore
 		static constexpr auto Gold = T::from_rgb(0xFFD700);
 		static constexpr auto Goldenrod = T::from_rgb(0xDAA520);
 		static constexpr auto Gray = T::from_rgb(0x808080);
-		static constexpr auto Green = T::from_rgb(0x000000);
+		static constexpr auto Green = T::from_rgb(0x00FF00);
 		static constexpr auto GreenYellow = T::from_rgb(0xADFF2F);
 		static constexpr auto Honeydew = T::from_rgb(0xF0FFF0);
 		static constexpr auto HotPink = T::from_rgb(0xFF69B4);
