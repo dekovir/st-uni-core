@@ -1,6 +1,5 @@
 #include "unicore/renderer/PrimitiveBatch.hpp"
 #include "unicore/math/ShapePrimitive.hpp"
-#include "unicore/math/Curve.hpp"
 #include "unicore/renderer/Font.hpp"
 
 namespace unicore
@@ -333,7 +332,7 @@ namespace unicore
 			return draw_point(center);
 
 		s_points.clear();
-		ShapePrimitive::create_circle(s_points, center, radius, segments);
+		ShapePrimitive::circle(s_points, center, radius, segments);
 
 		return !filled
 			? draw_poly_line(s_points, true)
@@ -343,7 +342,7 @@ namespace unicore
 	PrimitiveBatch& PrimitiveBatch::draw_ellipse(const Vector2f& center, const Vector2f& radius, bool filled, unsigned segments)
 	{
 		s_points.clear();
-		ShapePrimitive::create_ellipse(s_points, center, radius, segments);
+		ShapePrimitive::ellipse(s_points, center, radius, segments);
 
 		return !filled
 			? draw_poly_line(s_points, true)
@@ -355,7 +354,7 @@ namespace unicore
 		if (count >= 2)
 		{
 			s_points.clear();
-			ShapePrimitive::create_star(s_points, center, count, radius);
+			ShapePrimitive::star(s_points, center, count, radius);
 
 			if (filled)
 				s_points.insert(s_points.begin(), center);
@@ -372,100 +371,28 @@ namespace unicore
 		const Vector2f& p0, const Vector2f& p1, const Vector2f& p2,
 		unsigned segments)
 	{
-		set_type(BatchType::Line);
+		s_points.clear();
+		ShapePrimitive::bezier3(s_points, p0, p1, p2, segments);
 
-		if (segments == 0)
-			segments = 20;
-
-		const float step = 1.0f / static_cast<float>(segments);
-
-		auto prev = Curve::bezier3(0.0f, p0, p1, p2);
-
-		for (unsigned i = 1; i < segments; i++)
-		{
-			const auto p = Curve::bezier3(
-				step * static_cast<float>(i), p0, p1, p2);
-
-			_points.push_back(transform * prev);
-			_points.push_back(transform * p);
-			_current.count += 2;
-
-			prev = p;
-		}
-
-		const auto end = Curve::bezier3(1.0f, p0, p1, p2);
-
-		_points.push_back(transform * prev);
-		_points.push_back(transform * end);
-		_current.count += 2;
-
-		return *this;
+		return draw_poly_line(s_points, false);
 	}
 
 	PrimitiveBatch& PrimitiveBatch::draw_curve(
 		const Vector2f& p0, const Vector2f& p1,
 		const Vector2f& p2, const Vector2f& p3, unsigned segments)
 	{
-		set_type(BatchType::Line);
+		s_points.clear();
+		ShapePrimitive::bezier4(s_points, p0, p1, p2, p3, segments);
 
-		if (segments == 0)
-			segments = 20;
-
-		const float step = 1.0f / static_cast<float>(segments);
-
-		auto prev = Curve::bezier4(0.0f, p0, p1, p2, p3);
-
-		for (unsigned i = 1; i < segments; i++)
-		{
-			const auto p = Curve::bezier4(
-				step * static_cast<float>(i), p0, p1, p2, p3);
-
-			_points.push_back(transform * prev);
-			_points.push_back(transform * p);
-			_current.count += 2;
-
-			prev = p;
-		}
-
-		const auto end = Curve::bezier4(1.0f, p0, p1, p2, p3);
-
-		_points.push_back(transform * prev);
-		_points.push_back(transform * end);
-		_current.count += 2;
-
-		return *this;
+		return draw_poly_line(s_points, false);
 	}
 
 	PrimitiveBatch& PrimitiveBatch::draw_spline(const Vector2f* points, unsigned count, unsigned segments)
 	{
-				set_type(BatchType::Line);
+		s_points.clear();
+		ShapePrimitive::spline(s_points, points, count, segments);
 
-		if (segments == 0)
-			segments = 20;
-
-		const float step = 1.0f / static_cast<float>(segments);
-
-		auto prev = Curve::spline(0.0f, points, count);
-
-		for (unsigned i = 1; i < segments; i++)
-		{
-			const auto p = Curve::spline(
-				step * static_cast<float>(i), points, count);
-
-			_points.push_back(transform * prev);
-			_points.push_back(transform * p);
-			_current.count += 2;
-
-			prev = p;
-		}
-
-		const auto end = Curve::spline(1.0f, points, count);
-
-		_points.push_back(transform * prev);
-		_points.push_back(transform * end);
-		_current.count += 2;
-
-		return *this;
+		return draw_poly_line(s_points, false);
 	}
 
 	PrimitiveBatch& PrimitiveBatch::draw_triangle(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2)

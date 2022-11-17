@@ -136,8 +136,8 @@ namespace unicore
 		tr.angle = _angle;
 		tr.scale.x = 1 + .5f * Math::sin(static_cast<float>(time.elapsed().total_seconds()));
 
-		const auto rect_points = ShapePrimitive::create_rect({ 100, 800, 100, 100 });
-		const auto ellipse_points = ShapePrimitive::create_ellipse({ 900, 900 }, { 80, 50 });
+		const auto rect_points = ShapePrimitive::rect({ 100, 800, 100, 100 });
+		const auto ellipse_points = ShapePrimitive::ellipse({ 900, 900 }, { 80, 50 });
 
 		const std::initializer_list<Vector2f> curve1 = { { 300, 100 }, { 400, 100 }, { 400, 200 } };
 		const std::initializer_list<Vector2f> curve2 = { { 400, 200 }, { 500, 300 }, { 600, 200 }, { 400, 200 } };
