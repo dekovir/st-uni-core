@@ -142,10 +142,12 @@ namespace unicore
 		static inline T acos(T value) { return std::acos(value); }
 
 		// POW, SQRT ///////////////////////////////////////////////////////////////
+		// TODO: Replace with constexpr
 		template<typename T,
 			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T pow(T value, T count = 2) { return std::pow(value, count); }
 
+		// TODO: Replace with constexpr
 		template<typename T,
 			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T sqrt(T value) { return std::sqrt(value); }

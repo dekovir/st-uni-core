@@ -9,11 +9,27 @@ namespace unicore
 	class Ray
 	{
 	public:
-		TVector pos;
-		TVector dir;
+		TVector origin;
+		TVector direction;
 
 		constexpr Ray(const TVector& pos_, const TVector& dir_)
-			: pos(pos_), dir(dir_) {}
+			: origin(pos_), direction(dir_) {}
+
+		UC_NODISCARD constexpr TVector point(const Float distance) const
+		{
+			return origin + direction * distance;
+		}
+
+		UC_NODISCARD constexpr TVector project(const TVector& point) const
+		{
+			return origin + direction * TVector::dot(point - origin, direction);
+		}
+
+		// TODO: Replace with constexpr
+		UC_NODISCARD auto distance(const TVector& point) const
+		{
+			return (point - project(point)).length();
+		}
 	};
 
 	// OPERATORS /////////////////////////////////////////////////////////////////
@@ -21,8 +37,8 @@ namespace unicore
 	static constexpr Bool operator==(const Ray<TVector>& a, const Ray<TVector>& b)
 	{
 		return
-			Math::equals(a.pos, b.pos) &&
-			Math::equals(a.dir, b.dir);
+			Math::equals(a.origin, b.origin) &&
+			Math::equals(a.direction, b.direction);
 	}
 
 	template<typename TVector>
@@ -37,16 +53,16 @@ namespace unicore
 	template<typename TVector>
 	extern UNICODE_STRING_BUILDER_FORMAT(const Ray<TVector>&)
 	{
-		return builder << "(" << value.pos << ";" << value.dir << ")";
+		return builder << value.origin << "->" << value.direction;
 	}
 
 	UNICORE_MAKE_HASH(Ray2)
 	{
-		return make(value.pos, value.dir);
+		return make(value.origin, value.direction);
 	}
 
 	UNICORE_MAKE_HASH(Ray3)
 	{
-		return make(value.pos, value.dir);
+		return make(value.origin, value.direction);
 	}
 }

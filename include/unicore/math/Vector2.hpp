@@ -26,11 +26,12 @@ namespace unicore
 			y = y_;
 		}
 
-		UC_NODISCARD constexpr size_t size() const { return 2; }
+		UC_NODISCARD constexpr Size size() const { return 2; }
 		UC_NODISCARD constexpr T area() const { return x * y; }
 
 		UC_NODISCARD constexpr T length_squared() const { return x * x + y * y; }
-		UC_NODISCARD float length() const { return sqrtf(static_cast<float>(length_squared())); }
+		// TODO: Replace with constexpr
+		UC_NODISCARD float length() const { return Math::sqrt(static_cast<float>(length_squared())); }
 
 		T& operator[](int index)
 		{
@@ -134,12 +135,12 @@ namespace unicore
 			return { Math::snap(x, value.x), Math::snap(y, value.y) };
 		}
 
-		static float constexpr dot(const Vector2<T>& a, const Vector2<T>& b)
+		static T constexpr dot(const Vector2<T>& a, const Vector2<T>& b)
 		{
 			return a.x * b.x + a.y * b.y;
 		}
 
-		static float constexpr distance(const Vector2<T>& a, const Vector2<T>& b)
+		static auto constexpr distance(const Vector2<T>& a, const Vector2<T>& b)
 		{
 			return (a - b).length();
 		}

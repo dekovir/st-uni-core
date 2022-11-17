@@ -5,6 +5,28 @@
 
 namespace unicore
 {
+	enum class VertexElementFormat
+	{
+		Float2,
+		Float3,
+		Float4,
+	};
+
+	enum class VertexElementType
+	{
+		Position,
+		Normal,
+		Color,
+		Texture,
+	};
+
+	struct VertexElement
+	{
+		VertexElementType type;
+		unsigned index;
+		VertexElementFormat format;
+	};
+
 	// VertexPosition /////////////////////////////////////////////////////////////
 	template<typename TPos>
 	struct VertexPosition

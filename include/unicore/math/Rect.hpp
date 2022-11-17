@@ -256,7 +256,7 @@ namespace unicore
 	template<typename T>
 	extern UNICODE_STRING_BUILDER_FORMAT(const Rect<T>&)
 	{
-		return builder << "[" << value.pos << ';' << value.size << "]";
+		return builder << value.pos << ';' << value.size;
 	}
 
 	UNICORE_MAKE_HASH(Recti)
