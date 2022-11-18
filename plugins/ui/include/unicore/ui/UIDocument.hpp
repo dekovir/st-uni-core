@@ -114,18 +114,18 @@ namespace unicore
 			String name;
 			String style;
 			Bool visible = true;
-			UINode::IndexType parent = UINode::InvalidIndex;
+			UINodeIndex parent = UINodeIndex_Invalid;
 			UIAttributeDict attributes;
 		};
 
-		using NodeIndexList = List<UINode::IndexType>;
+		using NodeIndexList = List<UINodeIndex>;
 
 		Logger* _logger;
 		NodeIndexList _roots;
-		Dictionary<UINode::IndexType, NodeInfo> _node_infos;
-		Dictionary<UINode::IndexType, UIActionDict> _node_actions;
-		Dictionary<UINode::IndexType, NodeIndexList> _node_children;
-		Dictionary<String, UINode::IndexType> _cached_id;
+		Dictionary<UINodeIndex, NodeInfo> _node_infos;
+		Dictionary<UINodeIndex, UIActionDict> _node_actions;
+		Dictionary<UINodeIndex, NodeIndexList> _node_children;
+		Dictionary<String, UINodeIndex> _cached_id;
 
 		mutable bool _write_protection = false;
 
@@ -145,39 +145,39 @@ namespace unicore
 			Bool& _value;
 		};
 
-		UINode::IndexType _last_index = 0;
+		UINodeIndex::TypeValue _last_index = 0;
 
-		NodeInfo* get_info(UINode::IndexType index);
-		UC_NODISCARD const NodeInfo* get_info(UINode::IndexType index) const;
+		NodeInfo* get_info(UINodeIndex index);
+		UC_NODISCARD const NodeInfo* get_info(UINodeIndex index) const;
 
 		NodeInfo* get_info(const UINode& node);
 		UC_NODISCARD const NodeInfo* get_info(const UINode& node) const;
 
-		UIActionDict* get_actions(UINode::IndexType index);
-		UC_NODISCARD const UIActionDict* get_actions(UINode::IndexType index) const;
+		UIActionDict* get_actions(UINodeIndex index);
+		UC_NODISCARD const UIActionDict* get_actions(UINodeIndex index) const;
 
-		NodeIndexList* get_children_index(UINode::IndexType index);
-		UC_NODISCARD const NodeIndexList* get_children_index(UINode::IndexType index) const;
+		NodeIndexList* get_children_index(UINodeIndex index);
+		UC_NODISCARD const NodeIndexList* get_children_index(UINodeIndex index) const;
 
-		UINode::IndexType create_index();
-		UC_NODISCARD UINode node_from_index(UINode::IndexType index) const;
+		UINodeIndex create_index();
+		UC_NODISCARD UINode node_from_index(UINodeIndex index) const;
 
-		void internal_find_all_by_type(UINode::IndexType index,
+		void internal_find_all_by_type(UINodeIndex index,
 			UINodeTag tag, List<UINode>& list, Size& count) const;
-		void internal_find_all_by_name(UINode::IndexType index,
+		void internal_find_all_by_name(UINodeIndex index,
 			StringView name, List<UINode>& list, Size& count) const;
 
-		UINode internal_querry(UINode::IndexType index,
+		UINode internal_querry(UINodeIndex index,
 			const Predicate<const UINode&>& predicate) const;
 
-		void internal_querry_all(UINode::IndexType index,
+		void internal_querry_all(UINodeIndex index,
 			const Predicate<const UINode&>& predicate,
 			List<UINode>& list, Size& count) const;
 
-		UINode::IndexType internal_create_node(UINodeTag tag,
-			const UINodeOptions& options, UINode::IndexType parent);
-		UINode::IndexType internal_duplicate(const UINode& node, UINode::IndexType parent);
-		void internal_remove_node(UINode::IndexType index, Size& count);
+		UINodeIndex internal_create_node(UINodeTag tag,
+			const UINodeOptions& options, UINodeIndex parent);
+		UINodeIndex internal_duplicate(const UINode& node, UINodeIndex parent);
+		void internal_remove_node(UINodeIndex index, Size& count);
 
 		static bool call_action_default(const UIAction& action, const UINode& node);
 		static bool call_action_value(const UIAction& action, const UINode& node, const Variant& value);

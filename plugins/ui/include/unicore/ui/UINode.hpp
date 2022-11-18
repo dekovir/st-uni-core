@@ -1,5 +1,6 @@
 #pragma once
 #include "unicore/ui/UIAction.hpp"
+#include "unicore/system/Index.hpp"
 
 namespace unicore
 {
@@ -87,15 +88,14 @@ namespace unicore
 		UIActionDict actions = {};
 	};
 
+	UNICORE_MAKE_INDEX_WITH_INVALID(UINodeIndex, UInt16);
+
 	class UINode
 	{
 	public:
-		using IndexType = UInt16;
-		static constexpr IndexType InvalidIndex = std::numeric_limits<IndexType>::max();
-
 		constexpr UINode() noexcept
-			: _document(nullptr), _index(InvalidIndex) {}
-		constexpr UINode(const UIDocument* document, IndexType index) noexcept
+			: _document(nullptr), _index(UINodeIndex_Invalid) {}
+		constexpr UINode(const UIDocument* document, UINodeIndex index) noexcept
 			: _document(document), _index(index) {}
 		~UINode() = default;
 
@@ -151,7 +151,7 @@ namespace unicore
 
 	private:
 		const UIDocument* _document;
-		IndexType _index;
+		UINodeIndex _index;
 	};
 
 	static constexpr Bool operator==(const UINode& a, const UINode& b) noexcept
@@ -197,4 +197,5 @@ namespace unicore
 	}
 
 	extern UNICODE_STRING_BUILDER_FORMAT(const UINode&);
+	extern UNICODE_STRING_BUILDER_FORMAT(const UINodeIndex&);
 }

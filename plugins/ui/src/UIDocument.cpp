@@ -12,7 +12,7 @@ namespace unicore
 	{
 		return
 			sizeof(UIDocument) +
-			(sizeof(NodeInfo) + sizeof(UINode::IndexType)) * _node_infos.size();
+			(sizeof(NodeInfo) + sizeof(UINodeIndex)) * _node_infos.size();
 	}
 
 	Size UIDocument::get_roots(List<UINode>& list) const
@@ -82,7 +82,7 @@ namespace unicore
 		}
 		else
 		{
-			internal_find_all_by_type(UINode::InvalidIndex, tag, list, count);
+			internal_find_all_by_type(UINodeIndex_Invalid, tag, list, count);
 		}
 
 		return count;
@@ -135,7 +135,7 @@ namespace unicore
 		}
 		else
 		{
-			internal_find_all_by_name(UINode::InvalidIndex, name, list, count);
+			internal_find_all_by_name(UINodeIndex_Invalid, name, list, count);
 		}
 
 		return count;
@@ -157,7 +157,7 @@ namespace unicore
 			return internal_querry(parent.index(), predicate);
 		}
 
-		return internal_querry(UINode::InvalidIndex, predicate);
+		return internal_querry(UINodeIndex_Invalid, predicate);
 	}
 
 	Size UIDocument::querry_all(const Predicate<const UINode&>& predicate,
@@ -179,7 +179,7 @@ namespace unicore
 		}
 		else
 		{
-			internal_querry_all(UINode::InvalidIndex, predicate, list, count);
+			internal_querry_all(UINodeIndex_Invalid, predicate, list, count);
 		}
 
 		return count;
@@ -655,13 +655,13 @@ namespace unicore
 		return false;
 	}
 
-	UIDocument::NodeInfo* UIDocument::get_info(UINode::IndexType index)
+	UIDocument::NodeInfo* UIDocument::get_info(UINodeIndex index)
 	{
 		const auto it = _node_infos.find(index);
 		return it != _node_infos.end() ? &it->second : nullptr;
 	}
 
-	const UIDocument::NodeInfo* UIDocument::get_info(UINode::IndexType index) const
+	const UIDocument::NodeInfo* UIDocument::get_info(UINodeIndex index) const
 	{
 		const auto it = _node_infos.find(index);
 		return it != _node_infos.end() ? &it->second : nullptr;
@@ -677,21 +677,21 @@ namespace unicore
 		return node.document() == this ? get_info(node.index()) : nullptr;
 	}
 
-	UIActionDict* UIDocument::get_actions(UINode::IndexType index)
+	UIActionDict* UIDocument::get_actions(UINodeIndex index)
 	{
 		const auto it = _node_actions.find(index);
 		return it != _node_actions.end() ? &it->second : nullptr;
 	}
 
-	const UIActionDict* UIDocument::get_actions(UINode::IndexType index) const
+	const UIActionDict* UIDocument::get_actions(UINodeIndex index) const
 	{
 		const auto it = _node_actions.find(index);
 		return it != _node_actions.end() ? &it->second : nullptr;
 	}
 
-	UIDocument::NodeIndexList* UIDocument::get_children_index(UINode::IndexType index)
+	UIDocument::NodeIndexList* UIDocument::get_children_index(UINodeIndex index)
 	{
-		if (index != UINode::InvalidIndex)
+		if (index != UINodeIndex_Invalid)
 		{
 			const auto it = _node_children.find(index);
 			return it != _node_children.end() ? &it->second : nullptr;
@@ -700,9 +700,9 @@ namespace unicore
 		return !_roots.empty() ? &_roots : nullptr;
 	}
 
-	const UIDocument::NodeIndexList* UIDocument::get_children_index(UINode::IndexType index) const
+	const UIDocument::NodeIndexList* UIDocument::get_children_index(UINodeIndex index) const
 	{
-		if (index != UINode::InvalidIndex)
+		if (index != UINodeIndex_Invalid)
 		{
 			const auto it = _node_children.find(index);
 			return it != _node_children.end() ? &it->second : nullptr;
@@ -711,17 +711,17 @@ namespace unicore
 		return !_roots.empty() ? &_roots : nullptr;
 	}
 
-	UINode::IndexType UIDocument::create_index()
+	UINodeIndex UIDocument::create_index()
 	{
-		return _last_index++;
+		return UINodeIndex(_last_index++);
 	}
 
-	UINode UIDocument::node_from_index(UINode::IndexType index) const
+	UINode UIDocument::node_from_index(UINodeIndex index) const
 	{
 		return { this, index };
 	}
 
-	void UIDocument::internal_find_all_by_type(UINode::IndexType index,
+	void UIDocument::internal_find_all_by_type(UINodeIndex index,
 		UINodeTag tag, List<UINode>& list, Size& count) const
 	{
 		if (const auto info = get_info(index); info && info->tag == tag)
@@ -737,7 +737,7 @@ namespace unicore
 		}
 	}
 
-	void UIDocument::internal_find_all_by_name(UINode::IndexType index,
+	void UIDocument::internal_find_all_by_name(UINodeIndex index,
 		StringView name, List<UINode>& list, Size& count) const
 	{
 		if (const auto info = get_info(index);
@@ -754,10 +754,10 @@ namespace unicore
 		}
 	}
 
-	UINode UIDocument::internal_querry(UINode::IndexType index,
+	UINode UIDocument::internal_querry(UINodeIndex index,
 		const Predicate<const UINode&>& predicate) const
 	{
-		if (index != UINode::InvalidIndex)
+		if (index != UINodeIndex_Invalid)
 		{
 			if (const auto node = node_from_index(index); predicate(node))
 				return node;
@@ -775,11 +775,11 @@ namespace unicore
 		return UINode::Empty;
 	}
 
-	void UIDocument::internal_querry_all(UINode::IndexType index,
+	void UIDocument::internal_querry_all(UINodeIndex index,
 		const Predicate<const UINode&>& predicate,
 		List<UINode>& list, Size& count) const
 	{
-		if (index != UINode::InvalidIndex)
+		if (index != UINodeIndex_Invalid)
 		{
 			if (const auto node = node_from_index(index); predicate(node))
 			{
@@ -795,8 +795,8 @@ namespace unicore
 		}
 	}
 
-	UINode::IndexType UIDocument::internal_create_node(UINodeTag tag,
-		const UINodeOptions& options, UINode::IndexType parent)
+	UINodeIndex UIDocument::internal_create_node(UINodeTag tag,
+		const UINodeOptions& options, UINodeIndex parent)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
 
@@ -808,13 +808,13 @@ namespace unicore
 		info.name = options.name;
 		info.visible = options.visible;
 
-		info.parent = UINode::InvalidIndex;
+		info.parent = UINodeIndex_Invalid;
 		info.attributes = options.attributes;
 
 		if (!options.actions.empty())
 			_node_actions[index] = options.actions;
 
-		if (parent != UINode::InvalidIndex)
+		if (parent != UINodeIndex_Invalid)
 		{
 			info.parent = parent;
 			_node_children[parent].push_back(index);
@@ -840,7 +840,7 @@ namespace unicore
 		return index;
 	}
 
-	UINode::IndexType UIDocument::internal_duplicate(const UINode& node, UINode::IndexType parent)
+	UINodeIndex UIDocument::internal_duplicate(const UINode& node, UINodeIndex parent)
 	{
 		if (const auto info = get_info(node))
 		{
@@ -862,10 +862,10 @@ namespace unicore
 			return new_index;
 		}
 
-		return UINode::InvalidIndex;
+		return UINodeIndex_Invalid;
 	}
 
-	void UIDocument::internal_remove_node(UINode::IndexType index, Size& count)
+	void UIDocument::internal_remove_node(UINodeIndex index, Size& count)
 	{
 		// REMOVE CHILDREN
 		if (const auto it = _node_children.find(index); it != _node_children.end())

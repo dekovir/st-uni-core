@@ -10,9 +10,13 @@ namespace unicore
 	class Variant
 	{
 	public:
+		// TODO: Add Half
+		// TODO: Add Ray2/Ray3
+		// TODO: Add TimeSpan
+		// TODO: Add DeltaTime
+		// TODO: Add StringW/String16
 		using DataType = StdVariant<
-			Bool, Int, Int64,
-			Float, Double,
+			Bool, Int, Int64, Float, Double,
 			String, String32,
 			Vector2i, Vector2f, Vector3i, Vector3f,
 			Rangei, Rangef, Recti, Rectf,

@@ -95,4 +95,4 @@ namespace unicore
 
 #define UNICORE_MAKE_INDEX_WITH_INVALID(name, type) \
 	UNICORE_MAKE_INDEX(name, type) \
-	static constexpr name name ## _Invalid = name(std::numeric_limits<name::TypeValue>::max());
+	static constexpr name name ## _Invalid = name(std::numeric_limits<name::TypeValue>::max())

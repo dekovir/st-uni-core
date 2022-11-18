@@ -9,7 +9,7 @@ namespace unicore
 
 	Bool UINode::empty() const
 	{
-		return _document == nullptr || _index == InvalidIndex;
+		return _document == nullptr || _index == UINodeIndex_Invalid;
 	}
 
 	Bool UINode::valid() const
@@ -175,5 +175,10 @@ namespace unicore
 	UNICODE_STRING_BUILDER_FORMAT(const UINode&)
 	{
 		return builder << "N(" << value.tag() << ":" << value.index() << ")";
+	}
+
+	UNICODE_STRING_BUILDER_FORMAT(const UINodeIndex&)
+	{
+		return builder << "I" << value.value;
 	}
 }

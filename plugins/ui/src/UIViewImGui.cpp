@@ -90,7 +90,7 @@ namespace unicore
 		//UC_LOG_DEBUG(_logger) << "create_node " << node;
 
 		CachedInfo info;
-		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index()));
+		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index().value));
 		info.title = node.text().get_string() + info.id;
 
 		_cached[node.index()] = info;
@@ -580,7 +580,7 @@ namespace unicore
 		}
 	}
 
-	UIViewImGui::CachedInfo* UIViewImGui::get_info(UINode::IndexType index)
+	UIViewImGui::CachedInfo* UIViewImGui::get_info(UINodeIndex index)
 	{
 		const auto it = _cached.find(index);
 		return it != _cached.end() ? &it->second : nullptr;
