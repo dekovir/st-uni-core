@@ -18,6 +18,11 @@ namespace unicore::ui
 
 		void set_value(T value) { set_attribute(UIAttribute::Value, value); }
 		UC_NODISCARD T get_value() const { return get_attribute(UIAttribute::Value).template get<T>(); }
+
+		void set_change_callback(const UIAction& action)
+		{
+			set_action(UIActionType::OnChange, action);
+		}
 	};
 
 	class TextInputComponent : public InputComponent

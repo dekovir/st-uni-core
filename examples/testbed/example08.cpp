@@ -78,7 +78,8 @@ namespace unicore
 		Shared<ui::list_box> list_ref;
 		Shared<ui::button> add_ref;
 
-		const auto items_model = std::make_shared<ConstDictionaryDataModel<int, String32>>(items);
+		const auto combo_model = std::make_shared<ConstDictionaryDataModel<Int, String32>>(items);
+		const auto radio_model = std::make_shared<ConstDictionaryDataModel<Int, String32>>(items);
 		const auto table_model = std::make_shared<TestTableModel>(3);
 
 		_root = ui::ptr(ui::vlayout(
@@ -126,7 +127,11 @@ namespace unicore
 			),
 			ui::hlayout(
 				ui::text(U"Combo"),
-				ui::ref(ui::combo_box<int>(items_model, 0), combo_ref)
+				ui::ref(ui::combo_box<Int>(combo_model, 0), combo_ref)
+			),
+			ui::hlayout(
+				ui::text(U"Radio"),
+				ui::radio_group<Int>(radio_model, 0)
 			),
 			ui::vlayout(
 				ui::text(U"Items"),
