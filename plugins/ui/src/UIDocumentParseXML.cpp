@@ -49,6 +49,8 @@ namespace unicore
 		{"image", UIVisualType::Image},
 		{"img", UIVisualType::Image},
 		{"progress", UIVisualType::Progress},
+		{"separator", UIVisualType::Separator},
+		{"bullet", UIVisualType::Bullet},
 	};
 
 	static const Dictionary<StringView, UIInputType> s_input_type =

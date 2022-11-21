@@ -391,7 +391,7 @@ namespace unicore
 			render_node_footer(node);
 			return true;
 
-		case UIVisualType::Progress: // PROGRESS //////////////////////////////////////
+		case UIVisualType::Progress: // PROGRESS ///////////////////////////////////
 			range_f = {
 				node.get(UIAttribute::Min).get_float(0),
 				node.get(UIAttribute::Max).get_float(1)
@@ -401,6 +401,18 @@ namespace unicore
 			if (node.get(UIAttribute::Text).try_get_string(str))
 				ImGui::ProgressBar(float_value, { width, height }, str.c_str());
 			else ImGui::ProgressBar(float_value, { width, height });
+			render_node_footer(node);
+			return true;
+
+		case UIVisualType::Separator: // SEPARATOR /////////////////////////////////
+			render_node_header(node, layout_option);
+			ImGui::Separator();
+			render_node_footer(node);
+			return true;
+
+		case UIVisualType::Bullet: // BULLET ///////////////////////////////////////
+			render_node_header(node, layout_option);
+			ImGui::Bullet();
 			render_node_footer(node);
 			return true;
 		}

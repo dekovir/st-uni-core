@@ -30,7 +30,7 @@ namespace unicore
 			if (index % 5 == 0)
 			{
 				return ui::ptr(ui::vlayout(
-					ui::text(U"--- Header ---"),
+					ui::separator(),
 					item
 				));
 			}
@@ -187,7 +187,7 @@ namespace unicore
 			add_ref->set_click_action(
 				[this, list_ref] {
 					const auto text = StringBuilder::format(U"Item {}", list_ref->size() + 1);
-			list_ref->add(ui::item(text));
+			list_ref->add(ui::hlayout(ui::bullet(), ui::item(text)));
 				});
 		}
 

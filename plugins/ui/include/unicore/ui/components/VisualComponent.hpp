@@ -12,4 +12,14 @@ namespace unicore::ui
 			set_attribute(UIAttribute::Type, type);
 		}
 	};
+
+	template<UIVisualType Type>
+	class VisualComponentType : public VisualComponent
+	{
+	public:
+		VisualComponentType() : VisualComponent(Type) {}
+	};
+
+	using separator = VisualComponentType<UIVisualType::Separator>;
+	using bullet = VisualComponentType<UIVisualType::Bullet>;
 }

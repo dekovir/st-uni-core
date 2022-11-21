@@ -46,10 +46,12 @@ namespace unicore
 
 	enum class UIVisualType : UInt8
 	{
-		Text,     // Display text
-		Color,    // Display color
-		Image,    // Display image
-		Progress, // Display progress bar
+		Text,      // Display text
+		Color,     // Display color
+		Image,     // Display image
+		Progress,  // Display progress bar
+		Separator, // Display horizontal line
+		Bullet,    // Display small circle
 	};
 
 	enum class UIInputType : UInt8
