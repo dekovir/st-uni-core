@@ -1,11 +1,11 @@
-<group>
+<vbox>
 	<text id="position" />
 	<text>Sample text</text>
 
 	<!-- Button -->
-	<group type="1">
+	<hbox>
 		<button>Default</button>
-	</group>
+	</hbox>
 
 	<!-- Inputs -->
 	<horizontal>
@@ -16,67 +16,74 @@
 	<text>Multi line input</text>
 	<textarea height="50" value="first line&#10;second line" />
 
-	<group type="1" tooltip="Tooltip text">
+	<hbox tooltip="Tooltip text">
 		<text>Input Int</text>
 		<input type="integer" value="10" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>SpinBox Int</text>
 		<input type="integer" value="10" step="1" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Input Float</text>
 		<input type="float" value="10" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>SpinBox Float</text>
 		<input type="float" value="10" step="0.1" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Slider</text>
 		<slider value="50.50" max="100">Value %.1f</slider>
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Toggle</text>
 		<toggle value="true" />
 		<radio value="true" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Vector2</text>
-		<input type="vector2" />
-	</group>
+		<vbox>
+			<number />
+			<number />
+		</vbox>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Vector3</text>
-		<input type="vector3" />
-	</group>
+		<vbox>
+			<number />
+			<number />
+			<number />
+		</vbox>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Color3</text>
 		<input type="color3" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Color4</text>
 		<input type="color4" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Palette</text>
 		<color value="0xFFFFFF" />
 		<color value="0xFF0000" />
 		<color value="0x00FF00" />
 		<color value="0x0000FF" />
-	</group>
+	</hbox>
 
 	<!-- Combobox -->
-	<group type="1">
+	<hbox>
 		<text>Combo 1</text>
 		<combo value="Item 1">
 			<text>Text inside combo</text>
@@ -86,13 +93,13 @@
 			<item>Item 3</item>
 			<item>Item 4</item>
 		</combo>
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text tooltip="Combobox with logic">Combo 2</text>
 		<combo id="combo">
 		</combo>
-	</group>
+	</hbox>
 
 	<!-- List -->
 	<text>Items</text>
@@ -137,4 +144,4 @@
 	<progress value="0" min="-50" max="50" />
 	<progress value="75" max="100" />
 	<progress value="1">Completed</progress>
-</group>
+</vbox>

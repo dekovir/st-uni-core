@@ -566,20 +566,6 @@ namespace unicore
 				_update_events.push_back({ node, UIActionType::OnChange, float_value });
 			break;
 
-		case UIInputType::Vector2: // VECTOR2 //////////////////////////////////////
-			// TODO: Implement ImGui::InputInt2()
-			vec2_value = node.value().get_vec2f();
-			if (ImGui::InputFloat2(id.c_str(), &vec2_value.x))
-				_update_events.push_back({ node, UIActionType::OnChange, vec2_value });
-			break;
-
-		case UIInputType::Vector3: // VECTOR3 //////////////////////////////////////
-			// TODO: Implement ImGui::InputInt3()
-			vec3_value = node.value().get_vec3f();
-			if (ImGui::InputFloat3(id.c_str(), &vec3_value.x))
-				_update_events.push_back({ node, UIActionType::OnChange, vec3_value });
-			break;
-
 		case UIInputType::Color3: // COLOR3 ////////////////////////////////////////
 			col3_value = node.value().get_color3f();
 			if (ImGui::ColorEdit3(id.c_str(), &col3_value.r))

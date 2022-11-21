@@ -27,6 +27,8 @@ namespace unicore
 	static const Dictionary<StringView, UIGroupType> s_group_type = {
 		{"vertical", UIGroupType::Vertical},
 		{"horizontal", UIGroupType::Horizontal},
+		{"vbox", UIGroupType::Vertical},
+		{"hbox", UIGroupType::Horizontal},
 		{"child", UIGroupType::Child},
 		{"list", UIGroupType::List},
 		{"tree", UIGroupType::Tree},
@@ -62,8 +64,6 @@ namespace unicore
 		{"range", UIInputType::RangeF},
 		{"rangei", UIInputType::RangeI},
 		{"rangef", UIInputType::RangeF},
-		{"vector2", UIInputType::Vector2},
-		{"vector3", UIInputType::Vector3},
 		{"color3", UIInputType::Color3},
 		{"color4", UIInputType::Color4},
 	};
@@ -75,6 +75,7 @@ namespace unicore
 		{"radio", UIInputType::Radio},
 		{"button", UIInputType::Button},
 		{"item", UIInputType::Item},
+		{"number", UIInputType::Float},
 		{"slider", UIInputType::RangeF},
 	};
 

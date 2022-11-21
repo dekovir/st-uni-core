@@ -61,12 +61,10 @@ namespace unicore
 		Button,   // Button
 		Item,     // Selectable
 		Image,    // Image button
-		Integer,  // Spinbox
-		Float,    // Spinbox
-		RangeI,   // Slider
-		RangeF,   // Slider
-		Vector2,
-		Vector3,
+		Integer,  // Number (Integer)
+		Float,    // Number (Float)
+		RangeI,   // Slider (Integer)
+		RangeF,   // Slider (Float)
 		Color3,   // Color without alpha
 		Color4,   // Color with alpha
 	};
