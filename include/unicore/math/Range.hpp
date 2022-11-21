@@ -68,6 +68,9 @@ namespace unicore
 	using Rangei = Range<int>;
 	using Rangef = Range<float>;
 
+	static_assert(sizeof(Rangef) == sizeof(float) * 2);
+	static_assert(std::is_polymorphic_v<Rangef> == false);
+
 	// CONST /////////////////////////////////////////////////////////////////////
 	namespace details
 	{

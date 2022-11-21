@@ -134,6 +134,7 @@ namespace unicore
 	typedef Vector3<Radians> Angles3f;
 
 	static_assert(sizeof(Vector3f) == sizeof(float) * 3);
+	static_assert(std::is_polymorphic_v<Vector3f> == false);
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
 	template <typename T>

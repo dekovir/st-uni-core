@@ -22,12 +22,12 @@ namespace unicore
 	enum class UINodeTag : UInt8
 	{
 		Group, // Can have children
-		Text,
-		Color,
-		Image,
-		Input,
-		Item,
-		Progress,
+		Text,  // Display text
+		Color, // Display color ?Move
+		Image, // Display image
+		Input, // Input values
+		Item,  // Selectable ?Move to input
+		Progress, // Display progress bar ?Move
 	};
 
 	enum class UIGroupType : UInt8

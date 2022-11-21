@@ -2,8 +2,7 @@
 
 namespace unicore::ui
 {
-	TableComponent::TableComponent(
-		const Shared<TableDataModel<Shared<Component>>>& model)
+	TableComponent::TableComponent(const Shared<ModelType>& model)
 		: GroupComponent(UIGroupType::Table)
 		, _model(model)
 	{
@@ -11,8 +10,9 @@ namespace unicore::ui
 
 	void TableComponent::on_mount()
 	{
-		const auto row_count = _model->size();
-		const Size col_count = _model->col_count();
+		const auto& size = _model->size();
+		const auto col_count = size.x;
+		const auto row_count = size.y;
 
 		set_attribute(UIAttribute::Value, col_count);
 
@@ -31,14 +31,17 @@ namespace unicore::ui
 				{
 					if (const auto cell_layout = row_layout->add(table_cell()))
 					{
-						auto component = _model->get_at(row, col);
+						const auto index = ModelType::IndexType(col, row);
+						auto component = _model->get_at(index);
 
 						cell_layout->add(component);
-						_cells[Vector2i(row, col)] = component;
+						_cells[index] = component;
 					}
 				}
 			}
 		}
+
+		GroupComponent::on_mount();
 	}
 
 	void TableComponent::on_dismount()

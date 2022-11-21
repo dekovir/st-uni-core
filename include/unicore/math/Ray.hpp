@@ -50,6 +50,9 @@ namespace unicore
 	using Ray2 = Ray<Vector2f>;
 	using Ray3 = Ray<Vector3f>;
 
+	static_assert(sizeof(Ray2) == sizeof(float) * 4);
+	static_assert(std::is_polymorphic_v<Ray2> == false);
+
 	template<typename TVector>
 	extern UNICODE_STRING_BUILDER_FORMAT(const Ray<TVector>&)
 	{

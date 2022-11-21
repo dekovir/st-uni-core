@@ -161,6 +161,9 @@ namespace unicore
 		}
 	};
 
+	static_assert(sizeof(Quaternion) == sizeof(float) * 4);
+	static_assert(std::is_polymorphic_v<Quaternion> == false);
+
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	static constexpr bool operator==(const Quaternion& a, const Quaternion& b)
 	{

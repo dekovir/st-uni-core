@@ -43,7 +43,7 @@ namespace unicore::ui
 		void update_text()
 		{
 			String32 text;
-			if (_model->try_get(_value, text))
+			if (_model->try_get_value(_value, text))
 				set_attribute(UIAttribute::Value, text);
 		}
 	};
@@ -66,7 +66,7 @@ namespace unicore::ui
 			for (const auto& key : ValueGroupComponent<TKey>::_model->keys())
 			{
 				String32 text;
-				if (ValueGroupComponent<TKey>::_model->try_get(key, text))
+				if (ValueGroupComponent<TKey>::_model->try_get_value(key, text))
 				{
 					auto item = ValueGroupComponent<TKey>::add(ItemComponent(text));
 					_nodes[key] = item;
@@ -110,7 +110,7 @@ namespace unicore::ui
 			for (const auto& key : ValueGroupComponent<TKey>::_model->keys())
 			{
 				String32 value;
-				if (ValueGroupComponent<TKey>::_model->try_get(key, value))
+				if (ValueGroupComponent<TKey>::_model->try_get_value(key, value))
 				{
 					Shared<radio_button> radio_ref;
 

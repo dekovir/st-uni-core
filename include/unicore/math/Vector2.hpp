@@ -169,6 +169,7 @@ namespace unicore
 	typedef Vector2<Int>   Vector2i;
 
 	static_assert(sizeof(Vector2f) == sizeof(float) * 2);
+	static_assert(std::is_polymorphic_v<Vector2f> == false);
 
 	// IMPLEMENTATION ////////////////////////////////////////////////////////////
 	template <typename T>

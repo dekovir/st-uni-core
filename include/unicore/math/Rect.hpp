@@ -177,6 +177,9 @@ namespace unicore
 	using Recti = Rect<int>;
 	using Rectf = Rect<float>;
 
+	static_assert(sizeof(Rectf) == sizeof(float) * 4);
+	static_assert(std::is_polymorphic_v<Rectf> == false);
+
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
 	template <typename T>
 	constexpr Rect<T>::Rect(T x, T y, T w, T h)

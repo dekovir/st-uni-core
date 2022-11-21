@@ -2,6 +2,7 @@
 #include "unicore/io/Logger.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/imgui/ImGuiContext.hpp"
+#include "unicore/ui/components/ListComponent.hpp"
 
 namespace unicore
 {
@@ -13,6 +14,33 @@ namespace unicore
 			{2, U"Item 3"},
 			{3, U"Item 4"},
 			{4, U"Item 5"},
+	};
+
+	class TestListModel : public DataModel1<Shared<ui::Component>>
+	{
+	public:
+		explicit TestListModel(Size count) : _count(count) {}
+
+		UC_NODISCARD Size get_system_memory_use() const override { return sizeof(TestListModel); }
+		UC_NODISCARD IndexArg size() const override { return _count; }
+		UC_NODISCARD DataType get_at(IndexArg index) const override
+		{
+			const auto text = StringBuilder::format(U"Item {}", index + 1);
+			auto item = ui::ptr(ui::item(text));
+
+			if (index % 5 == 0)
+			{
+				return ui::ptr(ui::vlayout(
+					ui::text(U"--- Header ---"),
+					item
+				));
+			}
+
+			return item;
+		}
+
+	protected:
+		Size _count;
 	};
 
 	class TestTableModel : public TableDataModel<Shared<ui::Component>>
@@ -28,8 +56,7 @@ namespace unicore
 			return sizeof(TestTableModel);
 		}
 
-		UC_NODISCARD Size size() const override { return _size; }
-		UC_NODISCARD Size col_count() const override { return 3; }
+		UC_NODISCARD IndexArg size() const override { return _size; }
 
 		UC_NODISCARD StringView32 get_header(Size col) const override
 		{
@@ -42,16 +69,16 @@ namespace unicore
 			}
 		}
 
-		UC_NODISCARD std::shared_ptr<ui::Component> get_at(Size row, Size column) const override
+		UC_NODISCARD std::shared_ptr<ui::Component> get_at(IndexArg index) const override
 		{
-			auto str = StringBuilder::format(U"Cell {} {}", row + 1, column + 1);
-			if (Math::even(row + column))
+			auto str = StringBuilder::format(U"Cell {} {}", index.x + 1, index.y + 1);
+			if (Math::even(index.x + index.y))
 				return std::make_shared<ui::TextComponent>(str);
 			return std::make_shared<ui::ItemComponent>(str);
 		}
 
 	protected:
-		const Size _size;
+		const IndexType _size;
 	};
 
 	Example08::Example08(const ExampleContext& context)
@@ -80,6 +107,7 @@ namespace unicore
 
 		const auto combo_model = std::make_shared<ConstDictionaryDataModel<Int, String32>>(items);
 		const auto radio_model = std::make_shared<ConstDictionaryDataModel<Int, String32>>(items);
+		const auto list_model = std::make_shared<TestListModel>(10);
 		const auto table_model = std::make_shared<TestTableModel>(3);
 
 		_root = ui::ptr(ui::vlayout(
@@ -137,6 +165,10 @@ namespace unicore
 				ui::text(U"Items"),
 				ref(ui::list_box(), list_ref),
 				ref(ui::button(U"Add"), add_ref)
+			),
+			ui::vlayout(
+				ui::text(U"Items 2"),
+				ui::list(list_model)
 			),
 			ui::vlayout(
 				ui::text(U"Table"),

@@ -164,6 +164,9 @@ namespace unicore
 	using Degrees = Angle<AngleTypeDeg>;
 	using Radians = Angle<AngleTypeRad>;
 
+	static_assert(sizeof(Radians) == sizeof(float));
+	static_assert(std::is_polymorphic_v<Radians> == false);
+
 	// CONST /////////////////////////////////////////////////////////////////////
 	namespace details
 	{

@@ -7,6 +7,13 @@ namespace unicore::ui
 	class TableComponent : public GroupComponent
 	{
 	public:
+		using ModelType = TableDataModel<Shared<Component>>;
+
+		explicit TableComponent(const Shared<ModelType>& model);
+
+		UC_NODISCARD const Shared<ModelType>& model() const { return _model; }
+
+	protected:
 		class Header : public TypedGroupComponent<UIGroupType::TableHeader>
 		{
 		public:
@@ -14,11 +21,8 @@ namespace unicore::ui
 			UC_NODISCARD String32 text() const { return get_attribute(UIAttribute::Text).get_string32(); }
 		};
 
-		explicit TableComponent(const Shared<TableDataModel<Shared<Component>>>& model);
-
-	protected:
-		Shared<TableDataModel<Shared<Component>>> _model;
-		Dictionary<Vector2i, Shared<Component>, Vector2SortX<int>> _cells;
+		Shared<ModelType> _model;
+		Dictionary<ModelType::IndexType, Shared<Component>, Vector2SortX<Size>> _cells;
 
 		void on_mount() override;
 		void on_dismount() override;
