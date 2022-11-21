@@ -64,11 +64,12 @@ namespace unicore
 				const auto store_type = it.first;
 
 				UINodeOptions options;
+				options.attributes[UIAttribute::Type] = UIInputType::Item;
 				options.attributes[UIAttribute::Text] = it.second;
 				options.actions[UIActionType::OnClick] =
 					[this, store_type] { item_set_type(store_type); };
 				_type_nodes[store_type] = _document.create_node(
-					UINodeTag::Item, options, _type_node);
+					UINodeTag::Input, options, _type_node);
 			}
 		}
 

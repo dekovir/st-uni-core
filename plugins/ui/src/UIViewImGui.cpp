@@ -140,14 +140,6 @@ namespace unicore
 
 		case UINodeTag::Input: // INPUT ////////////////////////////////////////////
 			return render_input(*cached_info, node, layout_option);
-
-		case UINodeTag::Item: // ITEM //////////////////////////////////////////////
-			bool_value = node.value().get_bool();
-			render_node_header(node, layout_option);
-			if (ImGui::Selectable(title.c_str(), bool_value))
-				_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
-			render_node_footer(node);
-			return true;
 		}
 
 		return false;
@@ -446,38 +438,56 @@ namespace unicore
 		switch (node.type().get_enum<UIInputType>())
 		{
 		case UIInputType::Text: // TEXT ////////////////////////////////////////////
+			render_node_header(node, layout_option);
 			str = node.value().get_string();
 			if (ImGui::InputText(id.c_str(), &str))
 				_update_events.push_back({ node, UIActionType::OnChange, str });
+			render_node_footer(node);
 			break;
 
 		case UIInputType::TextArea: // TEXTAREA ////////////////////////////////////
+			render_node_header(node, layout_option);
 			str = node.value().get_string();
 			if (ImGui::InputTextMultiline(id.c_str(), &str, { width, height }))
 				_update_events.push_back({ node, UIActionType::OnChange, str });
+			render_node_footer(node);
 			break;
 
 		case UIInputType::Toggle: // TOGGLE ////////////////////////////////////////
+			render_node_header(node, layout_option);
 			bool_value = node.value().get_bool();
 			if (ImGui::Checkbox(id.c_str(), &bool_value))
 				_update_events.push_back({ node, UIActionType::OnChange, bool_value });
+			render_node_footer(node);
 			break;
 
 		case UIInputType::Radio: // RADIO //////////////////////////////////////////
+			render_node_header(node, layout_option);
 			bool_value = node.value().get_bool();
 			if (ImGui::RadioButton(id.c_str(), bool_value))
 			{
 				_update_events.push_back({ node, UIActionType::OnChange, !bool_value });
 				ImGui::CloseCurrentPopup();
 			}
+			render_node_footer(node);
 			break;
 
 		case UIInputType::Button: // BUTTON ////////////////////////////////////////
+			render_node_header(node, layout_option);
 			if (ImGui::Button(title.c_str(), { width, height }))
 			{
 				_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
 				ImGui::CloseCurrentPopup();
 			}
+			render_node_footer(node);
+			break;
+
+		case UIInputType::Item: // ITEM //////////////////////////////////////////////
+			bool_value = node.value().get_bool();
+			render_node_header(node, layout_option);
+			if (ImGui::Selectable(title.c_str(), bool_value))
+				_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
+			render_node_footer(node);
 			break;
 
 		case UIInputType::Image: // IMAGE //////////////////////////////////////////

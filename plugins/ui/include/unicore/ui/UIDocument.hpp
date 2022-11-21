@@ -59,6 +59,13 @@ namespace unicore
 		UINode create_node(UINodeTag tag, const UINodeOptions& options,
 			const UINode& parent = UINode::Empty);
 
+		UINode create_group(UIGroupType type, const UINodeOptions& options,
+			const UINode& parent = UINode::Empty);
+		UINode create_visual(UIVisualType type, const UINodeOptions& options,
+			const UINode& parent = UINode::Empty);
+		UINode create_input(UIInputType type, const UINodeOptions& options,
+			const UINode& parent = UINode::Empty);
+
 		UINode duplicate(const UINode& node, const UINode& at_parent = UINode::Empty);
 
 		Bool remove_node(const UINode& node);

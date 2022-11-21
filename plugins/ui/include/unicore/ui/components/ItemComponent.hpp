@@ -1,20 +1,10 @@
 #pragma once
-#include "unicore/ui/components/Component.hpp"
+#include "unicore/ui/components/InputComponent.hpp"
 
 namespace unicore::ui
 {
-	template<typename T>
-	class TypedComponent : public Component
-	{
-	public:
-		explicit TypedComponent(UINodeTag tag) : Component(tag) {}
-		TypedComponent(UINodeTag tag, T value) : TypedComponent(tag) { set_value(value); }
 
-		void set_value(T value) { set_attribute(UIAttribute::Value, value); }
-		UC_NODISCARD T get_value() const { return get_attribute(UIAttribute::Value).template get<T>(); }
-	};
-
-	class ItemComponent : public TypedComponent<Bool>
+	class ItemComponent : public TypedInputComponent<Bool>
 	{
 	public:
 		explicit ItemComponent(StringView32 text);

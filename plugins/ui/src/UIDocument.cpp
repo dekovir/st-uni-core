@@ -266,6 +266,30 @@ namespace unicore
 		return node_from_index(internal_create_node(tag, options, parent.index()));
 	}
 
+	UINode UIDocument::create_group(UIGroupType type,
+		const UINodeOptions& options, const UINode& parent)
+	{
+		auto copy_options = options;
+		copy_options.attributes[UIAttribute::Type] = type;
+		return create_node(UINodeTag::Group, copy_options, parent);
+	}
+
+	UINode UIDocument::create_visual(UIVisualType type,
+		const UINodeOptions& options, const UINode& parent)
+	{
+		auto copy_options = options;
+		copy_options.attributes[UIAttribute::Type] = type;
+		return create_node(UINodeTag::Visual, copy_options, parent);
+	}
+
+	UINode UIDocument::create_input(UIInputType type,
+		const UINodeOptions& options, const UINode& parent)
+	{
+		auto copy_options = options;
+		copy_options.attributes[UIAttribute::Type] = type;
+		return create_node(UINodeTag::Input, copy_options, parent);
+	}
+
 	UINode UIDocument::duplicate(const UINode& node, const UINode& at_parent)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");

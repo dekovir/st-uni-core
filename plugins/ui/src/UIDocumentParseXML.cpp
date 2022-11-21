@@ -9,7 +9,6 @@ namespace unicore
 		{"group", UINodeTag::Group},
 		{"visual", UINodeTag::Visual},
 		{"input", UINodeTag::Input},
-		{"item", UINodeTag::Item},
 	};
 
 	static const Dictionary<StringView, UIAttribute> s_attr_name =
@@ -56,6 +55,7 @@ namespace unicore
 		{"toggle", UIInputType::Toggle},
 		{"radio", UIInputType::Radio},
 		{"button", UIInputType::Button},
+		{"item", UIInputType::Item},
 		{"image", UIInputType::Image},
 		{"integer", UIInputType::Integer},
 		{"float", UIInputType::Float},
@@ -74,6 +74,7 @@ namespace unicore
 		{"toggle", UIInputType::Toggle},
 		{"radio", UIInputType::Radio},
 		{"button", UIInputType::Button},
+		{"item", UIInputType::Item},
 		{"slider", UIInputType::RangeF},
 	};
 

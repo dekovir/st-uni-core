@@ -24,7 +24,6 @@ namespace unicore
 		Group,  // Can have children
 		Visual, // Display content
 		Input,  // Input values
-		Item,   // Selectable ?Move to input
 	};
 
 	enum class UIGroupType : UInt8
@@ -60,6 +59,7 @@ namespace unicore
 		Toggle,
 		Radio,
 		Button,
+		Item,   // Selectable
 		Image,
 		Integer,
 		Float,

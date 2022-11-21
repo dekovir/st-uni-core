@@ -22,13 +22,14 @@ namespace unicore
 			options.attributes[UIAttribute::Text] = it.second;
 			options.attributes[UIAttribute::Value] = value == start_value;
 
-			auto node = document.create_node(UINodeTag::Item, options, combo_node);
+			auto node = document.create_input(UIInputType::Item, options, combo_node);
 			document.subscribe_node(node, UIActionType::OnClick,
 				[&document, combo_node, node, value, callback]
 				{
 					for (const auto& child : combo_node.get_children())
 					{
-						if (child.tag() == UINodeTag::Item)
+						if (child.tag() == UINodeTag::Input && 
+							child.type().get_enum<UIInputType>() == UIInputType::Item)
 							document.set_node_attribute(child, UIAttribute::Value, false);
 					}
 
@@ -91,7 +92,7 @@ namespace unicore
 
 						UINodeOptions options;
 						options.attributes[UIAttribute::Text] = text;
-						_document->create_node(UINodeTag::Item, options, group_node);
+						_document->create_input(UIInputType::Item, options, group_node);
 					});
 			}
 

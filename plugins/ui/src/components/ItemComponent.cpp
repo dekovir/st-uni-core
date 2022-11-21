@@ -2,12 +2,14 @@
 
 namespace unicore::ui
 {
-	ItemComponent::ItemComponent(StringView32 text) : TypedComponent(UINodeTag::Item)
+	ItemComponent::ItemComponent(StringView32 text)
+		: TypedInputComponent(UIInputType::Item)
 	{
 		set_attribute(UIAttribute::Text, text);
 	}
 
-	ItemComponent::ItemComponent(StringView32 text, Bool value) : ItemComponent(text)
+	ItemComponent::ItemComponent(StringView32 text, Bool value)
+		: ItemComponent(text)
 	{
 		set_attribute(UIAttribute::Value, value);
 	}
