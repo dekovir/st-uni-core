@@ -21,13 +21,10 @@ namespace unicore
 
 	enum class UINodeTag : UInt8
 	{
-		Group, // Can have children
-		Text,  // Display text
-		Color, // Display color ?Move
-		Image, // Display image
-		Input, // Input values
-		Item,  // Selectable ?Move to input
-		Progress, // Display progress bar ?Move
+		Group,  // Can have children
+		Visual, // Display content
+		Input,  // Input values
+		Item,   // Selectable ?Move to input
 	};
 
 	enum class UIGroupType : UInt8
@@ -48,15 +45,12 @@ namespace unicore
 		Modal,
 	};
 
-	enum class UITextType : UInt8
+	enum class UIVisualType : UInt8
 	{
-		Normal,
-		Heading1,
-		Heading2,
-		Heading3,
-		Heading4,
-		Heading5,
-		Heading6,
+		Text,     // Display text
+		Color,    // Display color
+		Image,    // Display image
+		Progress, // Display progress bar ?Move
 	};
 
 	enum class UIInputType : UInt8

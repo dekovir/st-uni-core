@@ -3,7 +3,7 @@
 namespace unicore::ui
 {
 	TextComponent::TextComponent()
-		: Component(UINodeTag::Text)
+		: VisualComponent(UIVisualType::Text)
 	{
 	}
 

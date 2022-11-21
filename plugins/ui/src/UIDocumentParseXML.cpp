@@ -7,13 +7,9 @@ namespace unicore
 	static const Dictionary<StringView, UINodeTag> s_tag_type =
 	{
 		{"group", UINodeTag::Group},
-		{"text", UINodeTag::Text},
-		{"color", UINodeTag::Color},
-		{"image", UINodeTag::Image},
-		{"img", UINodeTag::Image},
+		{"visual", UINodeTag::Visual},
 		{"input", UINodeTag::Input},
 		{"item", UINodeTag::Item},
-		{"progress", UINodeTag::Progress},
 	};
 
 	static const Dictionary<StringView, UIAttribute> s_attr_name =
@@ -46,13 +42,12 @@ namespace unicore
 		{"modal", UIGroupType::Modal},
 	};
 
-	static const Dictionary<StringView, UITextType> s_text_type = {
-		{"h1", UITextType::Heading1},
-		{"h2", UITextType::Heading2},
-		{"h3", UITextType::Heading3},
-		{"h4", UITextType::Heading4},
-		{"h5", UITextType::Heading5},
-		{"h6", UITextType::Heading6},
+	static const Dictionary<StringView, UIVisualType> s_visual_type = {
+		{"text", UIVisualType::Text},
+		{"color", UIVisualType::Color},
+		{"image", UIVisualType::Image},
+		{"img", UIVisualType::Image},
+		{"progress", UIVisualType::Progress},
 	};
 
 	static const Dictionary<StringView, UIInputType> s_input_type =
@@ -82,7 +77,7 @@ namespace unicore
 		{"slider", UIInputType::RangeF},
 	};
 
-	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UITextType, UIInputType>;
+	using VariantType = StdVariant<std::nullopt_t, UIGroupType, UIVisualType, UIInputType>;
 
 	static Optional<UINodeTag> parse_tag(StringView tag, VariantType& variant)
 	{
@@ -104,12 +99,12 @@ namespace unicore
 			}
 		}
 
-		for (const auto& it : s_text_type)
+		for (const auto& it : s_visual_type)
 		{
 			if (StringHelper::equals(it.first, tag, true))
 			{
 				variant = it.second;
-				return UINodeTag::Text;
+				return UINodeTag::Visual;
 			}
 		}
 
@@ -183,10 +178,10 @@ namespace unicore
 				input_variant = parse_enum_variant<UIGroupType>(str, s_group_type);
 		}
 
-		if (node_tag.value() == UINodeTag::Text)
+		if (node_tag.value() == UINodeTag::Visual)
 		{
 			if (const auto str = node->Attribute("type"); str != nullptr)
-				input_variant = parse_enum_variant<UITextType>(str, s_text_type);
+				input_variant = parse_enum_variant<UIVisualType>(str, s_visual_type);
 		}
 
 		if (node_tag.value() == UINodeTag::Input)
@@ -201,7 +196,7 @@ namespace unicore
 		if (const auto ptr = std::get_if<UIGroupType>(&input_variant))
 			options.attributes[UIAttribute::Type] = *ptr;
 
-		if (const auto ptr = std::get_if<UITextType>(&input_variant))
+		if (const auto ptr = std::get_if<UIVisualType>(&input_variant))
 			options.attributes[UIAttribute::Type] = *ptr;
 
 		if (const auto ptr = std::get_if<UIInputType>(&input_variant))

@@ -44,8 +44,6 @@ namespace unicore
 			SameLineFlex,
 		};
 
-
-
 		Logger& _logger;
 		ImGuiContext& _context;
 		List<UIEvent> _update_events;
@@ -73,6 +71,15 @@ namespace unicore
 			UIAttribute type, const Optional<Variant>& value) override;
 
 		Bool render_node(const UINode& node, LayoutOption layout_option = LayoutOption::None);
+
+		Bool render_group(const CachedInfo& info, const UINode& node,
+			LayoutOption layout_option = LayoutOption::None);
+
+		Bool render_visual(const CachedInfo& info, const UINode& node,
+			LayoutOption layout_option = LayoutOption::None);
+
+		Bool render_input(const CachedInfo& info, const UINode& node,
+			LayoutOption layout_option = LayoutOption::None);
 
 		void render_node_header(const UINode& node, LayoutOption layout_option);
 		void render_node_footer(const UINode& node);

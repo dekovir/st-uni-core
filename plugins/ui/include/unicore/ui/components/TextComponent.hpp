@@ -1,9 +1,9 @@
 #pragma once
-#include "unicore/ui/components/Component.hpp"
+#include "unicore/ui/components/VisualComponent.hpp"
 
 namespace unicore::ui
 {
-	class TextComponent : public Component
+	class TextComponent : public VisualComponent
 	{
 	public:
 		TextComponent();

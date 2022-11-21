@@ -123,11 +123,304 @@ namespace unicore
 		}
 
 		const auto tag = node.tag();
-		const auto& id = cached_info->id;
 		const auto& title = cached_info->title;
+
+		Bool bool_value;
+
+		String str;
+		String32 str32;
+
+		switch (tag)
+		{
+		case UINodeTag::Group: // GROUP ////////////////////////////////////////////
+			return render_group(*cached_info, node, layout_option);
+
+		case UINodeTag::Visual: // VISUAL //////////////////////////////////////////
+			return render_visual(*cached_info, node, layout_option);
+
+		case UINodeTag::Input: // INPUT ////////////////////////////////////////////
+			return render_input(*cached_info, node, layout_option);
+
+		case UINodeTag::Item: // ITEM //////////////////////////////////////////////
+			bool_value = node.value().get_bool();
+			render_node_header(node, layout_option);
+			if (ImGui::Selectable(title.c_str(), bool_value))
+				_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
+			render_node_footer(node);
+			return true;
+		}
+
+		return false;
+	}
+
+	Bool UIViewImGui::render_group(const CachedInfo& info, const UINode& node, LayoutOption layout_option)
+	{
+		const auto& id = info.id;
+		const auto& title = info.title;
+
+		const auto width = node.get(UIAttribute::Width).get_float();
+		const auto height = node.get(UIAttribute::Height).get_float();
+
+		Bool bool_value;
+		String str;
+		String32 str32;
 
 		List<UINode> children;
 		node.get_children(children);
+
+		switch (node.type().get_enum<UIGroupType>())
+		{
+		case UIGroupType::Vertical: // VERTICAL ////////////////////////////////////
+			render_node_header(node, layout_option);
+			ImGui::BeginGroup();
+			for (const auto& child : children)
+				render_node(child);
+			ImGui::EndGroup();
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::Horizontal: // HORIZONTAL ////////////////////////////////
+			render_node_header(node, layout_option);
+			ImGui::BeginGroup();
+			for (unsigned i = 0; i < children.size(); i++)
+			{
+				const auto option = i > 0
+					? LayoutOption::SameLine : LayoutOption::None;
+				render_node(children[i], option);
+			}
+			ImGui::EndGroup();
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::Child: // CHILD //////////////////////////////////////////
+			render_node_header(node, layout_option);
+			if (ImGui::BeginChild(id.c_str(), { width, height }, false, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				for (const auto& child : children)
+					render_node(child);
+			}
+			ImGui::EndChild();
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::List: // LIST ////////////////////////////////////////////
+			render_node_header(node, layout_option);
+			if (ImGui::BeginListBox(id.c_str(), { width, height }))
+			{
+				for (const auto& child : children)
+					render_node(child);
+				ImGui::EndListBox();
+			}
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::Tree: // TREE ////////////////////////////////////////////
+			bool_value = node.value().get_bool();
+			ImGui::SetNextItemOpen(bool_value);
+			render_node_header(node, layout_option);
+			if (ImGui::TreeNode(title.c_str()))
+			{
+				if (!bool_value)
+					_update_events.push_back({ node, UIActionType::OnChange, !bool_value });
+
+				for (const auto& child : children)
+					render_node(child);
+
+				ImGui::TreePop();
+			}
+			else if (bool_value)
+				_update_events.push_back({ node, UIActionType::OnChange, !bool_value });
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::Combo: // COMBO //////////////////////////////////////////
+			str = node.value().get_string();
+			render_node_header(node, layout_option);
+			if (ImGui::BeginCombo(title.c_str(), str.c_str()))
+			{
+				for (const auto& child : children)
+					render_node(child);
+				ImGui::EndCombo();
+			}
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::Flex: // FLEX ////////////////////////////////////////////
+			render_node_header(node, layout_option);
+			if (ImGui::BeginListBox(id.c_str(), { width, height }))
+			{
+				for (const auto& child : children)
+					render_node(child, LayoutOption::SameLineFlex);
+				ImGui::EndListBox();
+			}
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::Table: // TABLE //////////////////////////////////////////
+			render_node_header(node, layout_option);
+			if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
+				ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
+			{
+				for (const auto& child : children)
+					render_node(child);
+				ImGui::EndTable();
+			}
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::TableHeader: // TABLE HEADER /////////////////////////////
+			render_node_header(node, layout_option);
+			str = node.text().get_string();
+			ImGui::TableNextColumn();
+			ImGui::TableHeader(str.c_str());
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::TableRow: // TABLE ROW ///////////////////////////////////
+			render_node_header(node, layout_option);
+			ImGui::TableNextRow();
+			ImGui::BeginGroup();
+			for (const auto& child : children)
+				render_node(child);
+			ImGui::EndGroup();
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::TableCell: // TABLE CELL /////////////////////////////////
+			render_node_header(node, layout_option);
+			ImGui::TableNextColumn();
+			ImGui::BeginGroup();
+			if (node.get(UIAttribute::Text).try_get_string(str))
+				ImGui::Text("%s", str.c_str());
+
+			if (!children.empty())
+			{
+				for (const auto& child : children)
+					render_node(child);
+			}
+			ImGui::EndGroup();
+			render_node_footer(node);
+			return true;
+
+		case UIGroupType::Popup: // POPUP //////////////////////////////////////////
+			if (node.value().get_bool())
+			{
+				ImGui::OpenPopup(id.c_str());
+				_document->set_node_attribute(node, UIAttribute::Value, false);
+			}
+
+			if (ImGui::BeginPopup(id.c_str()))
+			{
+				for (const auto& child : children)
+					render_node(child);
+
+				ImGui::EndPopup();
+			}
+			break;
+
+		case UIGroupType::Tooltip: // TOOLTIP //////////////////////////////////////
+			if (node.visible())
+			{
+				ImGui::BeginTooltip();
+
+				str = node.get(UIAttribute::Text).get_string();
+				if (!str.empty())
+					ImGui::Text("%s", str.c_str());
+
+				for (const auto& child : children)
+					render_node(child);
+				ImGui::EndTooltip();
+			}
+			break;
+
+		case UIGroupType::Modal: // MODAL //////////////////////////////////////////
+			if (node.value().get_bool())
+			{
+				ImGui::OpenPopup(id.c_str());
+				_document->set_node_attribute(node, UIAttribute::Value, false);
+			}
+
+			if (ImGui::BeginPopupModal(id.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				for (const auto& child : children)
+					render_node(child);
+
+				ImGui::EndPopup();
+			}
+			break;
+		}
+
+		return true;
+	}
+
+	Bool UIViewImGui::render_visual(const CachedInfo& info, const UINode& node, LayoutOption layout_option)
+	{
+		const auto& id = info.id;
+		const auto width = node.get(UIAttribute::Width).get_float();
+		const auto height = node.get(UIAttribute::Height).get_float();
+
+		Float float_value;
+		String str;
+		String32 str32;
+		Rangef range_f;
+		Color4f col4_value;
+
+		ImTextureID texture_id;
+		ImVec2 size, uv0, uv1;
+
+		switch (node.type().get_enum<UIVisualType>())
+		{
+		case UIVisualType::Text: // TEXT ///////////////////////////////////////////
+			str = node.get(UIAttribute::Text).get_string();
+
+			render_node_header(node, layout_option);
+			ImGui::Text("%s", str.c_str());
+			render_node_footer(node);
+			return true;
+
+		case UIVisualType::Color: // COLOR /////////////////////////////////////////
+			col4_value = node.value().get_color4f();
+
+			render_node_header(node, layout_option);
+			if (ImGui::ColorButton(id.c_str(), ImGuiConvert::convert_color(col4_value)))
+				_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
+
+			render_node_footer(node);
+			return true;
+
+		case UIVisualType::Image: // IMAGE /////////////////////////////////////////
+			render_node_header(node, layout_option);
+			if (get_texture(node.value(), texture_id, size, uv0, uv1))
+			{
+				const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
+				ImGui::Image(texture_id, s, uv0, uv1);
+			}
+			else ImGui::Image(nullptr, { width, height });
+			render_node_footer(node);
+			return true;
+
+		case UIVisualType::Progress: // PROGRESS //////////////////////////////////////
+			range_f = {
+				node.get(UIAttribute::Min).get_float(0),
+				node.get(UIAttribute::Max).get_float(1)
+			};
+			float_value = Math::inverse_lerp(range_f.min, range_f.max, node.value().get_float());
+			render_node_header(node, layout_option);
+			if (node.get(UIAttribute::Text).try_get_string(str))
+				ImGui::ProgressBar(float_value, { width, height }, str.c_str());
+			else ImGui::ProgressBar(float_value, { width, height });
+			render_node_footer(node);
+			return true;
+		}
+
+		return false;
+	}
+
+	Bool UIViewImGui::render_input(const CachedInfo& info,
+		const UINode& node, LayoutOption layout_option)
+	{
+		const auto& id = info.id;
+		const auto& title = info.title;
 
 		const auto width = node.get(UIAttribute::Width).get_float();
 		const auto height = node.get(UIAttribute::Height).get_float();
@@ -149,389 +442,149 @@ namespace unicore
 		ImTextureID texture_id;
 		ImVec2 size, uv0, uv1;
 
-		switch (tag)
+		render_node_header(node, layout_option);
+		switch (node.type().get_enum<UIInputType>())
 		{
-		case UINodeTag::Group: // GROUP ////////////////////////////////////////////
-			switch (node.type().get_enum<UIGroupType>())
+		case UIInputType::Text: // TEXT ////////////////////////////////////////////
+			str = node.value().get_string();
+			if (ImGui::InputText(id.c_str(), &str))
+				_update_events.push_back({ node, UIActionType::OnChange, str });
+			break;
+
+		case UIInputType::TextArea: // TEXTAREA ////////////////////////////////////
+			str = node.value().get_string();
+			if (ImGui::InputTextMultiline(id.c_str(), &str, { width, height }))
+				_update_events.push_back({ node, UIActionType::OnChange, str });
+			break;
+
+		case UIInputType::Toggle: // TOGGLE ////////////////////////////////////////
+			bool_value = node.value().get_bool();
+			if (ImGui::Checkbox(id.c_str(), &bool_value))
+				_update_events.push_back({ node, UIActionType::OnChange, bool_value });
+			break;
+
+		case UIInputType::Radio: // RADIO //////////////////////////////////////////
+			bool_value = node.value().get_bool();
+			if (ImGui::RadioButton(id.c_str(), bool_value))
 			{
-			case UIGroupType::Vertical:
-				render_node_header(node, layout_option);
-				ImGui::BeginGroup();
-				for (const auto& child : children)
-					render_node(child);
-				ImGui::EndGroup();
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::Horizontal:
-				render_node_header(node, layout_option);
-				ImGui::BeginGroup();
-				for (unsigned i = 0; i < children.size(); i++)
-				{
-					const auto option = i > 0
-						? LayoutOption::SameLine : LayoutOption::None;
-					render_node(children[i], option);
-				}
-				ImGui::EndGroup();
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::Child:
-				render_node_header(node, layout_option);
-				if (ImGui::BeginChild(id.c_str(), { width, height }, false, ImGuiWindowFlags_AlwaysAutoResize))
-				{
-					for (const auto& child : children)
-						render_node(child);
-				}
-				ImGui::EndChild();
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::List:
-				render_node_header(node, layout_option);
-				if (ImGui::BeginListBox(id.c_str(), { width, height }))
-				{
-					for (const auto& child : children)
-						render_node(child);
-					ImGui::EndListBox();
-				}
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::Tree:
-				bool_value = node.value().get_bool();
-				ImGui::SetNextItemOpen(bool_value);
-				render_node_header(node, layout_option);
-				if (ImGui::TreeNode(title.c_str()))
-				{
-					if (!bool_value)
-						_update_events.push_back({ node, UIActionType::OnChange, !bool_value });
-
-					for (const auto& child : children)
-						render_node(child);
-
-					ImGui::TreePop();
-				}
-				else if (bool_value)
-					_update_events.push_back({ node, UIActionType::OnChange, !bool_value });
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::Combo:
-				str = node.value().get_string();
-				render_node_header(node, layout_option);
-				if (ImGui::BeginCombo(title.c_str(), str.c_str()))
-				{
-					for (const auto& child : children)
-						render_node(child);
-					ImGui::EndCombo();
-				}
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::Flex:
-				render_node_header(node, layout_option);
-				if (ImGui::BeginListBox(id.c_str(), { width, height }))
-				{
-					for (const auto& child : children)
-						render_node(child, LayoutOption::SameLineFlex);
-					ImGui::EndListBox();
-				}
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::Table:
-				render_node_header(node, layout_option);
-				if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
-					ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
-				{
-					for (const auto& child : children)
-						render_node(child);
-					ImGui::EndTable();
-				}
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::TableHeader:
-				render_node_header(node, layout_option);
-				str = node.text().get_string();
-				ImGui::TableNextColumn();
-				ImGui::TableHeader(str.c_str());
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::TableRow:
-				render_node_header(node, layout_option);
-				ImGui::TableNextRow();
-				ImGui::BeginGroup();
-				for (const auto& child : children)
-					render_node(child);
-				ImGui::EndGroup();
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::TableCell:
-				render_node_header(node, layout_option);
-				ImGui::TableNextColumn();
-				ImGui::BeginGroup();
-				if (node.get(UIAttribute::Text).try_get_string(str))
-					ImGui::Text("%s", str.c_str());
-
-				if (!children.empty())
-				{
-					for (const auto& child : children)
-						render_node(child);
-				}
-				ImGui::EndGroup();
-				render_node_footer(node);
-				return true;
-
-			case UIGroupType::Popup:
-				if (node.value().get_bool())
-				{
-					ImGui::OpenPopup(id.c_str());
-					_document->set_node_attribute(node, UIAttribute::Value, false);
-				}
-
-				if (ImGui::BeginPopup(id.c_str()))
-				{
-					for (const auto& child : children)
-						render_node(child);
-
-					ImGui::EndPopup();
-				}
-				break;
-
-			case UIGroupType::Tooltip:
-				if (node.visible())
-				{
-					ImGui::BeginTooltip();
-
-					str = node.get(UIAttribute::Text).get_string();
-					if (!str.empty())
-						ImGui::Text("%s", str.c_str());
-
-					for (const auto& child : children)
-						render_node(child);
-					ImGui::EndTooltip();
-				}
-				break;
-
-			case UIGroupType::Modal:
-				if (node.value().get_bool())
-				{
-					ImGui::OpenPopup(id.c_str());
-					_document->set_node_attribute(node, UIAttribute::Value, false);
-				}
-
-				if (ImGui::BeginPopupModal(id.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-				{
-					for (const auto& child : children)
-						render_node(child);
-
-					ImGui::EndPopup();
-				}
-				break;
+				_update_events.push_back({ node, UIActionType::OnChange, !bool_value });
+				ImGui::CloseCurrentPopup();
 			}
 			break;
 
-		case UINodeTag::Text: // TEXT //////////////////////////////////////////////
-			str = node.get(UIAttribute::Text).get_string();
-
-			render_node_header(node, layout_option);
-			ImGui::Text("%s", str.c_str());
-			render_node_footer(node);
-			return true;
-
-		case UINodeTag::Color: // COLOR ////////////////////////////////////////////
-			col4_value = node.value().get_color4f();
-
-			render_node_header(node, layout_option);
-			if (ImGui::ColorButton(id.c_str(), ImGuiConvert::convert_color(col4_value)))
+		case UIInputType::Button: // BUTTON ////////////////////////////////////////
+			if (ImGui::Button(title.c_str(), { width, height }))
+			{
 				_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
+				ImGui::CloseCurrentPopup();
+			}
+			break;
 
-			render_node_footer(node);
-			return true;
-
-		case UINodeTag::Image: // IMAGE ////////////////////////////////////////////
+		case UIInputType::Image: // IMAGE //////////////////////////////////////////
 			render_node_header(node, layout_option);
+			ImGui::PushID(id.c_str());
 			if (get_texture(node.value(), texture_id, size, uv0, uv1))
 			{
 				const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
-				ImGui::Image(texture_id, s, uv0, uv1);
-			}
-			else ImGui::Image(nullptr, { width, height });
-			render_node_footer(node);
-			return true;
-
-		case UINodeTag::Input: // INPUT ////////////////////////////////////////////
-			render_node_header(node, layout_option);
-			switch (node.type().get_enum<UIInputType>())
-			{
-			case UIInputType::Text:
-				str = node.value().get_string();
-				if (ImGui::InputText(id.c_str(), &str))
-					_update_events.push_back({ node, UIActionType::OnChange, str });
-				break;
-
-			case UIInputType::TextArea:
-				str = node.value().get_string();
-				if (ImGui::InputTextMultiline(id.c_str(), &str, { width, height }))
-					_update_events.push_back({ node, UIActionType::OnChange, str });
-				break;
-
-			case UIInputType::Toggle:
-				bool_value = node.value().get_bool();
-				if (ImGui::Checkbox(id.c_str(), &bool_value))
-					_update_events.push_back({ node, UIActionType::OnChange, bool_value });
-				break;
-
-			case UIInputType::Radio:
-				bool_value = node.value().get_bool();
-				if (ImGui::RadioButton(id.c_str(), bool_value))
-				{
-					_update_events.push_back({ node, UIActionType::OnChange, !bool_value });
-					ImGui::CloseCurrentPopup();
-				}
-				break;
-
-			case UIInputType::Button:
-				if (ImGui::Button(title.c_str(), { width, height }))
+				if (ImGui::ImageButton(texture_id, s, uv0, uv1))
 				{
 					_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
 					ImGui::CloseCurrentPopup();
 				}
-				break;
-
-			case UIInputType::Image:
-				render_node_header(node, layout_option);
-				ImGui::PushID(id.c_str());
-				if (get_texture(node.value(), texture_id, size, uv0, uv1))
+			}
+			else
+			{
+				if (ImGui::ImageButton(nullptr, { width, height }))
 				{
-					const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
-					if (ImGui::ImageButton(texture_id, s, uv0, uv1))
-					{
-						_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
-						ImGui::CloseCurrentPopup();
-					}
+					_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
+					ImGui::CloseCurrentPopup();
 				}
-				else
-				{
-					if (ImGui::ImageButton(nullptr, { width, height }))
-					{
-						_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
-						ImGui::CloseCurrentPopup();
-					}
-				}
-				ImGui::PopID();
-				render_node_footer(node);
-				return true;
+			}
+			ImGui::PopID();
+			render_node_footer(node);
+			return true;
 
-			case UIInputType::Integer:
-				range_i = {
-					node.get(UIAttribute::Min).get_int(std::numeric_limits<Int>::min()),
-					node.get(UIAttribute::Max).get_int(std::numeric_limits<Int>::max())
-				};
+		case UIInputType::Integer: // INTEGER //////////////////////////////////////
+			range_i = {
+				node.get(UIAttribute::Min).get_int(std::numeric_limits<Int>::min()),
+				node.get(UIAttribute::Max).get_int(std::numeric_limits<Int>::max())
+			};
 
-				int_value = node.value().get_int();
-				if (ImGui::InputInt(id.c_str(), &int_value, node.get(UIAttribute::Step).get_int(1)))
-				{
-					int_value = range_i.clamp(int_value);
-					_update_events.push_back({ node, UIActionType::OnChange, int_value });
-				}
-				break;
+			int_value = node.value().get_int();
+			if (ImGui::InputInt(id.c_str(), &int_value, node.get(UIAttribute::Step).get_int(1)))
+			{
+				int_value = range_i.clamp(int_value);
+				_update_events.push_back({ node, UIActionType::OnChange, int_value });
+			}
+			break;
 
-			case UIInputType::Float:
-				range_f = {
-					node.get(UIAttribute::Min).get_float(-std::numeric_limits<Float>::max()),
-					node.get(UIAttribute::Max).get_float(+std::numeric_limits<Float>::max())
-				};
-				float_value = node.value().get_float();
-				if (ImGui::InputFloat(id.c_str(), &float_value, node.get(UIAttribute::Step).get_float(1)))
-				{
-					float_value = range_f.clamp(float_value);
-					_update_events.push_back({ node, UIActionType::OnChange, float_value });
-				}
-
-				break;
-
-			case UIInputType::RangeI:
-				// TODO: Implement step
-				range_i = {
-					node.get(UIAttribute::Min).get_int(0),
-					node.get(UIAttribute::Max).get_int(100)
-				};
-				str = node.get(UIAttribute::Text).get_string("%d");
-				int_value = node.value().get_int();
-				if (ImGui::SliderInt(id.c_str(), &int_value, range_i.min, range_i.max, str.c_str()))
-					_update_events.push_back({ node, UIActionType::OnChange, int_value });
-				break;
-
-			case UIInputType::RangeF:
-				// TODO: Implement step
-				range_f = {
-					node.get(UIAttribute::Min).get_float(0),
-					node.get(UIAttribute::Max).get_float(1)
-				};
-				str = node.get(UIAttribute::Text).get_string("%.2f");
-				float_value = node.value().get_float();
-				if (ImGui::SliderFloat(id.c_str(), &float_value, range_f.min, range_f.max, str.c_str()))
-					_update_events.push_back({ node, UIActionType::OnChange, float_value });
-				break;
-
-			case UIInputType::Vector2:
-				// TODO: Implement ImGui::InputInt2()
-				vec2_value = node.value().get_vec2f();
-				if (ImGui::InputFloat2(id.c_str(), &vec2_value.x))
-					_update_events.push_back({ node, UIActionType::OnChange, vec2_value });
-				break;
-
-			case UIInputType::Vector3:
-				// TODO: Implement ImGui::InputInt3()
-				vec3_value = node.value().get_vec3f();
-				if (ImGui::InputFloat3(id.c_str(), &vec3_value.x))
-					_update_events.push_back({ node, UIActionType::OnChange, vec3_value });
-				break;
-
-			case UIInputType::Color3:
-				col3_value = node.value().get_color3f();
-				if (ImGui::ColorEdit3(id.c_str(), &col3_value.r))
-					_update_events.push_back({ node, UIActionType::OnChange, col3_value });
-				break;
-
-			case UIInputType::Color4:
-				col4_value = node.value().get_color4f();
-				if (ImGui::ColorEdit4(id.c_str(), &col4_value.r))
-					_update_events.push_back({ node, UIActionType::OnChange, col4_value });
-				break;
+		case UIInputType::Float: // FLOAT //////////////////////////////////////////
+			range_f = {
+				node.get(UIAttribute::Min).get_float(-std::numeric_limits<Float>::max()),
+				node.get(UIAttribute::Max).get_float(+std::numeric_limits<Float>::max())
+			};
+			float_value = node.value().get_float();
+			if (ImGui::InputFloat(id.c_str(), &float_value, node.get(UIAttribute::Step).get_float(1)))
+			{
+				float_value = range_f.clamp(float_value);
+				_update_events.push_back({ node, UIActionType::OnChange, float_value });
 			}
 
-			render_node_footer(node);
-			return true;
+			break;
 
-		case UINodeTag::Item: // ITEM //////////////////////////////////////////////
-			bool_value = node.value().get_bool();
-			render_node_header(node, layout_option);
-			if (ImGui::Selectable(title.c_str(), bool_value))
-				_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
-			render_node_footer(node);
-			return true;
+		case UIInputType::RangeI: // RANGEI ////////////////////////////////////////
+			// TODO: Implement step
+			range_i = {
+				node.get(UIAttribute::Min).get_int(0),
+				node.get(UIAttribute::Max).get_int(100)
+			};
+			str = node.get(UIAttribute::Text).get_string("%d");
+			int_value = node.value().get_int();
+			if (ImGui::SliderInt(id.c_str(), &int_value, range_i.min, range_i.max, str.c_str()))
+				_update_events.push_back({ node, UIActionType::OnChange, int_value });
+			break;
 
-		case UINodeTag::Progress: // PROGRESS //////////////////////////////////////
+		case UIInputType::RangeF: // RANGEF ////////////////////////////////////////
+			// TODO: Implement step
 			range_f = {
 				node.get(UIAttribute::Min).get_float(0),
 				node.get(UIAttribute::Max).get_float(1)
 			};
-			float_value = Math::inverse_lerp(range_f.min, range_f.max, node.value().get_float());
-			render_node_header(node, layout_option);
-			if (node.get(UIAttribute::Text).try_get_string(str))
-				ImGui::ProgressBar(float_value, { width, height }, str.c_str());
-			else ImGui::ProgressBar(float_value, { width, height });
-			render_node_footer(node);
+			str = node.get(UIAttribute::Text).get_string("%.2f");
+			float_value = node.value().get_float();
+			if (ImGui::SliderFloat(id.c_str(), &float_value, range_f.min, range_f.max, str.c_str()))
+				_update_events.push_back({ node, UIActionType::OnChange, float_value });
+			break;
+
+		case UIInputType::Vector2: // VECTOR2 //////////////////////////////////////
+			// TODO: Implement ImGui::InputInt2()
+			vec2_value = node.value().get_vec2f();
+			if (ImGui::InputFloat2(id.c_str(), &vec2_value.x))
+				_update_events.push_back({ node, UIActionType::OnChange, vec2_value });
+			break;
+
+		case UIInputType::Vector3: // VECTOR3 //////////////////////////////////////
+			// TODO: Implement ImGui::InputInt3()
+			vec3_value = node.value().get_vec3f();
+			if (ImGui::InputFloat3(id.c_str(), &vec3_value.x))
+				_update_events.push_back({ node, UIActionType::OnChange, vec3_value });
+			break;
+
+		case UIInputType::Color3: // COLOR3 ////////////////////////////////////////
+			col3_value = node.value().get_color3f();
+			if (ImGui::ColorEdit3(id.c_str(), &col3_value.r))
+				_update_events.push_back({ node, UIActionType::OnChange, col3_value });
+			break;
+
+		case UIInputType::Color4: // COLOR4 ////////////////////////////////////////
+			col4_value = node.value().get_color4f();
+			if (ImGui::ColorEdit4(id.c_str(), &col4_value.r))
+				_update_events.push_back({ node, UIActionType::OnChange, col4_value });
 			break;
 		}
 
-		return false;
+		render_node_footer(node);
+		return true;
 	}
 
 	void UIViewImGui::render_node_header(const UINode& node, LayoutOption layout_option)
