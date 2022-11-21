@@ -16,7 +16,7 @@ namespace unicore
 			{4, U"Item 5"},
 	};
 
-	class TestListModel : public DataModel1<Shared<ui::Component>>
+	class TestListModel : public ui::ListComponentModel
 	{
 	public:
 		explicit TestListModel(Size count) : _count(count) {}
@@ -43,7 +43,7 @@ namespace unicore
 		Size _count;
 	};
 
-	class TestTableModel : public TableDataModel<Shared<ui::Component>>
+	class TestTableModel : public ui::TableComponentModel
 	{
 	public:
 		explicit TestTableModel(Size size)

@@ -4,18 +4,19 @@
 
 namespace unicore::ui
 {
+	using ListComponentModel = DataModel1<Shared<Component>>;
+
 	class ListComponent : public GroupComponent
 	{
 	public:
-		using ModelType = DataModel1<Shared<Component>>;
 
-		explicit ListComponent(const Shared<ModelType>& model);
+		explicit ListComponent(const Shared<ListComponentModel>& model);
 
-		UC_NODISCARD const Shared<ModelType>& model() const { return _model; }
+		UC_NODISCARD const Shared<ListComponentModel>& model() const { return _model; }
 
 	protected:
-		Shared<ModelType> _model;
-		Dictionary<ModelType::IndexType, Shared<Component>> _nodes;
+		Shared<ListComponentModel> _model;
+		Dictionary<ListComponentModel::IndexType, Shared<Component>> _nodes;
 
 		void on_mount() override;
 		void on_dismount() override;

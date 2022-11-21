@@ -2,7 +2,7 @@
 
 namespace unicore::ui
 {
-	ListComponent::ListComponent(const Shared<ModelType>& model)
+	ListComponent::ListComponent(const Shared<ListComponentModel>& model)
 		: GroupComponent(UIGroupType::List)
 		, _model(model)
 	{

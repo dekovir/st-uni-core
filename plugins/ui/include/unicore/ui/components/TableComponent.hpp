@@ -4,14 +4,15 @@
 
 namespace unicore::ui
 {
+	using TableComponentModel = TableDataModel<Shared<Component>>;
+
 	class TableComponent : public GroupComponent
 	{
 	public:
-		using ModelType = TableDataModel<Shared<Component>>;
 
-		explicit TableComponent(const Shared<ModelType>& model);
+		explicit TableComponent(const Shared<TableComponentModel>& model);
 
-		UC_NODISCARD const Shared<ModelType>& model() const { return _model; }
+		UC_NODISCARD const Shared<TableComponentModel>& model() const { return _model; }
 
 	protected:
 		class Header : public TypedGroupComponent<UIGroupType::TableHeader>
@@ -21,8 +22,8 @@ namespace unicore::ui
 			UC_NODISCARD String32 text() const { return get_attribute(UIAttribute::Text).get_string32(); }
 		};
 
-		Shared<ModelType> _model;
-		Dictionary<ModelType::IndexType, Shared<Component>, Vector2SortX<Size>> _cells;
+		Shared<TableComponentModel> _model;
+		Dictionary<TableComponentModel::IndexType, Shared<Component>, Vector2SortX<Size>> _cells;
 
 		void on_mount() override;
 		void on_dismount() override;

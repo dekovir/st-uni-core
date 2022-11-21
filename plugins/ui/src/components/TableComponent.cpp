@@ -2,7 +2,7 @@
 
 namespace unicore::ui
 {
-	TableComponent::TableComponent(const Shared<ModelType>& model)
+	TableComponent::TableComponent(const Shared<TableComponentModel>& model)
 		: GroupComponent(UIGroupType::Table)
 		, _model(model)
 	{
@@ -31,7 +31,7 @@ namespace unicore::ui
 				{
 					if (const auto cell_layout = row_layout->add(table_cell()))
 					{
-						const auto index = ModelType::IndexType(col, row);
+						const auto index = TableComponentModel::IndexType(col, row);
 						auto component = _model->get_at(index);
 
 						cell_layout->add(component);
