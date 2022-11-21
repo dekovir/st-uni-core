@@ -10,30 +10,6 @@ namespace unicore
 	public:
 	};
 
-	namespace sfinae
-	{
-		template<Bool Value, class A = void, class B = void>
-		struct enable_if_else
-		{
-			using type = A;
-		};
-
-		template<class A, class B>
-		struct enable_if_else<false, A, B>
-		{
-			using type = B;
-		};
-
-		template<Bool Value, class A = void, class B = void>
-		using enable_if_else_t = typename enable_if_else<Value, A, B>::type;
-
-		template<class T>
-		inline constexpr bool is_small_v = sizeof(T) <= sizeof(intptr_t);
-
-		template<typename T>
-		using ConstRefType = enable_if_else_t<is_small_v<T>, T, const T&>;
-	}
-
 	template<typename TData, typename TIndex>
 	class DataModelTyped : public DataModel
 	{
