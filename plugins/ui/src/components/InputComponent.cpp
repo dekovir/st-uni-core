@@ -3,7 +3,7 @@
 namespace unicore::ui
 {
 	InputComponent::InputComponent(UIInputType type)
-		: Component(UINodeTag::Input)
+		: NodeComponent(UINodeTag::Input)
 	{
 		set_attribute(UIAttribute::Type, type);
 	}

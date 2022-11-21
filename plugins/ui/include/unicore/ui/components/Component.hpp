@@ -6,35 +6,26 @@ namespace unicore::ui
 	class Component
 	{
 	public:
-		explicit Component(UINodeTag tag);
+		Component() = default;
 		virtual ~Component() = default;
-
-		UC_NODISCARD Bool is_mounted() const { return !_node.empty(); }
-
-		UC_NODISCARD UINodeTag tag() const { return _tag; }
-		UC_NODISCARD const UINode& node() const { return _node; }
 
 		UC_NODISCARD UIDocument* document() { return _document; }
 		UC_NODISCARD const UIDocument* document() const { return _document; }
 
-		void mount(UIDocument& document, const UINode& parent);
-		void dismount();
+		UC_NODISCARD const UINode& parent() const { return _parent; }
+
+		UC_NODISCARD Bool is_mounted() const { return _document != nullptr; }
+
+		virtual void mount(UIDocument& document, const UINode& parent);
+		virtual void dismount();
 
 	protected:
-		virtual void on_mount() {}
-		virtual void on_dismount() {}
-
-		UC_NODISCARD Variant get_attribute(UIAttribute type) const { return _node.get(type); }
-
-		void set_attribute(UIAttribute type, const Variant& value);
-		void set_action(UIActionType type, const UIAction& action);
+		virtual void on_mount() = 0;
+		virtual void on_dismount() = 0;
 
 	private:
-		const UINodeTag _tag;
-		UINodeOptions _options;
-
 		UIDocument* _document = nullptr;
-		UINode _node = UINode::Empty;
+		UINode _parent = UINode::Empty;
 	};
 
 	using component = Component;

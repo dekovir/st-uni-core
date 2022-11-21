@@ -1,9 +1,9 @@
 #pragma once
-#include "unicore/ui/components/Component.hpp"
+#include "unicore/ui/components/NodeComponent.hpp"
 
 namespace unicore::ui
 {
-	class GroupComponent : public Component
+	class GroupComponent : public NodeComponent
 	{
 	public:
 		explicit GroupComponent(UIGroupType type);
@@ -14,11 +14,7 @@ namespace unicore::ui
 			std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
 		auto add(const Shared<T>& component)
 		{
-			// TODO: Create/destroy
-			_children.push_back(component);
-			if (is_mounted())
-				component->mount(*document(), node());
-
+			internal_add(component);
 			return component;
 		}
 
@@ -41,6 +37,8 @@ namespace unicore::ui
 
 		void on_mount() override;
 		void on_dismount() override;
+
+		void internal_add(const Shared<Component>& component);
 	};
 
 	template<UIGroupType Type>
@@ -68,7 +66,6 @@ namespace unicore::ui
 	using flex = TypedGroupComponent<UIGroupType::Flex>;
 
 	using table_group = TypedGroupComponent<UIGroupType::Table>;
-	using table_header = TypedGroupComponent<UIGroupType::TableHeader>;
 	using table_row = TypedGroupComponent<UIGroupType::TableRow>;
 	using table_cell = TypedGroupComponent<UIGroupType::TableCell>;
 

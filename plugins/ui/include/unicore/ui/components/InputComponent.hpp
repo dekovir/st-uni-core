@@ -1,9 +1,9 @@
 #pragma once
-#include "unicore/ui/components/Component.hpp"
+#include "unicore/ui/components/NodeComponent.hpp"
 
 namespace unicore::ui
 {
-	class InputComponent : public Component
+	class InputComponent : public NodeComponent
 	{
 	public:
 		explicit InputComponent(UIInputType type);

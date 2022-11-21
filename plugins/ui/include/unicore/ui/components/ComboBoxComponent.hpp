@@ -63,6 +63,8 @@ namespace unicore::ui
 
 		void on_mount() override
 		{
+			ValueGroupComponent<TKey>::on_mount();
+
 			for (const auto& key : ValueGroupComponent<TKey>::_model->keys())
 			{
 				String32 text;

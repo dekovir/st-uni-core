@@ -1,16 +1,12 @@
 #pragma once
-#include "unicore/ui/components/Component.hpp"
+#include "unicore/ui/components/NodeComponent.hpp"
 
 namespace unicore::ui
 {
-	class VisualComponent : public Component
+	class VisualComponent : public NodeComponent
 	{
 	public:
-		explicit VisualComponent(UIVisualType type)
-			: Component(UINodeTag::Visual)
-		{
-			set_attribute(UIAttribute::Type, type);
-		}
+		explicit VisualComponent(UIVisualType type);
 	};
 
 	template<UIVisualType Type>

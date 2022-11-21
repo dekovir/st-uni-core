@@ -10,6 +10,8 @@ namespace unicore::ui
 
 	void TableComponent::on_mount()
 	{
+		GroupComponent::on_mount();
+
 		const auto& size = _model->size();
 		const auto col_count = size.x;
 		const auto row_count = size.y;
@@ -20,7 +22,7 @@ namespace unicore::ui
 		if (const auto row_layout = add(table_row()))
 		{
 			for (unsigned i = 0; i < col_count; i++)
-				row_layout->add(Header())->set_text(_model->get_header(i));
+				row_layout->add(TableHeaderComponent())->set_text(_model->get_header(i));
 		}
 
 		for (unsigned row = 0; row < row_count; row++)
@@ -40,12 +42,12 @@ namespace unicore::ui
 				}
 			}
 		}
-
-		GroupComponent::on_mount();
 	}
 
 	void TableComponent::on_dismount()
 	{
 		_cells.clear();
+
+		GroupComponent::on_dismount();
 	}
 }

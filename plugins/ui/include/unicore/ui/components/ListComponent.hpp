@@ -9,7 +9,6 @@ namespace unicore::ui
 	class ListComponent : public GroupComponent
 	{
 	public:
-
 		explicit ListComponent(const Shared<ListComponentModel>& model);
 
 		UC_NODISCARD const Shared<ListComponentModel>& model() const { return _model; }

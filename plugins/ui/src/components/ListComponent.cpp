@@ -10,12 +10,12 @@ namespace unicore::ui
 
 	void ListComponent::on_mount()
 	{
+		GroupComponent::on_mount();
+
 		const auto& size = _model->size();
 
 		for (unsigned i = 0; i < size; i++)
 			add(_model->get_at(i));
-
-		GroupComponent::on_mount();
 	}
 
 	void ListComponent::on_dismount()
