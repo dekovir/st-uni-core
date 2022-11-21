@@ -22,8 +22,18 @@
 	</group>
 
 	<group type="1">
+		<text>SpinBox Int</text>
+		<input type="integer" value="10" step="1" />
+	</group>
+
+	<group type="1">
 		<text>Input Float</text>
 		<input type="float" value="10" />
+	</group>
+
+	<group type="1">
+		<text>SpinBox Float</text>
+		<input type="float" value="10" step="0.1" />
 	</group>
 
 	<group type="1">
@@ -93,7 +103,9 @@
 	<text>Table</text>
 	<table value="2">
 		<tr>
-			<td><button>Cell 0</button></td>
+			<td>
+				<button>Cell 0</button>
+			</td>
 			<td>Cell 1</td>
 		</tr>
 		<tr>
@@ -102,7 +114,9 @@
 		</tr>
 		<tr>
 			<td>Cell 4</td>
-			<td><item>Cell 5</item></td>
+			<td>
+				<item>Cell 5</item>
+			</td>
 		</tr>
 	</table>
 
@@ -120,7 +134,7 @@
 	<!-- Progressbar -->
 	<text>Progress bars</text>
 	<progress value="0.2" />
-	<progress value="0" min="-50" max="50"/>
-	<progress value="75" max="100"/>
+	<progress value="0" min="-50" max="50" />
+	<progress value="75" max="100" />
 	<progress value="1">Completed</progress>
 </group>

@@ -22,8 +22,8 @@ namespace unicore
 	enum class UINodeTag : UInt8
 	{
 		Group,  // Can have children
-		Visual, // Display content
-		Input,  // Input values
+		Visual, // Display readonly content
+		Input,  // Display user editable content
 	};
 
 	enum class UIGroupType : UInt8
@@ -49,26 +49,26 @@ namespace unicore
 		Text,     // Display text
 		Color,    // Display color
 		Image,    // Display image
-		Progress, // Display progress bar ?Move
+		Progress, // Display progress bar
 	};
 
 	enum class UIInputType : UInt8
 	{
-		Text,
-		TextArea,
-		Toggle,
-		Radio,
-		Button,
-		Item,   // Selectable
-		Image,
-		Integer,
-		Float,
-		RangeI,
-		RangeF,
+		Text,     // Single line text edit
+		TextArea, // Multi line text edit
+		Toggle,   // Checkbox
+		Radio,    // Radio button
+		Button,   // Button
+		Item,     // Selectable
+		Image,    // Image button
+		Integer,  // Spinbox
+		Float,    // Spinbox
+		RangeI,   // Slider
+		RangeF,   // Slider
 		Vector2,
 		Vector3,
-		Color3,
-		Color4,
+		Color3,   // Color without alpha
+		Color4,   // Color with alpha
 	};
 
 	class UIDocument;

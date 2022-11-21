@@ -2,7 +2,6 @@
 #include "unicore/io/Logger.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/imgui/ImGuiContext.hpp"
-#include "unicore/ui/components/ListComponent.hpp"
 
 namespace unicore
 {

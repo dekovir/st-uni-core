@@ -521,7 +521,7 @@ namespace unicore
 			};
 
 			int_value = node.value().get_int();
-			if (ImGui::InputInt(id.c_str(), &int_value, node.get(UIAttribute::Step).get_int(1)))
+			if (ImGui::InputInt(id.c_str(), &int_value, node.get(UIAttribute::Step).get_int(0)))
 			{
 				int_value = range_i.clamp(int_value);
 				_update_events.push_back({ node, UIActionType::OnChange, int_value });
@@ -534,7 +534,7 @@ namespace unicore
 				node.get(UIAttribute::Max).get_float(+std::numeric_limits<Float>::max())
 			};
 			float_value = node.value().get_float();
-			if (ImGui::InputFloat(id.c_str(), &float_value, node.get(UIAttribute::Step).get_float(1)))
+			if (ImGui::InputFloat(id.c_str(), &float_value, node.get(UIAttribute::Step).get_float(0)))
 			{
 				float_value = range_f.clamp(float_value);
 				_update_events.push_back({ node, UIActionType::OnChange, float_value });
