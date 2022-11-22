@@ -109,6 +109,8 @@ namespace unicore::ui
 
 		void on_mount() override
 		{
+			ValueGroupComponent<TKey>::on_mount();
+
 			for (const auto& key : ValueGroupComponent<TKey>::_model->keys())
 			{
 				String32 value;
@@ -124,7 +126,7 @@ namespace unicore::ui
 					if (radio_ref)
 					{
 						_radio_dict[key] = radio_ref;
-						radio_ref->set_change_callback([&, key] { ValueGroupComponent<TKey>::set_value(key); });
+						radio_ref->set_change_callback([&, key](auto _) { ValueGroupComponent<TKey>::set_value(key); });
 					}
 				}
 			}

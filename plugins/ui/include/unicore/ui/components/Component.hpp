@@ -70,4 +70,28 @@ namespace unicore::ui
 		value = element;
 		return value;
 	}
+
+	class TestComponent : public Component
+	{
+	public:
+
+	protected:
+		void on_mount() override
+		{
+			if (!_created)
+				_created = render();
+
+			_created->mount(*document(), parent());
+		}
+
+		void on_dismount() override
+		{
+			_created->dismount();
+		}
+
+		virtual Shared<Component> render() = 0;
+
+	private:
+		Shared<Component> _created;
+	};
 }

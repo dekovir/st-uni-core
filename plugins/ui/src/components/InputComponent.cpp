@@ -8,27 +8,6 @@ namespace unicore::ui
 		set_attribute(UIAttribute::Type, type);
 	}
 
-	// TextInputComponent ////////////////////////////////////////////////////////
-	TextInputComponent::TextInputComponent()
-		: InputComponent(UIInputType::Text)
-	{}
-
-	TextInputComponent::TextInputComponent(StringView32 text)
-		: InputComponent(UIInputType::Text)
-	{
-		set_value(text);
-	}
-
-	void TextInputComponent::set_value(StringView32 value)
-	{
-		set_attribute(UIAttribute::Value, value);
-	}
-
-	String32 TextInputComponent::get_value() const
-	{
-		return get_attribute(UIAttribute::Value).get_string32();
-	}
-
 	// ToggleComponent ///////////////////////////////////////////////////////////
 	ToggleComponent::ToggleComponent(Bool value)
 		: TypedInputComponent(UIInputType::Toggle, value)
@@ -40,12 +19,20 @@ namespace unicore::ui
 	{ }
 
 	// ButtonComponent ///////////////////////////////////////////////////////////
-	ButtonComponent::ButtonComponent() : InputComponent(UIInputType::Button)
+	ButtonComponent::ButtonComponent()
+		: InputComponent(UIInputType::Button)
 	{}
 
-	ButtonComponent::ButtonComponent(StringView32 text) : InputComponent(UIInputType::Button)
+	ButtonComponent::ButtonComponent(StringView32 text)
+		: InputComponent(UIInputType::Button)
 	{
 		set_text(text);
+	}
+
+	ButtonComponent::ButtonComponent(StringView32 text, const UIAction& action)
+		: ButtonComponent(text)
+	{
+		set_click_action(action);
 	}
 
 	void ButtonComponent::set_text(StringView32 text)

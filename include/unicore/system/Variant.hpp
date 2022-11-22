@@ -606,7 +606,7 @@ namespace unicore
 
 		// UNIVERSAL GET ///////////////////////////////////////////////////////////
 		template<typename T>
-		Bool try_get(T& value)
+		Bool try_get(T& value) const
 		{
 			if constexpr (std::is_same_v<T, Bool>)
 				return try_get_bool(value);
@@ -640,7 +640,7 @@ namespace unicore
 		}
 
 		template<typename T>
-		T get(const T& default_value)
+		T get(const T& default_value = {}) const
 		{
 			T value;
 			return try_get(value) ? value : default_value;
