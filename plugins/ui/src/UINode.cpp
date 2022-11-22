@@ -83,24 +83,12 @@ namespace unicore
 
 	Variant UINode::get(UIAttribute attribute) const
 	{
-		if (_document)
-		{
-			if (const auto result = _document->get_node_attribute(*this, attribute); result.has_value())
-				return result.value();
-		}
-
-		return Variant::Empty;
+		return _document ? _document->get_node_attribute(*this, attribute) : Variant::Empty;
 	}
 
 	Bool UINode::has(UIAttribute attribute) const
 	{
-		if (_document)
-		{
-			if (const auto result = _document->get_node_attribute(*this, attribute))
-				return result.has_value();
-		}
-
-		return false;
+		return _document ? _document->get_node_attribute(*this, attribute) != Variant::Empty : false;
 	}
 
 	size_t UINode::get_children(List<UINode>& children) const

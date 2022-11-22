@@ -7,7 +7,7 @@ namespace unicore
 	class PublicEvent
 	{
 	public:
-		using ActionType = Action<Args...>;
+		using ActionType = StdVariant<std::function<void()>, Action<Args...>>;
 
 		UC_NODISCARD bool empty() const { return _actions.empty(); }
 
@@ -18,14 +18,16 @@ namespace unicore
 
 		bool remove(const ActionType& action)
 		{
-			//for (unsigned i = 0; i < _actions.size(); i++)
+			// TODO: Fix compile error
+			//for (auto it = _actions.begin(); it != _actions.end(); ++it)
 			//{
-			//	if (_actions[i] == action)
+			//	if (*it == action)
 			//	{
-			//		_actions.erase(_actions.begin() + i);
+			//		_actions.erase(it);
 			//		return true;
 			//	}
 			//}
+
 			return false;
 		}
 
@@ -53,7 +55,16 @@ namespace unicore
 		void invoke(Args... args)
 		{
 			for (const auto& action : PublicEvent<Args...>::_actions)
-				action(std::forward<Args>(args)...);
+			{
+				if (auto ptr = std::get_if<Action<Args...>>(&action))
+				{
+					(*ptr)(std::forward<Args>(args)...);
+				}
+				else if (auto ptr = std::get_if<std::function<void()>>(&action))
+				{
+					(*ptr)();
+				}
+			}
 		}
 
 		void operator()(Args... args)
@@ -63,6 +74,7 @@ namespace unicore
 	};
 
 #define UC_OBJECT_EVENT(name, ...) \
-	public:  PublicEvent<__VA_ARGS__>& on_ ## name() { return _event_ ## name; } \
+	public: using Event_ ## name = PublicEvent<__VA_ARGS__>; \
+	public: PublicEvent<__VA_ARGS__>& on_ ## name() { return _event_ ## name; } \
 	protected: Event<__VA_ARGS__> _event_ ## name
 }

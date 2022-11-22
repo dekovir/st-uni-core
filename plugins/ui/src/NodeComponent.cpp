@@ -14,15 +14,17 @@ namespace unicore::ui
 			document()->set_node_attribute(_node, type, value);
 	}
 
-	void NodeComponent::set_action(UIActionType type, const UIAction& action)
-	{
-		_options.actions[type] = action;
-		if (is_mounted())
-			document()->subscribe_node(_node, type, action);
-	}
+	//void NodeComponent::set_action(UIActionType type, const UIAction& action)
+	//{
+	//	_options.actions[type] = action;
+	//	if (is_mounted())
+	//		document()->subscribe_node(_node, type, action);
+	//}
 
 	void NodeComponent::on_mount()
 	{
+		apply_options(_options);
+
 		_node = document()->create_node(_tag, _options, parent());
 	}
 

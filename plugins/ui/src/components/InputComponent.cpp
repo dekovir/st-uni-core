@@ -29,10 +29,10 @@ namespace unicore::ui
 		set_text(text);
 	}
 
-	ButtonComponent::ButtonComponent(StringView32 text, const UIAction& action)
+	ButtonComponent::ButtonComponent(StringView32 text, const Event_clicked::ActionType& action)
 		: ButtonComponent(text)
 	{
-		set_click_action(action);
+		on_clicked().add(action);
 	}
 
 	void ButtonComponent::set_text(StringView32 text)
@@ -45,8 +45,11 @@ namespace unicore::ui
 		return get_attribute(UIAttribute::Text).get_string32();
 	}
 
-	void ButtonComponent::set_click_action(const UIAction& action)
+	void ButtonComponent::apply_options(UINodeOptions& options)
 	{
-		set_action(UIActionType::OnClick, action);
+		InputComponent::apply_options(options);
+
+		options.actions[UIActionType::OnClick] =
+			[&] { _event_clicked.invoke(true); };
 	}
 }

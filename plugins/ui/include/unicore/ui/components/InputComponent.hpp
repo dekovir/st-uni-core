@@ -12,8 +12,9 @@ namespace unicore::ui
 	template<typename T>
 	class TypedInputComponent : public InputComponent
 	{
+		UC_OBJECT_EVENT(change, T);
 	public:
-		using CallbackType = std::function<void(T)>;
+		using CallbackType = typename Event_change::ActionType;
 
 		explicit TypedInputComponent(UIInputType type)
 			: InputComponent(type) {}
@@ -27,68 +28,63 @@ namespace unicore::ui
 		TypedInputComponent(UIInputType type, T value, const CallbackType& callback)
 			: TypedInputComponent(type, value)
 		{
-			set_change_callback(callback);
+			on_change().add(callback);
 		}
 
 		void set_value(T value) { set_attribute(UIAttribute::Value, value); }
 		UC_NODISCARD T get_value() const { return get_attribute(UIAttribute::Value).template get<T>(); }
 
-		void set_change_callback(const CallbackType& callback)
+	protected:
+		void apply_options(UINodeOptions& options) override
 		{
-			set_action(UIActionType::OnChange,
-				[&] { callback(get_value()); });
+			InputComponent::apply_options(options);
+
+			options.actions[UIActionType::OnChange] =
+				[&] { _event_change(get_value()); };
 		}
 	};
 
-	template<typename TChar,
-		std::enable_if<unicore::sfinae::is_char_v<TChar>>* = nullptr>
 	class TextInputComponent : public InputComponent
 	{
+		UC_OBJECT_EVENT(change, StringView32);
 	public:
-		using ChangeFunc = std::function<void(BasicStringView<TChar>)>;
-
 		TextInputComponent()
 			: InputComponent(UIInputType::Text)
 		{}
 
-		explicit TextInputComponent(BasicStringView<TChar> text)
+		explicit TextInputComponent(StringView32 text)
 			: InputComponent(UIInputType::Text)
 		{
 			set_value(text);
 		}
 
-		explicit TextInputComponent(BasicStringView<TChar> text, const ChangeFunc& callback)
-			: InputComponent(text)
+		explicit TextInputComponent(StringView32 text, const Event_change::ActionType& callback)
+			: TextInputComponent(text)
 		{
-			set_callback(callback);
+			on_change().add(callback);
 		}
 
-		void set_value(BasicStringView<TChar> value)
+		void set_value(StringView32 value)
 		{
 			set_attribute(UIAttribute::Value, value);
 		}
 
-		UC_NODISCARD BasicString<TChar> get_value() const
+		UC_NODISCARD String32 get_value() const
 		{
-			return Unicode::to<TChar>(get_attribute(UIAttribute::Value).get_string32());
+			return get_attribute(UIAttribute::Value).get_string32();
 		}
 
-		void set_callback(const ChangeFunc& callback)
+	protected:
+		void apply_options(UINodeOptions& options) override
 		{
-			set_action(UIActionType::OnChange,
-				[this, callback] { callback(get_value()); });
+			InputComponent::apply_options(options);
+
+			options.actions[UIActionType::OnChange] =
+				[&] { _event_change(get_value()); };
 		}
 	};
 
-	template<typename TChar>
-	using input_text_t = TextInputComponent<TChar>;
-
-	using input_text8 = input_text_t<Char8>;
-	using input_textW = input_text_t<CharW>;
-	using input_text16 = input_text_t<Char16>;
-	using input_text32 = input_text_t<Char32>;
-
-	using input_text = input_text32;
+	using input_text = TextInputComponent;
 
 	class ToggleComponent : public TypedInputComponent<Bool>
 	{
@@ -108,21 +104,23 @@ namespace unicore::ui
 
 	class ButtonComponent : public InputComponent
 	{
+		UC_OBJECT_EVENT(clicked, Bool);
 	public:
 		ButtonComponent();
 		explicit ButtonComponent(StringView32 text);
-		ButtonComponent(StringView32 text, const UIAction& action);
+		ButtonComponent(StringView32 text, const Event_clicked::ActionType& action);
 
 		void set_text(StringView32 text);
 		UC_NODISCARD String32 text() const;
 
-		void set_click_action(const UIAction& action);
+	protected:
+		void apply_options(UINodeOptions& options) override;
 	};
 
 	using button = ButtonComponent;
 
 	template<typename T,
-		std::enable_if_t<unicore::sfinae::is_numeric_v<T>>* = nullptr>
+		std::enable_if_t<sfinae::is_numeric_v<T>>* = nullptr>
 	class NumberInputComponent : public TypedInputComponent<T>
 	{
 	public:
@@ -217,6 +215,12 @@ namespace unicore::ui
 		{
 		}
 
+		explicit FloatInputComponent(T value,
+			const typename NumberInputComponent<T>::CallbackType& callback)
+			: NumberInputComponent<T>(value, callback)
+		{
+		}
+
 		explicit FloatInputComponent(T value, T step)
 			: NumberInputComponent<T>(value)
 		{
@@ -238,7 +242,7 @@ namespace unicore::ui
 	using input_double = input_float_t<Double>;
 
 	template<typename T,
-		std::enable_if_t<unicore::sfinae::is_numeric_v<T>>* = nullptr>
+		std::enable_if_t<sfinae::is_numeric_v<T>>* = nullptr>
 	class RangeComponent : public TypedInputComponent<T>
 	{
 	public:

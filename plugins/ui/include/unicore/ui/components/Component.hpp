@@ -30,17 +30,6 @@ namespace unicore::ui
 
 	using component = Component;
 
-	namespace sfinae
-	{
-		template<typename T>
-		inline constexpr Bool is_component_v =
-			std::is_base_of_v<Component, T> ||
-			std::is_convertible_v<T, Shared<Component>>;
-
-		template<typename ... T>
-		inline constexpr Bool all_is_component_v = (... && is_component_v<T>);
-	}
-
 	template<typename T,
 		std::enable_if_t<std::is_base_of_v<Component, T>>* = nullptr>
 	extern auto ptr(T&& element)
@@ -94,4 +83,18 @@ namespace unicore::ui
 	private:
 		Shared<Component> _created;
 	};
+}
+
+namespace unicore
+{
+	namespace sfinae
+	{
+		template<typename T>
+		inline constexpr Bool is_component_v =
+			std::is_base_of_v<ui::Component, T> ||
+			std::is_convertible_v<T, Shared<ui::Component>>;
+
+		template<typename ... T>
+		inline constexpr Bool all_is_component_v = (... && is_component_v<T>);
+	}
 }

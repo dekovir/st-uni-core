@@ -24,8 +24,8 @@ namespace unicore::ui
 		return get_attribute(UIAttribute::Text).get_string32();
 	}
 
-	void ItemComponent::set_click_action(const UIAction& action)
+	void ItemComponent::set_click_action(const Event_clicked::ActionType& action)
 	{
-		set_action(UIActionType::OnClick, action);
+		_event_clicked.add(action);
 	}
 }

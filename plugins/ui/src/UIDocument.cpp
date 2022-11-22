@@ -580,18 +580,18 @@ namespace unicore
 
 	// ATTRIBUTES ////////////////////////////////////////////////////////////////
 	void UIDocument::set_node_attribute(const UINode& node,
-		UIAttribute attribute, const Optional<Variant>& value)
+		UIAttribute attribute, const Variant& value)
 	{
 		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
 		if (const auto info = get_info(node))
 		{
 			if (const auto it = info->attributes.find(attribute); it != info->attributes.end())
 			{
-				if (value.has_value())
+				if (value != Variant::Empty)
 				{
-					if (it->second != value.value())
+					if (it->second != value)
 					{
-						it->second = value.value();
+						it->second = value;
 						if (!_event_set_attribute.empty())
 							_event_set_attribute.invoke(node, attribute, value);
 					}
@@ -600,27 +600,26 @@ namespace unicore
 				{
 					info->attributes.erase(it);
 					if (!_event_set_attribute.empty())
-						_event_set_attribute.invoke(node, attribute, std::nullopt);
+						_event_set_attribute.invoke(node, attribute, Variant::Empty);
 				}
 			}
-			else if (value.has_value())
+			else if (value != Variant::Empty)
 			{
-				info->attributes[attribute] = value.value();
+				info->attributes[attribute] = value;
 				if (!_event_set_attribute.empty())
 					_event_set_attribute.invoke(node, attribute, value);
 			}
 		}
 	}
 
-	Optional<Variant> UIDocument::get_node_attribute(
-		const UINode& node, UIAttribute attribute) const
+	const Variant& UIDocument::get_node_attribute(const UINode& node, UIAttribute attribute) const
 	{
 		if (const auto info = get_info(node))
 		{
 			if (const auto it = info->attributes.find(attribute); it != info->attributes.end())
 				return it->second;
 		}
-		return std::nullopt;
+		return Variant::Empty;
 	}
 
 	Optional<UIAttributeDict> UIDocument::get_node_attributes(const UINode& node) const

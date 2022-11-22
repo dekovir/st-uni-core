@@ -21,7 +21,7 @@ namespace unicore
 		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_style, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_visible, const UINode&, Bool);
-		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttribute, const Optional<Variant>&);
+		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttribute, const Variant&);
 	public:
 		explicit UIDocument(Logger* logger = nullptr);
 
@@ -101,10 +101,9 @@ namespace unicore
 
 		// ATTRIBUTES //////////////////////////////////////////////////////////////
 		void set_node_attribute(const UINode& node,
-			UIAttribute attribute, const Optional<Variant>& value);
+			UIAttribute attribute, const Variant& value);
 
-		UC_NODISCARD Optional<Variant> get_node_attribute(
-			const UINode& node, UIAttribute attribute) const;
+		UC_NODISCARD const Variant& get_node_attribute(const UINode& node, UIAttribute attribute) const;
 
 		UC_NODISCARD Optional<UIAttributeDict> get_node_attributes(const UINode& node) const;
 		UC_NODISCARD Bool get_node_attributes(const UINode& node, UIAttributeDict& dict) const;

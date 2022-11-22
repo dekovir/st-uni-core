@@ -175,7 +175,7 @@ namespace unicore::ui
 		Shared<Component> render() override
 		{
 			return ptr(input_int_t<T>(_property->get().get_integral<T>(),
-				[this](auto value) { _property->set(value); }));
+				[&](auto value) { _property->set(value); }));
 		}
 	};
 
@@ -185,19 +185,20 @@ namespace unicore::ui
 	protected:
 		Shared<Component> render() override
 		{
-			return ptr(input_float_t<T>(_property->get().get_floating_point<T>()));
+			auto start_value = _property->get().get_floating_point<T>();
+			return ptr(input_float_t<T>(start_value,
+				[&](auto value) { _property->set(value); }));
 		}
 	};
 
-	template<typename TChar,
-		std::enable_if<unicore::sfinae::is_char_v<TChar>>* = nullptr>
 	class StringPropertyEditorComponent : public PropertyEditorComponent
 	{
 	protected:
 		Shared<Component> render() override
 		{
-			const auto text = Unicode::to<TChar>(_property->get().get_string32());
-			return ptr(input_text_t<TChar>(text));
+			const auto text = _property->get().get_string32();
+			return ptr(input_text(text,
+				[&](auto value) { _property->set(value); }));
 		}
 	};
 

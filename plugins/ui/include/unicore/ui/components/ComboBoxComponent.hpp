@@ -126,7 +126,8 @@ namespace unicore::ui
 					if (radio_ref)
 					{
 						_radio_dict[key] = radio_ref;
-						radio_ref->set_change_callback([&, key](auto _) { ValueGroupComponent<TKey>::set_value(key); });
+						radio_ref->on_change() += [&, key](auto)
+						{ ValueGroupComponent<TKey>::set_value(key); };
 					}
 				}
 			}

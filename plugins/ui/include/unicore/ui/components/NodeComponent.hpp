@@ -15,10 +15,11 @@ namespace unicore::ui
 		UC_NODISCARD Variant get_attribute(UIAttribute type) const { return _node.get(type); }
 
 		void set_attribute(UIAttribute type, const Variant& value);
-		void set_action(UIActionType type, const UIAction& action);
+		//void set_action(UIActionType type, const UIAction& action);
 
 		void on_mount() override;
 		void on_dismount() override;
+		virtual void apply_options(UINodeOptions& options) {}
 
 	private:
 		const UINodeTag _tag;

@@ -126,7 +126,7 @@ namespace unicore
 			),
 			ui::hlayout(
 				ui::text(U"Int16"),
-				ui::input_int()
+				std::make_shared<ui::input_int>(0, [this](auto value) { UC_LOG_DEBUG(logger) << "Changed: " << value; })
 			),
 			ui::hlayout(
 				ui::text(U"UInt8"),
@@ -176,19 +176,23 @@ namespace unicore
 		));
 
 		if (btn_ref)
-			btn_ref->set_click_action([btn_ref] { btn_ref->set_text(U"Clicked"); });
+		{
+			btn_ref->on_clicked() += [btn_ref] { btn_ref->set_text(U"Clicked"); };
+		}
 
 		if (combo_ref)
-			combo_ref->on_changed() +=
-			[this](auto value) { UC_LOG_DEBUG(logger) << "Combo value changed to " << value; };
+		{
+			combo_ref->on_changed() += [this](auto value)
+			{ UC_LOG_DEBUG(logger) << "Combo value changed to " << value; };
+		}
 
 		if (list_ref && add_ref)
 		{
-			add_ref->set_click_action(
-				[this, list_ref] {
-					const auto text = StringBuilder::format(U"Item {}", list_ref->size() + 1);
-			list_ref->add(ui::hlayout(ui::bullet(), ui::item(text)));
-				});
+			add_ref->on_clicked() += [this, list_ref]
+			{
+				const auto text = StringBuilder::format(U"Item {}", list_ref->size() + 1);
+				list_ref->add(ui::hlayout(ui::bullet(), ui::item(text)));
+			};
 		}
 
 		_root->mount(*_document, UINode::Empty);
