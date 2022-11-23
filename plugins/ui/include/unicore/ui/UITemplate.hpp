@@ -22,35 +22,11 @@ namespace unicore::ui
 	namespace details::tag { struct name {}; } \
 	using name = StrongType<type, details::tag::name>;
 
-	class Element
+	class Template
 	{
 	public:
-		virtual ~Element() = default;
-
-		UC_NODISCARD Bool is_mounted() const { return _document != nullptr; }
-		UC_NODISCARD UIDocument* document() const { return _document; }
-		UC_NODISCARD const UINode& node() const { return _node; }
-
-		void mount(UIDocument& document, const UINode& parent)
-		{
-			_document = &document;
-			_node = on_mount(document, parent);
-		}
-
-		void unmount()
-		{
-			if (!is_mounted()) return;
-
-			_document->remove_node(_node);
-			_document = nullptr;
-			_node = UINode::Empty;
-		}
-
-	protected:
-		UIDocument* _document = nullptr;
-		UINode _node = UINode::Empty;
-
-		virtual UINode on_mount(UIDocument& document, const UINode& parent) = 0;
+		virtual ~Template() = default;
+		virtual UINode create(UIDocument& document, const UINode& parent) = 0;
 	};
 
 	namespace attr
@@ -81,13 +57,13 @@ namespace unicore::ui
 	}
 
 	template<UINodeTag Tag, typename... TKeys>
-	class TypedElement : public Element
+	class TypedTemplate : public Template
 	{
 	public:
 		using VariantType = std::variant<attr::Id, attr::Name, attr::Visible, TKeys...>;
 		using Params = List<VariantType>;
 
-		TypedElement() = default;
+		TypedTemplate() = default;
 
 		void set_params(const Params& params)
 		{
@@ -95,13 +71,13 @@ namespace unicore::ui
 				apply_variant(value);
 		}
 
-	protected:
-		UINodeOptions _options;
-
-		UINode on_mount(UIDocument& document, const UINode& parent) override
+		UINode create(UIDocument& document, const UINode& parent) override
 		{
 			return document.create_node(Tag, _options, parent);
 		}
+
+	protected:
+		UINodeOptions _options;
 
 		void apply_variant(const VariantType& value)
 		{
@@ -145,13 +121,13 @@ namespace unicore::ui
 	};
 
 	template<UIGroupType Type, typename... TKeys>
-	class TypedGroupElement : public TypedElement<UINodeTag::Group, TKeys...>
+	class TypedGroupTemplate : public TypedTemplate<UINodeTag::Group, TKeys...>
 	{
 	public:
-		using BaseClass = TypedElement<UINodeTag::Group, TKeys...>;
+		using BaseClass = TypedTemplate<UINodeTag::Group, TKeys...>;
 
 		template<typename ... Args>
-		explicit TypedGroupElement(const typename BaseClass::Params& params, Args&&... args)
+		explicit TypedGroupTemplate(const typename BaseClass::Params& params, Args&&... args)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 			BaseClass::set_params(params);
@@ -160,58 +136,58 @@ namespace unicore::ui
 		}
 
 		template<typename ... Args>
-		explicit TypedGroupElement(Args&&... args)
+		explicit TypedGroupTemplate(Args&&... args)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 
 			((add(std::forward<Args>(args))), ...);
 		}
 
-		void add(const Shared<Element>& element)
+		void add(const Shared<Template>& element)
 		{
 			_elements.push_back(element);
 		}
 
 		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
+			std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
 		void add(const T& element)
 		{
 			add(std::make_shared<T>(element));
 		}
 
 		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
+			std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
 		void add(T&& element)
 		{
 			add(std::make_shared<T>(std::forward<T>(element)));
 		}
 
-	protected:
-		List<Shared<Element>> _elements;
-
-		UINode on_mount(UIDocument& document, const UINode& parent) override
+		UINode create(UIDocument& document, const UINode& parent) override
 		{
-			auto node = BaseClass::on_mount(document, parent);
+			auto node = BaseClass::create(document, parent);
 
 			for (const auto& element : _elements)
-				element->mount(document, node);
+				element->create(document, node);
 
 			return node;
 		}
+
+	protected:
+		List<Shared<Template>> _elements;
 	};
 
 	template<UIInputType Type, typename... TKeys>
-	class TypedInputElement : public TypedElement<UINodeTag::Input, attr::Value, TKeys...>
+	class TypedInputTemplate : public TypedTemplate<UINodeTag::Input, attr::Value, TKeys...>
 	{
 	public:
-		using BaseClass = TypedElement<UINodeTag::Input, attr::Value, TKeys...>;
+		using BaseClass = TypedTemplate<UINodeTag::Input, attr::Value, TKeys...>;
 
-		TypedInputElement()
+		TypedInputTemplate()
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 		}
 
-		explicit TypedInputElement(const typename BaseClass::Params& params)
+		explicit TypedInputTemplate(const typename BaseClass::Params& params)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 			BaseClass::set_params(params);
@@ -219,37 +195,118 @@ namespace unicore::ui
 	};
 
 	template<UIVisualType Type, typename... TKeys>
-	class TypedVisualElement : public TypedElement<UINodeTag::Visual, TKeys...>
+	class TypedVisualTemplate : public TypedTemplate<UINodeTag::Visual, TKeys...>
 	{
 	public:
-		using BaseClass = TypedElement<UINodeTag::Visual, TKeys...>;
+		using BaseClass = TypedTemplate<UINodeTag::Visual, TKeys...>;
 
-		TypedVisualElement()
+		TypedVisualTemplate()
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 		}
 
-		explicit TypedVisualElement(const typename BaseClass::Params& params)
+		explicit TypedVisualTemplate(const typename BaseClass::Params& params)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 			BaseClass::set_params(params);
 		}
 	};
 
-	template<UIGroupType Type, typename ... TValues>
-	using GroupElement = TypedGroupElement<Type, TValues...>;
+	template<typename T,
+		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+	extern Shared<T> ptr(const T& element)
+	{
+		return std::make_shared<T>(element);
+	}
 
-	using VBox = GroupElement<UIGroupType::Vertical>;
-	using HBox = GroupElement<UIGroupType::Vertical>;
+	template<typename T,
+		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+	extern Shared<T> ptr(T&& element)
+	{
+		return std::make_shared<T>(std::forward<T>(element));
+	}
+
+	template<typename T,
+		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+	extern Shared<T> ref(const T& element, Shared<T>& ref)
+	{
+		ref = ptr(element);
+		return ref;
+	}
+
+	template<typename T,
+		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+	extern Shared<T> ref(T&& element, Shared<T>& ref)
+	{
+		ref = ptr(element);
+		return ref;
+	}
+
+	template<UIGroupType Type, typename ... TValues>
+	using GroupTemplate = TypedGroupTemplate<Type, TValues...>;
+
+	using VBox = GroupTemplate<UIGroupType::Vertical>;
+	using HBox = GroupTemplate<UIGroupType::Vertical>;
 
 	template<UIInputType Type, typename ... TValues>
-	using InputElement = TypedInputElement<Type, TValues...>;
+	using InputTemplate = TypedInputTemplate<Type, TValues...>;
 
 	template<UIVisualType Type, typename ... TValues>
-	using VisualElement = TypedVisualElement<Type, TValues...>;
+	using VisualTemplate = TypedVisualTemplate<Type, TValues...>;
 
-	using TextElement = VisualElement<UIVisualType::Text, attr::Text>;
+	using TextTemplate = VisualTemplate<UIVisualType::Text, attr::Text>;
 
-	using ButtonElement = InputElement<UIInputType::Button, attr::Text, action::OnClick>;
-	using SliderElement = InputElement<UIInputType::RangeF, attr::Min, attr::Max, action::OnChange>;
+	using ButtonTemplate = InputTemplate<UIInputType::Button, attr::Text, action::OnClick>;
+	using SliderTemplate = InputTemplate<UIInputType::RangeF, attr::Min, attr::Max, action::OnChange>;
+
+	class Element
+	{
+	public:
+		virtual ~Element() = default;
+		virtual Shared<Template> render() = 0;
+	};
+
+	template<typename T,
+		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+	class TypedElement : public Element
+	{
+	public:
+		Shared<Template> render() override
+		{
+			auto temp = ptr(T());
+			apply_params(*temp);
+			return temp;
+		}
+
+	protected:
+		String _name;
+		Bool _visible = true;
+
+		virtual void apply_params(T& temp)
+		{
+			if (!_name.empty())
+				temp.set_params({ attr::Name(_name) });
+			temp.set_params({ attr::Visible(_visible) });
+		}
+	};
+
+	class ButtonElement : public TypedElement<ButtonTemplate>
+	{
+		UC_OBJECT_EVENT(clicked, Bool);
+	public:
+
+	protected:
+		String32 _text;
+
+		void apply_params(ButtonTemplate& temp) override
+		{
+			TypedElement<ButtonTemplate>::apply_params(temp);
+
+			if (!_text.empty())
+				temp.set_params({ attr::Text(_text) });
+
+			if (!_event_clicked.empty())
+				temp.set_params({ action::OnClick([&] { _event_clicked.invoke(true); }) });
+		}
+	};
 }

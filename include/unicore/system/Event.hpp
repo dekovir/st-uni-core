@@ -73,6 +73,7 @@ namespace unicore
 		}
 	};
 
+	// TODO: Make valid with empty or void
 #define UC_OBJECT_EVENT(name, ...) \
 	public: using Event_ ## name = PublicEvent<__VA_ARGS__>; \
 	public: PublicEvent<__VA_ARGS__>& on_ ## name() { return _event_ ## name; } \
