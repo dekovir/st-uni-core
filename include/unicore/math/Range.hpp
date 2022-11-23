@@ -50,6 +50,11 @@ namespace unicore
 				static_cast<U>(max),
 			};
 		}
+
+		UC_NODISCARD static constexpr Range<T> numeric_limits()
+		{
+			return { std::numeric_limits<T>::min(), std::numeric_limits<T>::max() };
+		}
 	};
 
 	// OPERATORS /////////////////////////////////////////////////////////////////

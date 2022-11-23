@@ -75,8 +75,8 @@ namespace unicore
 
 	struct UINodeOptions
 	{
-		StringView uid;
-		StringView name;
+		String uid;
+		String name;
 		Bool visible = true;
 		UIAttributeDict attributes = {};
 		UIActionDict actions = {};
