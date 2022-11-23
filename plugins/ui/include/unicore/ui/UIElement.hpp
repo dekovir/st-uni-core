@@ -7,11 +7,12 @@ namespace unicore::ui
 	class StrongType
 	{
 	public:
+		StrongType() : _value({}) {}
 		explicit StrongType(T const& value) : _value(value) {}
 		explicit StrongType(T&& value) : _value(std::move(value)) {}
 
 		T& get() { return _value; }
-		T const& get() const { return _value; }
+		UC_NODISCARD T const& get() const { return _value; }
 
 	private:
 		T _value;
@@ -88,18 +89,18 @@ namespace unicore::ui
 
 		TypedElement() = default;
 
+		void set_params(const Params& params)
+		{
+			for (const auto& value : params)
+				apply_variant(value);
+		}
+
 	protected:
 		UINodeOptions _options;
 
 		UINode on_mount(UIDocument& document, const UINode& parent) override
 		{
 			return document.create_node(Tag, _options, parent);
-		}
-
-		void apply_params(const Params& params)
-		{
-			for (const auto& value : params)
-				apply_variant(value);
 		}
 
 		void apply_variant(const VariantType& value)
@@ -153,7 +154,7 @@ namespace unicore::ui
 		explicit TypedGroupElement(const typename BaseClass::Params& params, Args&&... args)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
-			BaseClass::apply_params(params);
+			BaseClass::set_params(params);
 
 			((add(std::forward<Args>(args))), ...);
 		}
@@ -213,7 +214,7 @@ namespace unicore::ui
 		explicit TypedInputElement(const typename BaseClass::Params& params)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
-			BaseClass::apply_params(params);
+			BaseClass::set_params(params);
 		}
 	};
 
@@ -231,7 +232,7 @@ namespace unicore::ui
 		explicit TypedVisualElement(const typename BaseClass::Params& params)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
-			BaseClass::apply_params(params);
+			BaseClass::set_params(params);
 		}
 	};
 
