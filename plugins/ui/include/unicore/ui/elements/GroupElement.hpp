@@ -115,12 +115,14 @@ namespace unicore::ui
 	template<typename TValue>
 	class GroupValueElement : public Element
 	{
+		UC_OBJECT_EVENT(changed, sfinae::ConstRefType<TValue>);
 	public:
 		using ValueType = TValue;
 		using ValueArg = sfinae::ConstRefType<ValueType>;
 
 		explicit GroupValueElement(ValueArg value)
-			: _value(value) {}
+			: _value(value)
+		{}
 
 		UC_NODISCARD ValueArg value() const { return _value; }
 
@@ -129,6 +131,7 @@ namespace unicore::ui
 			if (_value == value) return;
 
 			_value = value;
+			_event_changed(_value);
 			rebuild();
 		}
 
@@ -171,9 +174,11 @@ namespace unicore::ui
 					String32 value;
 					if (_model->try_get_value(key, value))
 					{
+						const auto selected = GroupValueElement<TKey>::_value == key;
 						group->add(GroupH(
 							VisualText({ attr::Text(value) }),
-							InputRadio()));
+							InputRadio({ attr::Value(selected), action::OnChange([&]
+								{ GroupValueElement<TKey>::set_value(key); }) })));
 					}
 				}
 			}

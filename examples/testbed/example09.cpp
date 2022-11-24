@@ -5,7 +5,7 @@
 
 namespace unicore
 {
-	UC_EXAMPLE_REGISTER(Example09, "UI Components/Elements");
+	UC_EXAMPLE_REGISTER(Example09, "UI Elements");
 
 	static const Dictionary<int, String32> items = {
 			{0, U"Item 1"},
@@ -95,7 +95,7 @@ namespace unicore
 		_document = std::make_shared<UIDocument>(&logger);
 		_view = std::make_shared<UIViewImGui>(_context, logger);
 		_view->set_document(_document);
-		_view->set_title(U"Component/Elements UI");
+		_view->set_title(U"Elements UI");
 		_view->set_size(Vector2f(300, 0));
 		_view->set_position(Vector2f(size.x / 2 - 150, 50));
 
