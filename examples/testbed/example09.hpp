@@ -1,6 +1,6 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/ui/UIComponent.hpp"
+#include "unicore/ui/UIElement.hpp"
 #include "unicore/ui/UIViewImGui.hpp"
 
 namespace unicore
@@ -19,7 +19,7 @@ namespace unicore
 		Shared<UIDocument> _document;
 		Shared<UIViewImGui> _view;
 
-		Shared<ui::Component> _root;
+		Shared<ui::Element> _root;
 		Shared<ui::text> _position_node;
 	};
 }

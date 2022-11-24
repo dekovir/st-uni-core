@@ -47,18 +47,18 @@ namespace unicore
 			.add("float_value", &TestObject::float_value)
 			.build();
 
-		Shared<ui::ObjectEditorComponent> editor_ref;
+		Shared<ui::ObjectEditorElement> editor_ref;
 
 		_root = ui::ptr(ui::vlayout(
 			ui::text(U"Inspector"),
-			ref(ui::ObjectEditorComponent(s_context), editor_ref),
+			ref(ui::ObjectEditorElement(s_context), editor_ref),
 			ui::button(U"Print", [&] { std::dynamic_pointer_cast<TestObject>(_object->object())->print(logger); })
 		));
 
 		if (editor_ref)
 			editor_ref->set_object(_object);
 
-		_root->mount(*_document, UINode::Empty);
+		_root->render()->create(*_document, UINode::Empty);
 	}
 
 	void Example10::update()

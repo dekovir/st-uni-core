@@ -29,9 +29,9 @@ namespace unicore::ui
 	using InputTextArea = InputTemplate<UIInputType::TextArea,
 		attr::Value, action::OnChange>;
 
-	using Toggle = InputTemplate<UIInputType::Toggle,
+	using InputToggle = InputTemplate<UIInputType::Toggle,
 		attr::Value, action::OnChange>;
-	using RadioButton = InputTemplate<UIInputType::Radio,
+	using InputRadio = InputTemplate<UIInputType::Radio,
 		attr::Value, action::OnChange>;
 
 	using InputButton = InputTemplate<UIInputType::Button,

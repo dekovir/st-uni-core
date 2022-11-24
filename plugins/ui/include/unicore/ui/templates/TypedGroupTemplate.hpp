@@ -9,7 +9,8 @@ namespace unicore::ui
 	public:
 		using BaseClass = TypedTemplate<UINodeTag::Group, TKeys...>;
 
-		template<typename ... Args>
+		template<typename ... Args,
+			std::enable_if_t<all_is_template_v<Args...>>* = nullptr>
 		explicit TypedGroupTemplate(const typename BaseClass::Params& params, Args&&... args)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
@@ -18,7 +19,8 @@ namespace unicore::ui
 			((add(std::forward<Args>(args))), ...);
 		}
 
-		template<typename ... Args>
+		template<typename ... Args,
+			std::enable_if_t<all_is_template_v<Args...>>* = nullptr>
 		explicit TypedGroupTemplate(Args&&... args)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
@@ -26,23 +28,30 @@ namespace unicore::ui
 			((add(std::forward<Args>(args))), ...);
 		}
 
-		void add(const Shared<Template>& element)
+		template<typename T,
+			std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+		auto add(const Shared<T>& item)
 		{
-			_elements.push_back(element);
+			internal_add(item);
+			return item;
 		}
 
 		template<typename T,
 			std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
-		void add(const T& element)
+		auto add(const T& element)
 		{
-			add(std::make_shared<T>(element));
+			auto item = std::make_shared<T>(element);
+			internal_add(item);
+			return item;
 		}
 
 		template<typename T,
 			std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
-		void add(T&& element)
+		auto add(T&& element)
 		{
-			add(std::make_shared<T>(std::forward<T>(element)));
+			auto item = std::make_shared<T>(std::forward<T>(element));
+			internal_add(item);
+			return item;
 		}
 
 		UINode create(UIDocument& document, const UINode& parent) override
@@ -80,6 +89,11 @@ namespace unicore::ui
 
 	protected:
 		List<Shared<Template>> _elements;
+
+		void internal_add(const Shared<Template>& element)
+		{
+			_elements.push_back(element);
+		}
 	};
 
 	template<UIGroupType Type, typename ... TValues>

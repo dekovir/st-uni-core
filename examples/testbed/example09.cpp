@@ -15,7 +15,7 @@ namespace unicore
 			{4, U"Item 5"},
 	};
 
-	class TestListModel : public ui::ListComponentModel
+	class TestListModel : public ui::ListModel
 	{
 	public:
 		explicit TestListModel(Size count) : _count(count) {}
@@ -42,7 +42,7 @@ namespace unicore
 		Size _count;
 	};
 
-	class TestTableModel : public ui::TableComponentModel
+	class TestTableModel : public ui::TableModel
 	{
 	public:
 		explicit TestTableModel(Size size)
@@ -68,12 +68,12 @@ namespace unicore
 			}
 		}
 
-		UC_NODISCARD std::shared_ptr<ui::Component> get_at(IndexArg index) const override
+		UC_NODISCARD std::shared_ptr<ui::Element> get_at(IndexArg index) const override
 		{
 			auto str = StringBuilder::format(U"Cell {} {}", index.x + 1, index.y + 1);
 			if (Math::even(index.x + index.y))
-				return std::make_shared<ui::TextComponent>(str);
-			return std::make_shared<ui::ItemComponent>(str);
+				return std::make_shared<ui::text>(str);
+			return std::make_shared<ui::item>(str);
 		}
 
 	protected:
@@ -100,7 +100,7 @@ namespace unicore
 		_view->set_position(Vector2f(size.x / 2 - 150, 50));
 
 		Shared<ui::button> btn_ref;
-		Shared<ui::combo_box<int>> combo_ref;
+		Shared<ui::combo_box_t<int>> combo_ref;
 		Shared<ui::list_box> list_ref;
 		Shared<ui::button> add_ref;
 
@@ -110,7 +110,7 @@ namespace unicore
 		const auto table_model = std::make_shared<TestTableModel>(3);
 
 		_root = ui::ptr(ui::vlayout(
-			ui::ref(ui::text(U""), _position_node),
+			ui::ref(ui::text(U"<update>"), _position_node),
 			ui::hlayout(
 				ui::text(U"Text"),
 				ui::input_text(U"Lorem ipsum dolor")
@@ -152,13 +152,13 @@ namespace unicore
 					ui::item(U"Item 3")
 				)
 			),
-			ui::hlayout(
-				ui::text(U"Combo"),
-				ui::ref(ui::combo_box<Int>(combo_model, 0), combo_ref)
-			),
+			//ui::hlayout(
+			//	ui::text(U"Combo"),
+			//	ui::ref(ui::combo_box<Int>(combo_model, 0), combo_ref)
+			//),
 			ui::hlayout(
 				ui::text(U"Radio"),
-				ui::radio_group<Int>(radio_model, 0)
+				ui::radio_group_t<Int>(radio_model, 0)
 			),
 			ui::vlayout(
 				ui::text(U"Items"),
@@ -180,11 +180,11 @@ namespace unicore
 			btn_ref->on_clicked() += [btn_ref] { btn_ref->set_text(U"Clicked"); };
 		}
 
-		if (combo_ref)
-		{
-			combo_ref->on_changed() += [this](auto value)
-			{ UC_LOG_DEBUG(logger) << "Combo value changed to " << value; };
-		}
+		//if (combo_ref)
+		//{
+		//	combo_ref->on_changed() += [this](auto value)
+		//	{ UC_LOG_DEBUG(logger) << "Combo value changed to " << value; };
+		//}
 
 		if (list_ref && add_ref)
 		{
@@ -195,7 +195,7 @@ namespace unicore
 			};
 		}
 
-		_root->mount(*_document, UINode::Empty);
+		_root->render()->create(*_document, UINode::Empty);
 	}
 
 	void Example09::update()

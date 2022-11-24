@@ -1,8 +1,8 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/ui/UIComponent.hpp"
+#include "unicore/ui/UIElement.hpp"
 #include "unicore/ui/UIViewImGui.hpp"
-#include "unicore/ui/editors/EditorComponent.hpp"
+#include "unicore/ui/editors/EditorElement.hpp"
 
 namespace unicore
 {
@@ -20,7 +20,7 @@ namespace unicore
 		Shared<UIDocument> _document;
 		Shared<UIViewImGui> _view;
 
-		Shared<ui::Component> _root;
+		Shared<ui::Element> _root;
 		Shared<ui::EditorObject> _object;
 	};
 }

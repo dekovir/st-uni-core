@@ -1,6 +1,5 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/ui/UIComponent.hpp"
 #include "unicore/ui/UIViewImGui.hpp"
 #include "unicore/ui/UITemplate.hpp"
 

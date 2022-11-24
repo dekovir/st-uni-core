@@ -40,6 +40,14 @@ namespace unicore::ui
 	}
 
 	// SFINAE ////////////////////////////////////////////////////////////////////
+	template<typename T>
+	inline constexpr Bool is_template_v =
+		std::is_base_of_v<Template, T> ||
+		std::is_convertible_v<T, Shared<Template>>;
+
+	template<typename ... T>
+	inline constexpr Bool all_is_template_v = (... && is_template_v<T>);
+
 	template <class T>
 	inline constexpr bool is_attr_v =
 		std::is_same_v<T, attr::Uid> ||
@@ -76,31 +84,31 @@ namespace unicore::ui
 	// UTILITIES /////////////////////////////////////////////////////////////////
 	template<typename T,
 		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
-	extern Shared<T> ptr(const T& element)
+	extern Shared<T> ptr(const T& item)
 	{
-		return std::make_shared<T>(element);
+		return std::make_shared<T>(item);
 	}
 
 	template<typename T,
 		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
-	extern Shared<T> ptr(T&& element)
+	extern Shared<T> ptr(T&& item)
 	{
-		return std::make_shared<T>(std::forward<T>(element));
+		return std::make_shared<T>(std::forward<T>(item));
 	}
 
 	template<typename T,
 		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
-	extern Shared<T> ref(const T& element, Shared<T>& ref)
+	extern Shared<T> ref(const T& item, Shared<T>& ref)
 	{
-		ref = ptr(element);
+		ref = ptr(item);
 		return ref;
 	}
 
 	template<typename T,
 		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
-	extern Shared<T> ref(T&& element, Shared<T>& ref)
+	extern Shared<T> ref(T&& item, Shared<T>& ref)
 	{
-		ref = ptr(element);
+		ref = ptr(item);
 		return ref;
 	}
 }

@@ -1,8 +1,9 @@
 #pragma once
-#include "unicore/ui/UIComponent.hpp"
+#include "unicore/ui/UIElement.hpp"
 
 namespace unicore::ui
 {
+	// EditorObjectProperty //////////////////////////////////////////////////////
 	class EditorObjectProperty
 	{
 	public:
@@ -94,6 +95,7 @@ namespace unicore::ui
 		SetFunc _set;
 	};
 
+	// EditorObject //////////////////////////////////////////////////////////////
 	class EditorObject
 	{
 	public:
@@ -116,6 +118,7 @@ namespace unicore::ui
 		Shared<Object> _object;
 	};
 
+	// EditorObjectBuilder ///////////////////////////////////////////////////////
 	template<typename TObject>
 	class EditorObjectBuilder
 	{
@@ -145,12 +148,13 @@ namespace unicore::ui
 		List<Shared<EditorObjectProperty>> _properties;
 	};
 
-	class EditorComponent : public TestComponent
+	// EditorElement /////////////////////////////////////////////////////////////
+	class EditorElement : public Element
 	{
 	public:
 	};
 
-	class PropertyEditorComponent : public EditorComponent
+	class PropertyEditorElement : public EditorElement
 	{
 	public:
 		UC_NODISCARD const Shared<EditorObjectProperty>& get_property() const { return _property; }
@@ -166,52 +170,56 @@ namespace unicore::ui
 		Shared<EditorObjectProperty> _property;
 	};
 
-	using PropertyEditorComponentFactory = std::function<Shared<PropertyEditorComponent>()>;
+	using PropertyEditorElementFactory = std::function<Shared<PropertyEditorElement>()>;
 
 	template<typename T, std::enable_if_t<std::is_integral_v<T>>* = nullptr>
-	class IntPropertyEditorComponent : public PropertyEditorComponent
+	class IntPropertyEditorElement : public PropertyEditorElement
 	{
 	protected:
-		Shared<Component> render() override
+		Shared<Template> render() override
 		{
-			return ptr(input_int_t<T>(_property->get().get_integral<T>(),
-				[&](auto value) { _property->set(value); }));
+			auto start_value = _property->get().get_integral<T>();
+			return ptr(InputInteger({ attr::Value(start_value),
+				action::OnChange([&](const Variant& value) { _property->set(value); })
+				}));
 		}
 	};
 
 	template<typename T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
-	class FloatPropertyEditorComponent : public PropertyEditorComponent
+	class FloatPropertyEditorElement : public PropertyEditorElement
 	{
 	protected:
-		Shared<Component> render() override
+		Shared<Template> render() override
 		{
 			auto start_value = _property->get().get_floating_point<T>();
-			return ptr(input_float_t<T>(start_value,
-				[&](auto value) { _property->set(value); }));
+			return ptr(InputFloat({ attr::Value(start_value),
+				action::OnChange([&](const Variant& value) { _property->set(value); })
+				}));
 		}
 	};
 
-	class StringPropertyEditorComponent : public PropertyEditorComponent
+	class StringPropertyEditorElement : public PropertyEditorElement
 	{
 	protected:
-		Shared<Component> render() override
+		Shared<Template> render() override
 		{
 			const auto text = _property->get().get_string32();
-			return ptr(input_text(text,
-				[&](auto value) { _property->set(value); }));
+			return ptr(InputText({ attr::Value(text),
+				action::OnChange([&](const Variant& value) { _property->set(value); })
+				}));
 		}
 	};
 
 #define UNICORE_UI_CONTEXT_REGISTER_INT_TYPE(context, type) \
-	(context)->create<type, ui::IntPropertyEditorComponent<type>>()
+	(context)->create<type, ui::IntPropertyEditorElement<type>>()
 
 	class ObjectEditorContext
 	{
 	public:
 		ObjectEditorContext()
 		{
-#define REGISTER_INT(type) create<type, IntPropertyEditorComponent<type>>()
-#define REGISTER_FLOAT(type) create<type, FloatPropertyEditorComponent<type>>()
+#define REGISTER_INT(type) create<type, IntPropertyEditorElement<type>>()
+#define REGISTER_FLOAT(type) create<type, FloatPropertyEditorElement<type>>()
 
 			REGISTER_INT(Int8);
 			REGISTER_INT(Int16);
@@ -229,65 +237,76 @@ namespace unicore::ui
 #undef REGISTER_FLOAT
 		}
 
-		void add(const TypeInfo& type, const PropertyEditorComponentFactory& factory)
+		void add(const TypeInfo& type, const PropertyEditorElementFactory& factory)
 		{
 			_factories[type] = factory;
 		}
 
 		template<typename TType, typename TEditor,
-			std::enable_if_t<std::is_base_of_v<PropertyEditorComponent, TEditor>>* = nullptr>
+			std::enable_if_t<std::is_base_of_v<PropertyEditorElement, TEditor>>* = nullptr>
 		void create()
 		{
 			auto factory = [] { return std::make_shared<TEditor>(); };
 			add(get_type_info<TType>(), factory);
 		}
 
-		UC_NODISCARD const PropertyEditorComponentFactory* find(const TypeInfo& type) const
+		UC_NODISCARD const PropertyEditorElementFactory* find(const TypeInfo& type) const
 		{
 			const auto it = _factories.find(type);
 			return it != _factories.end() ? &it->second : nullptr;
 		}
 
 	protected:
-		Dictionary<TypeIndex, PropertyEditorComponentFactory> _factories;
+		Dictionary<TypeIndex, PropertyEditorElementFactory> _factories;
 	};
 
-	class ObjectEditorComponent : public EditorComponent
+	class ObjectEditorElement : public EditorElement
 	{
 	public:
-		explicit ObjectEditorComponent(ObjectEditorContext& context)
+		explicit ObjectEditorElement(ObjectEditorContext& context)
 			: _context(context)
 		{
 		}
 
 		void set_object(const Shared<EditorObject>& object)
 		{
+			if (_object == object) return;
+
 			_object = object;
-		}
-
-	protected:
-		ObjectEditorContext& _context;
-		Shared<EditorObject> _object;
-
-		Shared<Component> render() override
-		{
-			if (!_object) return nullptr;
-
-			auto layout = std::make_shared<vlayout>();
+			_elements.clear();
 
 			for (const auto& prop : _object->properties())
 			{
 				const auto factory = _context.find(prop->type());
 				if (!factory) continue;
 
-				const auto component = (*factory)();
+				if (const auto element = (*factory)())
+				{
+					element->set_property(prop);
+					_elements.push_back(element);
+				}
+			}
+		}
 
-				if (!component) continue;
+	protected:
+		ObjectEditorContext& _context;
+		Shared<EditorObject> _object;
+		List<Shared<PropertyEditorElement>> _elements;
 
-				component->set_property(prop);
-				layout->add(hlayout(
-					text(Unicode::to_utf32(prop->name())),
-					component
+		Shared<Template> render() override
+		{
+			if (!_object) return nullptr;
+
+			auto layout = ptr(GroupV());
+
+			for (const auto& element : _elements)
+			{
+				auto& prop = element->get_property();
+				auto title = Unicode::to_utf32(prop->name());
+
+				layout->add(GroupH(
+					VisualText({ attr::Text(title) }),
+					element->render()
 				));
 			}
 
