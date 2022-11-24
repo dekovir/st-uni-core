@@ -2,6 +2,7 @@
 #include "unicore/io/Logger.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/imgui/ImGuiContext.hpp"
+#include "unicore/ui/UITemplate.hpp"
 
 namespace unicore
 {
@@ -15,7 +16,8 @@ namespace unicore
 
 		void print(Logger& logger) const
 		{
-			UC_LOG_DEBUG(logger) << "Print " << int_value << ";" << float_value;
+			UC_LOG_DEBUG(logger) << "Int: " << int_value;
+			UC_LOG_DEBUG(logger) << "Float: " << float_value;
 		}
 	};
 
@@ -25,6 +27,19 @@ namespace unicore
 		: Example(context)
 		, _context(context.imgui)
 	{
+		auto layout = ui::VBox({ ui::attr::Name("group") },
+			ui::HBox({ ui::attr::Name("box") },
+				ui::TextTemplate({ ui::attr::Text(U"Text") }),
+				ui::SliderTemplate({ ui::attr::Name("slider") })
+			),
+			ui::ButtonTemplate({ ui::attr::Text(U"Click"), ui::action::OnClick([] {}) })
+		);
+
+		auto element = ui::SliderTemplate({
+			ui::attr::Name("Test"), ui::attr::Visible(false),
+			ui::attr::Value(42), ui::attr::Min(8),
+			ui::action::OnChange([&] { UC_LOG_DEBUG(logger) << "test"; }) });
+		element.set_params({ ui::attr::Max(42) });
 	}
 
 	void Example09::load(IResourceCache& resources)
@@ -50,7 +65,7 @@ namespace unicore
 		_root = ui::ptr(ui::vlayout(
 			ui::text(U"Inspector"),
 			ref(ui::ObjectEditorComponent(s_context), editor_ref),
-			ui::button(U"Print", [this] { std::dynamic_pointer_cast<TestObject>(_object->object())->print(logger); })
+			ui::button(U"Print", [&] { std::dynamic_pointer_cast<TestObject>(_object->object())->print(logger); })
 		));
 
 		if (editor_ref)
