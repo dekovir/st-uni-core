@@ -1,27 +1,9 @@
 #pragma once
 #include "unicore/ui/UIDocument.hpp"
+#include "unicore/system/StrongType.hpp"
 
 namespace unicore::ui
 {
-	template <typename T, typename Parameter>
-	class StrongType
-	{
-	public:
-		StrongType() : _value({}) {}
-		explicit StrongType(T const& value) : _value(value) {}
-		explicit StrongType(T&& value) : _value(std::move(value)) {}
-
-		T& get() { return _value; }
-		UC_NODISCARD T const& get() const { return _value; }
-
-	private:
-		T _value;
-	};
-
-#define UNICORE_MAKE_TYPE(name, type) \
-	namespace details::tag { struct name {}; } \
-	using name = StrongType<type, details::tag::name>;
-
 	class Template
 	{
 	public:
@@ -33,29 +15,29 @@ namespace unicore::ui
 
 	namespace attr
 	{
-		UNICORE_MAKE_TYPE(Uid, String);
-		UNICORE_MAKE_TYPE(Name, String);
-		UNICORE_MAKE_TYPE(Visible, Bool);
+		UNICORE_MAKE_STRONG_TYPE(Uid, String);
+		UNICORE_MAKE_STRONG_TYPE(Name, String);
+		UNICORE_MAKE_STRONG_TYPE(Visible, Bool);
 
-		UNICORE_MAKE_TYPE(Type, UInt8);
-		UNICORE_MAKE_TYPE(Value, Variant);
+		UNICORE_MAKE_STRONG_TYPE(Type, UInt8);
+		UNICORE_MAKE_STRONG_TYPE(Value, Variant);
 
-		UNICORE_MAKE_TYPE(Width, Variant);
-		UNICORE_MAKE_TYPE(Height, Variant);
+		UNICORE_MAKE_STRONG_TYPE(Width, Variant);
+		UNICORE_MAKE_STRONG_TYPE(Height, Variant);
 
-		UNICORE_MAKE_TYPE(Tooltip, String32);
-		UNICORE_MAKE_TYPE(Text, String32);
+		UNICORE_MAKE_STRONG_TYPE(Tooltip, String32);
+		UNICORE_MAKE_STRONG_TYPE(Text, String32);
 
-		UNICORE_MAKE_TYPE(Step, Variant);
+		UNICORE_MAKE_STRONG_TYPE(Step, Variant);
 
-		UNICORE_MAKE_TYPE(Min, Variant);
-		UNICORE_MAKE_TYPE(Max, Variant);
+		UNICORE_MAKE_STRONG_TYPE(Min, Variant);
+		UNICORE_MAKE_STRONG_TYPE(Max, Variant);
 	}
 
 	namespace action
 	{
-		UNICORE_MAKE_TYPE(OnClick, UIActionDefault);
-		UNICORE_MAKE_TYPE(OnChange, UIAction);
+		UNICORE_MAKE_STRONG_TYPE(OnClick, UIActionDefault);
+		UNICORE_MAKE_STRONG_TYPE(OnChange, UIAction);
 	}
 
 	template<UINodeTag Tag, typename... TKeys>
