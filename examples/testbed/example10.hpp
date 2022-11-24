@@ -2,14 +2,14 @@
 #include "example.hpp"
 #include "unicore/ui/UIComponent.hpp"
 #include "unicore/ui/UIViewImGui.hpp"
-#include "unicore/ui/UITemplate.hpp"
+#include "unicore/ui/editors/EditorComponent.hpp"
 
 namespace unicore
 {
-	class Example08 : public Example
+	class Example10 : public Example
 	{
 	public:
-		explicit Example08(const ExampleContext& context);
+		explicit Example10(const ExampleContext& context);
 
 		void load(IResourceCache& resources) override;
 		void update() override;
@@ -20,6 +20,7 @@ namespace unicore
 		Shared<UIDocument> _document;
 		Shared<UIViewImGui> _view;
 
-		Shared<ui::Template> _root;
+		Shared<ui::Component> _root;
+		Shared<ui::EditorObject> _object;
 	};
 }

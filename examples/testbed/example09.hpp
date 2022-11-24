@@ -2,7 +2,6 @@
 #include "example.hpp"
 #include "unicore/ui/UIComponent.hpp"
 #include "unicore/ui/UIViewImGui.hpp"
-#include "unicore/ui/editors/EditorComponent.hpp"
 
 namespace unicore
 {
@@ -21,6 +20,6 @@ namespace unicore
 		Shared<UIViewImGui> _view;
 
 		Shared<ui::Component> _root;
-		Shared<ui::EditorObject> _object;
+		Shared<ui::text> _position_node;
 	};
 }
