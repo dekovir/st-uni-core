@@ -85,6 +85,20 @@ namespace unicore::ui
 	template<UIGroupType Type, typename ... TValues>
 	using GroupTemplate = TypedGroupTemplate<Type, TValues...>;
 
-	using VBox = GroupTemplate<UIGroupType::Vertical>;
-	using HBox = GroupTemplate<UIGroupType::Vertical>;
+	using GroupV = GroupTemplate<UIGroupType::Vertical>;
+	using GroupH = GroupTemplate<UIGroupType::Horizontal>;
+	//using GroupChild = GroupTemplate<UIGroupType::Child>;
+	using GroupList = GroupTemplate<UIGroupType::List>;
+	using GroupTree = GroupTemplate<UIGroupType::Tree, attr::Value>;
+	using GroupCombo = GroupTemplate<UIGroupType::Combo, attr::Value>;
+	//using GroupFlex = GroupTemplate<UIGroupType::Flex>;
+
+	using GroupTable = GroupTemplate<UIGroupType::Table, attr::Value>;
+	using GroupTableHeader = GroupTemplate<UIGroupType::TableHeader, attr::Text>;
+	using GroupTableRow = GroupTemplate<UIGroupType::TableRow>;
+	using GroupTableCell = GroupTemplate<UIGroupType::TableCell, attr::Text>;
+
+	using GroupPopup = GroupTemplate<UIGroupType::Popup, attr::Value>;
+	using GroupTooltip = GroupTemplate<UIGroupType::Tooltip>;
+	using GroupModal = GroupTemplate<UIGroupType::Modal, attr::Value>;
 }

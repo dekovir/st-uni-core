@@ -20,7 +20,7 @@ namespace unicore::ui
 	{
 	public:
 		using TypeValue = TValue;
-		using TypeArg = unicore::sfinae::ConstRefType<TypeValue>;
+		using TypeArg = sfinae::ConstRefType<TypeValue>;
 
 		using VarType = TypeValue TObject::*;
 
@@ -63,7 +63,7 @@ namespace unicore::ui
 	{
 	public:
 		using TypeValue = TValue;
-		using TypeArg = unicore::sfinae::ConstRefType<TypeValue>;
+		using TypeArg = sfinae::ConstRefType<TypeValue>;
 
 		using GetFunc = std::function<TypeValue()>;
 		using SetFunc = std::function<void(TypeArg)>;
@@ -285,8 +285,8 @@ namespace unicore::ui
 				if (!component) continue;
 
 				component->set_property(prop);
-				layout->add(ui::hlayout(
-					ui::text(Unicode::to_utf32(prop->name())),
+				layout->add(hlayout(
+					text(Unicode::to_utf32(prop->name())),
 					component
 				));
 			}

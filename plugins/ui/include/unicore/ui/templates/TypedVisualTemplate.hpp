@@ -24,5 +24,10 @@ namespace unicore::ui
 	template<UIVisualType Type, typename ... TValues>
 	using VisualTemplate = TypedVisualTemplate<Type, TValues...>;
 
-	using TextTemplate = VisualTemplate<UIVisualType::Text, attr::Text>;
+	using VisualText = VisualTemplate<UIVisualType::Text, attr::Text>;
+	using VisualColor = VisualTemplate<UIVisualType::Color, attr::Value>;
+	using VisualImage = VisualTemplate<UIVisualType::Image, attr::Value>;
+	using VisualProgress = VisualTemplate<UIVisualType::Progress, attr::Value, attr::Min, attr::Max>;
+	using VisualSeparator = VisualTemplate<UIVisualType::Separator>;
+	using VisualBullet = VisualTemplate<UIVisualType::Bullet>;
 }

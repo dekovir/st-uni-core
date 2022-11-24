@@ -74,6 +74,4 @@ namespace unicore::ui
 				}, value);
 		}
 	};
-
-	
 }

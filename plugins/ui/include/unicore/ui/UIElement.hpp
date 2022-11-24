@@ -34,7 +34,7 @@ namespace unicore::ui
 		}
 	};
 
-	class ButtonElement : public TypedElement<ButtonTemplate>
+	class ButtonElement : public TypedElement<InputButton>
 	{
 		UC_OBJECT_EVENT(clicked, Bool);
 	public:
@@ -42,9 +42,9 @@ namespace unicore::ui
 	protected:
 		String32 _text;
 
-		void apply_params(ButtonTemplate& temp) override
+		void apply_params(InputButton& temp) override
 		{
-			TypedElement<ButtonTemplate>::apply_params(temp);
+			TypedElement<InputButton>::apply_params(temp);
 
 			if (!_text.empty())
 				temp.set_params({ attr::Text(_text) });

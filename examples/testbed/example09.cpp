@@ -27,15 +27,15 @@ namespace unicore
 		: Example(context)
 		, _context(context.imgui)
 	{
-		auto layout = ui::VBox({ ui::attr::Name("group") },
-			ui::HBox({ ui::attr::Name("box") },
-				ui::TextTemplate({ ui::attr::Text(U"Text") }),
-				ui::SliderTemplate({ ui::attr::Name("slider") })
+		auto layout = ui::GroupV({ ui::attr::Name("group") },
+			ui::GroupH({ ui::attr::Name("box") },
+				ui::VisualText({ ui::attr::Text(U"Text") }),
+				ui::InputSliderF({ ui::attr::Name("slider") })
 			),
-			ui::ButtonTemplate({ ui::attr::Text(U"Click"), ui::action::OnClick([] {}) })
+			ui::InputButton({ ui::attr::Text(U"Click"), ui::action::OnClick([] {}) })
 		);
 
-		auto element = ui::SliderTemplate({
+		auto element = ui::InputSliderF({
 			ui::attr::Name("Test"), ui::attr::Visible(false),
 			ui::attr::Value(42), ui::attr::Min(8),
 			ui::action::OnChange([&] { UC_LOG_DEBUG(logger) << "test"; }) });

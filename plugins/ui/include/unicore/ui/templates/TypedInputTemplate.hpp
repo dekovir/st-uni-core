@@ -4,10 +4,10 @@
 namespace unicore::ui
 {
 	template<UIInputType Type, typename... TKeys>
-	class TypedInputTemplate : public TypedTemplate<UINodeTag::Input, attr::Value, TKeys...>
+	class TypedInputTemplate : public TypedTemplate<UINodeTag::Input, TKeys...>
 	{
 	public:
-		using BaseClass = TypedTemplate<UINodeTag::Input, attr::Value, TKeys...>;
+		using BaseClass = TypedTemplate<UINodeTag::Input, TKeys...>;
 
 		TypedInputTemplate()
 		{
@@ -24,6 +24,36 @@ namespace unicore::ui
 	template<UIInputType Type, typename ... TValues>
 	using InputTemplate = TypedInputTemplate<Type, TValues...>;
 
-	using ButtonTemplate = InputTemplate<UIInputType::Button, attr::Text, action::OnClick>;
-	using SliderTemplate = InputTemplate<UIInputType::RangeF, attr::Min, attr::Max, action::OnChange>;
+	using InputText = InputTemplate<UIInputType::Text,
+		attr::Value, action::OnChange>;
+	using InputTextArea = InputTemplate<UIInputType::TextArea,
+		attr::Value, action::OnChange>;
+
+	using Toggle = InputTemplate<UIInputType::Toggle,
+		attr::Value, action::OnChange>;
+	using RadioButton = InputTemplate<UIInputType::Radio,
+		attr::Value, action::OnChange>;
+
+	using InputButton = InputTemplate<UIInputType::Button,
+		attr::Text, action::OnClick>;
+	using InputItem = InputTemplate<UIInputType::Item,
+		attr::Value, attr::Text, action::OnClick>;
+
+	using InputImage = InputTemplate<UIInputType::Image,
+		attr::Value, action::OnChange>;
+
+	using InputInteger = InputTemplate<UIInputType::Integer,
+		attr::Value, attr::Step, attr::Min, attr::Max, action::OnChange>;
+	using InputFloat = InputTemplate<UIInputType::Float,
+		attr::Value, attr::Step, attr::Min, attr::Max, action::OnChange>;
+
+	using InputSliderI = InputTemplate<UIInputType::RangeI,
+		attr::Value, attr::Min, attr::Max, action::OnChange>;
+	using InputSliderF = InputTemplate<UIInputType::RangeF,
+		attr::Value, attr::Min, attr::Max, action::OnChange>;
+
+	using InputColor3 = InputTemplate<UIInputType::Color3,
+		attr::Value, action::OnChange>;
+	using InputColor4 = InputTemplate<UIInputType::Color4,
+		attr::Value, action::OnChange>;
 }
