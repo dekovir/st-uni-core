@@ -16,6 +16,17 @@ namespace unicore
 		Min,
 		Max,
 	};
+	static const List<UIAttribute> UIAttributeKeys = {
+		UIAttribute::Type,
+		UIAttribute::Value,
+		UIAttribute::Width,
+		UIAttribute::Height,
+		UIAttribute::Tooltip,
+		UIAttribute::Text,
+		UIAttribute::Step,
+		UIAttribute::Min,
+		UIAttribute::Max,
+	};
 
 	using UIAttributeDict = Dictionary<UIAttribute, Variant>;
 

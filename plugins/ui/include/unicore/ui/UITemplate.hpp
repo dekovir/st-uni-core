@@ -26,12 +26,14 @@ namespace unicore::ui
 	{
 	public:
 		virtual ~Template() = default;
+
 		virtual UINode create(UIDocument& document, const UINode& parent) = 0;
+		virtual Bool apply_to(UIDocument& document, const UINode& node) = 0;
 	};
 
 	namespace attr
 	{
-		UNICORE_MAKE_TYPE(Id, String);
+		UNICORE_MAKE_TYPE(Uid, String);
 		UNICORE_MAKE_TYPE(Name, String);
 		UNICORE_MAKE_TYPE(Visible, Bool);
 
@@ -60,7 +62,7 @@ namespace unicore::ui
 	class TypedTemplate : public Template
 	{
 	public:
-		using VariantType = std::variant<attr::Id, attr::Name, attr::Visible, TKeys...>;
+		using VariantType = std::variant<attr::Uid, attr::Name, attr::Visible, TKeys...>;
 		using Params = List<VariantType>;
 
 		TypedTemplate() = default;
@@ -76,6 +78,14 @@ namespace unicore::ui
 			return document.create_node(Tag, _options, parent);
 		}
 
+		Bool apply_to(UIDocument& document, const UINode& node) override
+		{
+			if (node.tag() != Tag)
+				return false;
+
+			return document.apply_options(node, _options);
+		}
+
 	protected:
 		UINodeOptions _options;
 
@@ -83,7 +93,7 @@ namespace unicore::ui
 		{
 			std::visit([&](auto&& arg) {
 				using T = std::decay_t<decltype(arg)>;
-			if constexpr (std::is_same_v<T, attr::Id>)
+			if constexpr (std::is_same_v<T, attr::Uid>)
 				_options.uid = arg.get();
 			else if constexpr (std::is_same_v<T, attr::Name>)
 				_options.name = arg.get();
@@ -170,6 +180,29 @@ namespace unicore::ui
 				element->create(document, node);
 
 			return node;
+		}
+
+		Bool apply_to(UIDocument& document, const UINode& node) override
+		{
+			if (!BaseClass::apply_to(document, node))
+				return false;
+
+			// TODO: Optimize
+			if (document.get_node_children_count(node) != _elements.size())
+				return false;
+
+			for (unsigned i = 0; i < _elements.size(); i++)
+			{
+				const auto& element = _elements[i];
+
+				auto child = document.get_node_child(node, i);
+				if (child.empty()) return false;
+
+				if (!element->apply_to(document, child))
+					return false;
+			}
+
+			return true;
 		}
 
 	protected:

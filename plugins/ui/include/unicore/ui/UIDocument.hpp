@@ -70,6 +70,8 @@ namespace unicore
 
 		Bool remove_node(const UINode& node);
 
+		Bool apply_options(const UINode& node, const UINodeOptions& options);
+
 		// VALUES //////////////////////////////////////////////////////////////////
 		UC_NODISCARD Bool is_node_valid(const UINode& node) const;
 
@@ -92,6 +94,8 @@ namespace unicore
 		Size get_node_children(List<UINode>& list, const UINode& node) const;
 		UC_NODISCARD List<UINode> get_node_children(const UINode& node) const;
 		UC_NODISCARD Size get_node_children_count(const UINode& node) const;
+
+		UC_NODISCARD UINode get_node_child(const UINode& node, Size index) const;
 
 		UC_NODISCARD Optional<unsigned> get_node_sibling_index(const UINode& node) const;
 		Bool set_node_sibling_index(const UINode& node, unsigned new_index);

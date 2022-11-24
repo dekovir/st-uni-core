@@ -324,6 +324,68 @@ namespace unicore
 		return count > 0;
 	}
 
+	Bool UIDocument::apply_options(const UINode& node, const UINodeOptions& options)
+	{
+		if (const auto info = get_info(node))
+		{
+			if (info->name != options.name)
+			{
+				info->name = options.name;
+				_event_set_name(node, info->name);
+			}
+
+			if (info->visible != options.visible)
+			{
+				info->visible = options.visible;
+				_event_set_visible(node, info->visible);
+
+				// ATTRIBUTES
+				for (const auto& key : UIAttributeKeys)
+				{
+					auto it = info->attributes.find(key);
+					auto jt = options.attributes.find(key);
+
+					if (it != info->attributes.end() &&
+						jt != options.attributes.end())
+					{
+						if (it->second != jt->second)
+						{
+							info->attributes[key] = jt->second;
+							_event_set_attribute(node, key, jt->second);
+						}
+					}
+					else if (it != info->attributes.end())
+					{
+						info->attributes.erase(it);
+						_event_set_attribute(node, key, Variant::Empty);
+					}
+					else if (jt != options.attributes.end())
+					{
+						info->attributes[key] = jt->second;
+						_event_set_attribute(node, key, jt->second);
+					}
+				}
+
+				// ACTIONS
+				const auto it = _node_actions.find(node.index());
+				if (it != _node_actions.end())
+				{
+					if (options.actions.empty())
+						_node_actions.erase(it);
+					else it->second = options.actions;
+				}
+				else if (!options.actions.empty())
+				{
+					_node_actions[node.index()] = options.actions;
+				}
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 	// VALUES ////////////////////////////////////////////////////////////////////
 	Bool UIDocument::is_node_valid(const UINode& node) const
 	{
@@ -491,6 +553,31 @@ namespace unicore
 		}
 
 		return _roots.size();
+	}
+
+	UINode UIDocument::get_node_child(const UINode& node, Size index) const
+	{
+		if (node.valid())
+		{
+			if (node.document() != this)
+			{
+				UC_LOG_ERROR(_logger) << "Wrong document";
+				return UINode::Empty;
+			}
+
+			if (const auto children = get_children_index(node.index()))
+			{
+				if (index <= children->size())
+					return node_from_index(children->at(index));
+			}
+
+			return UINode::Empty;
+		}
+
+		if (index <= _roots.size())
+			return node_from_index(_roots[index]);
+
+		return UINode::Empty;
 	}
 
 	Optional<unsigned> UIDocument::get_node_sibling_index(const UINode& node) const
