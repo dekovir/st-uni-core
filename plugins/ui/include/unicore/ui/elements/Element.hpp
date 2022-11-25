@@ -3,21 +3,33 @@
 
 namespace unicore::ui
 {
+	UNICORE_MAKE_INDEX_WITH_INVALID(ElementIndex, UInt16);
+
+	class ElementContainer;
+
 	class Element
 	{
-		UC_OBJECT_EVENT(rebuild, void);
 	public:
+		Element();
 		virtual ~Element() = default;
+
+		UC_NODISCARD ElementIndex index() const { return _index; }
+		UC_NODISCARD ElementContainer* parent() const { return _parent; }
+
+		void set_parent(ElementContainer* parent);
+
 		virtual Shared<Template> render() = 0;
 
 	protected:
-		void rebuild()
-		{
-			_event_rebuild();
-		}
+		const ElementIndex _index;
+		ElementContainer* _parent = nullptr;
+
+		void rebuild();
+
+		friend class ElementContainer;
 	};
 
-		// SFINAE ////////////////////////////////////////////////////////////////////
+	// SFINAE ////////////////////////////////////////////////////////////////////
 	template<typename T>
 	inline constexpr Bool is_element_v =
 		std::is_base_of_v<Element, T> ||

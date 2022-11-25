@@ -50,6 +50,7 @@ namespace unicore::ui
 
 	class ItemElement : public ValueInputElement<InputItem, Bool>
 	{
+		UC_UI_ELEMENT_PROPERTY(text, String32);
 		UC_OBJECT_EVENT(clicked, void);
 	public:
 		ItemElement() = default;
@@ -58,16 +59,7 @@ namespace unicore::ui
 			: _text(text)
 		{}
 
-		void set_text(StringView32 text)
-		{
-			if (_text == text) return;
-
-			_text = text;
-			rebuild();
-		}
-
 	protected:
-		String32 _text;
 
 		void apply_params(InputItem& item) override
 		{
@@ -180,6 +172,7 @@ namespace unicore::ui
 	// ButtonElement /////////////////////////////////////////////////////////////
 	class ButtonElement : public TypedElement<InputButton>
 	{
+		UC_UI_ELEMENT_PROPERTY(text, String32);
 		UC_OBJECT_EVENT(clicked, void);
 	public:
 		ButtonElement() = default;
@@ -195,16 +188,7 @@ namespace unicore::ui
 			_event_clicked.add(action);
 		}
 
-		void set_text(StringView32 text)
-		{
-			if (_text == text) return;
-
-			_text = text;
-			rebuild();
-		}
-
 	protected:
-		String32 _text;
 
 		void apply_params(InputButton& item) override
 		{

@@ -7,11 +7,12 @@ namespace unicore
 	struct Index
 	{
 		using TypeValue = Type;
+		using TypeArg = sfinae::ConstRefType<TypeValue>;
 
 		Type value;
 
 		constexpr Index() = default;
-		explicit constexpr Index(const Type& value_) noexcept : value(value_) {}
+		explicit constexpr Index(TypeArg value_) noexcept : value(value_) {}
 
 		template<typename... Args,
 			std::enable_if_t<std::is_nothrow_constructible_v<Type, Args...>>* = nullptr>

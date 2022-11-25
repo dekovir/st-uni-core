@@ -5,6 +5,7 @@ namespace unicore::ui
 {
 	class TextElement : public TypedElement<VisualText>
 	{
+		UC_UI_ELEMENT_PROPERTY(text, String32);
 	public:
 		TextElement() = default;
 
@@ -12,17 +13,7 @@ namespace unicore::ui
 			: _text(text)
 		{}
 
-		void set_text(StringView32 text)
-		{
-			if (_text == text) return;
-
-			_text = text;
-			rebuild();
-		}
-
 	protected:
-		String32 _text;
-
 		void apply_params(VisualText& item) override
 		{
 			item.set_params({ attr::Text(_text) });
