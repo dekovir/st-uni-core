@@ -4,11 +4,11 @@
 namespace unicore::ui
 {
 	template<typename TTemplate,
-		std::enable_if_t<std::is_base_of_v<NodeScheme, TTemplate>>* = nullptr>
+		std::enable_if_t<std::is_base_of_v<SchemeNode, TTemplate>>* = nullptr>
 	class TypedNodeElement : public NodeElement
 	{
 	public:
-		Shared<NodeScheme> render() override
+		Shared<SchemeNode> render() override
 		{
 			auto temp = ptr(TTemplate());
 			apply_params(*temp);

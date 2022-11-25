@@ -1,6 +1,6 @@
 #pragma once
 #include "unicore/resource/Resource.hpp"
-#include "unicore/ui/schemes/NodeScheme.hpp"
+#include "unicore/ui/schemes/SchemeNode.hpp"
 
 namespace unicore::ui
 {

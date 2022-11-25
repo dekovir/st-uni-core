@@ -176,7 +176,7 @@ namespace unicore::ui
 	class IntPropertyEditorElement : public PropertyEditorElement
 	{
 	protected:
-		Shared<NodeScheme> render() override
+		Shared<SchemeNode> render() override
 		{
 			auto start_value = _property->get().get_integral<T>();
 			return ptr(InputInteger({ attr::Value(start_value),
@@ -189,7 +189,7 @@ namespace unicore::ui
 	class FloatPropertyEditorElement : public PropertyEditorElement
 	{
 	protected:
-		Shared<NodeScheme> render() override
+		Shared<SchemeNode> render() override
 		{
 			auto start_value = _property->get().get_floating_point<T>();
 			return ptr(InputFloat({ attr::Value(start_value),
@@ -201,7 +201,7 @@ namespace unicore::ui
 	class StringPropertyEditorElement : public PropertyEditorElement
 	{
 	protected:
-		Shared<NodeScheme> render() override
+		Shared<SchemeNode> render() override
 		{
 			const auto text = _property->get().get_string32();
 			return ptr(InputText({ attr::Value(text),
@@ -293,7 +293,7 @@ namespace unicore::ui
 		Shared<EditorObject> _object;
 		List<Shared<PropertyEditorElement>> _elements;
 
-		Shared<NodeScheme> render() override
+		Shared<SchemeNode> render() override
 		{
 			if (!_object) return nullptr;
 

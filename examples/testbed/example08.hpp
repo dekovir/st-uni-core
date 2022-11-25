@@ -19,6 +19,6 @@ namespace unicore
 		Shared<UIDocument> _document;
 		Shared<UIViewImGui> _view;
 
-		Shared<ui::NodeScheme> _root;
+		Shared<ui::SchemeNode> _root;
 	};
 }

@@ -18,7 +18,7 @@ namespace unicore::ui
 
 		void set_parent(ElementContainer* parent);
 
-		virtual Shared<NodeScheme> render() = 0;
+		virtual Shared<SchemeNode> render() = 0;
 
 	protected:
 		const ElementIndex _index;

@@ -5,7 +5,7 @@ namespace unicore::ui
 {
 	// ValueInputElement /////////////////////////////////////////////////////////
 	template<typename TTemplate, typename TValue,
-		std::enable_if_t<std::is_base_of_v<NodeScheme, TTemplate>>* = nullptr>
+		std::enable_if_t<std::is_base_of_v<SchemeNode, TTemplate>>* = nullptr>
 	class ValueInputElement : public TypedNodeElement<TTemplate>
 	{
 		UC_OBJECT_EVENT(changed, sfinae::ConstRefType<TValue>);
