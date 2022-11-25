@@ -33,14 +33,14 @@ namespace unicore::ui
 
 			item.set_params({ attr::Value(_value) });
 
-			//if (!_event_changed.empty())
-			//{
-			//	item.set_params({ action::OnChange([&](const UINode& node)
-			//	{
-			//		_value = node.value().get<TValue>();
-			//		_event_changed(_value);
-			//	}) });
-			//}
+			if (!_event_changed.empty())
+			{
+				item.set_params({ action::OnChange([&](const Variant& value)
+				{
+					_value = value.get<TValue>();
+					_event_changed(_value);
+				}) });
+			}
 		}
 	};
 
@@ -50,6 +50,7 @@ namespace unicore::ui
 
 	class ItemElement : public ValueInputElement<InputItem, Bool>
 	{
+		UC_OBJECT_EVENT(clicked, void);
 	public:
 		ItemElement() = default;
 
@@ -72,6 +73,9 @@ namespace unicore::ui
 		{
 			if (!_text.empty())
 				item.set_params({ attr::Text(_text) });
+
+			if (!_event_clicked.empty())
+				item.set_params({ action::OnClick([&] { _event_clicked.invoke(); }) });
 		}
 	};
 
@@ -176,7 +180,7 @@ namespace unicore::ui
 	// ButtonElement /////////////////////////////////////////////////////////////
 	class ButtonElement : public TypedElement<InputButton>
 	{
-		UC_OBJECT_EVENT(clicked, Bool);
+		UC_OBJECT_EVENT(clicked, void);
 	public:
 		ButtonElement() = default;
 
@@ -202,15 +206,15 @@ namespace unicore::ui
 	protected:
 		String32 _text;
 
-		void apply_params(InputButton& temp) override
+		void apply_params(InputButton& item) override
 		{
-			TypedElement<InputButton>::apply_params(temp);
+			TypedElement<InputButton>::apply_params(item);
 
 			if (!_text.empty())
-				temp.set_params({ attr::Text(_text) });
+				item.set_params({ attr::Text(_text) });
 
 			if (!_event_clicked.empty())
-				temp.set_params({ action::OnClick([&] { _event_clicked.invoke(true); }) });
+				item.set_params({ action::OnClick([&] { _event_clicked.invoke(); }) });
 		}
 	};
 

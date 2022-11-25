@@ -280,10 +280,25 @@ namespace unicore
 	}
 
 	template<typename T>
-	using Predicate = std::function<bool(T)>;
+	using Predicate = std::function<Bool(T)>;
+
+	namespace details
+	{
+		template<typename... Args>
+		struct ActionFunctionType
+		{
+			using type = std::function<void(Args...)>;
+		};
+
+		template<>
+		struct ActionFunctionType<void>
+		{
+			using type = std::function<void()>;
+		};
+	}
 
 	template<typename ... Args>
-	using Action = std::function<void(Args...)>;
+	using Action = typename details::ActionFunctionType<Args...>::type;
 
 	template<typename Ret, typename ... Args>
 	using Function = std::function<Ret(Args...)>;

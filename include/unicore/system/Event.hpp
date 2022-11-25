@@ -7,7 +7,7 @@ namespace unicore
 	class PublicEvent
 	{
 	public:
-		using ActionType = StdVariant<std::function<void()>, Action<Args...>>;
+		using ActionType = Action<Args...>;
 
 		UC_NODISCARD bool empty() const { return _actions.empty(); }
 
@@ -55,16 +55,7 @@ namespace unicore
 		void invoke(Args... args)
 		{
 			for (const auto& action : PublicEvent<Args...>::_actions)
-			{
-				if (auto ptr = std::get_if<Action<Args...>>(&action))
-				{
-					(*ptr)(std::forward<Args>(args)...);
-				}
-				else if (auto ptr = std::get_if<std::function<void()>>(&action))
-				{
-					(*ptr)();
-				}
-			}
+				action(std::forward<Args>(args)...);
 		}
 
 		void operator()(Args... args)
@@ -73,7 +64,23 @@ namespace unicore
 		}
 	};
 
-	// TODO: Make valid with empty or void
+	template<>
+	class Event<void> : public PublicEvent<void>
+	{
+	public:
+
+		void invoke()
+		{
+			for (const auto& action : _actions)
+				action();
+		}
+
+		void operator()()
+		{
+			invoke();
+		}
+	};
+
 #define UC_OBJECT_EVENT(name, ...) \
 	public: using Event_ ## name = PublicEvent<__VA_ARGS__>; \
 	public: PublicEvent<__VA_ARGS__>& on_ ## name() { return _event_ ## name; } \

@@ -5,13 +5,16 @@ namespace unicore::ui
 {
 	class Element
 	{
-		// rebuild event
+		UC_OBJECT_EVENT(rebuild, void);
 	public:
 		virtual ~Element() = default;
 		virtual Shared<Template> render() = 0;
 
 	protected:
-		void rebuild() {}
+		void rebuild()
+		{
+			_event_rebuild();
+		}
 	};
 
 		// SFINAE ////////////////////////////////////////////////////////////////////

@@ -37,7 +37,7 @@ namespace unicore::ui
 	using InputButton = InputTemplate<UIInputType::Button,
 		attr::Text, action::OnClick>;
 	using InputItem = InputTemplate<UIInputType::Item,
-		attr::Value, attr::Text, action::OnClick>;
+		attr::Value, attr::Text, action::OnClick, action::OnChange>;
 
 	using InputImage = InputTemplate<UIInputType::Image,
 		attr::Value, action::OnChange>;
