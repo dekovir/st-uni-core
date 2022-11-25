@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/ui/elements/TypedElement.hpp"
+#include "unicore/ui/elements/TypedNodeElement.hpp"
 #include "unicore/resource/DataModel.hpp"
 
 namespace unicore::ui
@@ -7,7 +7,7 @@ namespace unicore::ui
 	// GroupElement //////////////////////////////////////////////////////////////
 	template<typename TTemplate,
 		std::enable_if_t<std::is_base_of_v<Template, TTemplate>>* = nullptr>
-	class GroupElement : public TypedElement<TTemplate>
+	class GroupElement : public TypedNodeElement<TTemplate>
 	{
 	public:
 		GroupElement() = default;
@@ -50,7 +50,7 @@ namespace unicore::ui
 		Shared<Template> render() override
 		{
 			auto temp = ptr(TTemplate());
-			TypedElement<TTemplate>::apply_params(*temp);
+			TypedNodeElement<TTemplate>::apply_params(*temp);
 
 			for (const auto& element : _elements)
 				temp->add(element->render());

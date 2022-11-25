@@ -3,6 +3,18 @@
 
 namespace unicore::ui
 {
+	class NodeTemplate : public Template
+	{
+	public:
+		String uid;
+		String name;
+		Bool visible = true;
+
+	protected:
+		UIAttributeDict _attributes = {};
+		UIActionDict _actions = {};
+	};
+
 	template<UINodeTag Tag, typename... TKeys>
 	class TypedTemplate : public Template
 	{

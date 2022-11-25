@@ -1,9 +1,9 @@
 #pragma once
-#include "unicore/ui/elements/TypedElement.hpp"
+#include "unicore/ui/elements/TypedNodeElement.hpp"
 
 namespace unicore::ui
 {
-	class TextElement : public TypedElement<VisualText>
+	class TextElement : public TypedNodeElement<VisualText>
 	{
 		UC_UI_ELEMENT_PROPERTY(text, String32);
 	public:
@@ -20,8 +20,8 @@ namespace unicore::ui
 		}
 	};
 
-	using bullet = TypedElement<VisualBullet>;
-	using separator = TypedElement<VisualSeparator>;
+	using bullet = TypedNodeElement<VisualBullet>;
+	using separator = TypedNodeElement<VisualSeparator>;
 
 	using text = TextElement;
 }

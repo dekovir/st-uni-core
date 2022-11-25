@@ -1,11 +1,12 @@
 #pragma once
-#include "unicore/ui/elements/TypedElement.hpp"
+#include "unicore/ui/elements/TypedNodeElement.hpp"
 
 namespace unicore::ui
 {
 	// ValueInputElement /////////////////////////////////////////////////////////
-	template<typename TTemplate, typename TValue>
-	class ValueInputElement : public TypedElement<TTemplate>
+	template<typename TTemplate, typename TValue,
+		std::enable_if_t<std::is_base_of_v<Template, TTemplate>>* = nullptr>
+	class ValueInputElement : public TypedNodeElement<TTemplate>
 	{
 		UC_OBJECT_EVENT(changed, sfinae::ConstRefType<TValue>);
 	public:
@@ -21,7 +22,7 @@ namespace unicore::ui
 			if (_value == value) return;
 
 			_value = value;
-			TypedElement<TTemplate>::rebuild();
+			TypedNodeElement<TTemplate>::rebuild();
 		}
 
 	protected:
@@ -29,7 +30,7 @@ namespace unicore::ui
 
 		void apply_params(TTemplate& item) override
 		{
-			TypedElement<TTemplate>::apply_params(item);
+			TypedNodeElement<TTemplate>::apply_params(item);
 
 			item.set_params({ attr::Value(_value) });
 
@@ -170,7 +171,7 @@ namespace unicore::ui
 	using range_float = range_float_t<Float>;
 
 	// ButtonElement /////////////////////////////////////////////////////////////
-	class ButtonElement : public TypedElement<InputButton>
+	class ButtonElement : public TypedNodeElement<InputButton>
 	{
 		UC_UI_ELEMENT_PROPERTY(text, String32);
 		UC_OBJECT_EVENT(clicked, void);
@@ -192,7 +193,7 @@ namespace unicore::ui
 
 		void apply_params(InputButton& item) override
 		{
-			TypedElement<InputButton>::apply_params(item);
+			TypedNodeElement<InputButton>::apply_params(item);
 
 			if (!_text.empty())
 				item.set_params({ attr::Text(_text) });
