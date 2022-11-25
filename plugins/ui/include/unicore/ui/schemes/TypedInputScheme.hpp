@@ -25,35 +25,35 @@ namespace unicore::ui
 	using InputTemplate = TypedInputScheme<Type, TValues...>;
 
 	using InputText = InputTemplate<UIInputType::Text,
-		attr::Value, action::OnChange>;
+		attr::Value, attr::OnChange>;
 	using InputTextArea = InputTemplate<UIInputType::TextArea,
-		attr::Value, action::OnChange>;
+		attr::Value, attr::OnChange>;
 
 	using InputToggle = InputTemplate<UIInputType::Toggle,
-		attr::Value, action::OnChange>;
+		attr::Value, attr::OnChange>;
 	using InputRadio = InputTemplate<UIInputType::Radio,
-		attr::Value, action::OnChange>;
+		attr::Value, attr::OnChange>;
 
 	using InputButton = InputTemplate<UIInputType::Button,
-		attr::Text, action::OnClick>;
+		attr::Text, attr::OnClick>;
 	using InputItem = InputTemplate<UIInputType::Item,
-		attr::Value, attr::Text, action::OnClick, action::OnChange>;
+		attr::Value, attr::Text, attr::OnClick, attr::OnChange>;
 
 	using InputImage = InputTemplate<UIInputType::Image,
-		attr::Value, action::OnChange>;
+		attr::Value, attr::OnChange>;
 
 	using InputInteger = InputTemplate<UIInputType::Integer,
-		attr::Value, attr::Step, attr::Min, attr::Max, action::OnChange>;
+		attr::Value, attr::Step, attr::Min, attr::Max, attr::OnChange>;
 	using InputFloat = InputTemplate<UIInputType::Float,
-		attr::Value, attr::Step, attr::Min, attr::Max, action::OnChange>;
+		attr::Value, attr::Step, attr::Min, attr::Max, attr::OnChange>;
 
 	using InputSliderI = InputTemplate<UIInputType::RangeI,
-		attr::Value, attr::Min, attr::Max, action::OnChange>;
+		attr::Value, attr::Min, attr::Max, attr::OnChange>;
 	using InputSliderF = InputTemplate<UIInputType::RangeF,
-		attr::Value, attr::Min, attr::Max, action::OnChange>;
+		attr::Value, attr::Min, attr::Max, attr::OnChange>;
 
 	using InputColor3 = InputTemplate<UIInputType::Color3,
-		attr::Value, action::OnChange>;
+		attr::Value, attr::OnChange>;
 	using InputColor4 = InputTemplate<UIInputType::Color4,
-		attr::Value, action::OnChange>;
+		attr::Value, attr::OnChange>;
 }

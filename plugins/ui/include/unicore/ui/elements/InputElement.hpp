@@ -36,7 +36,7 @@ namespace unicore::ui
 
 			if (!_event_changed.empty())
 			{
-				item.set_params({ action::OnChange([&](const Variant& value)
+				item.set_params({ attr::OnChange([&](const Variant& value)
 				{
 					_value = value.get<TValue>();
 					_event_changed(_value);
@@ -68,7 +68,7 @@ namespace unicore::ui
 				item.set_params({ attr::Text(_text) });
 
 			if (!_event_clicked.empty())
-				item.set_params({ action::OnClick([&] { _event_clicked.invoke(); }) });
+				item.set_params({ attr::OnClick([&] { _event_clicked.invoke(); }) });
 		}
 	};
 
@@ -199,7 +199,7 @@ namespace unicore::ui
 				item.set_params({ attr::Text(_text) });
 
 			if (!_event_clicked.empty())
-				item.set_params({ action::OnClick([&] { _event_clicked.invoke(); }) });
+				item.set_params({ attr::OnClick([&] { _event_clicked.invoke(); }) });
 		}
 	};
 

@@ -177,7 +177,7 @@ namespace unicore::ui
 						const auto selected = GroupValueElement<TKey>::_value == key;
 						group->add(GroupH(
 							VisualText({ attr::Text(value) }),
-							InputRadio({ attr::Value(selected), action::OnChange([&]
+							InputRadio({ attr::Value(selected), attr::OnChange([&]
 								{ GroupValueElement<TKey>::set_value(key); }) })));
 					}
 				}

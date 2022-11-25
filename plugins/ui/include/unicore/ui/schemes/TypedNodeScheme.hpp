@@ -79,9 +79,9 @@ namespace unicore::ui
 			else if constexpr (std::is_same_v<T, attr::Max>)
 				_options.attributes[UIAttribute::Max] = arg.get();
 
-			else if constexpr (std::is_same_v<T, action::OnClick>)
+			else if constexpr (std::is_same_v<T, attr::OnClick>)
 				_options.actions[UIActionType::OnClick] = arg.get();
-			else if constexpr (std::is_same_v<T, action::OnChange>)
+			else if constexpr (std::is_same_v<T, attr::OnChange>)
 				_options.actions[UIActionType::OnChange] = arg.get();
 				}, value);
 		}

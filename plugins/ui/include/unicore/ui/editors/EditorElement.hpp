@@ -180,7 +180,7 @@ namespace unicore::ui
 		{
 			auto start_value = _property->get().get_integral<T>();
 			return ptr(InputInteger({ attr::Value(start_value),
-				action::OnChange([&](const Variant& value) { _property->set(value); })
+				attr::OnChange([&](const Variant& value) { _property->set(value); })
 				}));
 		}
 	};
@@ -193,7 +193,7 @@ namespace unicore::ui
 		{
 			auto start_value = _property->get().get_floating_point<T>();
 			return ptr(InputFloat({ attr::Value(start_value),
-				action::OnChange([&](const Variant& value) { _property->set(value); })
+				attr::OnChange([&](const Variant& value) { _property->set(value); })
 				}));
 		}
 	};
@@ -205,7 +205,7 @@ namespace unicore::ui
 		{
 			const auto text = _property->get().get_string32();
 			return ptr(InputText({ attr::Value(text),
-				action::OnChange([&](const Variant& value) { _property->set(value); })
+				attr::OnChange([&](const Variant& value) { _property->set(value); })
 				}));
 		}
 	};

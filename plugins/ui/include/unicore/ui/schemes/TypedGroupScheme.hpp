@@ -10,7 +10,7 @@ namespace unicore::ui
 		using BaseClass = TypedNodeScheme<UINodeTag::Group, TKeys...>;
 
 		template<typename ... Args,
-			std::enable_if_t<all_is_template_v<Args...>>* = nullptr>
+			std::enable_if_t<all_is_scheme_v<Args...>>* = nullptr>
 		explicit TypedGroupScheme(const typename BaseClass::Params& params, Args&&... args)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
@@ -20,7 +20,7 @@ namespace unicore::ui
 		}
 
 		template<typename ... Args,
-			std::enable_if_t<all_is_template_v<Args...>>* = nullptr>
+			std::enable_if_t<all_is_scheme_v<Args...>>* = nullptr>
 		explicit TypedGroupScheme(Args&&... args)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
