@@ -1,7 +1,7 @@
 #pragma once
 #include "example.hpp"
 #include "unicore/ui/UIViewImGui.hpp"
-#include "unicore/ui/UITemplate.hpp"
+#include "unicore/ui/UISchemes.hpp"
 
 namespace unicore
 {
@@ -19,6 +19,6 @@ namespace unicore
 		Shared<UIDocument> _document;
 		Shared<UIViewImGui> _view;
 
-		Shared<ui::Template> _root;
+		Shared<ui::NodeScheme> _root;
 	};
 }

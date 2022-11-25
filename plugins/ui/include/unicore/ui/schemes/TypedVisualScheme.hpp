@@ -1,20 +1,20 @@
 #pragma once
-#include "unicore/ui/templates/TypedTemplate.hpp"
+#include "unicore/ui/schemes/TypedNodeScheme.hpp"
 
 namespace unicore::ui
 {
 	template<UIVisualType Type, typename... TKeys>
-	class TypedVisualTemplate : public TypedTemplate<UINodeTag::Visual, TKeys...>
+	class TypedVisualScheme : public TypedNodeScheme<UINodeTag::Visual, TKeys...>
 	{
 	public:
-		using BaseClass = TypedTemplate<UINodeTag::Visual, TKeys...>;
+		using BaseClass = TypedNodeScheme<UINodeTag::Visual, TKeys...>;
 
-		TypedVisualTemplate()
+		TypedVisualScheme()
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 		}
 
-		explicit TypedVisualTemplate(const typename BaseClass::Params& params)
+		explicit TypedVisualScheme(const typename BaseClass::Params& params)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 			BaseClass::set_params(params);
@@ -22,7 +22,7 @@ namespace unicore::ui
 	};
 
 	template<UIVisualType Type, typename ... TValues>
-	using VisualTemplate = TypedVisualTemplate<Type, TValues...>;
+	using VisualTemplate = TypedVisualScheme<Type, TValues...>;
 
 	using VisualText = VisualTemplate<UIVisualType::Text, attr::Text>;
 	using VisualColor = VisualTemplate<UIVisualType::Color, attr::Value>;

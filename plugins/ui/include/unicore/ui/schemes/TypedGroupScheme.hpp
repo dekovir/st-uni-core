@@ -1,17 +1,17 @@
 #pragma once
-#include "unicore/ui/templates/TypedTemplate.hpp"
+#include "unicore/ui/schemes/TypedNodeScheme.hpp"
 
 namespace unicore::ui
 {
 	template<UIGroupType Type, typename... TKeys>
-	class TypedGroupTemplate : public TypedTemplate<UINodeTag::Group, TKeys...>
+	class TypedGroupScheme : public TypedNodeScheme<UINodeTag::Group, TKeys...>
 	{
 	public:
-		using BaseClass = TypedTemplate<UINodeTag::Group, TKeys...>;
+		using BaseClass = TypedNodeScheme<UINodeTag::Group, TKeys...>;
 
 		template<typename ... Args,
 			std::enable_if_t<all_is_template_v<Args...>>* = nullptr>
-		explicit TypedGroupTemplate(const typename BaseClass::Params& params, Args&&... args)
+		explicit TypedGroupScheme(const typename BaseClass::Params& params, Args&&... args)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 			BaseClass::set_params(params);
@@ -21,7 +21,7 @@ namespace unicore::ui
 
 		template<typename ... Args,
 			std::enable_if_t<all_is_template_v<Args...>>* = nullptr>
-		explicit TypedGroupTemplate(Args&&... args)
+		explicit TypedGroupScheme(Args&&... args)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 
@@ -29,7 +29,7 @@ namespace unicore::ui
 		}
 
 		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+			std::enable_if_t<std::is_base_of_v<NodeScheme, T>>* = nullptr>
 		auto add(const Shared<T>& item)
 		{
 			internal_add(item);
@@ -37,7 +37,7 @@ namespace unicore::ui
 		}
 
 		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+			std::enable_if_t<std::is_base_of_v<NodeScheme, T>>* = nullptr>
 		auto add(const T& element)
 		{
 			auto item = std::make_shared<T>(element);
@@ -46,7 +46,7 @@ namespace unicore::ui
 		}
 
 		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+			std::enable_if_t<std::is_base_of_v<NodeScheme, T>>* = nullptr>
 		auto add(T&& element)
 		{
 			auto item = std::make_shared<T>(std::forward<T>(element));
@@ -88,16 +88,16 @@ namespace unicore::ui
 		}
 
 	protected:
-		List<Shared<Template>> _elements;
+		List<Shared<NodeScheme>> _elements;
 
-		void internal_add(const Shared<Template>& element)
+		void internal_add(const Shared<NodeScheme>& element)
 		{
 			_elements.push_back(element);
 		}
 	};
 
 	template<UIGroupType Type, typename ... TValues>
-	using GroupTemplate = TypedGroupTemplate<Type, TValues...>;
+	using GroupTemplate = TypedGroupScheme<Type, TValues...>;
 
 	using GroupV = GroupTemplate<UIGroupType::Vertical>;
 	using GroupH = GroupTemplate<UIGroupType::Horizontal>;

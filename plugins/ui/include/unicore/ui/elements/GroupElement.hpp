@@ -6,7 +6,7 @@ namespace unicore::ui
 {
 	// GroupElement //////////////////////////////////////////////////////////////
 	template<typename TTemplate,
-		std::enable_if_t<std::is_base_of_v<Template, TTemplate>>* = nullptr>
+		std::enable_if_t<std::is_base_of_v<NodeScheme, TTemplate>>* = nullptr>
 	class GroupElement : public TypedNodeElement<TTemplate>
 	{
 	public:
@@ -47,7 +47,7 @@ namespace unicore::ui
 			return ptr;
 		}
 
-		Shared<Template> render() override
+		Shared<NodeScheme> render() override
 		{
 			auto temp = ptr(TTemplate());
 			TypedNodeElement<TTemplate>::apply_params(*temp);
@@ -73,7 +73,7 @@ namespace unicore::ui
 
 	// ValueGroupElement /////////////////////////////////////////////////////////
 	template<typename TTemplate, typename TValue,
-		std::enable_if_t<std::is_base_of_v<Template, TTemplate>>* = nullptr>
+		std::enable_if_t<std::is_base_of_v<NodeScheme, TTemplate>>* = nullptr>
 	class ValueGroupElement : public GroupElement<TTemplate>
 	{
 	public:
@@ -162,7 +162,7 @@ namespace unicore::ui
 			GroupValueElement<TKey>::rebuild();
 		}
 
-		Shared<Template> render() override
+		Shared<NodeScheme> render() override
 		{
 			auto group = ptr(GroupV());
 
@@ -230,7 +230,7 @@ namespace unicore::ui
 			set_model(model);
 		}
 
-		Shared<Template> render() override
+		Shared<NodeScheme> render() override
 		{
 			auto list = ptr(GroupList());
 
@@ -263,7 +263,7 @@ namespace unicore::ui
 			set_model(model);
 		}
 
-		Shared<Template> render() override
+		Shared<NodeScheme> render() override
 		{
 			if (!_model) return nullptr;
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/ui/UITemplate.hpp"
+#include "unicore/ui/UISchemes.hpp"
 
 namespace unicore::ui
 {
@@ -18,7 +18,7 @@ namespace unicore::ui
 
 		void set_parent(ElementContainer* parent);
 
-		virtual Shared<Template> render() = 0;
+		virtual Shared<NodeScheme> render() = 0;
 
 	protected:
 		const ElementIndex _index;

@@ -4,10 +4,10 @@
 
 namespace unicore::ui
 {
-	class Template
+	class NodeScheme
 	{
 	public:
-		virtual ~Template() = default;
+		virtual ~NodeScheme() = default;
 
 		virtual UINode create(UIDocument& document, const UINode& parent) = 0;
 		virtual Bool apply_to(UIDocument& document, const UINode& node) = 0;
@@ -42,8 +42,8 @@ namespace unicore::ui
 	// SFINAE ////////////////////////////////////////////////////////////////////
 	template<typename T>
 	inline constexpr Bool is_template_v =
-		std::is_base_of_v<Template, T> ||
-		std::is_convertible_v<T, Shared<Template>>;
+		std::is_base_of_v<NodeScheme, T> ||
+		std::is_convertible_v<T, Shared<NodeScheme>>;
 
 	template<typename ... T>
 	inline constexpr Bool all_is_template_v = (... && is_template_v<T>);
@@ -83,21 +83,21 @@ namespace unicore::ui
 
 	// UTILITIES /////////////////////////////////////////////////////////////////
 	template<typename T,
-		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+		std::enable_if_t<std::is_base_of_v<NodeScheme, T>>* = nullptr>
 	extern Shared<T> ptr(const T& item)
 	{
 		return std::make_shared<T>(item);
 	}
 
 	template<typename T,
-		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+		std::enable_if_t<std::is_base_of_v<NodeScheme, T>>* = nullptr>
 	extern Shared<T> ptr(T&& item)
 	{
 		return std::make_shared<T>(std::forward<T>(item));
 	}
 
 	template<typename T,
-		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+		std::enable_if_t<std::is_base_of_v<NodeScheme, T>>* = nullptr>
 	extern Shared<T> ref(const T& item, Shared<T>& ref)
 	{
 		ref = ptr(item);
@@ -105,7 +105,7 @@ namespace unicore::ui
 	}
 
 	template<typename T,
-		std::enable_if_t<std::is_base_of_v<Template, T>>* = nullptr>
+		std::enable_if_t<std::is_base_of_v<NodeScheme, T>>* = nullptr>
 	extern Shared<T> ref(T&& item, Shared<T>& ref)
 	{
 		ref = ptr(item);

@@ -1,20 +1,20 @@
 #pragma once
-#include "unicore/ui/templates/TypedTemplate.hpp"
+#include "unicore/ui/schemes/TypedNodeScheme.hpp"
 
 namespace unicore::ui
 {
 	template<UIInputType Type, typename... TKeys>
-	class TypedInputTemplate : public TypedTemplate<UINodeTag::Input, TKeys...>
+	class TypedInputScheme : public TypedNodeScheme<UINodeTag::Input, TKeys...>
 	{
 	public:
-		using BaseClass = TypedTemplate<UINodeTag::Input, TKeys...>;
+		using BaseClass = TypedNodeScheme<UINodeTag::Input, TKeys...>;
 
-		TypedInputTemplate()
+		TypedInputScheme()
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 		}
 
-		explicit TypedInputTemplate(const typename BaseClass::Params& params)
+		explicit TypedInputScheme(const typename BaseClass::Params& params)
 		{
 			BaseClass::_options.attributes[UIAttribute::Type] = Type;
 			BaseClass::set_params(params);
@@ -22,7 +22,7 @@ namespace unicore::ui
 	};
 
 	template<UIInputType Type, typename ... TValues>
-	using InputTemplate = TypedInputTemplate<Type, TValues...>;
+	using InputTemplate = TypedInputScheme<Type, TValues...>;
 
 	using InputText = InputTemplate<UIInputType::Text,
 		attr::Value, action::OnChange>;

@@ -1,9 +1,9 @@
 #pragma once
-#include "unicore/ui/templates/Template.hpp"
+#include "unicore/ui/schemes/NodeScheme.hpp"
 
 namespace unicore::ui
 {
-	class NodeTemplate : public Template
+	class NodeTemplate : public NodeScheme
 	{
 	public:
 		String uid;
@@ -16,13 +16,13 @@ namespace unicore::ui
 	};
 
 	template<UINodeTag Tag, typename... TKeys>
-	class TypedTemplate : public Template
+	class TypedNodeScheme : public NodeScheme
 	{
 	public:
 		using VariantType = std::variant<attr::Uid, attr::Name, attr::Visible, TKeys...>;
 		using Params = List<VariantType>;
 
-		TypedTemplate() = default;
+		TypedNodeScheme() = default;
 
 		void set_params(const Params& params)
 		{

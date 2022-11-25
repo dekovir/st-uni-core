@@ -5,7 +5,7 @@
 
 namespace unicore
 {
-	UC_EXAMPLE_REGISTER(Example08, "UI Templates");
+	UC_EXAMPLE_REGISTER(Example08, "UI Scheme");
 
 	Example08::Example08(const ExampleContext& context)
 		: Example(context)
@@ -22,7 +22,7 @@ namespace unicore
 		_document = std::make_shared<UIDocument>(&logger);
 		_view = std::make_shared<UIViewImGui>(_context, logger);
 		_view->set_document(_document);
-		_view->set_title(U"Template UI");
+		_view->set_title(U"Scheme UI");
 		_view->set_size(Vector2f(300, 0));
 		_view->set_position(Vector2f(size.x / 2 - 150, 50));
 
