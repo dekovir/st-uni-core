@@ -8,10 +8,10 @@ namespace unicore::ui
 	{
 		UNICORE_MAKE_STRONG_TYPE(Uid, String);
 		UNICORE_MAKE_STRONG_TYPE(Name, String);
-		UNICORE_MAKE_STRONG_TYPE(Visible, Bool);
 
 		UNICORE_MAKE_STRONG_TYPE(Type, UInt8);
 		UNICORE_MAKE_STRONG_TYPE(Value, Variant);
+		UNICORE_MAKE_STRONG_TYPE(Hidden, Bool);
 
 		UNICORE_MAKE_STRONG_TYPE(Width, Variant);
 		UNICORE_MAKE_STRONG_TYPE(Height, Variant);
@@ -27,7 +27,7 @@ namespace unicore::ui
 		UNICORE_MAKE_STRONG_TYPE(OnChange, UIAction);
 
 		using Any = StdVariant<
-			Uid, Name, Visible, Type,
+			Uid, Name, Hidden, Type,
 			Value, Width, Height, Tooltip, Text, Step, Min, Max,
 			OnClick, OnChange>;
 	}
@@ -37,9 +37,9 @@ namespace unicore::ui
 	inline constexpr bool is_attr_v =
 		std::is_same_v<T, attr::Uid> ||
 		std::is_same_v<T, attr::Name> ||
-		std::is_same_v<T, attr::Visible> ||
 		std::is_same_v<T, attr::Type> ||
 		std::is_same_v<T, attr::Value> ||
+		std::is_same_v<T, attr::Hidden> ||
 		std::is_same_v<T, attr::Width> ||
 		std::is_same_v<T, attr::Height> ||
 		std::is_same_v<T, attr::Tooltip> ||
@@ -57,49 +57,29 @@ namespace unicore::ui
 	class UINodeValues
 	{
 	public:
-		using VariantType = std::variant<attr::Uid, attr::Name, attr::Visible>;
+		using VariantType = std::variant<attr::Uid, attr::Name, attr::Hidden>;
 		using Params = std::initializer_list<VariantType>;
 
 		UINodeValues() = default;
 
-		UINodeValues(Params params)
-		{
-			apply(params);
-		}
+		UINodeValues(Params params);
 
-		void fill(UINodeOptions& options) const
-		{
-			options.uid = _uid;
-			options.name = _name;
-			options.visible = _visible;
-			options.attributes = _attributes;
-			options.actions = _actions;
-		}
-
-		void set(const VariantType& value)
-		{
-			std::visit([&](auto&& arg) { internal_set(arg); }, value);
-		}
-
-		void apply(Params params)
-		{
-			for (const auto& value : params)
-				set(value);
-		}
+		void fill(UINodeOptions& options) const;
+		void set(const VariantType& value);
+		void apply(Params params);
 
 	protected:
 		String _uid;
 		String _name;
-		Bool _visible = true;
 
 		UIAttributeDict _attributes = {};
 		UIActionDict _actions = {};
 
 		void internal_set(const attr::Uid& value) { _uid = value.get(); }
 		void internal_set(const attr::Name& value) { _name = value.get(); }
-		void internal_set(const attr::Visible& value) { _visible = value.get(); }
 		void internal_set(const attr::Type& value) { _attributes[UIAttribute::Type] = value.get(); }
 		void internal_set(const attr::Value& value) { _attributes[UIAttribute::Value] = value.get(); }
+		void internal_set(const attr::Hidden& value) { _attributes[UIAttribute::Hidden] = value.get(); }
 		void internal_set(const attr::Width& value) { _attributes[UIAttribute::Width] = value.get(); }
 		void internal_set(const attr::Height& value) { _attributes[UIAttribute::Height] = value.get(); }
 		void internal_set(const attr::Tooltip& value) { _attributes[UIAttribute::Tooltip] = value.get(); }
@@ -118,28 +98,17 @@ namespace unicore::ui
 
 		UINodeValuesAny() = default;
 
-		UINodeValuesAny(Params params)
-		{
-			apply(params);
-		}
+		UINodeValuesAny(Params params);
 
-		void set(const attr::Any& value)
-		{
-			std::visit([&](auto&& arg) { internal_set(arg); }, value);
-		}
-
-		void apply(Params params)
-		{
-			for (const auto& value : params)
-				set(value);
-		}
+		void set(const attr::Any& value);
+		void apply(Params params);
 	};
 
 	template<typename... TKeys>
 	class UINodeValuesT : public UINodeValues
 	{
 	public:
-		using VariantType = std::variant<attr::Uid, attr::Name, attr::Visible, TKeys...>;
+		using VariantType = std::variant<attr::Uid, attr::Name, attr::Hidden, TKeys...>;
 		using Params = std::initializer_list<VariantType>;
 
 		UINodeValuesT() = default;

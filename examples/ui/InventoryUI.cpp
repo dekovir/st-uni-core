@@ -87,7 +87,7 @@ namespace unicore
 		const auto& item = *_inventory.database().get(id);
 		//UC_LOG_DEBUG(_logger) << "Apply item " << item.title << " to " << node;
 
-		_document.set_node_visible(node, true);
+		_document.set_node_hidden(node, false);
 
 		if (const auto find = node.find_by_name("name"); find.valid())
 		{
@@ -138,11 +138,11 @@ namespace unicore
 
 		if (item == nullptr)
 		{
-			_document.set_node_visible(_item_tooltip, false);
+			_document.set_node_hidden(_item_tooltip, true);
 			return;
 		}
 
-		_document.set_node_visible(_item_tooltip, true);
+		_document.set_node_hidden(_item_tooltip, false);
 
 		if (const auto find = _item_tooltip.find_by_name("title"); find.valid())
 			_document.set_node_attribute(find, UIAttribute::Text, item->title);
@@ -156,10 +156,10 @@ namespace unicore
 			{
 				const auto str = StringBuilder::format(U"{}-{}", item->damage.min, item->damage.max);
 
-				_document.set_node_visible(group, true);
+				_document.set_node_hidden(group, false);
 				_document.set_node_attribute(find, UIAttribute::Text, str);
 			}
-			else _document.set_node_visible(group, false);
+			else _document.set_node_hidden(group, true);
 		}
 
 		if (const auto [find, group] = find_node(_item_tooltip, "armor"); find.valid())
@@ -168,18 +168,18 @@ namespace unicore
 			{
 				const auto str = StringBuilder::format(U"+{}", item->armor);
 
-				_document.set_node_visible(group, true);
+				_document.set_node_hidden(group, false);
 				_document.set_node_attribute(find, UIAttribute::Text, str);
 			}
-			else _document.set_node_visible(group, false);
+			else _document.set_node_hidden(group, true);
 		}
 
 		if (const auto find = _item_tooltip.find_by_name("desc"); find.valid())
-			_document.set_node_visible(find, false);
+			_document.set_node_hidden(find, true);
 
 		if (const auto [find, group] = find_node(_item_tooltip, "status"); find.valid())
 		{
-			_document.set_node_visible(group, item->has_status());
+			_document.set_node_hidden(group, !item->has_status());
 			const auto value = Math::inverse_lerp_numeric(_inventory.get_index_value(index));
 			_document.set_node_attribute(find, UIAttribute::Value, value);
 		}

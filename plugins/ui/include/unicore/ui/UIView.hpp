@@ -21,7 +21,7 @@ namespace unicore
 
 		const std::function<void(const UINode&, StringView)> _bind_set_name;
 		const std::function<void(const UINode&, StringView)> _bind_set_style;
-		const std::function<void(const UINode&, Bool)> _bind_set_visible;
+		const std::function<void(const UINode&, Bool)> _bind_set_hidden;
 		const std::function<void(const UINode&, UIAttribute, const Optional<Variant>&)> _bind_set_attribute;
 
 		virtual void on_rebuild() = 0;
@@ -32,7 +32,7 @@ namespace unicore
 
 		virtual void on_set_name(const UINode& node, StringView value) {}
 		virtual void on_set_style(const UINode& node, StringView value) {}
-		virtual void on_set_visible(const UINode& node, Bool value) {}
+		virtual void on_set_hidden(const UINode& node, Bool value) {}
 
 		virtual void on_set_attribute(const UINode& node, UIAttribute type, const Optional<Variant>& value) {}
 	};

@@ -113,7 +113,7 @@ namespace unicore
 
 	Bool UIViewImGui::render_node(const UINode& node, LayoutOption layout_option)
 	{
-		if (!node.visible()) return false;
+		if (node.hidden()) return false;
 
 		const auto cached_info = get_info(node.index());
 		if (!cached_info)
@@ -311,18 +311,15 @@ namespace unicore
 			break;
 
 		case UIGroupType::Tooltip: // TOOLTIP //////////////////////////////////////
-			if (node.visible())
-			{
-				ImGui::BeginTooltip();
+			ImGui::BeginTooltip();
 
-				str = node.get(UIAttribute::Text).get_string();
-				if (!str.empty())
-					ImGui::Text("%s", str.c_str());
+			str = node.get(UIAttribute::Text).get_string();
+			if (!str.empty())
+				ImGui::Text("%s", str.c_str());
 
-				for (const auto& child : children)
-					render_node(child);
-				ImGui::EndTooltip();
-			}
+			for (const auto& child : children)
+				render_node(child);
+			ImGui::EndTooltip();
 			break;
 
 		case UIGroupType::Modal: // MODAL //////////////////////////////////////////

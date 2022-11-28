@@ -8,6 +8,7 @@ namespace unicore
 	{
 		Type,
 		Value,
+		Hidden,
 		Width,
 		Height,
 		Tooltip,
@@ -19,6 +20,7 @@ namespace unicore
 	static const List<UIAttribute> UIAttributeKeys = {
 		UIAttribute::Type,
 		UIAttribute::Value,
+		UIAttribute::Hidden,
 		UIAttribute::Width,
 		UIAttribute::Height,
 		UIAttribute::Tooltip,
@@ -86,9 +88,9 @@ namespace unicore
 
 	struct UINodeOptions
 	{
+		// TODO: Optimize with StringView
 		String uid;
 		String name;
-		Bool visible = true;
 		UIAttributeDict attributes = {};
 		UIActionDict actions = {};
 	};
@@ -120,8 +122,6 @@ namespace unicore
 
 		UC_NODISCARD Optional<String> uid() const;
 		UC_NODISCARD Optional<String> name() const;
-		UC_NODISCARD Optional<String> style() const;
-		UC_NODISCARD Bool visible() const;
 
 		// ATTRIBUTES //////////////////////////////////////////////////////////////
 		UC_NODISCARD UIAttributeDict get_attributes() const;
@@ -130,6 +130,7 @@ namespace unicore
 		UC_NODISCARD Bool has(UIAttribute attribute) const;
 
 		UC_NODISCARD Variant value() const { return get(UIAttribute::Value); }
+		UC_NODISCARD Bool hidden() const { return get(UIAttribute::Hidden).get_bool(); }
 		UC_NODISCARD Variant type() const { return get(UIAttribute::Type); }
 		UC_NODISCARD Variant text() const { return get(UIAttribute::Text); }
 

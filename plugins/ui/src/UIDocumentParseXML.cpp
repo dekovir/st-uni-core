@@ -14,6 +14,7 @@ namespace unicore
 	static const Dictionary<StringView, UIAttribute> s_attr_name =
 	{
 		{"value", UIAttribute::Value},
+		{"hidden", UIAttribute::Hidden},
 		{"width", UIAttribute::Width},
 		{"w", UIAttribute::Width},
 		{"height", UIAttribute::Height},
@@ -223,7 +224,7 @@ namespace unicore
 			options.name = str;
 
 		if (const auto str = node->Attribute("visible"); str != nullptr)
-			options.visible = parse_value(str).get_bool(true);
+			options.attributes[UIAttribute::Hidden] = !parse_value(str).get_bool(true);
 
 		for (const auto& [name, type] : s_attr_name)
 		{

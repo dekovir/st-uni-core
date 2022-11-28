@@ -20,7 +20,7 @@ namespace unicore
 
 		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_style, const UINode&, StringView);
-		UC_OBJECT_EVENT(set_visible, const UINode&, Bool);
+		UC_OBJECT_EVENT(set_hidden, const UINode&, Bool);
 		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttribute, const Variant&);
 	public:
 		explicit UIDocument(Logger* logger = nullptr);
@@ -83,12 +83,6 @@ namespace unicore
 		UC_NODISCARD Bool get_node_name(const UINode& node, String& value) const;
 		Bool set_node_name(const UINode& node, StringView value);
 
-		UC_NODISCARD Bool get_node_style(const UINode& node, String& value) const;
-		Bool set_node_style(const UINode& node, StringView value);
-
-		UC_NODISCARD Bool get_node_visible(const UINode& node, Bool& value) const;
-		Bool set_node_visible(const UINode& node, Bool value);
-
 		// HIERARCHY ///////////////////////////////////////////////////////////////
 		UC_NODISCARD UINode get_node_parent(const UINode& node) const;
 
@@ -113,6 +107,8 @@ namespace unicore
 		UC_NODISCARD Optional<UIAttributeDict> get_node_attributes(const UINode& node) const;
 		UC_NODISCARD Bool get_node_attributes(const UINode& node, UIAttributeDict& dict) const;
 
+		void set_node_hidden(const UINode& node, Bool value) { set_node_attribute(node, UIAttribute::Hidden, value); }
+
 		// ACTIONS /////////////////////////////////////////////////////////////////
 		void subscribe_node(const UINode& node, UIActionType type, const UIAction& action);
 		Bool unsubscribe_node(const UINode& node, UIActionType type);
@@ -123,9 +119,7 @@ namespace unicore
 			UINodeTag tag = UINodeTag::Group;
 			String uid;
 			String name;
-			String style;
 			// UInt16 sibling_index; ? Optimization
-			Bool visible = true;
 			UINodeIndex parent = UINodeIndex_Invalid;
 			UIAttributeDict attributes;
 		};

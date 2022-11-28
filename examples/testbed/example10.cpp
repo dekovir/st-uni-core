@@ -63,7 +63,8 @@ namespace unicore
 
 	void Example10::update()
 	{
-		_root->update();
+		if (_root)
+			_root->update();
 
 		if (_view)
 			_view->render();

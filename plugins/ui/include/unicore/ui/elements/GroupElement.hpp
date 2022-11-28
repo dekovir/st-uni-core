@@ -36,7 +36,7 @@ namespace unicore::ui
 		{
 			if (_name.empty())
 				item.set_params({ attr::Name(_name) });
-			item.set_params({ attr::Visible(!_hidden) });
+			item.set_params({ attr::Hidden(_hidden) });
 		}
 	};
 

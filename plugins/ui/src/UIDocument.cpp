@@ -340,50 +340,44 @@ namespace unicore
 				_event_set_name(node, info->name);
 			}
 
-			if (info->visible != options.visible)
+			// ATTRIBUTES
+			for (const auto& key : UIAttributeKeys)
 			{
-				info->visible = options.visible;
-				_event_set_visible(node, info->visible);
+				auto it = info->attributes.find(key);
+				auto jt = options.attributes.find(key);
 
-				// ATTRIBUTES
-				for (const auto& key : UIAttributeKeys)
+				if (it != info->attributes.end() &&
+					jt != options.attributes.end())
 				{
-					auto it = info->attributes.find(key);
-					auto jt = options.attributes.find(key);
-
-					if (it != info->attributes.end() &&
-						jt != options.attributes.end())
-					{
-						if (it->second != jt->second)
-						{
-							info->attributes[key] = jt->second;
-							_event_set_attribute(node, key, jt->second);
-						}
-					}
-					else if (it != info->attributes.end())
-					{
-						info->attributes.erase(it);
-						_event_set_attribute(node, key, Variant::Empty);
-					}
-					else if (jt != options.attributes.end())
+					if (it->second != jt->second)
 					{
 						info->attributes[key] = jt->second;
 						_event_set_attribute(node, key, jt->second);
 					}
 				}
+				else if (it != info->attributes.end())
+				{
+					info->attributes.erase(it);
+					_event_set_attribute(node, key, Variant::Empty);
+				}
+				else if (jt != options.attributes.end())
+				{
+					info->attributes[key] = jt->second;
+					_event_set_attribute(node, key, jt->second);
+				}
+			}
 
-				// ACTIONS
-				const auto it = _node_actions.find(node.index());
-				if (it != _node_actions.end())
-				{
-					if (options.actions.empty())
-						_node_actions.erase(it);
-					else it->second = options.actions;
-				}
-				else if (!options.actions.empty())
-				{
-					_node_actions[node.index()] = options.actions;
-				}
+			// ACTIONS
+			const auto it = _node_actions.find(node.index());
+			if (it != _node_actions.end())
+			{
+				if (options.actions.empty())
+					_node_actions.erase(it);
+				else it->second = options.actions;
+			}
+			else if (!options.actions.empty())
+			{
+				_node_actions[node.index()] = options.actions;
 			}
 
 			return true;
@@ -441,59 +435,6 @@ namespace unicore
 		{
 			info->name = value;
 			_event_set_name.invoke(node, value);
-			return true;
-		}
-
-		return false;
-	}
-
-	Bool UIDocument::get_node_style(const UINode& node, String& value) const
-	{
-		if (const auto info = get_info(node); info && !info->style.empty())
-		{
-			value = info->style;
-			return true;
-		}
-
-		return false;
-	}
-
-	Bool UIDocument::set_node_style(const UINode& node, StringView value)
-	{
-		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
-
-		if (const auto info = get_info(node))
-		{
-			info->style = value;
-			_event_set_style.invoke(node, value);
-			return true;
-		}
-
-		return false;
-	}
-
-	Bool UIDocument::get_node_visible(const UINode& node, Bool& value) const
-	{
-		if (const auto info = get_info(node))
-		{
-			value = info->visible;
-			return true;
-		}
-
-		return false;
-	}
-
-	Bool UIDocument::set_node_visible(const UINode& node, Bool value)
-	{
-		UC_ASSERT_MSG(!_write_protection, "Write protection is On");
-
-		if (const auto info = get_info(node))
-		{
-			if (info->visible != value)
-			{
-				info->visible = value;
-				_event_set_visible.invoke(node, value);
-			}
 			return true;
 		}
 
@@ -922,7 +863,6 @@ namespace unicore
 		info.tag = tag;
 		info.uid = StringHelper::to_lower(options.uid);
 		info.name = options.name;
-		info.visible = options.visible;
 
 		info.parent = UINodeIndex_Invalid;
 		info.attributes = options.attributes;
@@ -962,7 +902,6 @@ namespace unicore
 		{
 			UINodeOptions options;
 			options.name = info->name;
-			options.visible = info->visible;
 			options.attributes = info->attributes;
 
 			if (const auto actions = get_actions(node.index()); actions != nullptr)

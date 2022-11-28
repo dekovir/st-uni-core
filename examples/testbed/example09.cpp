@@ -195,11 +195,14 @@ namespace unicore
 			};
 		}
 
-		_root->render()->create(*_document, UINode::Empty);
+		_root->mount(*_document, UINode::Empty);
 	}
 
 	void Example09::update()
 	{
+		if (_root)
+			_root->update();
+
 		if (_document && _view && _position_node)
 		{
 			const auto text = StringBuilder::format(U"Pos {}, Size {}",

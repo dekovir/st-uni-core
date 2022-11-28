@@ -52,23 +52,6 @@ namespace unicore
 		return std::nullopt;
 	}
 
-	Optional<String> UINode::style() const
-	{
-		String value;
-		if (_document && _document->get_node_style(*this, value))
-			return value;
-
-		return std::nullopt;
-	}
-
-	Bool UINode::visible() const
-	{
-		Bool value;
-		if (_document && _document->get_node_visible(*this, value))
-			return value;
-
-		return false;
-	}
 
 	UIAttributeDict UINode::get_attributes() const
 	{

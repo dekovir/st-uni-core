@@ -106,7 +106,7 @@ namespace unicore
 				_document.subscribe_node(find, UIActionType::OnClick,
 					[this, stored_id] { set_selected(stored_id); });
 			}
-			_document.set_node_visible(node, true);
+			_document.set_node_hidden(node, false);
 
 			apply_item(node, id);
 		}
@@ -147,11 +147,11 @@ namespace unicore
 		const auto item = _database->get(_selected);
 		if (!item)
 		{
-			_document.set_node_visible(_inspector_node, false);
+			_document.set_node_hidden(_inspector_node, true);
 			return;
 		}
 
-		_document.set_node_visible(_inspector_node, true);
+		_document.set_node_hidden(_inspector_node, false);
 
 		apply_inspector_icon(*item);
 		apply_inspector_title(*item);
