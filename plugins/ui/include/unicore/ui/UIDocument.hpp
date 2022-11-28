@@ -32,6 +32,7 @@ namespace unicore
 
 		// FIND ////////////////////////////////////////////////////////////////////
 		UC_NODISCARD UINode find_by_id(StringView id) const;
+		UC_NODISCARD UINode find_by_index(UINodeIndex index) const;
 
 		UC_NODISCARD UINode find_by_type(UINodeTag tag,
 			const UINode& parent = UINode::Empty) const;
@@ -123,6 +124,7 @@ namespace unicore
 			String uid;
 			String name;
 			String style;
+			// UInt16 sibling_index; ? Optimization
 			Bool visible = true;
 			UINodeIndex parent = UINodeIndex_Invalid;
 			UIAttributeDict attributes;
@@ -132,6 +134,8 @@ namespace unicore
 
 		Logger* _logger;
 		NodeIndexList _roots;
+
+		// TODO: Optimize with list
 		Dictionary<UINodeIndex, NodeInfo> _node_infos;
 		Dictionary<UINodeIndex, UIActionDict> _node_actions;
 		Dictionary<UINodeIndex, NodeIndexList> _node_children;

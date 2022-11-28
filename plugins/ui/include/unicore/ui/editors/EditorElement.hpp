@@ -164,6 +164,7 @@ namespace unicore::ui
 			if (_property == prop) return;
 
 			_property = prop;
+			rebuild();
 		}
 
 	protected:

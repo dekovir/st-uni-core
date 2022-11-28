@@ -1,14 +1,16 @@
 #pragma once
-#include "unicore/ui/elements/TypedNodeElement.hpp"
+#include "unicore/ui/elements/ElementContainer.hpp"
 #include "unicore/resource/DataModel.hpp"
 
 namespace unicore::ui
 {
 	// GroupElement //////////////////////////////////////////////////////////////
-	template<typename TTemplate,
-		std::enable_if_t<std::is_base_of_v<SchemeNode, TTemplate>>* = nullptr>
-	class GroupElement : public TypedNodeElement<TTemplate>
+	template<typename TScheme,
+		std::enable_if_t<std::is_base_of_v<GroupSchemeNode, TScheme>>* = nullptr>
+	class GroupElement : public ElementContainer
 	{
+		UC_UI_ELEMENT_PROPERTY(name, String);
+		UC_UI_ELEMENT_PROPERTY(hidden, Bool);
 	public:
 		GroupElement() = default;
 
@@ -19,38 +21,10 @@ namespace unicore::ui
 			((add(std::forward<Args>(args))), ...);
 		}
 
-		UC_NODISCARD Size size() const { return _elements.size(); }
-
-		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
-		auto add(const Shared<T>& element)
-		{
-			internal_add(element);
-			return element;
-		}
-
-		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
-		auto add(const T& element)
-		{
-			auto ptr = std::make_shared<T>(element);
-			internal_add(ptr);
-			return ptr;
-		}
-
-		template<typename T,
-			std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
-		auto add(T&& element)
-		{
-			auto ptr = std::make_shared<T>(std::forward<T>(element));
-			internal_add(ptr);
-			return ptr;
-		}
-
 		Shared<SchemeNode> render() override
 		{
-			auto temp = ptr(TTemplate());
-			TypedNodeElement<TTemplate>::apply_params(*temp);
+			auto temp = ptr(TScheme());
+			apply_params(*temp);
 
 			for (const auto& element : _elements)
 				temp->add(element->render());
@@ -58,12 +32,11 @@ namespace unicore::ui
 			return temp;
 		}
 
-	protected:
-		List<Shared<Element>> _elements;
-
-		void internal_add(const Shared<Element>& element)
+		virtual void apply_params(TScheme& item)
 		{
-			_elements.push_back(element);
+			if (_name.empty())
+				item.set_params({ attr::Name(_name) });
+			item.set_params({ attr::Visible(!_hidden) });
 		}
 	};
 
@@ -72,9 +45,9 @@ namespace unicore::ui
 	using list_box = GroupElement<GroupList>;
 
 	// ValueGroupElement /////////////////////////////////////////////////////////
-	template<typename TTemplate, typename TValue,
-		std::enable_if_t<std::is_base_of_v<SchemeNode, TTemplate>>* = nullptr>
-	class ValueGroupElement : public GroupElement<TTemplate>
+	template<typename TScheme, typename TValue,
+		std::enable_if_t<std::is_base_of_v<GroupSchemeNode, TScheme>>* = nullptr>
+	class ValueGroupElement : public GroupElement<TScheme>
 	{
 	public:
 		using ValueType = TValue;
@@ -86,7 +59,7 @@ namespace unicore::ui
 			std::enable_if_t<all_is_element_v<Args...>>* = nullptr>
 		explicit ValueGroupElement(Args&&... args)
 		{
-			((GroupElement<TTemplate>::add(std::forward<Args>(args))), ...);
+			((GroupElement<TScheme>::add(std::forward<Args>(args))), ...);
 		}
 
 		void set_value(ValueArg value)
@@ -94,15 +67,15 @@ namespace unicore::ui
 			if (_value == value) return;
 
 			_value = value;
-			GroupElement<TTemplate>::rebuild();
+			GroupElement<TScheme>::rebuild();
 		}
 
 	protected:
 		TValue _value;
 
-		void apply_params(TTemplate& item) override
+		void apply_params(TScheme& item) override
 		{
-			GroupElement<TTemplate>::apply_params(item);
+			GroupElement<TScheme>::apply_params(item);
 
 			item.set_params({ attr::Value(_value) });
 		}

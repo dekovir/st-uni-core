@@ -6,6 +6,8 @@ namespace unicore::ui
 	class ElementContainer : public Element
 	{
 	public:
+		UC_NODISCARD Size size() const { return _elements.size(); }
+
 		template<typename T,
 			std::enable_if_t<std::is_base_of_v<Element, T>>* = nullptr>
 		auto add(const Shared<T>& element)
@@ -32,23 +34,11 @@ namespace unicore::ui
 			return ptr;
 		}
 
-		Bool rebuild_element(const Element& element);
-
 	protected:
-		struct Info
-		{
-			Shared<Element> element;
-			UINode node = UINode::Empty;
-		};
+		List<Shared<Element>> _elements;
 
-		Shared<UIDocument> _document;
-		List<ElementIndex> _indexes;
-		Dictionary<ElementIndex, Info> _infos;
+		void did_update() override;
 
 		void internal_add(const Shared<Element>& element);
-
-		Bool internal_rebuild(Info& info);
-
-		virtual UINode get_container_node() = 0;
 	};
 }

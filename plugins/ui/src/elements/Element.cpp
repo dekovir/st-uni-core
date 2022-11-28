@@ -1,5 +1,4 @@
 #include "unicore/ui/elements/Element.hpp"
-#include "unicore/ui/elements/ElementContainer.hpp"
 
 namespace unicore::ui
 {
@@ -10,17 +9,54 @@ namespace unicore::ui
 	{
 	}
 
-	void Element::set_parent(ElementContainer* parent)
+	void Element::mount(UIDocument& document, const UINode& parent)
 	{
-		UC_ASSERT_MSG(_parent == nullptr, "Reparanting in not supported");
-		UC_ASSERT_MSG(parent == nullptr, "Invalid argument");
+		if (is_mounted()) return;
 
-		_parent = parent;
+		const auto scheme = render();
+
+		_document = &document;
+		_node = scheme->create(*_document, parent);
+
+		did_mount();
+	}
+
+	void Element::unmount()
+	{
+		if (is_mounted())
+		{
+			will_umount();
+
+			_document->remove_node(_node);
+
+			_document = nullptr;
+			_node = UINode::Empty;
+		}
+	}
+
+	void Element::update()
+	{
+		if (is_mounted())
+		{
+			if (_need_rerender)
+			{
+				_need_rerender = false;
+
+				const auto scheme = render();
+				if (!scheme->apply_to(*_document, _node))
+				{
+					const auto parent = _node.parent();
+					_document->remove_node(_node);
+					_node = scheme->create(*_document, parent);
+				}
+			}
+
+			did_update();
+		}
 	}
 
 	void Element::rebuild()
 	{
-		if (_parent)
-			_parent->rebuild_element(*this);
+		_need_rerender = true;
 	}
 }

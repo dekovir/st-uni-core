@@ -15,7 +15,7 @@ namespace unicore::ui
 
 	Bool SchemeNode::apply_to(UIDocument& document, const UINode& node) const
 	{
-		if (node.tag() == _tag)
+		if (!node.empty() && node.tag() == _tag)
 		{
 			UINodeOptions options;
 			fill_optons(options);

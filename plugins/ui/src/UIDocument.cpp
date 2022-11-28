@@ -35,6 +35,12 @@ namespace unicore
 		return UINode::Empty;
 	}
 
+	UINode UIDocument::find_by_index(UINodeIndex index) const
+	{
+		const auto info = get_info(index);
+		return info != nullptr ? node_from_index(index) : UINode::Empty;
+	}
+
 	UINode UIDocument::find_by_type(UINodeTag tag, const UINode& parent) const
 	{
 		WriteProtectionGuard guard(_write_protection);

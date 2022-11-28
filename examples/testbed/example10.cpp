@@ -58,11 +58,13 @@ namespace unicore
 		if (editor_ref)
 			editor_ref->set_object(_object);
 
-		_root->render()->create(*_document, UINode::Empty);
+		_root->mount(*_document, UINode::Empty);
 	}
 
 	void Example10::update()
 	{
+		_root->update();
+
 		if (_view)
 			_view->render();
 	}
