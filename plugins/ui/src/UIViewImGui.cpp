@@ -605,6 +605,9 @@ namespace unicore
 	void UIViewImGui::render_node_header(
 		const UINode& node, LayoutOption layout_option)
 	{
+		if (node.disabled())
+			ImGui::BeginDisabled(true);
+
 		switch (layout_option)
 		{
 		case LayoutOption::None:
@@ -630,6 +633,9 @@ namespace unicore
 	void UIViewImGui::render_node_footer(const UINode& node)
 	{
 		const bool is_item_hovered = ImGui::IsItemHovered();
+
+		if (node.disabled())
+			ImGui::EndDisabled();
 
 		if (const auto info = get_info(node.index()))
 		{

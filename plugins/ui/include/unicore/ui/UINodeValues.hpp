@@ -10,6 +10,7 @@ namespace unicore::ui
 		UNICORE_MAKE_STRONG_TYPE(Name, String);
 		UNICORE_MAKE_STRONG_TYPE(Value, Variant);
 		UNICORE_MAKE_STRONG_TYPE(Hidden, Bool);
+		UNICORE_MAKE_STRONG_TYPE(Disabled, Bool);
 
 		UNICORE_MAKE_STRONG_TYPE(Width, Variant);
 		UNICORE_MAKE_STRONG_TYPE(Height, Variant);
@@ -25,7 +26,7 @@ namespace unicore::ui
 		UNICORE_MAKE_STRONG_TYPE(OnChange, UIAction);
 
 		using Any = StdVariant<
-			Type, Name, Value, Hidden,
+			Type, Name, Value, Hidden, Disabled,
 			Width, Height, Tooltip, Text, Step, Min, Max,
 			OnClick, OnChange>;
 	}
@@ -37,6 +38,7 @@ namespace unicore::ui
 		std::is_same_v<T, attr::Type> ||
 		std::is_same_v<T, attr::Value> ||
 		std::is_same_v<T, attr::Hidden> ||
+		std::is_same_v<T, attr::Disabled> ||
 		std::is_same_v<T, attr::Width> ||
 		std::is_same_v<T, attr::Height> ||
 		std::is_same_v<T, attr::Tooltip> ||
@@ -73,6 +75,7 @@ namespace unicore::ui
 		void internal_set(const attr::Type& value) { _attributes[UIAttribute::Type] = value.get(); }
 		void internal_set(const attr::Value& value) { _attributes[UIAttribute::Value] = value.get(); }
 		void internal_set(const attr::Hidden& value) { _attributes[UIAttribute::Hidden] = value.get(); }
+		void internal_set(const attr::Disabled& value) { _attributes[UIAttribute::Disabled] = value.get(); }
 		void internal_set(const attr::Width& value) { _attributes[UIAttribute::Width] = value.get(); }
 		void internal_set(const attr::Height& value) { _attributes[UIAttribute::Height] = value.get(); }
 		void internal_set(const attr::Tooltip& value) { _attributes[UIAttribute::Tooltip] = value.get(); }

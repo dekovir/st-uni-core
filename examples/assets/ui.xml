@@ -135,6 +135,11 @@
 		</tr>
 	</table>
 
+	<!-- Disabled -->
+	<hbox disabled="1">
+		<button>Disabled</button>
+	</hbox>
+
 	<!-- Tree -->
 	<text>Tree</text>
 	<tree value="1">Item 1

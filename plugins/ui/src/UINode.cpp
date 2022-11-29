@@ -78,6 +78,11 @@ namespace unicore
 		return _document ? _document->get_node_children_count(*this) : 0;
 	}
 
+	UINode UINode::get_children(int index) const
+	{
+		return _document ? _document->get_node_child(*this, index) : Empty;
+	}
+
 	int UINode::get_sibling_index() const
 	{
 		if (_document)

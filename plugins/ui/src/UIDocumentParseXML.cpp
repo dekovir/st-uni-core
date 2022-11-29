@@ -16,6 +16,7 @@ namespace unicore
 		{"name", UIAttribute::Name},
 		{"value", UIAttribute::Value},
 		{"hidden", UIAttribute::Hidden},
+		{"disabled", UIAttribute::Disabled},
 		{"width", UIAttribute::Width},
 		{"w", UIAttribute::Width},
 		{"height", UIAttribute::Height},

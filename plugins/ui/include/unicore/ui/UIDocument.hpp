@@ -18,8 +18,6 @@ namespace unicore
 		UC_OBJECT_EVENT(create_node, const UINode&);
 		UC_OBJECT_EVENT(remove_node, const UINode&);
 		UC_OBJECT_EVENT(reorder_children, const UINode&);
-
-		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
 		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttribute, const Variant&);
 	public:
 		explicit UIDocument(Logger* logger = nullptr);

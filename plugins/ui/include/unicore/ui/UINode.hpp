@@ -10,6 +10,7 @@ namespace unicore
 		Name,
 		Value,
 		Hidden,
+		Disabled,
 		Width,
 		Height,
 		Tooltip,
@@ -23,6 +24,7 @@ namespace unicore
 		UIAttribute::Name,
 		UIAttribute::Value,
 		UIAttribute::Hidden,
+		UIAttribute::Disabled,
 		UIAttribute::Width,
 		UIAttribute::Height,
 		UIAttribute::Tooltip,
@@ -130,12 +132,14 @@ namespace unicore
 		UC_NODISCARD StringView name() const;
 		UC_NODISCARD Variant value() const { return get(UIAttribute::Value); }
 		UC_NODISCARD Bool hidden() const { return get(UIAttribute::Hidden).get_bool(); }
+		UC_NODISCARD Bool disabled() const { return get(UIAttribute::Disabled).get_bool(); }
 		UC_NODISCARD Variant text() const { return get(UIAttribute::Text); }
 
 		// HIERARCHY ///////////////////////////////////////////////////////////////
 		size_t get_children(List<UINode>& children) const;
 		UC_NODISCARD List<UINode> get_children() const;
 		UC_NODISCARD Size get_children_count() const;
+		UC_NODISCARD UINode get_children(int index) const;
 
 		UC_NODISCARD int get_sibling_index() const;
 
