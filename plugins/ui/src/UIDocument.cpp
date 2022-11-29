@@ -49,7 +49,7 @@ namespace unicore
 				return parent;
 		}
 
-		if (const auto children = get_children_index(parent.index()))
+		if (const auto children = get_children_list(parent.index()))
 		{
 			for (const auto child_index : *children)
 			{
@@ -109,7 +109,7 @@ namespace unicore
 			}
 		}
 
-		if (const auto children = get_children_index(parent.index()))
+		if (const auto children = get_children_list(parent.index()))
 		{
 			for (const auto child_index : *children)
 			{
@@ -421,7 +421,7 @@ namespace unicore
 				return 0;
 			}
 
-			if (const auto children = get_children_index(node.index()))
+			if (const auto children = get_children_list(node.index()))
 			{
 				for (const auto child_index : *children)
 					list.push_back(node_from_index(child_index));
@@ -444,6 +444,30 @@ namespace unicore
 		return list;
 	}
 
+	UINode UIDocument::get_node_child(const UINode& node, int index) const
+	{
+		if (!node.empty())
+		{
+			if (node.document() != this)
+			{
+				UC_LOG_ERROR(_logger) << "Failed to get node children count. Node "
+					<< node << " from other document";
+				return UINode::Empty;
+			}
+
+			if (const auto children = get_children_list(node.index()); children != nullptr)
+			{
+				if (const auto it = std::find(children->begin(), children->end(), node.index()); it != children->end())
+				{
+					const auto value = static_cast<UINodeIndex::TypeValue>(it - children->begin());
+					return node_from_index(UINodeIndex(value));
+				}
+			}
+		}
+
+		return UINode::Empty;
+	}
+
 	Size UIDocument::get_node_children_count(const UINode& node) const
 	{
 		if (!node.empty())
@@ -455,7 +479,7 @@ namespace unicore
 				return 0;
 			}
 
-			if (const auto children = get_children_index(node.index()))
+			if (const auto children = get_children_list(node.index()))
 				return children->size();
 
 			return 0;
@@ -464,37 +488,18 @@ namespace unicore
 		return _roots.size();
 	}
 
-	UINode UIDocument::get_node_child(const UINode& node, Size index) const
+	int UIDocument::get_node_sibling_index(const UINode& node) const
 	{
-		if (!node.empty())
+		if (!node.empty() && node.document() != this)
 		{
-			if (node.document() != this)
-			{
-				UC_LOG_ERROR(_logger) << "Failed to get child. Node "
-					<< node << " from other document";
-				return UINode::Empty;
-			}
-
-			if (const auto children = get_children_index(node.index()))
-			{
-				if (index <= children->size())
-					return node_from_index(children->at(index));
-			}
-
-			return UINode::Empty;
+			UC_LOG_ERROR(_logger) << "Failed to set node "
+				<< node << " sibling index. Wrong document";
+			return -1;
 		}
 
-		if (index <= _roots.size())
-			return node_from_index(_roots[index]);
-
-		return UINode::Empty;
-	}
-
-	Optional<unsigned> UIDocument::get_node_sibling_index(const UINode& node) const
-	{
 		if (const auto& info = get_info(node); info != nullptr)
 		{
-			const auto children = get_children_index(info->parent);
+			const auto children = get_children_list(info->parent);
 			UC_ASSERT_MSG(children != nullptr, "Children is null");
 
 			if (const auto it = std::find(children->begin(), children->end(), node.index()); it != children->end())
@@ -503,35 +508,38 @@ namespace unicore
 			UC_ASSERT_ALWAYS_MSG("Index not found");
 		}
 
-		return std::nullopt;
+		return -1;
 	}
 
-	Bool UIDocument::set_node_sibling_index(const UINode& node, unsigned new_index)
+	Bool UIDocument::set_node_sibling_index(const UINode& node, int new_index)
 	{
 		if (!node.empty() && node.document() != this)
 		{
-			UC_LOG_ERROR(_logger) << "Failed to set node sibling index. Wrong document";
+			UC_LOG_ERROR(_logger) << "Failed to set node "
+				<< node << " sibling index. Wrong document";
 			return false;
 		}
 
 		if (const auto& info = get_info(node.index()); info != nullptr)
 		{
-			const auto children = get_children_index(info->parent);
-			UC_ASSERT_MSG(children != nullptr, "Children is null");
-
-			if (const auto it = std::find(children->begin(), children->end(), node.index()); it != children->end())
+			if (const auto children = get_children_list(info->parent); children != nullptr)
 			{
-				if (const auto old_index = it - children->begin(); old_index != new_index)
+				new_index = Math::clamp<int>(new_index, 0, children->size() - 1);
+
+				if (const auto it = std::find(children->begin(), children->end(), node.index()); it != children->end())
 				{
-					children->erase(children->begin() + old_index);
-					children->insert(children->begin() + new_index, node.index());
+					if (const auto old_index = it - children->begin(); old_index != new_index)
+					{
+						children->erase(children->begin() + old_index);
+						children->insert(children->begin() + new_index, node.index());
 
-					_event_reorder_children.invoke(node_from_index(info->parent));
+						_event_reorder_children.invoke(node_from_index(info->parent));
+					}
+					return true;
 				}
-				return true;
-			}
 
-			UC_ASSERT_ALWAYS_MSG("Index not found");
+				UC_ASSERT_ALWAYS_MSG("Index not found");
+			}
 		}
 
 		return false;
@@ -541,7 +549,7 @@ namespace unicore
 	{
 		if (const auto& info = get_info(node); info != nullptr)
 		{
-			const auto children = get_children_index(info->parent);
+			const auto children = get_children_list(info->parent);
 			UC_ASSERT_MSG(children != nullptr, "Children is null");
 
 			if (const auto it = std::find(children->begin(), children->end(), node.index()); it != children->end())
@@ -560,7 +568,7 @@ namespace unicore
 	{
 		if (const auto& info = get_info(node); info != nullptr)
 		{
-			const auto children = get_children_index(info->parent);
+			const auto children = get_children_list(info->parent);
 			UC_ASSERT_MSG(children != nullptr, "Children is null");
 
 			if (const auto it = std::find(children->begin(), children->end(), node.index()); it != children->end())
@@ -735,7 +743,7 @@ namespace unicore
 		return it != _node_actions.end() ? &it->second : nullptr;
 	}
 
-	UIDocument::NodeIndexList* UIDocument::get_children_index(UINodeIndex index)
+	UIDocument::NodeIndexList* UIDocument::get_children_list(UINodeIndex index)
 	{
 		if (index != UINodeIndex_Invalid)
 		{
@@ -746,7 +754,7 @@ namespace unicore
 		return !_roots.empty() ? &_roots : nullptr;
 	}
 
-	const UIDocument::NodeIndexList* UIDocument::get_children_index(UINodeIndex index) const
+	const UIDocument::NodeIndexList* UIDocument::get_children_list(UINodeIndex index) const
 	{
 		if (index != UINodeIndex_Invalid)
 		{
@@ -776,7 +784,7 @@ namespace unicore
 			count++;
 		}
 
-		if (const auto children = get_children_index(index); children != nullptr)
+		if (const auto children = get_children_list(index); children != nullptr)
 		{
 			for (const auto child_index : *children)
 				internal_find_all_by_tag(child_index, tag, list, count);
@@ -798,7 +806,7 @@ namespace unicore
 			}
 		}
 
-		if (const auto children = get_children_index(index); children != nullptr)
+		if (const auto children = get_children_list(index); children != nullptr)
 		{
 			for (const auto child_index : *children)
 				internal_find_all_by_name(child_index, name, list, count);
@@ -814,7 +822,7 @@ namespace unicore
 				return node;
 		}
 
-		if (const auto children = get_children_index(index); children != nullptr)
+		if (const auto children = get_children_list(index); children != nullptr)
 		{
 			for (const auto child_index : *children)
 			{
@@ -839,7 +847,7 @@ namespace unicore
 			}
 		}
 
-		if (const auto children = get_children_index(index); children != nullptr)
+		if (const auto children = get_children_list(index); children != nullptr)
 		{
 			for (const auto child_index : *children)
 				internal_query_all(child_index, predicate, list, count);
@@ -888,7 +896,7 @@ namespace unicore
 				options.actions = *actions;
 
 			const auto new_index = internal_create_node(info->tag, options, parent);
-			if (const auto children = get_children_index(node.index()); children != nullptr)
+			if (const auto children = get_children_list(node.index()); children != nullptr)
 			{
 				for (const auto& child : *children)
 					internal_duplicate(node_from_index(child), new_index);

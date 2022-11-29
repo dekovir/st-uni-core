@@ -2,6 +2,14 @@
 	<text name="position" />
 	<text>Sample text</text>
 
+	<!-- Move -->
+	<hbox name="move_group">
+		<text>Index: </text>
+		<text name="move_index"></text>
+		<button name="move_up">move up</button>
+		<button name="move_down">move down</button>
+	</hbox>
+
 	<!-- Button -->
 	<hbox>
 		<button name="button">Click</button>

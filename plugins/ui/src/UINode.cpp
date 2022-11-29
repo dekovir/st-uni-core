@@ -78,15 +78,12 @@ namespace unicore
 		return _document ? _document->get_node_children_count(*this) : 0;
 	}
 
-	unsigned UINode::get_sibling_index() const
+	int UINode::get_sibling_index() const
 	{
 		if (_document)
-		{
-			if (const auto result = _document->get_node_sibling_index(*this); result.has_value())
-				return result.value();
-		}
+			return _document->get_node_sibling_index(*this);
 
-		return 0;
+		return -1;
 	}
 
 	UINode UINode::get_next_sibling() const

@@ -28,16 +28,16 @@ namespace unicore
 				{
 					for (const auto& child : combo_node.get_children())
 					{
-						if (child.tag() == UINodeTag::Input && 
+						if (child.tag() == UINodeTag::Input &&
 							child.type().get_enum<UIInputType>() == UIInputType::Item)
 							document.set_node_attribute(child, UIAttribute::Value, false);
 					}
 
-					document.set_node_attribute(node, UIAttribute::Value, true);
-					document.set_node_attribute(combo_node, UIAttribute::Value, node.text());
+				document.set_node_attribute(node, UIAttribute::Value, true);
+				document.set_node_attribute(combo_node, UIAttribute::Value, node.text());
 
-					if (callback != nullptr)
-						callback(value);
+				if (callback != nullptr)
+					callback(value);
 				});
 		}
 
@@ -83,12 +83,18 @@ namespace unicore
 			const auto add_node = _document->find_by_name("add_item");
 			const auto combo_node = _document->find_by_name("combo");
 
+			_move_group_node = _document->find_by_name("move_group");
+			_move_index_node = _document->find_by_name("move_index");
+
+			const auto move_up_node = _document->find_by_name("move_up");
+			const auto move_down_node = _document->find_by_name("move_down");
+
 			if (!button_node.empty())
 			{
 				_document->subscribe_node(button_node, UIActionType::OnClick, [&, button_node]
-				{
-					_document->set_node_attribute(button_node, UIAttribute::Text, U"Clicked");
-				});
+					{
+						_document->set_node_attribute(button_node, UIAttribute::Text, U"Clicked");
+					});
 			}
 
 			if (!group_node.empty() && !add_node.empty())
@@ -97,11 +103,30 @@ namespace unicore
 					[this, group_node]
 					{
 						const auto count = group_node.get_children_count();
-						const auto text = StringBuilder::format("Item {}", count + 1);
+					const auto text = StringBuilder::format("Item {}", count + 1);
 
-						UINodeOptions options;
-						options.attributes[UIAttribute::Text] = text;
-						_document->create_input(UIInputType::Item, options, group_node);
+					UINodeOptions options;
+					options.attributes[UIAttribute::Text] = text;
+					_document->create_input(UIInputType::Item, options, group_node);
+					});
+			}
+
+			update_move_index();
+			if (!_move_group_node.empty() && !_move_index_node.empty() &&
+				!move_up_node.empty() && !move_down_node.empty())
+			{
+				_document->subscribe_node(move_up_node, UIActionType::OnClick, [&]
+					{
+						const auto index = _document->get_node_sibling_index(_move_group_node);
+				_document->set_node_sibling_index(_move_group_node, index - 1);
+				update_move_index();
+					});
+
+				_document->subscribe_node(move_down_node, UIActionType::OnClick, [&]
+					{
+						const auto index = _document->get_node_sibling_index(_move_group_node);
+				_document->set_node_sibling_index(_move_group_node, index + 1);
+				update_move_index();
 					});
 			}
 
@@ -109,7 +134,7 @@ namespace unicore
 				[this](int value)
 				{
 					if (const auto it = s_items.find(value); it != s_items.end())
-						UC_LOG_DEBUG(logger) << "Select " << it->second;
+					UC_LOG_DEBUG(logger) << "Select " << it->second;
 					else UC_LOG_DEBUG(logger) << "Select " << value;
 				});
 		}
@@ -130,5 +155,14 @@ namespace unicore
 
 	void Example07::draw() const
 	{
+	}
+
+	void Example07::update_move_index()
+	{
+		if (_move_group_node.empty() || _move_index_node.empty()) return;
+
+		const auto index = _document->get_node_sibling_index(_move_group_node);
+		const auto text = StringBuilder::format("{}", index);
+		_document->set_node_attribute(_move_index_node, UIAttribute::Text, text);
 	}
 }

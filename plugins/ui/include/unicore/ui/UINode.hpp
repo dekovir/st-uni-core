@@ -137,7 +137,8 @@ namespace unicore
 		UC_NODISCARD List<UINode> get_children() const;
 		UC_NODISCARD Size get_children_count() const;
 
-		UC_NODISCARD unsigned get_sibling_index() const;
+		UC_NODISCARD int get_sibling_index() const;
+
 		UC_NODISCARD UINode get_next_sibling() const;
 		UC_NODISCARD UINode get_prev_sibling() const;
 

@@ -80,12 +80,11 @@ namespace unicore
 
 		Size get_node_children(List<UINode>& list, const UINode& node) const;
 		UC_NODISCARD List<UINode> get_node_children(const UINode& node) const;
+		UC_NODISCARD UINode get_node_child(const UINode& node, int index) const;
 		UC_NODISCARD Size get_node_children_count(const UINode& node) const;
 
-		UC_NODISCARD UINode get_node_child(const UINode& node, Size index) const;
-
-		UC_NODISCARD Optional<unsigned> get_node_sibling_index(const UINode& node) const;
-		Bool set_node_sibling_index(const UINode& node, unsigned new_index);
+		UC_NODISCARD int get_node_sibling_index(const UINode& node) const;
+		Bool set_node_sibling_index(const UINode& node, int new_index);
 
 		UC_NODISCARD UINode get_node_next_sibling(const UINode& node) const;
 		UC_NODISCARD UINode get_node_prev_sibling(const UINode& node) const;
@@ -156,8 +155,8 @@ namespace unicore
 		UIActionDict* get_actions(UINodeIndex index);
 		UC_NODISCARD const UIActionDict* get_actions(UINodeIndex index) const;
 
-		NodeIndexList* get_children_index(UINodeIndex index);
-		UC_NODISCARD const NodeIndexList* get_children_index(UINodeIndex index) const;
+		NodeIndexList* get_children_list(UINodeIndex index);
+		UC_NODISCARD const NodeIndexList* get_children_list(UINodeIndex index) const;
 
 		UINodeIndex create_index();
 		UC_NODISCARD UINode node_from_index(UINodeIndex index) const;

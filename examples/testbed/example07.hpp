@@ -18,6 +18,11 @@ namespace unicore
 		ImGuiContext& _context;
 		Shared<UIDocument> _document;
 		Shared<UIViewImGui> _view;
+
 		UINode _position_node;
+		UINode _move_group_node;
+		UINode _move_index_node;
+
+		void update_move_index();
 	};
 }
