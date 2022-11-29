@@ -1,10 +1,10 @@
 <vbox>
-	<text id="position" />
+	<text name="position" />
 	<text>Sample text</text>
 
 	<!-- Button -->
 	<hbox>
-		<button>Default</button>
+		<button name="button">Click</button>
 	</hbox>
 
 	<!-- Inputs -->
@@ -97,14 +97,14 @@
 
 	<hbox>
 		<text tooltip="Combobox with logic">Combo 2</text>
-		<combo id="combo">
+		<combo name="combo">
 		</combo>
 	</hbox>
 
 	<!-- List -->
 	<text>Items</text>
-	<list id="group" />
-	<button id="add_item">Add item</button>
+	<list name="group" />
+	<button name="add_item">Add item</button>
 
 	<!-- Table -->
 	<text>Table</text>

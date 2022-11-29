@@ -2,6 +2,7 @@
 #include "unicore/resource/Resource.hpp"
 #include "unicore/ui/UINode.hpp"
 #include "unicore/system/Event.hpp"
+#include "unicore/system/EnumFlag.hpp"
 
 namespace unicore
 {
@@ -29,12 +30,11 @@ namespace unicore
 		UC_NODISCARD List<UINode> get_roots() const;
 
 		// FIND ////////////////////////////////////////////////////////////////////
-		UC_NODISCARD UINode find_by_id(StringView id) const;
 		UC_NODISCARD UINode find_by_index(UINodeIndex index) const;
 
-		UC_NODISCARD UINode find_by_type(UINodeTag tag,
+		UC_NODISCARD UINode find_by_tag(UINodeTag tag,
 			const UINode& parent = UINode::Empty) const;
-		Size find_all_by_type(UINodeTag tag, List<UINode>& list,
+		Size find_all_by_tag(UINodeTag tag, List<UINode>& list,
 			const UINode& parent = UINode::Empty) const;
 
 		UC_NODISCARD UINode find_by_name(StringView name,
@@ -73,13 +73,7 @@ namespace unicore
 
 		// VALUES //////////////////////////////////////////////////////////////////
 		UC_NODISCARD Bool is_node_valid(const UINode& node) const;
-
 		UC_NODISCARD Bool get_node_tag(const UINode& node, UINodeTag& value) const;
-
-		UC_NODISCARD Bool get_node_uid(const UINode& node, String& value) const;
-
-		UC_NODISCARD Bool get_node_name(const UINode& node, String& value) const;
-		Bool set_node_name(const UINode& node, StringView value);
 
 		// HIERARCHY ///////////////////////////////////////////////////////////////
 		UC_NODISCARD UINode get_node_parent(const UINode& node) const;
@@ -99,13 +93,16 @@ namespace unicore
 		// ATTRIBUTES //////////////////////////////////////////////////////////////
 		void set_node_attribute(const UINode& node,
 			UIAttribute attribute, const Variant& value);
-
 		UC_NODISCARD const Variant& get_node_attribute(const UINode& node, UIAttribute attribute) const;
 
 		UC_NODISCARD Optional<UIAttributeDict> get_node_attributes(const UINode& node) const;
 		UC_NODISCARD Bool get_node_attributes(const UINode& node, UIAttributeDict& dict) const;
 
-		void set_node_hidden(const UINode& node, Bool value) { set_node_attribute(node, UIAttribute::Hidden, value); }
+		UC_NODISCARD StringView get_node_name(const UINode& node) const;
+		void set_node_name(const UINode& node, StringView value);
+
+		UC_NODISCARD Bool get_node_hidden(const UINode& node) const;
+		void set_node_hidden(const UINode& node, Bool value);
 
 		// ACTIONS /////////////////////////////////////////////////////////////////
 		void subscribe_node(const UINode& node, UIActionType type, const UIAction& action);
@@ -115,8 +112,6 @@ namespace unicore
 		struct NodeInfo
 		{
 			UINodeTag tag = UINodeTag::Group;
-			String uid;
-			String name;
 			// UInt16 sibling_index; ? Optimization
 			UINodeIndex parent = UINodeIndex_Invalid;
 			UIAttributeDict attributes;
@@ -131,7 +126,6 @@ namespace unicore
 		Dictionary<UINodeIndex, NodeInfo> _node_infos;
 		Dictionary<UINodeIndex, UIActionDict> _node_actions;
 		Dictionary<UINodeIndex, NodeIndexList> _node_children;
-		Dictionary<String, UINodeIndex> _cached_id;
 
 		mutable bool _write_protection = false;
 
@@ -168,7 +162,7 @@ namespace unicore
 		UINodeIndex create_index();
 		UC_NODISCARD UINode node_from_index(UINodeIndex index) const;
 
-		void internal_find_all_by_type(UINodeIndex index,
+		void internal_find_all_by_tag(UINodeIndex index,
 			UINodeTag tag, List<UINode>& list, Size& count) const;
 		void internal_find_all_by_name(UINodeIndex index,
 			StringView name, List<UINode>& list, Size& count) const;

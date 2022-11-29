@@ -6,10 +6,8 @@ namespace unicore::ui
 {
 	namespace attr
 	{
-		UNICORE_MAKE_STRONG_TYPE(Uid, String);
-		UNICORE_MAKE_STRONG_TYPE(Name, String);
-
 		UNICORE_MAKE_STRONG_TYPE(Type, UInt8);
+		UNICORE_MAKE_STRONG_TYPE(Name, String);
 		UNICORE_MAKE_STRONG_TYPE(Value, Variant);
 		UNICORE_MAKE_STRONG_TYPE(Hidden, Bool);
 
@@ -27,15 +25,14 @@ namespace unicore::ui
 		UNICORE_MAKE_STRONG_TYPE(OnChange, UIAction);
 
 		using Any = StdVariant<
-			Uid, Name, Hidden, Type,
-			Value, Width, Height, Tooltip, Text, Step, Min, Max,
+			Type, Name, Value, Hidden,
+			Width, Height, Tooltip, Text, Step, Min, Max,
 			OnClick, OnChange>;
 	}
 
 	// SFINAE ////////////////////////////////////////////////////////////////////
 	template <class T>
 	inline constexpr bool is_attr_v =
-		std::is_same_v<T, attr::Uid> ||
 		std::is_same_v<T, attr::Name> ||
 		std::is_same_v<T, attr::Type> ||
 		std::is_same_v<T, attr::Value> ||
@@ -57,7 +54,7 @@ namespace unicore::ui
 	class UINodeValues
 	{
 	public:
-		using VariantType = std::variant<attr::Uid, attr::Name, attr::Hidden>;
+		using VariantType = std::variant<attr::Name, attr::Hidden>;
 		using Params = std::initializer_list<VariantType>;
 
 		UINodeValues() = default;
@@ -69,14 +66,10 @@ namespace unicore::ui
 		void apply(Params params);
 
 	protected:
-		String _uid;
-		String _name;
-
 		UIAttributeDict _attributes = {};
 		UIActionDict _actions = {};
 
-		void internal_set(const attr::Uid& value) { _uid = value.get(); }
-		void internal_set(const attr::Name& value) { _name = value.get(); }
+		void internal_set(const attr::Name& value) { _attributes[UIAttribute::Name] = value.get(); }
 		void internal_set(const attr::Type& value) { _attributes[UIAttribute::Type] = value.get(); }
 		void internal_set(const attr::Value& value) { _attributes[UIAttribute::Value] = value.get(); }
 		void internal_set(const attr::Hidden& value) { _attributes[UIAttribute::Hidden] = value.get(); }
@@ -108,7 +101,7 @@ namespace unicore::ui
 	class UINodeValuesT : public UINodeValues
 	{
 	public:
-		using VariantType = std::variant<attr::Uid, attr::Name, attr::Hidden, TKeys...>;
+		using VariantType = std::variant<attr::Name, attr::Hidden, TKeys...>;
 		using Params = std::initializer_list<VariantType>;
 
 		UINodeValuesT() = default;

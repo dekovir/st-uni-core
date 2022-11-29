@@ -7,6 +7,7 @@ namespace unicore
 	enum class UIAttribute : UInt8
 	{
 		Type,
+		Name,
 		Value,
 		Hidden,
 		Width,
@@ -19,6 +20,7 @@ namespace unicore
 	};
 	static const List<UIAttribute> UIAttributeKeys = {
 		UIAttribute::Type,
+		UIAttribute::Name,
 		UIAttribute::Value,
 		UIAttribute::Hidden,
 		UIAttribute::Width,
@@ -88,9 +90,6 @@ namespace unicore
 
 	struct UINodeOptions
 	{
-		// TODO: Remove strings
-		String uid;
-		String name;
 		UIAttributeDict attributes = {};
 		// TODO: Move to attributes
 		UIActionDict actions = {};
@@ -121,18 +120,16 @@ namespace unicore
 		UC_NODISCARD UINodeTag tag() const;
 		UC_NODISCARD UINode parent() const;
 
-		UC_NODISCARD Optional<String> uid() const;
-		UC_NODISCARD Optional<String> name() const;
-
 		// ATTRIBUTES //////////////////////////////////////////////////////////////
 		UC_NODISCARD UIAttributeDict get_attributes() const;
 
 		UC_NODISCARD Variant get(UIAttribute attribute) const;
 		UC_NODISCARD Bool has(UIAttribute attribute) const;
 
+		UC_NODISCARD Variant type() const { return get(UIAttribute::Type); }
+		UC_NODISCARD StringView name() const;
 		UC_NODISCARD Variant value() const { return get(UIAttribute::Value); }
 		UC_NODISCARD Bool hidden() const { return get(UIAttribute::Hidden).get_bool(); }
-		UC_NODISCARD Variant type() const { return get(UIAttribute::Type); }
 		UC_NODISCARD Variant text() const { return get(UIAttribute::Text); }
 
 		// HIERARCHY ///////////////////////////////////////////////////////////////

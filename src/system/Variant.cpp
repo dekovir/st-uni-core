@@ -209,6 +209,17 @@ namespace unicore
 		return std::holds_alternative<String>(_data);
 	}
 
+	bool Variant::try_get_string(StringView& value) const
+	{
+		if (const auto str = std::get_if<String>(&_data))
+		{
+			value = *str;
+			return true;
+		}
+
+		return false;
+	}
+
 	bool Variant::try_get_string(String& value) const
 	{
 		if (const auto str = std::get_if<String>(&_data))
@@ -250,6 +261,17 @@ namespace unicore
 	Bool Variant::is_string32() const
 	{
 		return std::holds_alternative<String32>(_data);
+	}
+
+	bool Variant::try_get_string32(StringView32& value) const
+	{
+		if (const auto str = std::get_if<String32>(&_data))
+		{
+			value = *str;
+			return true;
+		}
+
+		return false;
 	}
 
 	bool Variant::try_get_string32(String32& value) const

@@ -210,11 +210,13 @@ namespace unicore
 
 		// STRING //////////////////////////////////////////////////////////////////
 		UC_NODISCARD Bool is_string() const;
+		UC_NODISCARD bool try_get_string(StringView& value) const;
 		UC_NODISCARD bool try_get_string(String& value) const;
 		UC_NODISCARD String get_string(StringView default_value = "") const;
 
 		// STRING32 ////////////////////////////////////////////////////////////////
 		UC_NODISCARD Bool is_string32() const;
+		UC_NODISCARD bool try_get_string32(StringView32& value) const;
 		UC_NODISCARD bool try_get_string32(String32& value) const;
 		UC_NODISCARD String32 get_string32(StringView32 default_value = U"") const;
 

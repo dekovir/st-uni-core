@@ -76,11 +76,20 @@ namespace unicore
 			_view->set_size(Vector2f(300, 0));
 			_view->set_position(Vector2f(size.x / 2 - 150, 10));
 
-			_position_node = _document->find_by_id("position");
+			_position_node = _document->find_by_name("position");
 
-			const auto group_node = _document->find_by_id("group");
-			const auto add_node = _document->find_by_id("add_item");
-			const auto combo_node = _document->find_by_id("combo");
+			const auto button_node = _document->find_by_name("button");
+			const auto group_node = _document->find_by_name("group");
+			const auto add_node = _document->find_by_name("add_item");
+			const auto combo_node = _document->find_by_name("combo");
+
+			if (!button_node.empty())
+			{
+				_document->subscribe_node(button_node, UIActionType::OnClick, [&, button_node]
+				{
+					_document->set_node_attribute(button_node, UIAttribute::Text, U"Clicked");
+				});
+			}
 
 			if (!group_node.empty() && !add_node.empty())
 			{

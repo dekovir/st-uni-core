@@ -32,24 +32,6 @@ namespace unicore
 		return _document ? _document->get_node_parent(*this) : Empty;
 	}
 
-	Optional<String> UINode::uid() const
-	{
-		String value;
-		if (_document && _document->get_node_uid(*this, value))
-			return value;
-
-		return std::nullopt;
-	}
-
-	Optional<String> UINode::name() const
-	{
-		String value;
-		if (_document && _document->get_node_name(*this, value))
-			return value;
-
-		return std::nullopt;
-	}
-
 	UIAttributeDict UINode::get_attributes() const
 	{
 		if (_document)
@@ -69,6 +51,14 @@ namespace unicore
 	Bool UINode::has(UIAttribute attribute) const
 	{
 		return _document ? _document->get_node_attribute(*this, attribute) != Variant::Empty : false;
+	}
+
+	StringView UINode::name() const
+	{
+		if (_document)
+			return _document->get_node_name(*this);
+
+		return {};
 	}
 
 	size_t UINode::get_children(List<UINode>& children) const
@@ -112,12 +102,12 @@ namespace unicore
 	// FIND //////////////////////////////////////////////////////////////////////
 	UINode UINode::find_by_type(UINodeTag tag) const
 	{
-		return _document ? _document->find_by_type(tag, *this) : Empty;
+		return _document ? _document->find_by_tag(tag, *this) : Empty;
 	}
 
 	Size UINode::find_all_by_type(UINodeTag tag, List<UINode>& list) const
 	{
-		return _document ? _document->find_all_by_type(tag, list, *this) : 0;
+		return _document ? _document->find_all_by_tag(tag, list, *this) : 0;
 	}
 
 	UINode UINode::find_by_name(StringView name) const

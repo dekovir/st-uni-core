@@ -145,7 +145,8 @@ namespace unicore
 		return false;
 	}
 
-	Bool UIViewImGui::render_group(const CachedInfo& info, const UINode& node, LayoutOption layout_option)
+	Bool UIViewImGui::render_group(const CachedInfo& info,
+		const UINode& node, LayoutOption layout_option)
 	{
 		const auto& id = info.id;
 		const auto& title = info.title;
@@ -342,7 +343,8 @@ namespace unicore
 		return true;
 	}
 
-	Bool UIViewImGui::render_visual(const CachedInfo& info, const UINode& node, LayoutOption layout_option)
+	Bool UIViewImGui::render_visual(const CachedInfo& info,
+		const UINode& node, LayoutOption layout_option)
 	{
 		const auto& id = info.id;
 		const auto width = node.get(UIAttribute::Width).get_float();
@@ -393,7 +395,8 @@ namespace unicore
 				node.get(UIAttribute::Min).get_float(0),
 				node.get(UIAttribute::Max).get_float(1)
 			};
-			float_value = Math::inverse_lerp(range_f.min, range_f.max, node.value().get_float());
+			float_value = Math::inverse_lerp(
+				range_f.min, range_f.max, node.value().get_float());
 			render_node_header(node, layout_option);
 			if (node.get(UIAttribute::Text).try_get_string(str))
 				ImGui::ProgressBar(float_value, { width, height }, str.c_str());
@@ -491,7 +494,7 @@ namespace unicore
 			render_node_footer(node);
 			break;
 
-		case UIInputType::Item: // ITEM //////////////////////////////////////////////
+		case UIInputType::Item: // ITEM ////////////////////////////////////////////
 			bool_value = node.value().get_bool();
 			render_node_header(node, layout_option);
 			if (ImGui::Selectable(title.c_str(), bool_value))
@@ -504,7 +507,10 @@ namespace unicore
 			ImGui::PushID(id.c_str());
 			if (get_texture(node.value(), texture_id, size, uv0, uv1))
 			{
-				const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
+				const ImVec2 s = {
+					width > 0 ? width : size.x,
+					height > 0 ? height : size.y
+				};
 				if (ImGui::ImageButton(texture_id, s, uv0, uv1))
 				{
 					_update_events.push_back({ node, UIActionType::OnClick, Variant::Empty });
@@ -530,7 +536,8 @@ namespace unicore
 			};
 
 			int_value = node.value().get_int();
-			if (ImGui::InputInt(id.c_str(), &int_value, node.get(UIAttribute::Step).get_int(0)))
+			if (ImGui::InputInt(id.c_str(), &int_value,
+				node.get(UIAttribute::Step).get_int(0)))
 			{
 				int_value = range_i.clamp(int_value);
 				_update_events.push_back({ node, UIActionType::OnChange, int_value });
@@ -543,7 +550,8 @@ namespace unicore
 				node.get(UIAttribute::Max).get_float(+std::numeric_limits<Float>::max())
 			};
 			float_value = node.value().get_float();
-			if (ImGui::InputFloat(id.c_str(), &float_value, node.get(UIAttribute::Step).get_float(0)))
+			if (ImGui::InputFloat(id.c_str(), &float_value,
+				node.get(UIAttribute::Step).get_float(0)))
 			{
 				float_value = range_f.clamp(float_value);
 				_update_events.push_back({ node, UIActionType::OnChange, float_value });
@@ -559,7 +567,8 @@ namespace unicore
 			};
 			str = node.get(UIAttribute::Text).get_string("%d");
 			int_value = node.value().get_int();
-			if (ImGui::SliderInt(id.c_str(), &int_value, range_i.min, range_i.max, str.c_str()))
+			if (ImGui::SliderInt(id.c_str(), &int_value,
+				range_i.min, range_i.max, str.c_str()))
 				_update_events.push_back({ node, UIActionType::OnChange, int_value });
 			break;
 
@@ -571,7 +580,8 @@ namespace unicore
 			};
 			str = node.get(UIAttribute::Text).get_string("%.2f");
 			float_value = node.value().get_float();
-			if (ImGui::SliderFloat(id.c_str(), &float_value, range_f.min, range_f.max, str.c_str()))
+			if (ImGui::SliderFloat(id.c_str(), &float_value,
+				range_f.min, range_f.max, str.c_str()))
 				_update_events.push_back({ node, UIActionType::OnChange, float_value });
 			break;
 
@@ -592,7 +602,8 @@ namespace unicore
 		return true;
 	}
 
-	void UIViewImGui::render_node_header(const UINode& node, LayoutOption layout_option)
+	void UIViewImGui::render_node_header(
+		const UINode& node, LayoutOption layout_option)
 	{
 		switch (layout_option)
 		{
@@ -608,7 +619,8 @@ namespace unicore
 			const ImGuiStyle& style = ImGui::GetStyle();
 			const float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
 			const float last_button_x2 = ImGui::GetItemRectMax().x;
-			const float next_button_x2 = last_button_x2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
+			// Expected position if next button was on same line
+			const float next_button_x2 = last_button_x2 + style.ItemSpacing.x + size.x;
 			if (next_button_x2 < window_visible_x2)
 				ImGui::SameLine();
 			break;
@@ -623,7 +635,8 @@ namespace unicore
 		{
 			if (info->mouse_over != is_item_hovered)
 			{
-				const auto event_type = info->mouse_over ? UIActionType::OnMouseLeave : UIActionType::OnMouseEnter;
+				const auto event_type = info->mouse_over
+					? UIActionType::OnMouseLeave : UIActionType::OnMouseEnter;
 				_update_events.push_back({ node, event_type, Variant::Empty });
 				info->mouse_over = is_item_hovered;
 				//UC_LOG_DEBUG(_logger) << "Mouse " << event_type << " at " << node;

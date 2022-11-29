@@ -9,8 +9,6 @@ namespace unicore::ui
 
 	void UINodeValues::fill(UINodeOptions& options) const
 	{
-		options.uid = _uid;
-		options.name = _name;
 		options.attributes = _attributes;
 		options.actions = _actions;
 	}
