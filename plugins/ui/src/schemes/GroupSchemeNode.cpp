@@ -37,13 +37,13 @@ namespace unicore::ui
 		return true;
 	}
 
-	void GroupSchemeNode::internal_add(const Shared<SchemeNode>& node)
-	{
-		_children.push_back(node);
-	}
-
 	void GroupSchemeNode::fill_optons(UINodeOptions& options) const
 	{
 		options.attributes[UIAttribute::Type] = _type;
+	}
+
+	void GroupSchemeNode::internal_add(const Shared<SchemeNode>& node)
+	{
+		_children.push_back(node);
 	}
 }

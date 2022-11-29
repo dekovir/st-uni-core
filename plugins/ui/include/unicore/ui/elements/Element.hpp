@@ -14,6 +14,9 @@ namespace unicore::ui
 		UC_NODISCARD ElementIndex index() const { return _index; }
 		UC_NODISCARD bool is_mounted() const { return _document != nullptr; }
 
+		UC_NODISCARD UIDocument* document() const { return _document; }
+		UC_NODISCARD const UINode& node() const { return _node; }
+
 		void mount(UIDocument& document, const UINode& parent);
 		void unmount();
 		void update();

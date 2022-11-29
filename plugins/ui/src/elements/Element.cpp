@@ -17,6 +17,7 @@ namespace unicore::ui
 
 		_document = &document;
 		_node = scheme->create(*_document, parent);
+		_need_rerender = false;
 
 		did_mount();
 	}
@@ -31,6 +32,7 @@ namespace unicore::ui
 
 			_document = nullptr;
 			_node = UINode::Empty;
+			_need_rerender = false;
 		}
 	}
 

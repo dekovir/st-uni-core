@@ -41,9 +41,9 @@ namespace unicore::ui
 		const UIGroupType _type;
 		List<Shared<SchemeNode>> _children;
 
-		void internal_add(const Shared<SchemeNode>& node);
-
 		void fill_optons(UINodeOptions& options) const override;
+
+		void internal_add(const Shared<SchemeNode>& node);
 	};
 
 	template<UIGroupType Type, typename ... Keys>

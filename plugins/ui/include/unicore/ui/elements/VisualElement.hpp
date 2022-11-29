@@ -9,15 +9,11 @@ namespace unicore::ui
 	public:
 		TextElement() = default;
 
-		explicit TextElement(StringView32 text)
-			: _text(text)
-		{}
+		explicit TextElement(StringView32 text);
+		explicit TextElement(StringView text);
 
 	protected:
-		void apply_params(VisualText& item) override
-		{
-			item.set_params({ attr::Text(_text) });
-		}
+		void apply_params(VisualText& item) override;
 	};
 
 	using bullet = TypedNodeElement<VisualBullet>;

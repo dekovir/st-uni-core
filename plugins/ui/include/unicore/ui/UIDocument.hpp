@@ -19,8 +19,6 @@ namespace unicore
 		UC_OBJECT_EVENT(reorder_children, const UINode&);
 
 		UC_OBJECT_EVENT(set_name, const UINode&, StringView);
-		UC_OBJECT_EVENT(set_style, const UINode&, StringView);
-		UC_OBJECT_EVENT(set_hidden, const UINode&, Bool);
 		UC_OBJECT_EVENT(set_attribute, const UINode&, UIAttribute, const Variant&);
 	public:
 		explicit UIDocument(Logger* logger = nullptr);
@@ -44,11 +42,11 @@ namespace unicore
 		Size find_all_by_name(StringView name, List<UINode>& list,
 			const UINode& parent = UINode::Empty) const;
 
-		UC_NODISCARD UINode querry(
+		UC_NODISCARD UINode query(
 			const Predicate<const UINode&>& predicate,
 			const UINode& parent = UINode::Empty) const;
 
-		Size querry_all(const Predicate<const UINode&>& predicate,
+		Size query_all(const Predicate<const UINode&>& predicate,
 			List<UINode>& list, const UINode& parent = UINode::Empty) const;
 
 		// EVENTS //////////////////////////////////////////////////////////////////
@@ -175,10 +173,10 @@ namespace unicore
 		void internal_find_all_by_name(UINodeIndex index,
 			StringView name, List<UINode>& list, Size& count) const;
 
-		UINode internal_querry(UINodeIndex index,
+		UINode internal_query(UINodeIndex index,
 			const Predicate<const UINode&>& predicate) const;
 
-		void internal_querry_all(UINodeIndex index,
+		void internal_query_all(UINodeIndex index,
 			const Predicate<const UINode&>& predicate,
 			List<UINode>& list, Size& count) const;
 

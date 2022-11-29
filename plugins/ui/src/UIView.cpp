@@ -7,8 +7,6 @@ namespace unicore
 		, _bind_remove_node([this](auto& node) { on_remove_node(node); })
 		, _bind_reorder_children([this](auto& node) { on_reorder_children(node); })
 		, _bind_set_name([this](auto& node, auto value) { on_set_name(node, value); })
-		, _bind_set_style([this](auto& node, auto value) { on_set_style(node, value); })
-		, _bind_set_hidden([this](auto& node, auto value) { on_set_hidden(node, value); })
 		, _bind_set_attribute([this](auto& node, auto type, auto& value) { on_set_attribute(node, type, value); })
 	{
 	}
@@ -25,8 +23,6 @@ namespace unicore
 			_document->on_reorder_children() -= _bind_reorder_children;
 
 			_document->on_set_name() -= _bind_set_name;
-			_document->on_set_style() -= _bind_set_style;
-			_document->on_set_hidden() -= _bind_set_hidden;
 			_document->on_set_attribute() -= _bind_set_attribute;
 		}
 
@@ -39,8 +35,6 @@ namespace unicore
 			_document->on_reorder_children() += _bind_reorder_children;
 
 			_document->on_set_name() += _bind_set_name;
-			_document->on_set_style() += _bind_set_style;
-			_document->on_set_hidden() += _bind_set_hidden;
 			_document->on_set_attribute() += _bind_set_attribute;
 		}
 

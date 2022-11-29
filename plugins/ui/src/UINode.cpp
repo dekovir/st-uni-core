@@ -5,8 +5,6 @@ namespace unicore
 {
 	const UINode UINode::Empty;
 
-	static List<UINode> s_nodes;
-
 	Bool UINode::empty() const
 	{
 		return _document == nullptr || _index == UINodeIndex_Invalid;
@@ -52,7 +50,6 @@ namespace unicore
 		return std::nullopt;
 	}
 
-
 	UIAttributeDict UINode::get_attributes() const
 	{
 		if (_document)
@@ -81,9 +78,9 @@ namespace unicore
 
 	List<UINode> UINode::get_children() const
 	{
-		s_nodes.clear();
-		get_children(s_nodes);
-		return s_nodes;
+		if (_document)
+			return _document->get_node_children(*this);
+		return  {};
 	}
 
 	Size UINode::get_children_count() const
@@ -133,14 +130,14 @@ namespace unicore
 		return _document ? _document->find_all_by_name(name, list, *this) : 0;
 	}
 
-	UINode UINode::querry(const Predicate<const UINode&>& predicate) const
+	UINode UINode::query(const Predicate<const UINode&>& predicate) const
 	{
-		return _document ? _document->querry(predicate, *this) : Empty;
+		return _document ? _document->query(predicate, *this) : Empty;
 	}
 
-	Size UINode::querry_all(const Predicate<const UINode&>& predicate, List<UINode>& list) const
+	Size UINode::query_all(const Predicate<const UINode&>& predicate, List<UINode>& list) const
 	{
-		return _document ? _document->querry_all(predicate, list, *this) : 0;
+		return _document ? _document->query_all(predicate, list, *this) : 0;
 	}
 
 	UNICODE_STRING_BUILDER_FORMAT(const UINode&)

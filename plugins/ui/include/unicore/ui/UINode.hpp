@@ -88,10 +88,11 @@ namespace unicore
 
 	struct UINodeOptions
 	{
-		// TODO: Optimize with StringView
+		// TODO: Remove strings
 		String uid;
 		String name;
 		UIAttributeDict attributes = {};
+		// TODO: Move to attributes
 		UIActionDict actions = {};
 	};
 
@@ -150,8 +151,8 @@ namespace unicore
 		UC_NODISCARD UINode find_by_name(StringView name) const;
 		Size find_all_by_name(StringView name, List<UINode>& list) const;
 
-		UC_NODISCARD UINode querry(const Predicate<const UINode&>& predicate) const;
-		Size querry_all(const Predicate<const UINode&>& predicate, List<UINode>& list) const;
+		UC_NODISCARD UINode query(const Predicate<const UINode&>& predicate) const;
+		Size query_all(const Predicate<const UINode&>& predicate, List<UINode>& list) const;
 
 		static const UINode Empty;
 

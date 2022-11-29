@@ -37,6 +37,8 @@ namespace unicore::ui
 	protected:
 		List<Shared<Element>> _elements;
 
+		void did_mount() override;
+		//void will_umount() override;
 		void did_update() override;
 
 		void internal_add(const Shared<Element>& element);

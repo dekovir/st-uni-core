@@ -26,9 +26,6 @@ namespace unicore::ui
 			auto temp = ptr(TScheme());
 			apply_params(*temp);
 
-			for (const auto& element : _elements)
-				temp->add(element->render());
-
 			return temp;
 		}
 

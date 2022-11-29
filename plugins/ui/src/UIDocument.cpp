@@ -44,11 +44,12 @@ namespace unicore
 	UINode UIDocument::find_by_type(UINodeTag tag, const UINode& parent) const
 	{
 		WriteProtectionGuard guard(_write_protection);
-		if (parent.valid())
+		if (!parent.empty())
 		{
 			if (parent.document() != this)
 			{
-				UC_LOG_WARNING(_logger) << "Node from other document";
+				UC_LOG_WARNING(_logger) << "Failed find by id. Parent "
+					<< parent << " from other document";
 				return UINode::Empty;
 			}
 
@@ -62,7 +63,7 @@ namespace unicore
 			for (const auto child_index : *children)
 			{
 				const auto child = node_from_index(child_index);
-				if (auto find = find_by_type(tag, child); find.valid())
+				if (auto find = find_by_type(tag, child); !find.empty())
 					return find;
 			}
 		}
@@ -80,7 +81,8 @@ namespace unicore
 		{
 			if (parent.document() != this)
 			{
-				UC_LOG_WARNING(_logger) << "Node from other document";
+				UC_LOG_WARNING(_logger) << "Failed to find all by type. Parent "
+					<< parent << " from other document";
 				return 0;
 			}
 
@@ -97,11 +99,12 @@ namespace unicore
 	UINode UIDocument::find_by_name(StringView name, const UINode& parent) const
 	{
 		WriteProtectionGuard guard(_write_protection);
-		if (parent.valid())
+		if (!parent.empty())
 		{
 			if (parent.document() != this)
 			{
-				UC_LOG_WARNING(_logger) << "Node from other document";
+				UC_LOG_WARNING(_logger) << "Failed find by name. Parent "
+					<< parent << " from other document";
 				return UINode::Empty;
 			}
 
@@ -115,7 +118,7 @@ namespace unicore
 			for (const auto child_index : *children)
 			{
 				const auto child = node_from_index(child_index);
-				if (auto find = find_by_name(name, child); find.valid())
+				if (auto find = find_by_name(name, child); !find.empty())
 					return find;
 			}
 		}
@@ -129,11 +132,12 @@ namespace unicore
 		Size count = 0;
 
 		WriteProtectionGuard guard(_write_protection);
-		if (parent.valid())
+		if (!parent.empty())
 		{
 			if (parent.document() != this)
 			{
-				UC_LOG_WARNING(_logger) << "Node from other document";
+				UC_LOG_WARNING(_logger) << "Failed find all by names. Parent "
+					<< parent << " from other document";
 				return 0;
 			}
 
@@ -147,45 +151,47 @@ namespace unicore
 		return count;
 	}
 
-	UINode UIDocument::querry(
+	UINode UIDocument::query(
 		const Predicate<const UINode&>& predicate,
 		const UINode& parent) const
 	{
 		WriteProtectionGuard guard(_write_protection);
-		if (parent.valid())
+		if (!parent.empty())
 		{
 			if (parent.document() != this)
 			{
-				UC_LOG_WARNING(_logger) << "Node from other document";
+				UC_LOG_WARNING(_logger) << "Failed to query. Parent "
+					<< parent << " from other document";
 				return UINode::Empty;
 			}
 
-			return internal_querry(parent.index(), predicate);
+			return internal_query(parent.index(), predicate);
 		}
 
-		return internal_querry(UINodeIndex_Invalid, predicate);
+		return internal_query(UINodeIndex_Invalid, predicate);
 	}
 
-	Size UIDocument::querry_all(const Predicate<const UINode&>& predicate,
+	Size UIDocument::query_all(const Predicate<const UINode&>& predicate,
 		List<UINode>& list, const UINode& parent) const
 	{
 		Size count = 0;
 
 		WriteProtectionGuard guard(_write_protection);
 
-		if (parent.valid())
+		if (!parent.empty())
 		{
 			if (parent.document() != this)
 			{
-				UC_LOG_WARNING(_logger) << "Node from other document";
+				UC_LOG_WARNING(_logger) << "Failed query all. Parent "
+					<< parent << " from other document";
 				return 0;
 			}
 
-			internal_querry_all(parent.index(), predicate, list, count);
+			internal_query_all(parent.index(), predicate, list, count);
 		}
 		else
 		{
-			internal_querry_all(UINodeIndex_Invalid, predicate, list, count);
+			internal_query_all(UINodeIndex_Invalid, predicate, list, count);
 		}
 
 		return count;
@@ -197,13 +203,13 @@ namespace unicore
 	{
 		if (node.empty())
 		{
-			UC_LOG_WARNING(_logger) << "Can't send event - Node is empty";
+			UC_LOG_WARNING(_logger) << "Can't send event - Node " << node << " is empty";
 			return;
 		}
 
 		if (node.document() != this)
 		{
-			UC_LOG_ERROR(_logger) << "Can't send event - Node from other document";
+			UC_LOG_ERROR(_logger) << "Can't send event - Node " << node << " from other document";
 			return;
 		}
 
@@ -321,7 +327,7 @@ namespace unicore
 
 		if (!is_node_valid(node))
 		{
-			UC_LOG_WARNING(_logger) << "Failed to remove node. Node is invalid";
+			UC_LOG_WARNING(_logger) << "Failed to remove node. " << node << " is invalid";
 			return false;
 		}
 
@@ -452,11 +458,12 @@ namespace unicore
 
 	Size UIDocument::get_node_children(List<UINode>& list, const UINode& node) const
 	{
-		if (node.valid())
+		if (!node.empty())
 		{
 			if (node.document() != this)
 			{
-				UC_LOG_ERROR(_logger) << "Wrong document";
+				UC_LOG_ERROR(_logger) << "Failed to get children. Node "
+					<< node << " from other document";
 				return 0;
 			}
 
@@ -485,11 +492,12 @@ namespace unicore
 
 	Size UIDocument::get_node_children_count(const UINode& node) const
 	{
-		if (node.valid())
+		if (!node.empty())
 		{
 			if (node.document() != this)
 			{
-				UC_LOG_ERROR(_logger) << "Wrong document";
+				UC_LOG_ERROR(_logger) << "Failed to get node children count. Node "
+					<< node << " from other document";
 				return 0;
 			}
 
@@ -504,11 +512,12 @@ namespace unicore
 
 	UINode UIDocument::get_node_child(const UINode& node, Size index) const
 	{
-		if (node.valid())
+		if (!node.empty())
 		{
 			if (node.document() != this)
 			{
-				UC_LOG_ERROR(_logger) << "Wrong document";
+				UC_LOG_ERROR(_logger) << "Failed to get child. Node "
+					<< node << " from other document";
 				return UINode::Empty;
 			}
 
@@ -683,7 +692,8 @@ namespace unicore
 
 		if (node.document() != this)
 		{
-			UC_LOG_ERROR(_logger) << "Wrong document";
+			UC_LOG_ERROR(_logger) << "Failed to subscribe. Node "
+				<< node << " from other document";
 			return;
 		}
 
@@ -696,7 +706,8 @@ namespace unicore
 
 		if (node.document() != this)
 		{
-			UC_LOG_ERROR(_logger) << "Wrong document";
+			UC_LOG_ERROR(_logger) << "Failed to unsubscribe. Node "
+				<< node << " from other document";
 			return false;
 		}
 
@@ -811,7 +822,7 @@ namespace unicore
 		}
 	}
 
-	UINode UIDocument::internal_querry(UINodeIndex index,
+	UINode UIDocument::internal_query(UINodeIndex index,
 		const Predicate<const UINode&>& predicate) const
 	{
 		if (index != UINodeIndex_Invalid)
@@ -824,7 +835,7 @@ namespace unicore
 		{
 			for (const auto child_index : *children)
 			{
-				if (auto find = internal_querry(child_index, predicate); find.valid())
+				if (auto find = internal_query(child_index, predicate); !find.empty())
 					return find;
 			}
 		}
@@ -832,7 +843,7 @@ namespace unicore
 		return UINode::Empty;
 	}
 
-	void UIDocument::internal_querry_all(UINodeIndex index,
+	void UIDocument::internal_query_all(UINodeIndex index,
 		const Predicate<const UINode&>& predicate,
 		List<UINode>& list, Size& count) const
 	{
@@ -848,7 +859,7 @@ namespace unicore
 		if (const auto children = get_children_index(index); children != nullptr)
 		{
 			for (const auto child_index : *children)
-				internal_querry_all(child_index, predicate, list, count);
+				internal_query_all(child_index, predicate, list, count);
 		}
 	}
 

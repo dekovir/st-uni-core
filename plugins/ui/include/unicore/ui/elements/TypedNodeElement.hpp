@@ -1,12 +1,14 @@
 #pragma once
-#include "unicore/ui/elements/NodeElement.hpp"
+#include "unicore/ui/elements/Element.hpp"
 
 namespace unicore::ui
 {
 	template<typename TScheme,
 		std::enable_if_t<std::is_base_of_v<SchemeNode, TScheme>>* = nullptr>
-	class TypedNodeElement : public NodeElement
+	class TypedNodeElement : public Element
 	{
+		UC_UI_ELEMENT_PROPERTY(name, String);
+		UC_UI_ELEMENT_PROPERTY(hidden, Bool);
 	public:
 		Shared<SchemeNode> render() override
 		{

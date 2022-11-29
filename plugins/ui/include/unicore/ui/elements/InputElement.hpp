@@ -56,20 +56,11 @@ namespace unicore::ui
 	public:
 		ItemElement() = default;
 
-		explicit ItemElement(StringView32 text)
-			: _text(text)
-		{}
+		explicit ItemElement(StringView32 text);
+		explicit ItemElement(StringView text);
 
 	protected:
-
-		void apply_params(InputItem& item) override
-		{
-			if (!_text.empty())
-				item.set_params({ attr::Text(_text) });
-
-			if (!_event_clicked.empty())
-				item.set_params({ attr::OnClick([&] { _event_clicked.invoke(); }) });
-		}
+		void apply_params(InputItem& item) override;
 	};
 
 	using item = ItemElement;

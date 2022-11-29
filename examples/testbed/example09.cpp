@@ -90,14 +90,15 @@ namespace unicore
 	{
 		Example::load(resources);
 
-		const auto size = renderer.screen_size();
+		const auto size = renderer.screen_size().cast<Float>();
 
 		_document = std::make_shared<UIDocument>(&logger);
 		_view = std::make_shared<UIViewImGui>(_context, logger);
 		_view->set_document(_document);
 		_view->set_title(U"Elements UI");
 		_view->set_size(Vector2f(300, 0));
-		_view->set_position(Vector2f(size.x / 2 - 150, 50));
+		_view->set_position({ size.x / 2 - 150, 50 });
+		_view->set_size({ 300, size.y - 100 });
 
 		Shared<ui::button> btn_ref;
 		Shared<ui::combo_box_t<int>> combo_ref;
@@ -110,6 +111,14 @@ namespace unicore
 		const auto table_model = std::make_shared<TestTableModel>(3);
 
 		_root = ui::ptr(ui::vlayout(
+			ui::hlayout(
+				ui::text(U"Text"),
+				ui::input_text()
+			),
+			ui::button(U"Click")
+		));
+
+		/*_root = ui::ptr(ui::vlayout(
 			ui::ref(ui::text(U"<update>"), _position_node),
 			ui::hlayout(
 				ui::text(U"Text"),
@@ -173,11 +182,12 @@ namespace unicore
 				ui::text(U"Table"),
 				ui::table(table_model)
 			)
-		));
+		));/**/
 
 		if (btn_ref)
 		{
-			btn_ref->on_clicked() += [btn_ref] { btn_ref->set_text(U"Clicked"); };
+			btn_ref->on_clicked() += [btn_ref]
+			{ btn_ref->set_text(U"Clicked"); };
 		}
 
 		//if (combo_ref)
@@ -191,7 +201,8 @@ namespace unicore
 			add_ref->on_clicked() += [this, list_ref]
 			{
 				const auto text = StringBuilder::format(U"Item {}", list_ref->size() + 1);
-				list_ref->add(ui::hlayout(ui::bullet(), ui::item(text)));
+				const auto element = ui::hlayout(ui::bullet(), ui::item(text));
+				list_ref->add(element);
 			};
 		}
 
@@ -203,12 +214,12 @@ namespace unicore
 		if (_root)
 			_root->update();
 
-		if (_document && _view && _position_node)
-		{
-			const auto text = StringBuilder::format(U"Pos {}, Size {}",
-				_view->position().cast<Int>(), _view->size().cast<Int>());
-			_position_node->set_text(text);
-		}
+		//if (_document && _view && _position_node)
+		//{
+		//	const auto text = StringBuilder::format(U"Pos {}, Size {}",
+		//		_view->position().cast<Int>(), _view->size().cast<Int>());
+		//	_position_node->set_text(text);
+		//}
 
 		if (_view)
 			_view->render();
