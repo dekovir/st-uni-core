@@ -91,7 +91,7 @@ namespace unicore
 	struct UINodeOptions
 	{
 		UIAttributeDict attributes = {};
-		// TODO: Move to attributes
+		// TODO: Move to attributes?
 		UIActionDict actions = {};
 	};
 

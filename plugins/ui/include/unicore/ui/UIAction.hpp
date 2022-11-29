@@ -5,8 +5,8 @@ namespace unicore
 {
 	class UINode;
 
-	using UIActionDefault = std::function<void()>;
-	using UIActionValue = std::function<void(const Variant&)>;
+	using UIActionDefault = Action<void>;
+	using UIActionValue = Action<const Variant&>;
 	using UIAction = StdVariant<UIActionDefault, UIActionValue>;
 
 	enum class UIActionType : uint8_t
