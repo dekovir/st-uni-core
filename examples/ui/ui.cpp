@@ -4,7 +4,7 @@
 #include "unicore/io/Logger.hpp"
 #include "unicore/math/Random.hpp"
 #include "unicore/platform/Input.hpp"
-#include "unicore/ui/UIDocumentParseXML.hpp"
+#include "unicore/remoteui/DocumentParseXML.hpp"
 
 namespace unicore
 {
@@ -66,10 +66,10 @@ namespace unicore
 
 		// Database UI
 #if 1
-		_database_doc = resources.load<UIDocument>("database.xml"_path, LoggerOption{ _context_logger });
+		_database_doc = resources.load<remoteui::Document>("database.xml"_path, LoggerOption{ _context_logger });
 		if (_database_doc)
 		{
-			_database_view = std::make_shared<UIViewImGui>(_context, _context_logger);
+			_database_view = std::make_shared<remoteui::ViewImGui>(_context, _context_logger);
 			_database_view->set_document(_database_doc);
 			_database_view->set_title(U"Database");
 			_database_view->set_size({ 500, 0 });
@@ -81,10 +81,10 @@ namespace unicore
 
 		// Inventory UI
 #if 1
-		_inventory_doc = resources.load<UIDocument>("inventory.xml"_path, LoggerOption{ _context_logger });
+		_inventory_doc = resources.load<remoteui::Document>("inventory.xml"_path, LoggerOption{ _context_logger });
 		if (_inventory_doc)
 		{
-			_inventory_view = std::make_shared<UIViewImGui>(_context, _context_logger);
+			_inventory_view = std::make_shared<remoteui::ViewImGui>(_context, _context_logger);
 			_inventory_view->set_document(_inventory_doc);
 			_inventory_view->set_title(U"Inventory");
 			_inventory_view->set_position(Vector2f(10, 300));

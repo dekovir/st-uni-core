@@ -31,8 +31,8 @@
 #include "unicore/xml/XMLPlugin.hpp"
 #endif
 
-#if defined(UNICORE_USE_UI)
-#include "unicore/ui/UIPlugin.hpp"
+#if defined(UNICORE_USE_REMOTEUI)
+#include "unicore/remoteui/RemoteUIPlugin.hpp"
 #endif
 
 #if defined(UNICORE_USE_SCENE)
@@ -75,8 +75,8 @@ namespace unicore
 		app.create_plugin<XMLPlugin>();
 #endif
 
-#if defined(UNICORE_USE_UI)
-		app.create_plugin<UIPlugin>();
+#if defined(UNICORE_USE_REMOTEUI)
+		app.create_plugin<remoteui::RemoteUIPlugin>();
 #endif
 
 #if defined(UNICORE_USE_SCENE)

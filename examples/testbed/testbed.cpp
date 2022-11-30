@@ -6,7 +6,7 @@
 #include "unicore/renderer/Surface.hpp"
 #include "unicore/renderer/Font.hpp"
 #include "unicore/io/FileLoader.hpp"
-#include "unicore/ui/UIDocumentParseXML.hpp"
+#include "unicore/remoteui/DocumentParseXML.hpp"
 
 namespace unicore
 {
@@ -47,15 +47,15 @@ namespace unicore
 
 		_ui_render.init(renderer);
 
-		_ui_document = std::make_shared<UIDocument>(&_ui_logger);
-		_ui_view = std::make_shared<UIViewImGui>(_ui_context, _ui_logger);
+		_ui_document = std::make_shared<remoteui::Document>(&_ui_logger);
+		_ui_view = std::make_shared<remoteui::ViewImGui>(_ui_context, _ui_logger);
 		_ui_view->set_document(_ui_document);
 		_ui_view->set_size({ 300, 400 });
-		_ui_view->flags().set(UIViewImGuiFlag::NoTiltebar);
-		_ui_view->flags().set(UIViewImGuiFlag::NoMove);
-		_ui_view->flags().set(UIViewImGuiFlag::NoResize);
+		_ui_view->flags().set(remoteui::ViewImGui::Flag::NoTiltebar);
+		_ui_view->flags().set(remoteui::ViewImGui::Flag::NoMove);
+		_ui_view->flags().set(remoteui::ViewImGui::Flag::NoResize);
 
-		if (UIDocumentParseXML::parse(xml, *_ui_document, UINode::Empty, &_ui_logger))
+		if (remoteui::DocumentParseXML::parse(xml, *_ui_document, remoteui::Element::Empty, &_ui_logger))
 		{
 			const auto group_node = _ui_document->find_by_name("group");
 			const auto template_node = _ui_document->find_by_name("template");
@@ -67,7 +67,7 @@ namespace unicore
 					const auto node = _ui_document->duplicate(template_node, group_node);
 					if (!node.empty())
 					{
-						_ui_document->set_node_attribute(node, UIAttribute::Hidden, false);
+						_ui_document->set_node_attribute(node, remoteui::Attribute::Hidden, false);
 
 						auto& info = example_infos[i];
 
@@ -75,8 +75,8 @@ namespace unicore
 
 						if (auto find = node.find_by_name("name"); find.valid())
 						{
-							_ui_document->set_node_attribute(find, UIAttribute::Text, info.title);
-							_ui_document->subscribe_node(find, UIActionType::OnClick,
+							_ui_document->set_node_attribute(find, remoteui::Attribute::Text, info.title);
+							_ui_document->subscribe_node(find, remoteui::UIActionType::OnClick,
 								[this, index] { set_example(index); });
 						}
 					}
@@ -85,7 +85,6 @@ namespace unicore
 		}
 
 		//set_example(0);
-		//set_example(6);
 		//set_example(ExampleCatalog::get_all().size() - 1);
 	}
 

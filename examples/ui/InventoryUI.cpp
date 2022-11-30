@@ -3,8 +3,8 @@
 
 namespace unicore
 {
-	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document,
-		const UINode& parent, Logger* logger)
+	InventoryUI::InventoryUI(Inventory& inventory, remoteui::Document& document,
+		const remoteui::Element& parent, Logger* logger)
 		: _inventory(inventory)
 		, _document(document)
 		, _logger(logger)
@@ -25,8 +25,8 @@ namespace unicore
 		apply_money(0);
 	}
 
-	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger)
-		: InventoryUI(inventory, document, UINode::Empty, logger)
+	InventoryUI::InventoryUI(Inventory& inventory, remoteui::Document& document, Logger* logger)
+		: InventoryUI(inventory, document, remoteui::Element::Empty, logger)
 	{
 	}
 
@@ -66,10 +66,11 @@ namespace unicore
 	void InventoryUI::apply_money(UInt16 value)
 	{
 		if (!_money_text.empty())
-			_document.set_node_attribute(_money_text, UIAttribute::Text, value);
+			_document.set_node_attribute(_money_text, remoteui::Attribute::Text, value);
 	}
 
-	static std::pair<UINode, UINode> find_node(const UINode& node, StringView name)
+	static std::pair<remoteui::Element, remoteui::Element> find_node(
+		const remoteui::Element& node, StringView name)
 	{
 		if (const auto find = node.find_by_name(name); find.valid())
 			return std::make_pair(find, find);
@@ -80,7 +81,7 @@ namespace unicore
 		);
 	}
 
-	void InventoryUI::apply_item(const UINode& node, InventoryIndex index)
+	void InventoryUI::apply_item(const remoteui::Element& node, InventoryIndex index)
 	{
 		const auto id = _inventory.get_index_id(index);
 
@@ -92,25 +93,25 @@ namespace unicore
 		if (const auto find = node.find_by_name("name"); find.valid())
 		{
 			const auto tmp_index = index;
-			_document.subscribe_node(find, UIActionType::OnMouseEnter,
+			_document.subscribe_node(find, remoteui::UIActionType::OnMouseEnter,
 				[this, tmp_index] { apply_tooltip(tmp_index); });
-			_document.subscribe_node(find, UIActionType::OnMouseLeave,
+			_document.subscribe_node(find, remoteui::UIActionType::OnMouseLeave,
 				[this] { apply_tooltip(InventoryIndex_Invalid); });
 		}
 
 		if (const auto find = node.find_by_name("icon"); find.valid())
-			_document.set_node_attribute(find, UIAttribute::Value, item.sprite);
+			_document.set_node_attribute(find, remoteui::Attribute::Value, item.sprite);
 
 		if (const auto find = node.find_by_name("price"); find.valid())
-			_document.set_node_attribute(find, UIAttribute::Text, item.price);
+			_document.set_node_attribute(find, remoteui::Attribute::Text, item.price);
 
 		if (const auto find = node.find_by_name("weight"); find.valid())
-			_document.set_node_attribute(find, UIAttribute::Text, weight_to_string(item.weight));
+			_document.set_node_attribute(find, remoteui::Attribute::Text, weight_to_string(item.weight));
 
 		apply_item_value(node, index);
 	}
 
-	void InventoryUI::apply_item_value(const UINode& node, InventoryIndex index)
+	void InventoryUI::apply_item_value(const remoteui::Element& node, InventoryIndex index)
 	{
 		const auto id = _inventory.get_index_id(index);
 		const auto& item = *_inventory.database().get(id);
@@ -123,9 +124,9 @@ namespace unicore
 			{
 				const auto amount = _inventory.get_index_value(index);
 				const auto str = StringBuilder::format("{} ({})", item.title, amount);
-				_document.set_node_attribute(find, UIAttribute::Text, str);
+				_document.set_node_attribute(find, remoteui::Attribute::Text, str);
 			}
-			else _document.set_node_attribute(find, UIAttribute::Text, item.title);
+			else _document.set_node_attribute(find, remoteui::Attribute::Text, item.title);
 		}
 	}
 
@@ -145,10 +146,10 @@ namespace unicore
 		_document.set_node_hidden(_item_tooltip, false);
 
 		if (const auto find = _item_tooltip.find_by_name("title"); find.valid())
-			_document.set_node_attribute(find, UIAttribute::Text, item->title);
+			_document.set_node_attribute(find, remoteui::Attribute::Text, item->title);
 
 		if (const auto find = _item_tooltip.find_by_name("type"); find.valid())
-			_document.set_node_attribute(find, UIAttribute::Text, Item::type_to_string(item->item_type));
+			_document.set_node_attribute(find, remoteui::Attribute::Text, Item::type_to_string(item->item_type));
 
 		if (const auto [find, group] = find_node(_item_tooltip, "damage"); find.valid())
 		{
@@ -157,7 +158,7 @@ namespace unicore
 				const auto str = StringBuilder::format(U"{}-{}", item->damage.min, item->damage.max);
 
 				_document.set_node_hidden(group, false);
-				_document.set_node_attribute(find, UIAttribute::Text, str);
+				_document.set_node_attribute(find, remoteui::Attribute::Text, str);
 			}
 			else _document.set_node_hidden(group, true);
 		}
@@ -169,7 +170,7 @@ namespace unicore
 				const auto str = StringBuilder::format(U"+{}", item->armor);
 
 				_document.set_node_hidden(group, false);
-				_document.set_node_attribute(find, UIAttribute::Text, str);
+				_document.set_node_attribute(find, remoteui::Attribute::Text, str);
 			}
 			else _document.set_node_hidden(group, true);
 		}
@@ -181,7 +182,7 @@ namespace unicore
 		{
 			_document.set_node_hidden(group, !item->has_status());
 			const auto value = Math::inverse_lerp_numeric(_inventory.get_index_value(index));
-			_document.set_node_attribute(find, UIAttribute::Value, value);
+			_document.set_node_attribute(find, remoteui::Attribute::Value, value);
 		}
 	}
 

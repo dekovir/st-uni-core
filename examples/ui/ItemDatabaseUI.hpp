@@ -1,5 +1,5 @@
 #pragma once
-#include "unicore/ui/UIDocument.hpp"
+#include "unicore/remoteui/Document.hpp"
 #include "ItemDatabase.hpp"
 
 namespace unicore
@@ -8,41 +8,42 @@ namespace unicore
 	{
 	public:
 		ItemDatabaseUI(const Shared<ItemDatabase>& database,
-			const Shared<SpriteList>& sprites, UIDocument& document,
-			const UINode& parent = UINode::Empty, Logger* logger = nullptr);
+			const Shared<SpriteList>& sprites, remoteui::Document& document,
+			const remoteui::Element& parent = remoteui::Element::Empty,
+			Logger* logger = nullptr);
 
 		ItemDatabaseUI(const Shared<ItemDatabase>& database,
 			const Shared<SpriteList>& sprites,
-			UIDocument& document, Logger* logger = nullptr);
+			remoteui::Document& document, Logger* logger = nullptr);
 
 	protected:
 		Shared<ItemDatabase> _database;
 		Shared<SpriteList> _sprites;
-		UIDocument& _document;
+		remoteui::Document& _document;
 		Logger* _logger;
 
 		ItemId _selected = ItemId_Invalid;
 
-		UINode _item_group_node;
-		UINode _item_template_node;
+		remoteui::Element _item_group_node;
+		remoteui::Element _item_template_node;
 
-		UINode _inspector_node;
-		UINode _icon_items_node;
+		remoteui::Element _inspector_node;
+		remoteui::Element _icon_items_node;
 
-		UINode _icon_node;
-		UINode _title_node;
-		UINode _type_node;
-		UINode _price_node;
-		UINode _weight_node;
+		remoteui::Element _icon_node;
+		remoteui::Element _title_node;
+		remoteui::Element _type_node;
+		remoteui::Element _price_node;
+		remoteui::Element _weight_node;
 
-		Dictionary<ItemId, UINode> _item_nodes;
-		Dictionary<ItemType, UINode> _type_nodes;
+		Dictionary<ItemId, remoteui::Element> _item_nodes;
+		Dictionary<ItemType, remoteui::Element> _type_nodes;
 
 		void on_add_item(ItemId id, const Item& item);
 
 		void set_selected(ItemId id);
 
-		void apply_item(UINode& node, ItemId id);
+		void apply_item(remoteui::Element& node, ItemId id);
 
 		void apply_inspector();
 
