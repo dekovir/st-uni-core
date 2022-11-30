@@ -120,6 +120,7 @@ namespace unicore
 		}
 	};
 
+	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>
 	static constexpr bool operator==(const Color3<T>& a, const Color3<T>& b)
 	{
@@ -170,6 +171,10 @@ namespace unicore
 	using Color3b = Color3<uint8_t>;
 	using Color3f = Color3<float>;
 
+	static_assert(sizeof(Color3f) == sizeof(float) * 3);
+	static_assert(std::is_polymorphic_v<Color3f> == false);
+
+	// CONST /////////////////////////////////////////////////////////////////////
 	namespace details
 	{
 		template<typename T>

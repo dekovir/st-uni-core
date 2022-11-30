@@ -72,6 +72,12 @@ namespace unicore
 
 		PrimitiveBatch& draw_star(const Vector2f& center, unsigned count, float radius, bool filled = false);
 
+		PrimitiveBatch& draw_curve(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2, unsigned segments = 0);
+		PrimitiveBatch& draw_curve(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2, const Vector2f& p3, unsigned segments = 0);
+
+		// TODO: Replace with span
+		PrimitiveBatch& draw_spline(const Vector2f* points, unsigned count, unsigned segments = 0);
+
 		PrimitiveBatch& draw_triangle(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2);
 		PrimitiveBatch& draw_quad(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2, const Vector2f& p3);
 		PrimitiveBatch& draw_quad(const QuadColor2f& quad);

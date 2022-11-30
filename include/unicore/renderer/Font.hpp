@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "unicore/resource/Resource.hpp"
-#include "unicore/system/ConstString.hpp"
+#include "unicore/system/UnicodeTable.hpp"
 #include "unicore/resource/ResourceLoader.hpp"
 #include "unicore/renderer/Vertex.hpp"
 #include "unicore/renderer/Texture.hpp"
@@ -42,7 +42,7 @@ namespace unicore
 	public:
 		float height = 16;
 		// TODO: Replace to Set
-		StringView32 chars = CharTable::Ascii.view();
+		StringView32 chars = UnicodeTable::Ascii.view();
 
 		TTFontOptions() = default;
 

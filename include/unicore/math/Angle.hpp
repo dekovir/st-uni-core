@@ -6,12 +6,16 @@ namespace unicore
 {
 	struct AngleTypeRad
 	{
+		static constexpr auto max_value = Math::DoublePi;
+
 		static inline float cos(float value) { return Math::cos(value); }
 		static inline float sin(float value) { return Math::sin(value); }
 	};
 
 	struct AngleTypeDeg
 	{
+		static constexpr auto max_value = 360.0f;
+
 		static inline float to_rad(float value) { return Math::DEG_TO_RAD * value; }
 		static inline float cos(float value) { return Math::cos(to_rad(value)); }
 		static inline float sin(float value) { return Math::sin(to_rad(value)); }
@@ -64,9 +68,19 @@ namespace unicore
 			return *this;
 		}
 
+		void wrap()
+		{
+			_value = Math::mod(_value. TypeTag::max_value);
+		}
+
 		constexpr Angle operator-() const
 		{
 			return Angle(-_value);
+		}
+
+		UC_NODISCARD constexpr Angle wraped() const
+		{
+			return Angle(Math::mod(_value. TypeTag::max_value));
 		}
 
 		template<typename OtherTag>
@@ -76,6 +90,7 @@ namespace unicore
 		float _value;
 	};
 
+	// IMPLEMENTATION ////////////////////////////////////////////////////////////
 	template <typename TypeTag>
 	template <typename OtherTag>
 	constexpr Angle<OtherTag> Angle<TypeTag>::cast() const
@@ -97,6 +112,7 @@ namespace unicore
 		return Angle<AngleTypeDeg>(Math::RAD_TO_DEG * _value);
 	}
 
+	// OPERATORS /////////////////////////////////////////////////////////////////
 	template<typename TypeTag>
 	static constexpr bool operator==(const Angle<TypeTag>& a, const Angle<TypeTag>& b)
 	{
@@ -148,16 +164,23 @@ namespace unicore
 	using Degrees = Angle<AngleTypeDeg>;
 	using Radians = Angle<AngleTypeRad>;
 
-	template<typename AngleTag>
-	struct AngleConst
-	{
-		static constexpr auto Zero = Angle<AngleTag>(0);
-		static constexpr auto Pi = Angle<AngleTag>(Angle<AngleTypeRad>(Math::Pi));
-		static constexpr auto PiHalf = Angle<AngleTag>(Angle<AngleTypeRad>(Math::Pi / 2));
-	};
+	static_assert(sizeof(Radians) == sizeof(float));
+	static_assert(std::is_polymorphic_v<Radians> == false);
 
-	using DegreesConst = AngleConst<AngleTypeDeg>;
-	using RadiansConst = AngleConst<AngleTypeRad>;
+	// CONST /////////////////////////////////////////////////////////////////////
+	namespace details
+	{
+		template<typename AngleTag>
+		struct AngleConst
+		{
+			static constexpr auto Zero = Angle<AngleTag>(0);
+			static constexpr auto Pi = Angle<AngleTag>(Angle<AngleTypeRad>(Math::Pi));
+			static constexpr auto PiHalf = Angle<AngleTag>(Angle<AngleTypeRad>(Math::Pi / 2));
+		};
+	}
+
+	using DegreesConst = details::AngleConst<AngleTypeDeg>;
+	using RadiansConst = details::AngleConst<AngleTypeRad>;
 
 	static constexpr Radians operator"" _rad(unsigned long long value)
 	{
@@ -178,6 +201,9 @@ namespace unicore
 	{
 		return Degrees(static_cast<float>(value));
 	}
+
+	extern UNICODE_STRING_BUILDER_FORMAT(const Radians&);
+	extern UNICODE_STRING_BUILDER_FORMAT(const Degrees&);
 
 	UNICORE_MAKE_HASH(Radians)
 	{

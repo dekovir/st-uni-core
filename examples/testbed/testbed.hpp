@@ -3,8 +3,8 @@
 #include "unicore/renderer/SpriteBatch.hpp"
 #include "unicore/imgui/ImGuiContext.hpp"
 #include "unicore/imgui/ImGuiRender.hpp"
-#include "unicore/ui/UIDocument.hpp"
-#include "unicore/ui/UIViewImGui.hpp"
+#include "unicore/remoteui/Document.hpp"
+#include "unicore/remoteui/ViewImGui.hpp"
 #include "example.hpp"
 
 namespace unicore
@@ -34,8 +34,8 @@ namespace unicore
 		ImGuiRender2D _ui_render;
 		ImGuiContext _ui_context;
 
-		Shared<UIDocument> _ui_document;
-		Shared<UIViewImGui> _ui_view;
+		Shared<remoteui::Document> _ui_document;
+		Shared<remoteui::ViewImGui> _ui_view;
 
 		void on_init() override;
 		void on_update() override;

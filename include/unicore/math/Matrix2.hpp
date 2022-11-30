@@ -119,6 +119,7 @@ namespace unicore
 	using Matrix2f = Matrix2<float>;
 
 	static_assert(sizeof(Matrix2f) == sizeof(float) * 4);
+	static_assert(std::is_polymorphic_v<Matrix2f> == false);
 
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>

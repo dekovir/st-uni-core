@@ -72,6 +72,9 @@ namespace unicore
 
 	using Transform2f = Transform2<Float>;
 
+	static_assert(sizeof(Transform2f) == sizeof(float) * 5);
+	static_assert(std::is_polymorphic_v<Transform2f> == false);
+
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>
 	extern constexpr Vector2<T> operator*(const Transform2<T>& tr, const Vector2<T>& vec)

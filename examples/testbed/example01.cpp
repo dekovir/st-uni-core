@@ -1,6 +1,8 @@
 #include "example01.hpp"
 #include "unicore/math/Transform2.hpp"
 #include "unicore/math/ShapePrimitive.hpp"
+#include "unicore/math/Curve.hpp"
+#include "unicore/math/Ray.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/platform/Time.hpp"
 #include "unicore/renderer/Font.hpp"
@@ -120,6 +122,10 @@ namespace unicore
 		const auto formatted = to_format4(PIXELFORMAT_R8G8B8A8, ColorConst4f::Yellow);
 		auto color = from_format3<float>(PIXELFORMAT_R8G8B8A8, (uint32_t)0x00FF00FF);
 
+		constexpr auto ray = Ray2({ 100, 100 }, { 0, 1 });
+		const auto p = ray.point(10);
+		const auto d = ray.distance({ 200, 100 });
+
 		_font = resources.create<GeometryFont>(EmptyResourceOptions{});
 	}
 
@@ -135,8 +141,14 @@ namespace unicore
 		tr.angle = _angle;
 		tr.scale.x = 1 + .5f * Math::sin(static_cast<float>(time.elapsed().total_seconds()));
 
-		const auto rect_points = ShapePrimitive::create_rect({ 100, 800, 100, 100 });
-		const auto ellipse_points = ShapePrimitive::create_ellipse({ 900, 900 }, { 80, 50 });
+		const auto rect_points = ShapePrimitive::rect({ 100, 800, 100, 100 });
+		const auto ellipse_points = ShapePrimitive::ellipse({ 900, 900 }, { 80, 50 });
+
+		const std::initializer_list<Vector2f> curve1 = { { 300, 100 }, { 400, 100 }, { 400, 200 } };
+		const std::initializer_list<Vector2f> curve2 = { { 400, 200 }, { 500, 300 }, { 600, 200 }, { 400, 200 } };
+
+		const List<Vector2f> spline = { { 300, 100 }, { 400, 50 }, { 500, 150 }, { 600, 50 }, {700, 150} };
+		const auto spline_points = ShapePrimitive::spline(spline.data(), spline.size());
 
 		_graphics
 			.clear()
@@ -147,7 +159,15 @@ namespace unicore
 			// rect
 			.set_color(ColorConst4b::Cyan)
 			.draw_rect(Recti{ 600, 100, 200, 100 }, true)
+			// curves
+			.set_color(ColorConst4b::Red)
+			.draw_curve({ 300, 100 }, { 400, 100 }, { 400, 200 }, 16)
+			.draw_curve({ 400, 200 }, { 500, 300 }, { 600, 200 }, { 400, 200 }, 16)
+			.draw_path(spline_points, { 10 })
+			.set_color(ColorConst4b::Yellow)
+			.draw_spline(spline.data(), spline.size(), 20)
 			// point grid
+			.set_color(ColorConst4b::Red)
 			.move({ 200, 200 })
 			.rotate(45_deg)
 			.draw_grid({ 10, 10 }, { 10, 10 }, [](PrimitiveBatch& graphics, const Vector2f& pos)

@@ -15,10 +15,6 @@ namespace unicore
 		template <class T>
 		inline constexpr bool has_lerp_static_method_v =
 			has_lerp_static_method<T>::value;
-
-		template<class T>
-		inline constexpr bool is_numeric_v =
-			std::is_integral_v<T> || std::is_floating_point_v<T>;
 	}
 
 	namespace Math
@@ -146,10 +142,12 @@ namespace unicore
 		static inline T acos(T value) { return std::acos(value); }
 
 		// POW, SQRT ///////////////////////////////////////////////////////////////
+		// TODO: Replace with constexpr
 		template<typename T,
 			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T pow(T value, T count = 2) { return std::pow(value, count); }
 
+		// TODO: Replace with constexpr
 		template<typename T,
 			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T sqrt(T value) { return std::sqrt(value); }
@@ -238,13 +236,13 @@ namespace unicore
 
 		template<typename T,
 			std::enable_if_t<!sfinae::has_lerp_static_method_v<T>>* = nullptr>
-		static constexpr T lerp(T a, T b, float t)
+		static constexpr T lerp(const T& a, const T& b, float t)
 		{
 			return static_cast<T>((b - a) * t + a);
 		}
 
 		template<typename T>
-		static constexpr Float inverse_lerp(const T a, const T b, T t)
+		static constexpr Float inverse_lerp(const T& a, const T& b, T t)
 		{
 			return static_cast<Float>(t - a) / static_cast<Float>(b - a);
 		}

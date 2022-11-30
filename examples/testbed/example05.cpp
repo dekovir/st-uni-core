@@ -85,7 +85,7 @@ namespace unicore
 				if (!tile)
 					continue;
 
-				const auto scale = _map.topology.size() / tile->rect().size().cast<float>();
+				const auto scale = _map.topology.size() / tile->rect().size.cast<float>();
 				const GridIndex index(x, y);
 				auto center = _map.topology.cell_to_pos(index);
 				_sprite_batch.draw(tile, _tr * center, _graphics.transform.angle, scale);

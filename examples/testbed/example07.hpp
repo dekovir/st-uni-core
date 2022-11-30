@@ -1,7 +1,7 @@
 #pragma once
 #include "example.hpp"
-#include "unicore/ui/UINode.hpp"
-#include "unicore/ui/UIViewImGui.hpp"
+#include "unicore/remoteui/Element.hpp"
+#include "unicore/remoteui/ViewImGui.hpp"
 
 namespace unicore
 {
@@ -16,8 +16,13 @@ namespace unicore
 
 	protected:
 		ImGuiContext& _context;
-		Shared<UIDocument> _document;
-		Shared<UIViewImGui> _view;
-		UINode _position_node;
+		Shared<remoteui::Document> _document;
+		Shared<remoteui::ViewImGui> _view;
+
+		remoteui::Element _position_node;
+		remoteui::Element _move_group_node;
+		remoteui::Element _move_index_node;
+
+		void update_move_index();
 	};
 }

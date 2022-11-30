@@ -141,6 +141,7 @@ namespace unicore
 		}
 	};
 
+	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>
 	static constexpr bool operator==(const Color4<T>& a, const Color4<T>& b)
 	{
@@ -195,6 +196,10 @@ namespace unicore
 	using Color4b = Color4<Byte>;
 	using Color4f = Color4<Float>;
 
+	static_assert(sizeof(Color4f) == sizeof(float) * 4);
+	static_assert(std::is_polymorphic_v<Color4f> == false);
+
+	// CONST /////////////////////////////////////////////////////////////////////
 	namespace details
 	{
 		template<typename T>

@@ -303,8 +303,8 @@ namespace unicore
 			transform * rect.top_right().cast<float>()
 		);
 
-		_points.push_back(r.position());
-		_points.push_back(r.size());
+		_points.push_back(r.pos);
+		_points.push_back(r.size);
 		_current.count += 2;
 
 		return *this;
@@ -319,8 +319,8 @@ namespace unicore
 			transform * rect.top_right()
 		);
 
-		_points.push_back(r.position());
-		_points.push_back(r.size());
+		_points.push_back(r.pos);
+		_points.push_back(r.size);
 		_current.count += 2;
 
 		return *this;
@@ -332,7 +332,7 @@ namespace unicore
 			return draw_point(center);
 
 		s_points.clear();
-		ShapePrimitive::create_circle(s_points, center, radius, segments);
+		ShapePrimitive::circle(s_points, center, radius, segments);
 
 		return !filled
 			? draw_poly_line(s_points, true)
@@ -342,7 +342,7 @@ namespace unicore
 	PrimitiveBatch& PrimitiveBatch::draw_ellipse(const Vector2f& center, const Vector2f& radius, bool filled, unsigned segments)
 	{
 		s_points.clear();
-		ShapePrimitive::create_ellipse(s_points, center, radius, segments);
+		ShapePrimitive::ellipse(s_points, center, radius, segments);
 
 		return !filled
 			? draw_poly_line(s_points, true)
@@ -354,7 +354,7 @@ namespace unicore
 		if (count >= 2)
 		{
 			s_points.clear();
-			ShapePrimitive::create_star(s_points, center, count, radius);
+			ShapePrimitive::star(s_points, center, count, radius);
 
 			if (filled)
 				s_points.insert(s_points.begin(), center);
@@ -365,6 +365,34 @@ namespace unicore
 		}
 
 		return *this;
+	}
+
+	PrimitiveBatch& PrimitiveBatch::draw_curve(
+		const Vector2f& p0, const Vector2f& p1, const Vector2f& p2,
+		unsigned segments)
+	{
+		s_points.clear();
+		ShapePrimitive::bezier3(s_points, p0, p1, p2, segments);
+
+		return draw_poly_line(s_points, false);
+	}
+
+	PrimitiveBatch& PrimitiveBatch::draw_curve(
+		const Vector2f& p0, const Vector2f& p1,
+		const Vector2f& p2, const Vector2f& p3, unsigned segments)
+	{
+		s_points.clear();
+		ShapePrimitive::bezier4(s_points, p0, p1, p2, p3, segments);
+
+		return draw_poly_line(s_points, false);
+	}
+
+	PrimitiveBatch& PrimitiveBatch::draw_spline(const Vector2f* points, unsigned count, unsigned segments)
+	{
+		s_points.clear();
+		ShapePrimitive::spline(s_points, points, count, segments);
+
+		return draw_poly_line(s_points, false);
 	}
 
 	PrimitiveBatch& PrimitiveBatch::draw_triangle(const Vector2f& p0, const Vector2f& p1, const Vector2f& p2)

@@ -1,11 +1,19 @@
-<group>
-	<text id="position" />
+<vbox>
+	<text name="position" />
 	<text>Sample text</text>
 
+	<!-- Move -->
+	<hbox name="move_group">
+		<text>Index: </text>
+		<text name="move_index"></text>
+		<button name="move_up">move up</button>
+		<button name="move_down">move down</button>
+	</hbox>
+
 	<!-- Button -->
-	<group type="1">
-		<button>Default</button>
-	</group>
+	<hbox>
+		<button name="button">Click</button>
+	</hbox>
 
 	<!-- Inputs -->
 	<horizontal>
@@ -13,60 +21,79 @@
 		<input value="quick brown fox" />
 	</horizontal>
 
-	<text>Multi line input</text>
-	<textarea height="50" value="first line&#10;second line" />
+	<vbox>
+		<text>Multi line input</text>
+		<textarea height="50" value="first line&#10;second line" />
+	</vbox>
 
-	<group type="1" tooltip="Tooltip text">
+	<hbox tooltip="Tooltip text">
 		<text>Input Int</text>
 		<input type="integer" value="10" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
+		<text>SpinBox Int</text>
+		<input type="integer" value="10" step="1" />
+	</hbox>
+
+	<hbox>
 		<text>Input Float</text>
 		<input type="float" value="10" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
+		<text>SpinBox Float</text>
+		<input type="float" value="10" step="0.1" />
+	</hbox>
+
+	<hbox>
 		<text>Slider</text>
 		<slider value="50.50" max="100">Value %.1f</slider>
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Toggle</text>
 		<toggle value="true" />
 		<radio value="true" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Vector2</text>
-		<input type="vector2" />
-	</group>
+		<vbox>
+			<number />
+			<number />
+		</vbox>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Vector3</text>
-		<input type="vector3" />
-	</group>
+		<vbox>
+			<number />
+			<number />
+			<number />
+		</vbox>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Color3</text>
 		<input type="color3" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Color4</text>
 		<input type="color4" />
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text>Palette</text>
 		<color value="0xFFFFFF" />
 		<color value="0xFF0000" />
 		<color value="0x00FF00" />
 		<color value="0x0000FF" />
-	</group>
+	</hbox>
 
 	<!-- Combobox -->
-	<group type="1">
+	<hbox>
 		<text>Combo 1</text>
 		<combo value="Item 1">
 			<text>Text inside combo</text>
@@ -76,39 +103,53 @@
 			<item>Item 3</item>
 			<item>Item 4</item>
 		</combo>
-	</group>
+	</hbox>
 
-	<group type="1">
+	<hbox>
 		<text tooltip="Combobox with logic">Combo 2</text>
-		<combo id="combo">
+		<combo name="combo">
 		</combo>
-	</group>
+	</hbox>
 
 	<!-- List -->
-	<text>Items</text>
-	<list id="group" />
-	<button id="add_item">Add item</button>
+	<vbox>
+		<text>Items</text>
+		<list name="group" />
+		<button name="add_item">Add item</button>
+	</vbox>
 
 	<!-- Table -->
-	<text>Table</text>
-	<table value="2">
-		<tr>
-			<td><button>Cell 0</button></td>
-			<td>Cell 1</td>
-		</tr>
-		<tr>
-			<td>Cell 2</td>
-			<td>Cell 3</td>
-		</tr>
-		<tr>
-			<td>Cell 4</td>
-			<td><item>Cell 5</item></td>
-		</tr>
-	</table>
+	<vbox>
+		<text>Table</text>
+		<table value="2">
+			<tr>
+				<td>
+					<button>Cell 0</button>
+				</td>
+				<td>Cell 1</td>
+			</tr>
+			<tr>
+				<td>Cell 2</td>
+				<td>Cell 3</td>
+			</tr>
+			<tr>
+				<td>Cell 4</td>
+				<td>
+					<item>Cell 5</item>
+				</td>
+			</tr>
+		</table>
+	</vbox>
+
+	<!-- Disabled -->
+	<hbox disabled="1">
+		<button>Disabled</button>
+	</hbox>
 
 	<!-- Tree -->
-	<text>Tree</text>
-	<tree value="1">Item 1
+	<vbox>
+		<text>Tree</text>
+		<tree value="1">Item 1
 		<text>Text 1</text>
 		<text>Text 2</text>
 		<tree>Item 2
@@ -116,11 +157,14 @@
 			<text>Text 4</text>
 		</tree>
 	</tree>
+	</vbox>
 
 	<!-- Progressbar -->
-	<text>Progress bars</text>
-	<progress value="0.2" />
-	<progress value="0" min="-50" max="50"/>
-	<progress value="75" max="100"/>
-	<progress value="1">Completed</progress>
-</group>
+	<vbox>
+		<text>Progress bars</text>
+		<progress value="0.2" />
+		<progress value="0" min="-50" max="50" />
+		<progress value="75" max="100" />
+		<progress value="1">Completed</progress>
+	</vbox>
+</vbox>

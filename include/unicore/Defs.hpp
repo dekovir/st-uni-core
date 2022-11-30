@@ -79,9 +79,23 @@ namespace unicore
 	using Bool = bool;
 
 	using Char = char;
+	using Char8 = char;
 	using CharW = wchar_t;
 	using Char16 = char16_t;
 	using Char32 = char32_t;
+
+	namespace sfinae
+	{
+		template <class T>
+		inline constexpr bool is_char_v =
+			std::is_same_v<T, Char8> ||
+			std::is_same_v<T, CharW> ||
+			std::is_same_v<T, Char16> ||
+			std::is_same_v<T, Char32>;
+
+		template<typename ... T>
+		inline constexpr Bool all_is_char_v = (... && is_char_v<T>);
+	}
 
 	using Int = int;
 	using UInt = unsigned int;
@@ -101,7 +115,40 @@ namespace unicore
 	using Double = double;
 
 	using Byte = UInt8;
+	using Word = UInt16;
+	using DWord = UInt32;
 	using Size = size_t;
+
+	namespace sfinae
+	{
+		template<class T>
+		inline constexpr bool is_numeric_v =
+			std::is_integral_v<T> || std::is_floating_point_v<T>;
+
+		template<typename ... T>
+		inline constexpr Bool all_is_numeric_v = (... && is_numeric_v<T>);
+
+		template<Bool Value, class A = void, class B = void>
+		struct enable_if_else
+		{
+			using type = A;
+		};
+
+		template<class A, class B>
+		struct enable_if_else<false, A, B>
+		{
+			using type = B;
+		};
+
+		template<Bool Value, class A = void, class B = void>
+		using enable_if_else_t = typename enable_if_else<Value, A, B>::type;
+
+		template<class T>
+		inline constexpr bool is_small_v = sizeof(T) <= sizeof(intptr_t);
+
+		template<typename T>
+		using ConstRefType = enable_if_else_t<is_small_v<T>, T, const T&>;
+	}
 
 	namespace arithmetic
 	{
@@ -160,6 +207,7 @@ namespace unicore
 	template<typename T>
 	using BasicString = std::basic_string<T>;
 	using String = BasicString<Char>;
+	using String8 = BasicString<Char>;
 	using StringW = BasicString<CharW>;
 	using String16 = BasicString<Char16>;
 	using String32 = BasicString<Char32>;
@@ -167,6 +215,7 @@ namespace unicore
 	template<typename T>
 	using BasicStringView = std::basic_string_view<T>;
 	using StringView = BasicStringView<Char>;
+	using StringView8 = BasicStringView<Char>;
 	using StringViewW = BasicStringView<CharW>;
 	using StringView16 = BasicStringView<Char16>;
 	using StringView32 = BasicStringView<Char32>;
@@ -231,10 +280,25 @@ namespace unicore
 	}
 
 	template<typename T>
-	using Predicate = std::function<bool(T)>;
+	using Predicate = std::function<Bool(T)>;
+
+	namespace details
+	{
+		template<typename... Args>
+		struct ActionFunctionType
+		{
+			using type = std::function<void(Args...)>;
+		};
+
+		template<>
+		struct ActionFunctionType<void>
+		{
+			using type = std::function<void()>;
+		};
+	}
 
 	template<typename ... Args>
-	using Action = std::function<void(Args...)>;
+	using Action = typename details::ActionFunctionType<Args...>::type;
 
 	template<typename Ret, typename ... Args>
 	using Function = std::function<Ret(Args...)>;

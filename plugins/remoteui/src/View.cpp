@@ -1,19 +1,16 @@
-#include "unicore/ui/UIView.hpp"
+#include "unicore/remoteui/View.hpp"
 
-namespace unicore
+namespace unicore::remoteui
 {
-	UIView::UIView()
+	View::View()
 		: _bind_create_node([this](auto& node) { on_create_node(node); })
 		, _bind_remove_node([this](auto& node) { on_remove_node(node); })
-		, _bind_set_name([this](auto& node, auto value) { on_set_name(node, value); })
-		, _bind_set_style([this](auto& node, auto value) { on_set_style(node, value); })
-		, _bind_set_visible([this](auto& node, auto value) { on_set_visible(node, value); })
+		, _bind_reorder_children([this](auto& node) { on_reorder_children(node); })
 		, _bind_set_attribute([this](auto& node, auto type, auto& value) { on_set_attribute(node, type, value); })
-		, _bind_set_action([this](auto& node, auto type, auto& value) { on_set_action(node, type, value); })
 	{
 	}
 
-	void UIView::set_document(const Shared<UIDocument>& document)
+	void View::set_document(const Shared<Document>& document)
 	{
 		if (_document == document)
 			return;
@@ -21,8 +18,9 @@ namespace unicore
 		if (_document)
 		{
 			_document->on_create_node() -= _bind_create_node;
+			_document->on_remove_node() -= _bind_remove_node;
+			_document->on_reorder_children() -= _bind_reorder_children;
 			_document->on_set_attribute() -= _bind_set_attribute;
-			_document->on_set_action() -= _bind_set_action;
 		}
 
 		_document = document;
@@ -30,8 +28,9 @@ namespace unicore
 		if (_document)
 		{
 			_document->on_create_node() += _bind_create_node;
+			_document->on_remove_node() += _bind_remove_node;
+			_document->on_reorder_children() += _bind_reorder_children;
 			_document->on_set_attribute() += _bind_set_attribute;
-			_document->on_set_action() += _bind_set_action;
 		}
 
 		on_rebuild();

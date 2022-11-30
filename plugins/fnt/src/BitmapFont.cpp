@@ -44,7 +44,7 @@ namespace unicore
 
 			if (i + 1 < text.size())
 				cur.x += static_cast<float>(find_kerning(c, text[i + 1]));
-			else cur.x += r.w;
+			else cur.x += r.size.x;
 		}
 
 		return cur.x;
@@ -79,19 +79,16 @@ namespace unicore
 
 				if (uv_rect)
 				{
-					auto& size = page->size();
-					uv_rect->x = static_cast<float>(c.rect.x) / static_cast<float>(size.x);
-					uv_rect->y = static_cast<float>(c.rect.y) / static_cast<float>(size.y);
-					uv_rect->w = static_cast<float>(c.rect.w) / static_cast<float>(size.x);
-					uv_rect->h = static_cast<float>(c.rect.h) / static_cast<float>(size.y);
+					const auto size = page->size().cast<Float>();
+					uv_rect->pos = c.rect.pos.cast<Float>() / size;
+					uv_rect->size = c.rect.size.cast<Float>() / size;
 				}
 
 				if (rect)
 				{
-					rect->x = pos.x - static_cast<float>(c.xoffset);
-					rect->y = pos.y + static_cast<float>(c.yoffset);
-					rect->w = static_cast<float>(c.rect.w);
-					rect->h = static_cast<float>(c.rect.h);
+					rect->pos.x = pos.x - static_cast<float>(c.xoffset);
+					rect->pos.y = pos.y + static_cast<float>(c.yoffset);
+					rect->size = c.rect.size.cast<Float>();
 				}
 
 				pos.x += static_cast<float>(c.xadvance);

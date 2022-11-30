@@ -3,12 +3,6 @@
 
 namespace unicore::StringHelper
 {
-	namespace sfinae
-	{
-		template <class T>
-		constexpr bool is_char_v = std::is_same_v<T, char> || std::is_same_v<T, Char16> || std::is_same_v<T, Char32>;
-	}
-
 	template<typename TChar, typename Tag>
 	struct Data
 	{
@@ -25,10 +19,22 @@ namespace unicore::StringHelper
 	// METHODS ////////////////////////////////////////////////////////////////////
 	extern String to_hex(intptr_t value);
 	extern String print_format(StringView format, ...);
-	extern String to_lower(StringView str);
+
+	extern Char     to_lower(Char c);
+	extern Char32   to_lower(Char32 c);
+	extern String   to_lower(StringView str);
+	extern String32 to_lower(StringView32 str);
+
+	extern Char     to_upper(Char c);
+	extern Char32   to_upper(Char32 c);
+	extern String   to_upper(StringView str);
+	extern String32 to_upper(StringView32 str);
 
 	extern Int compare(StringView a, StringView b, bool case_insensetive = false);
+	extern Int compare(StringView32 a, StringView32 b, bool case_insensetive = false);
+
 	extern Bool equals(StringView a, StringView b, bool case_insensetive = false);
+	extern Bool equals(StringView32 a, StringView32 b, bool case_insensetive = false);
 
 	template<typename Char>
 	extern BasicString<Char> ltrim(BasicStringView<Char> string,
@@ -120,6 +126,20 @@ namespace unicore::StringHelper
 	{
 		static constexpr wchar_t AsteriskChar = L'*';
 		static constexpr wchar_t QuestionMark = L'?';
+	};
+
+	template<>
+	struct SpecialChars<Char16>
+	{
+		static constexpr wchar_t AsteriskChar = u'*';
+		static constexpr wchar_t QuestionMark = u'?';
+	};
+
+	template<>
+	struct SpecialChars<Char32>
+	{
+		static constexpr wchar_t AsteriskChar = U'*';
+		static constexpr wchar_t QuestionMark = U'?';
 	};
 
 	template<typename TChar>

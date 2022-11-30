@@ -19,24 +19,24 @@ namespace unicore
 
 		virtual void clip_rect(Recti& rect) const
 		{
-			if (rect.x < 0)
+			if (rect.pos.x < 0)
 			{
-				rect.w += rect.x;
-				rect.x = 0;
+				rect.size.x += rect.pos.x;
+				rect.pos.x = 0;
 			}
 
-			if (rect.y < 0)
+			if (rect.pos.y < 0)
 			{
-				rect.h += rect.y;
-				rect.y = 0;
+				rect.size.y += rect.pos.y;
+				rect.pos.y = 0;
 			}
 
 			const auto s = this->size();
-			if (rect.x + rect.w > s.x)
-				rect.w = s.x - rect.x;
+			if (rect.pos.x + rect.size.x > s.x)
+				rect.size.x = s.x - rect.pos.x;
 
-			if (rect.y + rect.h > s.y)
-				rect.h = s.y - rect.y;
+			if (rect.pos.y + rect.size.y > s.y)
+				rect.size.y = s.y - rect.pos.y;
 		}
 
 		UC_NODISCARD virtual Recti get_clip_rect(const Recti& rect) const

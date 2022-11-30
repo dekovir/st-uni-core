@@ -2,6 +2,7 @@
 
 namespace unicore
 {
+	// TODO: Implement https://github.com/microsoft/DirectXTK/blob/main/Src/Geometry.cpp
 	void GeometricPrimitive::create_cube(VertexCollection& vertices, IndexCollection& indeces, float size)
 	{
 		UC_ASSERT_ALWAYS_MSG("Unimplemented");

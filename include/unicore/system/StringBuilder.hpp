@@ -140,7 +140,7 @@ namespace unicore
 	extern UNICODE_STRING_BUILDER_FORMAT(const std::type_index&);
 
 	template<typename TChar,
-		std::enable_if_t<StringHelper::sfinae::is_char_v<TChar>>* = nullptr>
+		std::enable_if_t<sfinae::is_char_v<TChar>>* = nullptr>
 	extern StringBuilder& operator << (StringBuilder& builder, const BasicStringView<TChar> value)
 	{
 		builder.append(value);
@@ -148,7 +148,7 @@ namespace unicore
 	}
 
 	template<typename TChar,
-		std::enable_if_t<StringHelper::sfinae::is_char_v<TChar>>* = nullptr>
+		std::enable_if_t<sfinae::is_char_v<TChar>>* = nullptr>
 	extern StringBuilder& operator << (StringBuilder& builder, const BasicString<TChar>& value)
 	{
 		builder.append(value);

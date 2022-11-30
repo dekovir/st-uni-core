@@ -4,8 +4,8 @@
 namespace unicore
 {
 	ItemDatabaseUI::ItemDatabaseUI(const Shared<ItemDatabase>& database,
-		const Shared<SpriteList>& sprites, UIDocument& document,
-		const UINode& parent, Logger* logger)
+		const Shared<SpriteList>& sprites, remoteui::Document& document,
+		const remoteui::Element& parent, Logger* logger)
 		: _database(database)
 		, _sprites(sprites)
 		, _document(document)
@@ -24,8 +24,8 @@ namespace unicore
 		_price_node = document.find_by_name("price", _inspector_node);
 		_weight_node = document.find_by_name("weight", _inspector_node);
 
-		_document.set_node_action(_icon_node, UIActionType::OnClick,
-			[this] { _document.set_node_attribute(_icon_items_node, UIAttribute::Value, true); });
+		_document.subscribe_node(_icon_node, remoteui::UIActionType::OnClick,
+			[this] { _document.set_node_attribute(_icon_items_node, remoteui::Attribute::Value, true); });
 
 		if (!icon_list_node.empty() && _sprites && !_sprites->empty())
 		{
@@ -33,28 +33,26 @@ namespace unicore
 			{
 				auto spr = _sprites->get(i);
 
-				UINodeOptions options;
-				options.attributes[UIAttribute::Value] = spr;
-				//options.attributes[UIAttribute::Text] = StringBuilder::format("{}", i + 1);
-				options.attributes[UIAttribute::Type] = UIInputType::Image;
-				options.attributes[UIAttribute::Width] = 32;
-				options.attributes[UIAttribute::Height] = 32;
-				options.actions[UIActionType::OnClick] =
+				remoteui::ElementOptions options;
+				options.attributes[remoteui::Attribute::Value] = spr;
+				options.attributes[remoteui::Attribute::Width] = 32;
+				options.attributes[remoteui::Attribute::Height] = 32;
+				options.actions[remoteui::UIActionType::OnClick] =
 					[this, spr] { item_set_icon(spr); };
 
-				_document.create_node(UINodeTag::Input, options, icon_list_node);
+				_document.create_input(remoteui::InputType::Image, options, icon_list_node);
 			}
 		}
 
 		_database->on_add() += [&](auto id, auto& item) {on_add_item(id, item); };
 
-		_document.set_node_action(_title_node, UIActionType::OnChange,
+		_document.subscribe_node(_title_node, remoteui::UIActionType::OnChange,
 			[this](const Variant& value) { item_set_title(value.get_string32()); });
 
-		_document.set_node_action(_price_node, UIActionType::OnChange,
+		_document.subscribe_node(_price_node, remoteui::UIActionType::OnChange,
 			[this](const Variant& value) { item_set_price(value.get_int_type<UInt16>()); });
 
-		_document.set_node_action(_weight_node, UIActionType::OnChange,
+		_document.subscribe_node(_weight_node, remoteui::UIActionType::OnChange,
 			[this](const Variant& value) { item_set_weight(value.get_int_type<UInt16>()); });
 
 		if (!_type_node.empty())
@@ -63,12 +61,13 @@ namespace unicore
 			{
 				const auto store_type = it.first;
 
-				UINodeOptions options;
-				options.attributes[UIAttribute::Text] = it.second;
-				options.actions[UIActionType::OnClick] =
+				remoteui::ElementOptions options;
+				options.attributes[remoteui::Attribute::Text] = it.second;
+				options.actions[remoteui::UIActionType::OnClick] =
 					[this, store_type] { item_set_type(store_type); };
-				_type_nodes[store_type] = _document.create_node(
-					UINodeTag::Item, options, _type_node);
+
+				_type_nodes[store_type] = _document.create_input(
+					remoteui::InputType::Item, options, _type_node);
 			}
 		}
 
@@ -84,8 +83,8 @@ namespace unicore
 	}
 
 	ItemDatabaseUI::ItemDatabaseUI(const Shared<ItemDatabase>& database,
-		const Shared<SpriteList>& sprites, UIDocument& document, Logger* logger)
-		: ItemDatabaseUI(database, sprites, document, UINode::Empty, logger)
+		const Shared<SpriteList>& sprites, remoteui::Document& document, Logger* logger)
+		: ItemDatabaseUI(database, sprites, document, remoteui::Element::Empty, logger)
 	{
 	}
 
@@ -93,7 +92,7 @@ namespace unicore
 	{
 		if (_item_group_node.empty() || _item_template_node.empty()) return;
 
-		UINodeOptions options;
+		remoteui::ElementOptions options;
 
 		if (auto node = _document.duplicate(_item_template_node, _item_group_node); !node.empty())
 		{
@@ -102,10 +101,10 @@ namespace unicore
 			if (const auto find = node.find_by_name("item_name"); !find.empty())
 			{
 				const auto stored_id = id;
-				_document.set_node_action(find, UIActionType::OnClick,
+				_document.subscribe_node(find, remoteui::UIActionType::OnClick,
 					[this, stored_id] { set_selected(stored_id); });
 			}
-			_document.set_node_visible(node, true);
+			_document.set_node_hidden(node, false);
 
 			apply_item(node, id);
 		}
@@ -121,24 +120,24 @@ namespace unicore
 		for (const auto& it : _item_nodes)
 		{
 			if (const auto find = it.second.find_by_name("item_name"); !find.empty())
-				_document.set_node_attribute(find, UIAttribute::Value, it.first == _selected);
+				_document.set_node_attribute(find, remoteui::Attribute::Value, it.first == _selected);
 		}
 		apply_inspector();
 	}
 
-	void ItemDatabaseUI::apply_item(UINode& node, ItemId id)
+	void ItemDatabaseUI::apply_item(remoteui::Element& node, ItemId id)
 	{
 		const auto item = _database->get(id);
 		if (!item) return;
 
 		if (const auto find = node.find_by_name("item_id"); !find.empty())
-			_document.set_node_attribute(find, UIAttribute::Text, id.value);
+			_document.set_node_attribute(find, remoteui::Attribute::Text, id.value);
 
 		if (const auto find = node.find_by_name("item_icon"); !find.empty())
-			_document.set_node_attribute(find, UIAttribute::Value, item->sprite);
+			_document.set_node_attribute(find, remoteui::Attribute::Value, item->sprite);
 
 		if (const auto find = node.find_by_name("item_name"); !find.empty())
-			_document.set_node_attribute(find, UIAttribute::Text, item->title);
+			_document.set_node_attribute(find, remoteui::Attribute::Text, item->title);
 	}
 
 	void ItemDatabaseUI::apply_inspector()
@@ -146,11 +145,11 @@ namespace unicore
 		const auto item = _database->get(_selected);
 		if (!item)
 		{
-			_document.set_node_visible(_inspector_node, false);
+			_document.set_node_hidden(_inspector_node, true);
 			return;
 		}
 
-		_document.set_node_visible(_inspector_node, true);
+		_document.set_node_hidden(_inspector_node, false);
 
 		apply_inspector_icon(*item);
 		apply_inspector_title(*item);
@@ -162,35 +161,35 @@ namespace unicore
 	void ItemDatabaseUI::apply_inspector_icon(const Item& item)
 	{
 		_document.set_node_attribute(_icon_node,
-			UIAttribute::Value, item.sprite);
+			remoteui::Attribute::Value, item.sprite);
 	}
 
 	void ItemDatabaseUI::apply_inspector_title(const Item& item)
 	{
 		_document.set_node_attribute(_title_node,
-			UIAttribute::Value, item.title);
+			remoteui::Attribute::Value, item.title);
 	}
 
 	void ItemDatabaseUI::apply_inspector_type(const Item& item)
 	{
 		_document.set_node_attribute(_type_node,
-			UIAttribute::Value, Item::type_to_string(item.item_type));
+			remoteui::Attribute::Value, Item::type_to_string(item.item_type));
 
 		for (const auto& it : _type_nodes)
 			_document.set_node_attribute(it.second,
-				UIAttribute::Value, it.first == item.item_type);
+				remoteui::Attribute::Value, it.first == item.item_type);
 	}
 
 	void ItemDatabaseUI::apply_inspector_price(const Item& item)
 	{
 		_document.set_node_attribute(_price_node,
-			UIAttribute::Value, item.price);
+			remoteui::Attribute::Value, item.price);
 	}
 
 	void ItemDatabaseUI::apply_inspector_weight(const Item& item)
 	{
 		_document.set_node_attribute(_weight_node,
-			UIAttribute::Value, item.weight);
+			remoteui::Attribute::Value, item.weight);
 	}
 
 	void ItemDatabaseUI::item_set_icon(const Shared<Sprite>& value)

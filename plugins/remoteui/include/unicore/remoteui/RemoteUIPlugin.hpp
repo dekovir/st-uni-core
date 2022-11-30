@@ -1,9 +1,9 @@
 #pragma once
 #include "unicore/platform/Plugin.hpp"
 
-namespace unicore
+namespace unicore::remoteui
 {
-	class UIPlugin : public Plugin
+	class RemoteUIPlugin : public Plugin
 	{
 	public:
 		void register_plugin(const ModuleContext& context) override;

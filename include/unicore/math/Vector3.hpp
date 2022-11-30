@@ -1,6 +1,5 @@
 #pragma once
-#include "unicore/math/Math.hpp"
-#include "unicore/math/Hash.hpp"
+#include "unicore/math/Vector2.hpp"
 
 namespace unicore
 {
@@ -21,11 +20,12 @@ namespace unicore
 
 		void set(T x_, T y_, T z_);
 
-		UC_NODISCARD constexpr size_t size() const { return 3; }
+		UC_NODISCARD constexpr Size size() const { return 3; }
 		UC_NODISCARD constexpr T volume() const { return x * y * z; }
 
 		UC_NODISCARD constexpr T length_squared() const { return x * x + y * y + z * z; }
-		UC_NODISCARD float length() const { return sqrtf(static_cast<float>(length_squared())); }
+		// TODO: Replace with constexpr
+		UC_NODISCARD float length() const { return Math::sqrt(static_cast<float>(length_squared())); }
 
 		T& operator[](int index) { return (&x)[index]; }
 		T operator[](int index) const { return (&x)[index]; }
@@ -75,6 +75,10 @@ namespace unicore
 			return vec;
 		}
 
+		UC_NODISCARD constexpr Vector2<T> xy() const { return { x, y }; }
+		UC_NODISCARD constexpr Vector2<T> xz() const { return { x, z }; }
+		UC_NODISCARD constexpr Vector2<T> yz() const { return { y, z }; }
+
 		template<typename U>
 		UC_NODISCARD constexpr Vector3<U> cast() const
 		{
@@ -93,6 +97,16 @@ namespace unicore
 				Math::snap(y, value.y),
 				Math::snap(z, value.z)
 			};
+		}
+
+		static T constexpr dot(const Vector3<T>& a, const Vector3<T>& b)
+		{
+			return a.x * b.x + a.y * b.y + a.z * b.z;
+		}
+
+		static auto constexpr distance(const Vector3<T>& a, const Vector3<T>& b)
+		{
+			return (a - b).length();
 		}
 
 		static constexpr Vector3<T> lerp(const Vector3<T>& a, const Vector3<T>& b, float t)
@@ -120,6 +134,7 @@ namespace unicore
 	typedef Vector3<Radians> Angles3f;
 
 	static_assert(sizeof(Vector3f) == sizeof(float) * 3);
+	static_assert(std::is_polymorphic_v<Vector3f> == false);
 
 	// IMPLEMENTATION //////////////////////////////////////////////////////////
 	template <typename T>

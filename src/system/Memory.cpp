@@ -7,12 +7,17 @@ namespace unicore
 	// TODO: Debug leak detection
 	void* Memory::alloc(size_t size)
 	{
-		return new uint8_t[size];
+		return std::malloc(size);
+	}
+
+	void* Memory::realloc(void* ptr, size_t size)
+	{
+		return std::realloc(ptr, size);
 	}
 
 	void Memory::free(void* ptr)
 	{
-		delete[] static_cast<const uint8_t*>(ptr);
+		std::free(ptr);
 	}
 
 	void Memory::set(void* dest, int value, size_t size)
@@ -110,7 +115,7 @@ namespace unicore
 			Memory::set(_data, value, _size);
 	}
 
-	void MemoryChunk::swap(void** data, size_t* size, Memory::FreeFunc* free)
+	void MemoryChunk::swap(void** data, Size* size, Memory::FreeFunc* free)
 	{
 		if (_data) std::swap(_data, *data);
 		if (_size) std::swap(_size, *size);

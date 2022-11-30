@@ -65,20 +65,19 @@ namespace unicore
 		// RECT //////////////////////////////////////////////////////////////////////
 		void draw_rect(const Recti& rect, ValueType value)
 		{
-			draw_line_h(rect.x, rect.y, rect.w, value);
-			draw_line_h(rect.x, rect.y + rect.h, rect.w, value);
-
-			draw_line_v(rect.x, rect.y + 1, rect.h - 2, value);
-			draw_line_v(rect.x + rect.w, rect.y + 1, rect.h - 2, value);
+			draw_line_h(rect.pos.x, rect.pos.y, rect.size.x, value);
+			draw_line_h(rect.pos.x, rect.pos.y + rect.size.y, rect.size.x, value);
+			draw_line_v(rect.pos.x, rect.pos.y + 1, rect.size.y - 2, value);
+			draw_line_v(rect.pos.x + rect.size.x, rect.pos.y + 1, rect.size.y - 2, value);
 		}
 
 		bool draw_rect(const Recti& rect, CallbackType func)
 		{
 			return
-				draw_line_h(rect.x, rect.y, rect.w, func) &&
-				draw_line_h(rect.x, rect.y + rect.h, rect.w, func) &&
-				draw_line_v(rect.x, rect.y + 1, rect.h - 2, func) &&
-				draw_line_v(rect.x + rect.w, rect.y + 1, rect.h - 2, func);
+				draw_line_h(rect.pos.x, rect.pos.y, rect.size.x, func) &&
+				draw_line_h(rect.pos.x, rect.pos.y + rect.size.y, rect.size.x, func) &&
+				draw_line_v(rect.pos.x, rect.pos.y + 1, rect.size.y - 2, func) &&
+				draw_line_v(rect.pos.x + rect.size.x, rect.pos.y + 1, rect.size.y - 2, func);
 		}
 
 		void fill_rect(const Recti& rect, ValueType value)
@@ -267,13 +266,13 @@ namespace unicore
 			Recti rect{ pos, src.size() };
 			_buffer.clip_rect(rect);
 
-			if (rect.w > 0 && rect.h > 0)
+			if (rect.size.x > 0 && rect.size.y > 0)
 			{
-				List<T> line(rect.w);
+				List<T> line(rect.size.x);
 
-				for (int y = 0; y < rect.h; y++)
+				for (int y = 0; y < rect.size.y; y++)
 				{
-					const auto w = src.get_line_h(0, y, rect.w, line.data());
+					const auto w = src.get_line_h(0, y, rect.size.x, line.data());
 					_buffer.set_line_h({ pos.x, pos.y + y }, w, line.data());
 				}
 			}
@@ -296,15 +295,21 @@ namespace unicore
 
 		void internal_fill_rect(const Recti& rect, ValueType value)
 		{
-			for (unsigned i = 0; i < rect.h; i++)
-				draw_line_h(Vector2i(rect.x, rect.y + i), static_cast<unsigned>(rect.w), value);
+			for (int i = 0; i < rect.size.y; i++)
+			{
+				draw_line_h(
+					Vector2i(rect.pos.x, rect.pos.y + i),
+					static_cast<unsigned>(rect.size.x), value);
+			}
 		}
 
 		bool internal_fill_rect(const Recti& rect, CallbackType func)
 		{
-			for (unsigned i = 0; i < rect.h; i++)
+			for (int i = 0; i < rect.size.y; i++)
 			{
-				if (!draw_line_h(Vector2i(rect.x, rect.y + i), static_cast<unsigned>(rect.w), func))
+				if (!draw_line_h(
+					Vector2i(rect.pos.x, rect.pos.y + i),
+					static_cast<unsigned>(rect.size.x), func))
 					return false;
 			}
 

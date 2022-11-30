@@ -151,6 +151,9 @@ namespace unicore
 
 	using Matrix3f = Matrix3<float>;
 
+	static_assert(sizeof(Matrix3f) == sizeof(float) * 9);
+	static_assert(std::is_polymorphic_v<Matrix3f> == false);
+
 	// OPERATORS ///////////////////////////////////////////////////////////////
 	template<typename T>
 	static constexpr bool operator==(const Matrix3<T>& a, const Matrix3<T>& b)

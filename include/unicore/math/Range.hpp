@@ -24,6 +24,16 @@ namespace unicore
 
 		UC_NODISCARD constexpr T size() const { return max - min; }
 
+		UC_NODISCARD constexpr Bool inside(T value) const
+		{
+			return value >= min && max <= value;
+		}
+
+		UC_NODISCARD constexpr Bool inside_exclusive(T value) const
+		{
+			return value > min && max < value;
+		}
+
 		UC_NODISCARD constexpr T clamp(T value) const
 		{
 			return Math::clamp(value, min, max);
@@ -40,12 +50,18 @@ namespace unicore
 				static_cast<U>(max),
 			};
 		}
+
+		UC_NODISCARD static constexpr Range<T> numeric_limits()
+		{
+			return { std::numeric_limits<T>::min(), std::numeric_limits<T>::max() };
+		}
 	};
 
+	// OPERATORS /////////////////////////////////////////////////////////////////
 	template<typename T>
 	static constexpr bool operator==(const Range<T>& a, const Range<T>& b)
 	{
-		return a.min == b.min && a.max == b.max;
+		return Math::equals(a.min, b.min) && Math::equals(a.max, b.max);
 	}
 
 	template<typename T>
@@ -57,6 +73,10 @@ namespace unicore
 	using Rangei = Range<int>;
 	using Rangef = Range<float>;
 
+	static_assert(sizeof(Rangef) == sizeof(float) * 2);
+	static_assert(std::is_polymorphic_v<Rangef> == false);
+
+	// CONST /////////////////////////////////////////////////////////////////////
 	namespace details
 	{
 		template<typename T>

@@ -1,16 +1,16 @@
 #pragma once
-#include "unicore/ui/UIDocumentParseXML.hpp"
+#include "unicore/remoteui/DocumentParseXML.hpp"
 #if defined(UNICORE_USE_XML)
 #include "unicore/resource/ResourceLoader.hpp"
 #include "unicore/xml/XMLDataLoader.hpp"
 
-namespace unicore
+namespace unicore::remoteui
 {
-	class UIDocumentXMLLoader : public ResourceLoaderOptionsTyped<
-		LoggerOption, ResourceLoaderTypePolicy::Single<UIDocument>, XMLLoadPolicy,
+	class DocumentXMLLoader : public ResourceLoaderOptionsTyped<
+		LoggerOption, ResourceLoaderTypePolicy::Single<Document>, XMLLoadPolicy,
 		ResourceLoaderOptionsPolicy::NullOrExact<LoggerOption>>
 	{
-		UC_OBJECT(UIDocumentXMLLoader, ResourceLoader)
+		UC_OBJECT(DocumentXMLLoader, ResourceLoader)
 	public:
 
 		UC_NODISCARD Shared<Resource> load_options(

@@ -1,16 +1,15 @@
 ﻿#pragma once
-#include "unicore/math/Hash.hpp"
+#include "unicore/Defs.hpp"
 
 namespace unicore
 {
-	template <typename TChar, size_t N>
+	template <typename TChar, Size N>
 	struct ConstString
 	{
-		static constexpr size_t npos = static_cast<size_t>(-1);
-		static constexpr size_t size = N;
+		static constexpr Size npos = BasicStringView<TChar>::npos;
+		static constexpr Size size = N;
 
 		TChar data[N + 1];
-		size_t hash;
 
 		constexpr ConstString() noexcept
 			: data{}
@@ -25,6 +24,11 @@ namespace unicore
 		constexpr ConstString(const TChar(&data)[N + 1]) noexcept
 			: ConstString(data, std::make_index_sequence<N>())
 		{
+		}
+
+		constexpr TChar operator[](Size index) const noexcept
+		{
+			return data[index];
 		}
 
 		explicit constexpr operator const TChar* () const noexcept
@@ -52,28 +56,23 @@ namespace unicore
 			return data;
 		}
 
-		//UC_NODISCARD constexpr auto hash() const
-		//{
-		//	return Crc32::compute(data, N);
-		//}
-
-		template <size_t Pos, size_t Count = npos>
+		template <Size Pos, Size Count = npos>
 		UC_NODISCARD constexpr auto substr() const noexcept
 		{
 			static_assert(Pos <= N);
-			constexpr size_t new_size = (std::min)(Count, N - Pos);
+			constexpr Size new_size = std::min(Count, N - Pos);
 
 			TChar buf[new_size + 1]{};
-			for (size_t i = 0; i < new_size; i++) {
+			for (Size i = 0; i < new_size; i++) {
 				buf[i] = data[Pos + i];
 			}
 
 			return ConstString<TChar, new_size>(buf);
 		}
 
-		UC_NODISCARD constexpr auto find(TChar ch, size_t pos = 0) const noexcept
+		UC_NODISCARD constexpr auto find(TChar ch, Size pos = 0) const noexcept
 		{
-			for (size_t i = pos; i < N; i++) {
+			for (Size i = pos; i < N; i++) {
 				if (data[i] == ch) {
 					return i;
 				}
@@ -81,9 +80,9 @@ namespace unicore
 			return npos;
 		}
 
-		UC_NODISCARD constexpr auto rfind(TChar ch, size_t pos = npos) const noexcept
+		UC_NODISCARD constexpr auto rfind(TChar ch, Size pos = npos) const noexcept
 		{
-			for (size_t i = (pos == npos ? N - 1 : pos); i + 1 > 0; i--) {
+			for (Size i = (pos == npos ? N - 1 : pos); i + 1 > 0; --i) {
 				if (data[i] == ch) {
 					return i;
 				}
@@ -92,15 +91,15 @@ namespace unicore
 		}
 
 	private:
-		template <size_t... Idx>
+		template <Size... Idx>
 		constexpr ConstString(const ConstString<TChar, N>& other, std::index_sequence<Idx...>) noexcept
-			: data{ other.data[Idx]... }, hash(Crc32::compute(view()))
+			: data{ other.data[Idx]... }
 		{
 		}
 
-		template <size_t... Idx>
+		template <Size... Idx>
 		constexpr ConstString(const TChar(&data)[sizeof...(Idx) + 1], std::index_sequence<Idx...>) noexcept
-			: data{ data[Idx]... }, hash(Crc32::compute(view()))
+			: data{ data[Idx]... }
 		{
 		}
 	};
@@ -111,7 +110,7 @@ namespace unicore
 		return {};
 	}
 
-	template <typename TChar, size_t N>
+	template <typename TChar, Size N>
 	constexpr ConstString<TChar, N - 1> make_const_string(const TChar(&str)[N]) noexcept
 	{
 		return str;
@@ -124,37 +123,37 @@ namespace unicore
 		return make_const_string(str);
 	}
 
-	template <typename TChar, size_t N, size_t M>
+	template <typename TChar, Size N, Size M>
 	constexpr ConstString<TChar, N + M> operator+(const ConstString<TChar, N>& a, const ConstString<TChar, M>& b) noexcept
 	{
 		TChar data[N + M + 1]{ };
-		for (size_t i = 0; i < N; i++)
+		for (Size i = 0; i < N; i++)
 			data[i] = a.data[i];
-		for (size_t i = 0; i < M; i++)
+		for (Size i = 0; i < M; i++)
 			data[N + i] = b.data[i];
 		return data;
 	}
 
-	template <typename TChar, size_t N, size_t M>
+	template <typename TChar, Size N, Size M>
 	constexpr ConstString<TChar, N + M - 1> operator+(const ConstString<TChar, N>& a, const TChar(&b)[M]) noexcept
 	{
 		return a + make_const_string(b);
 	}
 
-	template <typename TChar, size_t N, size_t M>
+	template <typename TChar, Size N, Size M>
 	constexpr ConstString<TChar, N + M - 1> operator+(const TChar(&a)[N], const ConstString<TChar, M>& b) noexcept
 	{
 		return make_const_string(a) + b;
 	}
 
-	template <typename TChar, size_t N, size_t M>
+	template <typename TChar, Size N, Size M>
 	constexpr bool operator==(const ConstString<TChar, N>& a, const ConstString<TChar, M>& b) noexcept
 	{
 		if constexpr (N != M) {
 			return false;
 		}
 
-		for (size_t i = 0; i < M; i++) {
+		for (Size i = 0; i < M; i++) {
 			if (a.data[i] != b.data[i]) {
 				return false;
 			}
@@ -163,52 +162,33 @@ namespace unicore
 		return true;
 	}
 
-	template <typename TChar, size_t N, size_t M>
+	template <typename TChar, Size N, Size M>
 	constexpr bool operator!=(const ConstString<TChar, N>& a, const ConstString<TChar, M>& b) noexcept
 	{
 		return !(a == b);
 	}
 
-	template <typename TChar, size_t N, size_t M>
+	template <typename TChar, Size N, Size M>
 	constexpr bool operator==(const ConstString<TChar, N>& a, const TChar(&b)[M]) noexcept
 	{
 		return a == make_const_string(b);
 	}
 
-	template <typename TChar, size_t N, size_t M>
+	template <typename TChar, Size N, Size M>
 	constexpr bool operator!=(const ConstString<TChar, N>& a, const TChar(&b)[M]) noexcept
 	{
 		return a != make_const_string(b);
 	}
 
-	template <typename TChar, size_t N, size_t M>
+	template <typename TChar, Size N, Size M>
 	constexpr bool operator==(const TChar(&a)[N], const ConstString<TChar, M>& b) noexcept
 	{
 		return make_const_string(a) == b;
 	}
 
-	template <typename TChar, size_t N, size_t M>
+	template <typename TChar, Size N, Size M>
 	constexpr bool operator!=(const TChar(&a)[N], const ConstString<TChar, M>& b) noexcept
 	{
 		return make_const_string(a) != b;
-	}
-
-	namespace CharTable
-	{
-		static constexpr auto Punctuation = make_const_string(U"!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
-		static constexpr auto Digits = make_const_string(U"0123456789");
-		static constexpr auto HexDigits = Digits + make_const_string(U"abcdefABCDEF");
-		static constexpr auto Alpha = make_const_string(U"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-		static constexpr auto Alnum = Alpha + Digits;
-		static constexpr auto Space = make_const_string(U" \f\n\r\t\v");
-
-		static constexpr auto Ascii = Alpha + Punctuation + Digits;
-		static constexpr auto Printable = Ascii + make_const_string(U" ");
-
-		static constexpr auto English = Alpha;
-		static constexpr auto Russian =
-			make_const_string(U"АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя");
-
-		// https://www.cogsci.ed.ac.uk/~richard/unicode-sample-3-2.html
 	}
 }

@@ -26,11 +26,12 @@ namespace unicore
 			y = y_;
 		}
 
-		UC_NODISCARD constexpr size_t size() const { return 2; }
+		UC_NODISCARD constexpr Size size() const { return 2; }
 		UC_NODISCARD constexpr T area() const { return x * y; }
 
 		UC_NODISCARD constexpr T length_squared() const { return x * x + y * y; }
-		UC_NODISCARD float length() const { return sqrtf(static_cast<float>(length_squared())); }
+		// TODO: Replace with constexpr
+		UC_NODISCARD float length() const { return Math::sqrt(static_cast<float>(length_squared())); }
 
 		T& operator[](int index)
 		{
@@ -85,13 +86,16 @@ namespace unicore
 			return vec;
 		}
 
+		UC_NODISCARD constexpr Vector2<T> yx() const { return { y, x }; }
+
 		UC_NODISCARD constexpr Vector2<T> perpendicular() const
 		{
 			//return Vector2(y, -x);
 			return Vector2(-y, x);
 		}
 
-		template<typename U>
+		template<typename U,
+			std::enable_if_t<sfinae::is_numeric_v<U>>* = nullptr>
 		UC_NODISCARD constexpr Vector2<U> cast() const
 		{
 			if constexpr (std::is_same_v<U, T>) return *this;
@@ -131,12 +135,12 @@ namespace unicore
 			return { Math::snap(x, value.x), Math::snap(y, value.y) };
 		}
 
-		static float constexpr dot(const Vector2<T>& a, const Vector2<T>& b)
+		static T constexpr dot(const Vector2<T>& a, const Vector2<T>& b)
 		{
 			return a.x * b.x + a.y * b.y;
 		}
 
-		static float constexpr distance(const Vector2<T>& a, const Vector2<T>& b)
+		static auto constexpr distance(const Vector2<T>& a, const Vector2<T>& b)
 		{
 			return (a - b).length();
 		}
@@ -154,10 +158,10 @@ namespace unicore
 
 		static constexpr Vector2<T> lerp(const Vector2<T>& a, const Vector2<T>& b, float t)
 		{
-			return Vector2<T>(
+			return {
 				Math::lerp(a.x, b.x, t),
 				Math::lerp(a.y, b.y, t)
-				);
+			};
 		}
 	};
 
@@ -165,8 +169,9 @@ namespace unicore
 	typedef Vector2<Int>   Vector2i;
 
 	static_assert(sizeof(Vector2f) == sizeof(float) * 2);
+	static_assert(std::is_polymorphic_v<Vector2f> == false);
 
-	// IMPLEMENTATION //////////////////////////////////////////////////////////
+	// IMPLEMENTATION ////////////////////////////////////////////////////////////
 	template <typename T>
 	constexpr Vector2<T>::Vector2(T x_, T y_) noexcept
 		: x(x_), y(y_)
@@ -177,7 +182,7 @@ namespace unicore
 		: x(value), y(value)
 	{}
 
-	// OPERATORS ///////////////////////////////////////////////////////////////
+	// OPERATORS /////////////////////////////////////////////////////////////////
 	template<typename T>
 	static constexpr bool operator == (const Vector2<T>& a, const Vector2<T>& b)
 	{
@@ -225,6 +230,17 @@ namespace unicore
 	{
 		return Vector2<T>(a.x / value, a.y / value);
 	}
+
+	template<typename T>
+	struct Vector2SortX
+	{
+		bool operator()(const Vector2<T>& lhs, const Vector2<T>& rhs) const
+		{
+			if (Math::equals(lhs.x, rhs.x))
+				return lhs.y < rhs.y;
+			return lhs.x < rhs.x;
+		}
+	};
 
 	// CONST /////////////////////////////////////////////////////////////////////
 	namespace details

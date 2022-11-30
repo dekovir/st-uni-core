@@ -18,14 +18,16 @@ namespace unicore
 
 		bool remove(const ActionType& action)
 		{
-			//for (unsigned i = 0; i < _actions.size(); i++)
+			// TODO: Fix compile error
+			//for (auto it = _actions.begin(); it != _actions.end(); ++it)
 			//{
-			//	if (_actions[i] == action)
+			//	if (*it == action)
 			//	{
-			//		_actions.erase(_actions.begin() + i);
+			//		_actions.erase(it);
 			//		return true;
 			//	}
 			//}
+
 			return false;
 		}
 
@@ -62,7 +64,25 @@ namespace unicore
 		}
 	};
 
+	template<>
+	class Event<void> : public PublicEvent<void>
+	{
+	public:
+
+		void invoke()
+		{
+			for (const auto& action : _actions)
+				action();
+		}
+
+		void operator()()
+		{
+			invoke();
+		}
+	};
+
 #define UC_OBJECT_EVENT(name, ...) \
-	public:  PublicEvent<__VA_ARGS__>& on_ ## name() { return _event_ ## name; } \
+	public: using Event_ ## name = PublicEvent<__VA_ARGS__>; \
+	public: PublicEvent<__VA_ARGS__>& on_ ## name() { return _event_ ## name; } \
 	protected: Event<__VA_ARGS__> _event_ ## name
 }
