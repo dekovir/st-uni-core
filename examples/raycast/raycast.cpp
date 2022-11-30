@@ -18,10 +18,15 @@ namespace unicore
 
 		constexpr int side = 20;
 
+		const Cell wall = { CellType::Wall };
+
 		_map = std::make_shared<Map>(side, side);
 		Canvas canvas(*_map);
 		canvas.fill(Cell{ CellType::Floor });
-		canvas.draw_rect({ 0, 0, side, side }, Cell{ CellType::Wall });
+		canvas.draw_rect({ 0, 0, side, side }, wall);
+		canvas.draw_line_h({ 1, 5 }, 5, wall);
+		canvas.draw_line_h({ 7, 5 }, 5, wall);
+		canvas.draw_line_h({ 13, 5 }, 5, wall);
 
 		_player = std::make_shared<Player>();
 		_player->position = { 3.5f, 3.5f };
@@ -61,7 +66,7 @@ namespace unicore
 			constexpr float backward_speed = -1;
 			constexpr auto turn_speed = 180_deg;
 
-			const float delta = time.delta().total_seconds();
+			const auto delta = static_cast<float>(time.delta().total_seconds());
 
 			if (input.keyboard().down(KeyCode::W) || input.keyboard().down(KeyCode::ArrowUp))
 				_player->move_forward(forward_speed * delta);
@@ -112,7 +117,7 @@ namespace unicore
 				const auto pos = _player->position * scale;
 
 				_graphics.set_color(ColorConst4b::Green);
-				_graphics.draw_circle(pos, scale / 2, false, 16);
+				_graphics.draw_circle(pos, scale / 4, false, 16);
 				_graphics.draw_line(pos, pos + _player->forward() * (scale / 2));
 			}
 		}
