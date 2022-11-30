@@ -65,19 +65,19 @@ namespace unicore
 		// RECT //////////////////////////////////////////////////////////////////////
 		void draw_rect(const Recti& rect, ValueType value)
 		{
-			draw_line_h(rect.pos.x, rect.pos.y, rect.size.x, value);
-			draw_line_h(rect.pos.x, rect.pos.y + rect.size.y, rect.size.x, value);
-			draw_line_v(rect.pos.x, rect.pos.y + 1, rect.size.y - 2, value);
-			draw_line_v(rect.pos.x + rect.size.x, rect.pos.y + 1, rect.size.y - 2, value);
+			draw_line_h({ rect.pos.x, rect.pos.y }, rect.size.x, value);
+			draw_line_h({ rect.pos.x, rect.pos.y + rect.size.y - 1 }, rect.size.x, value);
+			draw_line_v({ rect.pos.x, rect.pos.y + 1 }, rect.size.y - 2, value);
+			draw_line_v({ rect.pos.x + rect.size.x - 1, rect.pos.y + 1 }, rect.size.y - 2, value);
 		}
 
 		bool draw_rect(const Recti& rect, CallbackType func)
 		{
 			return
-				draw_line_h(rect.pos.x, rect.pos.y, rect.size.x, func) &&
-				draw_line_h(rect.pos.x, rect.pos.y + rect.size.y, rect.size.x, func) &&
-				draw_line_v(rect.pos.x, rect.pos.y + 1, rect.size.y - 2, func) &&
-				draw_line_v(rect.pos.x + rect.size.x, rect.pos.y + 1, rect.size.y - 2, func);
+				draw_line_h({ rect.pos.x, rect.pos.y }, rect.size.x, func) &&
+				draw_line_h({ rect.pos.x, rect.pos.y + rect.size.y - 1 }, rect.size.x, func) &&
+				draw_line_v({ rect.pos.x, rect.pos.y + 1 }, rect.size.y - 2, func) &&
+				draw_line_v({ rect.pos.x + rect.size.x - 1, rect.pos.y + 1 }, rect.size.y - 2, func);
 		}
 
 		void fill_rect(const Recti& rect, ValueType value)

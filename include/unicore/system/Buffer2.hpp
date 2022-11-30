@@ -255,7 +255,7 @@ namespace unicore
 
 			const auto offset = calc_offset(x, y);
 			for (unsigned i = 0; i < lng; i++)
-				_data[offset + _size.x] = value;
+				_data[offset + i * _size.x] = value;
 			return lng;
 		}
 
