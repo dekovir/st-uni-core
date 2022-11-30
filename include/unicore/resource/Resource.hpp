@@ -13,8 +13,8 @@ namespace unicore
 	{
 		UC_OBJECT(Resource, Object)
 	public:
-		UC_NODISCARD virtual size_t get_system_memory_use() const = 0;
-		UC_NODISCARD virtual size_t get_used_resources(Set<Shared<Resource>>& resources) { return 0; }
+		UC_NODISCARD virtual Size get_system_memory_use() const = 0;
+		UC_NODISCARD virtual Size get_used_resources(Set<Shared<Resource>>& resources) { return 0; }
 
 		// TODO: Replace with const value
 		UC_NODISCARD virtual ResourceCachePolicy cache_policy() const { return ResourceCachePolicy::CanCache; }
@@ -24,25 +24,40 @@ namespace unicore
 	{
 	public:
 		virtual ~ResourceOptions() = default;
-		UC_NODISCARD virtual size_t hash() const = 0;
+		UC_NODISCARD virtual Size hash() const = 0;
 	};
 
-	template<size_t Hash>
+	template<Size Hash>
 	class ResourceOptionsHash : public ResourceOptions
 	{
 	public:
-		UC_NODISCARD size_t hash() const override { return Hash; }
+		UC_NODISCARD Size hash() const override { return Hash; }
 	};
 
 	class ResourceOptionsTag : public ResourceOptions
 	{
 	public:
 		const StringView text;
-		const size_t hash_value;
+		const Size hash_value;
 
 		explicit ResourceOptionsTag(StringView text);
 
-		UC_NODISCARD size_t hash() const override { return hash_value; }
+		UC_NODISCARD Size hash() const override { return hash_value; }
+	};
+
+	class LoggerOption : public ResourceOptions
+	{
+	public:
+		Logger* logger = nullptr;
+
+		LoggerOption() = default;
+
+		explicit LoggerOption(Logger& logger)
+			: logger(&logger)
+		{
+		}
+
+		UC_NODISCARD Size hash() const override;
 	};
 
 #define UNICORE_RESOURCE_OPTIONS_TAG(name) \
@@ -51,7 +66,7 @@ namespace unicore
 	class EmptyResourceOptions : public ResourceOptions
 	{
 	public:
-		UC_NODISCARD size_t hash() const override { return 0; }
+		UC_NODISCARD Size hash() const override { return 0; }
 	};
 
 	template<typename T,
@@ -66,17 +81,18 @@ namespace unicore
 			: _data(std::move(data))
 		{}
 
-		auto get(size_t index) { return _data[index]; }
-		auto get(size_t index) const { return _data[index]; }
+		auto get(Size index) { return _data[index]; }
+		auto get(Size index) const { return _data[index]; }
 
-		auto operator[](size_t index) { return get(index); }
-		auto operator[](size_t index) const { return get(index); }
+		auto operator[](Size index) { return get(index); }
+		auto operator[](Size index) const { return get(index); }
 
 		UC_NODISCARD const DataType& data() const { return _data; }
-		UC_NODISCARD size_t size() const { return _data.size(); }
+		UC_NODISCARD Size size() const { return _data.size(); }
+		UC_NODISCARD Bool empty() const { return _data.empty(); }
 
-		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(ResourceList); }
-		UC_NODISCARD size_t get_used_resources(Set<Shared<Resource>>& resources) override
+		UC_NODISCARD Size get_system_memory_use() const override { return sizeof(ResourceList); }
+		UC_NODISCARD Size get_used_resources(Set<Shared<Resource>>& resources) override
 		{
 			resources.insert(_data.begin(), _data.end());
 			return _data.size();
@@ -93,7 +109,7 @@ namespace unicore
 		UC_OBJECT(ResourceDictionary, Resource)
 	public:
 		using ResourceList = List<Shared<T>>;
-		using NamesDictionary = Dictionary<String, uint16_t>;
+		using NamesDictionary = Dictionary<String, UInt16>;
 
 		ResourceDictionary(ResourceList&& list, NamesDictionary&& names)
 			:_list(std::move(list)), _names(std::move(names))
@@ -102,8 +118,8 @@ namespace unicore
 		UC_NODISCARD const ResourceList& list() const { return _list; }
 		UC_NODISCARD const NamesDictionary& names() const { return _names; }
 
-		UC_NODISCARD size_t get_system_memory_use() const override { return sizeof(ResourceDictionary); }
-		UC_NODISCARD size_t get_used_resources(Set<Shared<Resource>>& resources) override
+		UC_NODISCARD Size get_system_memory_use() const override { return sizeof(ResourceDictionary); }
+		UC_NODISCARD Size get_used_resources(Set<Shared<Resource>>& resources) override
 		{
 			resources.insert(_list.begin(), _list.end());
 			return _list.size();

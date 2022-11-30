@@ -1,45 +1,78 @@
 #pragma once
-#include "UINode.hpp"
-#include "unicore/ui/UIAttribute.hpp"
+#include "unicore/ui/UIAction.hpp"
 
 namespace unicore
 {
-	// ACTIONS
-	class UINode;
-
-	using UIActionDefault = std::function<void()>;
-	using UIActionNodeDefault = std::function<void(const UINode&)>;
-
-	using UIActionValue = std::function<void(const Variant&)>;
-	using UIActionNodeValue = std::function<void(const UINode&, const Variant&)>;
-
-	using UIAction = StdVariant<UIActionDefault, UIActionNodeDefault, UIActionValue, UIActionNodeValue>;
-
-	enum class UIActionType : uint8_t
+	enum class UIAttribute
 	{
-		OnClick,
-		OnChange, // Value changed
-	};
-	using UIActionDict = Dictionary<UIActionType, UIAction>;
-
-	// NODE
-	enum class UINodeType
-	{
-		Group,
-		Text,
-		Image,
-		Button,
-		Input,
-		Slider,
-		Toggle,
+		Type,
+		Value,
+		Width,
+		Height,
 		Tooltip,
-		List,
+		Text,
+		Step,
+		Min,
+		Max,
+	};
+
+	using UIAttributeDict = Dictionary<UIAttribute, Variant>;
+
+	enum class UINodeTag
+	{
+		Group, // Can have children
+		Text,
+		Color,
+		Image,
+		Input,
 		Item,
+		Progress,
+	};
+
+	enum class UIGroupType
+	{
+		Vertical,
+		Horizontal,
+		Child,
+		List,
 		Tree,
 		Combo,
+		Flex,
 		Table,
+		TableHeader,
 		TableRow,
 		TableCell,
+		Popup,
+		Tooltip,
+		Modal,
+	};
+
+	enum class UITextType
+	{
+		Normal,
+		Heading1,
+		Heading2,
+		Heading3,
+		Heading4,
+		Heading5,
+		Heading6,
+	};
+
+	enum class UIInputType
+	{
+		Text,
+		TextArea,
+		Toggle,
+		Radio,
+		Button,
+		Image,
+		Integer,
+		Float,
+		Range,
+		Vector2,
+		Vector3,
+		Color3,
+		Color4,
 	};
 
 	class UIDocument;
@@ -74,8 +107,9 @@ namespace unicore
 		UC_NODISCARD constexpr auto document() const { return _document; }
 		UC_NODISCARD constexpr auto index() const { return _index; }
 
+		UC_NODISCARD Bool empty() const;
 		UC_NODISCARD Bool valid() const;
-		UC_NODISCARD UINodeType type() const;
+		UC_NODISCARD UINodeTag tag() const;
 		UC_NODISCARD UINode parent() const;
 
 		UC_NODISCARD Optional<String> uid() const;
@@ -83,16 +117,21 @@ namespace unicore
 		UC_NODISCARD Optional<String> style() const;
 		UC_NODISCARD Bool visible() const;
 
+		// ATTRIBUTES //////////////////////////////////////////////////////////////
 		UC_NODISCARD UIAttributeDict get_attributes() const;
+
+		UC_NODISCARD Variant get(UIAttribute attribute) const;
+		UC_NODISCARD Bool has(UIAttribute attribute) const;
+
+		UC_NODISCARD Variant value() const { return get(UIAttribute::Value); }
+		UC_NODISCARD Variant type() const { return get(UIAttribute::Type); }
+		UC_NODISCARD Variant text() const { return get(UIAttribute::Text); }
+
+		// ACTIONS /////////////////////////////////////////////////////////////////
 		UC_NODISCARD UIActionDict get_actions() const;
-
-		UC_NODISCARD Variant attribute(UIAttributeType type) const;
-
-		UC_NODISCARD Variant value() const { return attribute(UIAttributeType::Value); }
-		UC_NODISCARD Variant text() const { return attribute(UIAttributeType::Text); }
-
 		UC_NODISCARD Optional<UIAction> action(UIActionType type) const;
 
+		// HIERARCHY ///////////////////////////////////////////////////////////////
 		size_t get_children(List<UINode>& children) const;
 		UC_NODISCARD List<UINode> get_children() const;
 		UC_NODISCARD Size get_children_count() const;
@@ -101,15 +140,17 @@ namespace unicore
 		UC_NODISCARD UINode get_next_sibling() const;
 		UC_NODISCARD UINode get_prev_sibling() const;
 
-		// FIND //////////////////////////////////////////////////////////////////////
-		UC_NODISCARD UINode find_by_type(UINodeType type) const;
-		Size find_all_by_type(UINodeType type, List<UINode>& list) const;
+		// FIND ////////////////////////////////////////////////////////////////////
+		UC_NODISCARD UINode find_by_type(UINodeTag tag) const;
+		Size find_all_by_type(UINodeTag tag, List<UINode>& list) const;
 
 		UC_NODISCARD UINode find_by_name(StringView name) const;
 		Size find_all_by_name(StringView name, List<UINode>& list) const;
 
 		UC_NODISCARD UINode querry(const Predicate<const UINode&>& predicate) const;
 		Size querry_all(const Predicate<const UINode&>& predicate, List<UINode>& list) const;
+
+		static const UINode Empty;
 
 	private:
 		const UIDocument* _document;

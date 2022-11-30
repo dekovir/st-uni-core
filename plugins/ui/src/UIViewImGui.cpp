@@ -12,7 +12,9 @@ namespace unicore
 	UIViewImGui::UIViewImGui(ImGuiContext& context, Logger& logger)
 		: _logger(logger)
 		, _context(context)
-		, _id(s_last_id)
+		, _pos(0, 0)
+		, _size(0, 0)
+		, _id(s_last_id++)
 	{
 	}
 
@@ -85,28 +87,31 @@ namespace unicore
 
 	void UIViewImGui::on_create_node(const UINode& node)
 	{
-		UC_LOG_DEBUG(_logger) << "create_node " << node;
+		//UC_LOG_DEBUG(_logger) << "create_node " << node;
 
 		CachedInfo info;
 		info.id = StringBuilder::format("##{}", StringHelper::to_hex(node.index()));
 		info.title = node.text().get_string() + info.id;
 
 		_cached[node.index()] = info;
+
+		for (const auto& child : node.get_children())
+			on_create_node(child);
 	}
 
 	void UIViewImGui::on_set_attribute(const UINode& node,
-		UIAttributeType type, const Optional<Variant>& value)
+		UIAttribute type, const Optional<Variant>& value)
 	{
 		UIView::on_set_attribute(node, type, value);
 
-		if (type == UIAttributeType::Text)
+		if (type == UIAttribute::Text)
 		{
 			if (const auto info = get_info(node.index()))
 				info->title = value->get_string() + info->id;
 		}
 	}
 
-	Bool UIViewImGui::render_node(const UINode& node, Bool same_line)
+	Bool UIViewImGui::render_node(const UINode& node, LayoutOption layout_option)
 	{
 		if (!node.visible()) return false;
 
@@ -117,226 +122,448 @@ namespace unicore
 			return false;
 		}
 
-		const auto type = node.type();
+		const auto tag = node.tag();
 		const auto& id = cached_info->id;
 		const auto& title = cached_info->title;
 
 		List<UINode> children;
 		node.get_children(children);
 
-		const auto width = node.attribute(UIAttributeType::Width).get_float();
-		const auto height = node.attribute(UIAttributeType::Height).get_float();
+		const auto width = node.get(UIAttribute::Width).get_float();
+		const auto height = node.get(UIAttribute::Height).get_float();
 
 		Bool bool_value;
+		Int int_value;
+		Float float_value;
+
+		Vector2f vec2_value;
+		Vector3f vec3_value;
+		Color3f col3_value;
+		Color4f col4_value;
+
 		String str;
 		String32 str32;
+		Rangef range_f;
+		Rangei range_i;
 
-		switch (type)
+		ImTextureID texture_id;
+		ImVec2 size, uv0, uv1;
+
+		switch (tag)
 		{
-		case UINodeType::Group:
-			render_node_header(node, same_line);
-			ImGui::BeginGroup();
-			switch (get_group_value(node.value()))
+		case UINodeTag::Group: // GROUP ////////////////////////////////////////////
+			switch (node.type().get_enum<UIGroupType>())
 			{
-			case UIGroupValue::Horizontal:
-				for (unsigned i = 0; i < children.size(); i++)
-					render_node(children[i], i > 0);
-				break;
-
-			default:
+			case UIGroupType::Vertical:
+				render_node_header(node, layout_option);
+				ImGui::BeginGroup();
 				for (const auto& child : children)
 					render_node(child);
+				ImGui::EndGroup();
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::Horizontal:
+				render_node_header(node, layout_option);
+				ImGui::BeginGroup();
+				for (unsigned i = 0; i < children.size(); i++)
+				{
+					const auto option = i > 0
+						? LayoutOption::SameLine : LayoutOption::None;
+					render_node(children[i], option);
+				}
+				ImGui::EndGroup();
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::Child:
+				render_node_header(node, layout_option);
+				if (ImGui::BeginChild(id.c_str(), { width, height }, false, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					for (const auto& child : children)
+						render_node(child);
+				}
+				ImGui::EndChild();
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::List:
+				render_node_header(node, layout_option);
+				if (ImGui::BeginListBox(id.c_str(), { width, height }))
+				{
+					for (const auto& child : children)
+						render_node(child);
+					ImGui::EndListBox();
+				}
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::Tree:
+				bool_value = node.value().get_bool();
+				ImGui::SetNextItemOpen(bool_value);
+				render_node_header(node, layout_option);
+				if (ImGui::TreeNode(title.c_str()))
+				{
+					if (!bool_value)
+						_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+
+					for (const auto& child : children)
+						render_node(child);
+
+					ImGui::TreePop();
+				}
+				else if (bool_value)
+					_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::Combo:
+				str = node.value().get_string();
+				render_node_header(node, layout_option);
+				if (ImGui::BeginCombo(title.c_str(), str.c_str()))
+				{
+					for (const auto& child : children)
+						render_node(child);
+					ImGui::EndCombo();
+				}
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::Flex:
+				render_node_header(node, layout_option);
+				if (ImGui::BeginListBox(id.c_str(), { width, height }))
+				{
+					for (const auto& child : children)
+						render_node(child, LayoutOption::SameLineFlex);
+					ImGui::EndListBox();
+				}
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::Table:
+				render_node_header(node, layout_option);
+				if (ImGui::BeginTable(id.c_str(), node.value().get_int(1),
+					ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingStretchProp))
+				{
+					for (const auto& child : children)
+						render_node(child);
+					ImGui::EndTable();
+				}
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::TableHeader:
+				render_node_header(node, layout_option);
+				str = node.text().get_string();
+				ImGui::TableNextColumn();
+				ImGui::TableHeader(str.c_str());
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::TableRow:
+				render_node_header(node, layout_option);
+				ImGui::TableNextRow();
+				ImGui::BeginGroup();
+				for (const auto& child : children)
+					render_node(child);
+				ImGui::EndGroup();
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::TableCell:
+				render_node_header(node, layout_option);
+				ImGui::TableNextColumn();
+				ImGui::BeginGroup();
+				if (node.get(UIAttribute::Text).try_get_string(str))
+					ImGui::Text("%s", str.c_str());
+
+				if (!children.empty())
+				{
+					for (const auto& child : children)
+						render_node(child);
+				}
+				ImGui::EndGroup();
+				render_node_footer(node);
+				return true;
+
+			case UIGroupType::Popup:
+				if (node.value().get_bool())
+				{
+					ImGui::OpenPopup(id.c_str());
+					_document->set_node_attribute(node, UIAttribute::Value, false);
+				}
+
+				if (ImGui::BeginPopup(id.c_str()))
+				{
+					for (const auto& child : children)
+						render_node(child);
+
+					ImGui::EndPopup();
+				}
+				break;
+
+			case UIGroupType::Tooltip:
+				if (node.visible())
+				{
+					ImGui::BeginTooltip();
+
+					str = node.get(UIAttribute::Text).get_string();
+					if (!str.empty())
+						ImGui::Text("%s", str.c_str());
+
+					for (const auto& child : children)
+						render_node(child);
+					ImGui::EndTooltip();
+				}
+				break;
+
+			case UIGroupType::Modal:
+				if (node.value().get_bool())
+				{
+					ImGui::OpenPopup(id.c_str());
+					_document->set_node_attribute(node, UIAttribute::Value, false);
+				}
+
+				if (ImGui::BeginPopupModal(id.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					for (const auto& child : children)
+						render_node(child);
+
+					ImGui::EndPopup();
+				}
 				break;
 			}
-			ImGui::EndGroup();
-			render_node_footer(node);
-			return true;
+			break;
 
-		case UINodeType::Text:
-			str = node.attribute(UIAttributeType::Text).get_string();
+		case UINodeTag::Text: // TEXT //////////////////////////////////////////////
+			str = node.get(UIAttribute::Text).get_string();
 
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			ImGui::Text("%s", str.c_str());
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::Image:
-			if (const auto tex = node.value().get_object_cast<Texture>(); tex != nullptr)
-			{
-				const auto size = tex->size().cast<Float>();
-				const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
+		case UINodeTag::Color: // COLOR ////////////////////////////////////////////
+			col4_value = node.value().get_color4f();
 
-				render_node_header(node, same_line);
-				ImGui::Image(tex.get(), s);
-				render_node_footer(node);
-				return true;
-			}
-
-			if (const auto spr = node.value().get_object_cast<Sprite>(); spr != nullptr)
-			{
-				const auto size = spr->texture()->size().cast<Float>();
-				const auto rect = spr->rect().cast<Float>();
-
-				const ImVec2 uv0{ rect.x / size.x, rect.y / size.y };
-				const ImVec2 uv1{ uv0.x + rect.w / size.x, uv0.y + rect.h / size.y };
-				const ImVec2 s = { width > 0 ? width : rect.w, height > 0 ? height : rect.h };
-
-				render_node_header(node, same_line);
-				ImGui::Image(spr->texture().get(), s, uv0, uv1);
-				render_node_footer(node);
-				return true;
-			}
-			break;
-
-		case UINodeType::Button:
-			render_node_header(node, same_line);
-			if (ImGui::Button(title.c_str(), { width, height }))
+			render_node_header(node, layout_option);
+			if (ImGui::ColorButton(id.c_str(), ImGuiConvert::convert_color(col4_value)))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::Input:
-			str = node.value().get_string();
-			render_node_header(node, same_line);
-			if (ImGui::InputText(id.c_str(), &str))
-				_update_events.push_back({ node, UIEventType::ValueChanged, str });
-			render_node_footer(node);
-			return true;
-
-		case UINodeType::Slider:
-		{
-			const auto value_min = node.attribute(UIAttributeType::MinValue).get_float(0);
-			const auto value_max = node.attribute(UIAttributeType::MaxValue).get_float(1);
-			const auto format = node.attribute(UIAttributeType::Text).get_string("%.2f");
-
-			auto value = node.value().get_float();
-			render_node_header(node, same_line);
-			if (ImGui::SliderFloat(id.c_str(), &value, value_min, value_max, format.c_str()))
-				_update_events.push_back({ node, UIEventType::ValueChanged, value });
-			render_node_footer(node);
-		}
-		return true;
-
-		case UINodeType::Toggle:
-			bool_value = node.value().get_bool();
-			render_node_header(node, same_line);
-			if (ImGui::Checkbox(id.c_str(), &bool_value))
-				_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
-			render_node_footer(node);
-			return true;
-
-		case UINodeType::Tooltip:
-			if (ImGui::IsItemHovered())
+		case UINodeTag::Image: // IMAGE ////////////////////////////////////////////
+			render_node_header(node, layout_option);
+			if (get_texture(node.value(), texture_id, size, uv0, uv1))
 			{
-				ImGui::BeginTooltip();
-
-				str = node.attribute(UIAttributeType::Text).get_string();
-				if (!str.empty())
-					ImGui::Text("%s", str.c_str());
-
-				for (const auto& child : children)
-					render_node(child);
-				ImGui::EndTooltip();
+				const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
+				ImGui::Image(texture_id, s, uv0, uv1);
 			}
-			return false;
-
-		case UINodeType::List:
-			if (ImGui::BeginListBox(id.c_str()))
-			{
-				for (const auto& child : children)
-					render_node(child);
-
-				ImGui::EndListBox();
-			}
+			else ImGui::Image(nullptr, { width, height });
+			render_node_footer(node);
 			return true;
 
-		case UINodeType::Item:
+		case UINodeTag::Input: // INPUT ////////////////////////////////////////////
+			render_node_header(node, layout_option);
+			switch (node.type().get_enum<UIInputType>())
+			{
+			case UIInputType::Text:
+				str = node.value().get_string();
+				if (ImGui::InputText(id.c_str(), &str))
+					_update_events.push_back({ node, UIEventType::ValueChanged, str });
+				break;
+
+			case UIInputType::TextArea:
+				str = node.value().get_string();
+				if (ImGui::InputTextMultiline(id.c_str(), &str, { width, height }))
+					_update_events.push_back({ node, UIEventType::ValueChanged, str });
+				break;
+
+			case UIInputType::Toggle:
+				bool_value = node.value().get_bool();
+				if (ImGui::Checkbox(id.c_str(), &bool_value))
+					_update_events.push_back({ node, UIEventType::ValueChanged, bool_value });
+				break;
+
+			case UIInputType::Radio:
+				bool_value = node.value().get_bool();
+				if (ImGui::RadioButton(id.c_str(), bool_value))
+				{
+					_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
+					ImGui::CloseCurrentPopup();
+				}
+				break;
+
+			case UIInputType::Button:
+				if (ImGui::Button(title.c_str(), { width, height }))
+				{
+					_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+					ImGui::CloseCurrentPopup();
+				}
+				break;
+
+			case UIInputType::Image:
+				render_node_header(node, layout_option);
+				ImGui::PushID(id.c_str());
+				if (get_texture(node.value(), texture_id, size, uv0, uv1))
+				{
+					const ImVec2 s = { width > 0 ? width : size.x, height > 0 ? height : size.y };
+					if (ImGui::ImageButton(texture_id, s, uv0, uv1))
+					{
+						_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+						ImGui::CloseCurrentPopup();
+					}
+				}
+				else
+				{
+					if (ImGui::ImageButton(nullptr, { width, height }))
+					{
+						_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
+						ImGui::CloseCurrentPopup();
+					}
+				}
+				ImGui::PopID();
+				render_node_footer(node);
+				return true;
+
+			case UIInputType::Integer:
+				range_i = {
+					node.get(UIAttribute::Min).get_int(std::numeric_limits<Int>::min()),
+					node.get(UIAttribute::Max).get_int(std::numeric_limits<Int>::max())
+				};
+
+				int_value = node.value().get_int();
+				if (ImGui::InputInt(id.c_str(), &int_value, node.get(UIAttribute::Step).get_int(1)))
+				{
+					int_value = range_i.clamp(int_value);
+					_update_events.push_back({ node, UIEventType::ValueChanged, int_value });
+				}
+				break;
+
+			case UIInputType::Float:
+				range_f = {
+					node.get(UIAttribute::Min).get_float(-std::numeric_limits<Float>::max()),
+					node.get(UIAttribute::Max).get_float(+std::numeric_limits<Float>::max())
+				};
+				float_value = node.value().get_float();
+				if (ImGui::InputFloat(id.c_str(), &float_value, node.get(UIAttribute::Step).get_float(1)))
+				{
+					float_value = range_f.clamp(float_value);
+					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
+				}
+
+				break;
+
+			case UIInputType::Range:
+				// TODO: Implement step
+				range_f = {
+					node.get(UIAttribute::Min).get_float(0),
+					node.get(UIAttribute::Max).get_float(1)
+				};
+				str = node.get(UIAttribute::Text).get_string("%.2f");
+				float_value = node.value().get_float();
+				if (ImGui::SliderFloat(id.c_str(), &float_value, range_f.min, range_f.max, str.c_str()))
+					_update_events.push_back({ node, UIEventType::ValueChanged, float_value });
+				break;
+
+			case UIInputType::Vector2:
+				// TODO: Implement ImGui::InputInt2()
+				vec2_value = node.value().get_vec2f();
+				if (ImGui::InputFloat2(id.c_str(), &vec2_value.x))
+					_update_events.push_back({ node, UIEventType::ValueChanged, vec2_value });
+				break;
+
+			case UIInputType::Vector3:
+				// TODO: Implement ImGui::InputInt3()
+				vec3_value = node.value().get_vec3f();
+				if (ImGui::InputFloat3(id.c_str(), &vec3_value.x))
+					_update_events.push_back({ node, UIEventType::ValueChanged, vec3_value });
+				break;
+
+			case UIInputType::Color3:
+				col3_value = node.value().get_color3f();
+				if (ImGui::ColorEdit3(id.c_str(), &col3_value.r))
+					_update_events.push_back({ node, UIEventType::ValueChanged, col3_value });
+				break;
+
+			case UIInputType::Color4:
+				col4_value = node.value().get_color4f();
+				if (ImGui::ColorEdit4(id.c_str(), &col4_value.r))
+					_update_events.push_back({ node, UIEventType::ValueChanged, col4_value });
+				break;
+			}
+
+			render_node_footer(node);
+			return true;
+
+		case UINodeTag::Item: // ITEM //////////////////////////////////////////////
 			bool_value = node.value().get_bool();
-			render_node_header(node, same_line);
+			render_node_header(node, layout_option);
 			if (ImGui::Selectable(title.c_str(), bool_value))
 				_update_events.push_back({ node, UIEventType::Clicked, Variant::Empty });
 			render_node_footer(node);
 			return true;
 
-		case UINodeType::Tree:
-			bool_value = node.value().get_bool();
-			ImGui::SetNextItemOpen(bool_value);
-			if (ImGui::TreeNode(title.c_str()))
-			{
-				if (!bool_value)
-					_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
-
-				for (const auto& child : children)
-					render_node(child);
-
-				ImGui::TreePop();
-			}
-			else if (bool_value)
-				_update_events.push_back({ node, UIEventType::ValueChanged, !bool_value });
-
-			return true;
-
-		case UINodeType::Combo:
-			str = node.value().get_string();
-			if (ImGui::BeginCombo(title.c_str(), str.c_str()))
-			{
-				for (const auto& child : children)
-					render_node(child);
-
-				ImGui::EndCombo();
-			}
-			return true;
-
-		case UINodeType::Table:
-			if (ImGui::BeginTable(id.c_str(), node.value().get_int(1)))
-			{
-				for (const auto& child : children)
-					render_node(child);
-
-				ImGui::EndTable();
-			}
-			return true;
-
-		case UINodeType::TableRow:
-			ImGui::TableNextRow();
-			ImGui::BeginGroup();
-			for (const auto& child : children)
-				render_node(child);
-			ImGui::EndGroup();
-
-			return true;
-
-		case UINodeType::TableCell:
-			ImGui::TableNextColumn();
-
-			if (node.attribute(UIAttributeType::Text).try_get_string(str))
-				ImGui::Text("%s", str.c_str());
-
-			if (!children.empty())
-			{
-				ImGui::BeginGroup();
-				for (const auto& child : children)
-					render_node(child);
-				ImGui::EndGroup();
-			}
-
-			return true;
+		case UINodeTag::Progress: // PROGRESS //////////////////////////////////////
+			range_f = {
+				node.get(UIAttribute::Min).get_float(0),
+				node.get(UIAttribute::Max).get_float(1)
+			};
+			float_value = Math::inverse_lerp(range_f.min, range_f.max, node.value().get_float());
+			render_node_header(node, layout_option);
+			if (node.get(UIAttribute::Text).try_get_string(str))
+				ImGui::ProgressBar(float_value, { width, height }, str.c_str());
+			else ImGui::ProgressBar(float_value, { width, height });
+			render_node_footer(node);
+			break;
 		}
 
 		return false;
 	}
 
-	void UIViewImGui::render_node_header(const UINode& node, Bool same_line)
+	void UIViewImGui::render_node_header(const UINode& node, LayoutOption layout_option)
 	{
-		if (same_line) ImGui::SameLine();
+		switch (layout_option)
+		{
+		case LayoutOption::None:
+			break;
+
+		case LayoutOption::SameLine:
+			ImGui::SameLine();
+			break;
+
+		case LayoutOption::SameLineFlex:
+			const auto size = ImGui::GetItemRectSize();
+			const ImGuiStyle& style = ImGui::GetStyle();
+			const float window_visible_x2 = ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x;
+			const float last_button_x2 = ImGui::GetItemRectMax().x;
+			const float next_button_x2 = last_button_x2 + style.ItemSpacing.x + size.x; // Expected position if next button was on same line
+			if (next_button_x2 < window_visible_x2)
+				ImGui::SameLine();
+			break;
+		}
 	}
 
 	void UIViewImGui::render_node_footer(const UINode& node)
 	{
-		String tooltip;
-		if (node.attribute(UIAttributeType::Tooltip).try_get_string(tooltip))
+		const bool is_item_hovered = ImGui::IsItemHovered();
+
+		if (const auto info = get_info(node.index()))
 		{
-			if (ImGui::IsItemHovered())
+			if (info->mouse_over != is_item_hovered)
+			{
+				const auto event_type = info->mouse_over ? UIEventType::MouseLeave : UIEventType::MouseEnter;
+				_update_events.push_back({ node, event_type, Variant::Empty });
+				info->mouse_over = is_item_hovered;
+				//UC_LOG_DEBUG(_logger) << "Mouse " << event_type << " at " << node;
+			}
+		}
+
+		String tooltip;
+		if (node.get(UIAttribute::Tooltip).try_get_string(tooltip))
+		{
+			if (is_item_hovered)
 				ImGui::SetTooltip("%s", tooltip.c_str());
 		}
 	}
@@ -345,6 +572,33 @@ namespace unicore
 	{
 		const auto it = _cached.find(index);
 		return it != _cached.end() ? &it->second : nullptr;
+	}
+
+	bool UIViewImGui::get_texture(const Variant& value,
+		ImTextureID& id, ImVec2& size, ImVec2& uv0, ImVec2& uv1)
+	{
+		if (const auto tex = value.get_object_cast<Texture>(); tex != nullptr)
+		{
+			id = tex.get();
+			size = ImGuiConvert::convert(tex->size().cast<Float>());
+			uv0 = { 0, 0 };
+			uv1 = { 1 , 1 };
+			return true;
+		}
+
+		if (const auto spr = value.get_object_cast<Sprite>(); spr != nullptr)
+		{
+			const auto tex_size = spr->texture()->size().cast<Float>();
+			const auto rect = spr->rect().cast<Float>();
+
+			id = spr->texture().get();
+			size = { rect.w, rect.h };
+			uv0 = { rect.x / tex_size.x, rect.y / tex_size.y };
+			uv1 = { uv0.x + rect.w / tex_size.x, uv0.y + rect.h / tex_size.y };
+			return true;
+		}
+
+		return false;
 	}
 }
 #endif

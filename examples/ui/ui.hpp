@@ -5,6 +5,7 @@
 #include "unicore/ui/UIDocument.hpp"
 #include "unicore/ui/UIViewImGui.hpp"
 #include "InventoryUI.hpp"
+#include "ItemDatabaseUI.hpp"
 
 namespace unicore
 {
@@ -18,11 +19,12 @@ namespace unicore
 		ImGuiRender2D _contex_render;
 		ImGuiContext _context;
 
-		Shared<SpriteList> _item_sprites;
+		Shared<SpriteList> _sprites;
 
-		Shared<UIDocument> _test_doc;
-		Shared<UIViewImGui> _test_view;
-		Optional<UINode> _test_position_id;
+		Shared<ItemDatabase> _database;
+		Shared<UIDocument> _database_doc;
+		Shared<ItemDatabaseUI> _database_ui;
+		Shared<UIViewImGui> _database_view;
 
 		Shared<Inventory> _inventory;
 		Shared<UIDocument> _inventory_doc;

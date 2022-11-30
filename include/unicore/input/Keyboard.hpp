@@ -154,10 +154,10 @@ namespace unicore
 
 	namespace KeyModConst
 	{
-		static constexpr KeyModFlags System = KeyMod::ShiftLeft | KeyMod::SystemRight;
-		static constexpr KeyModFlags Shift = KeyMod::ShiftLeft | KeyMod::ShiftRight;
-		static constexpr KeyModFlags Control = KeyMod::ControlLeft | KeyMod::ControlRight;
-		static constexpr KeyModFlags Alt = KeyMod::AltLeft | KeyMod::AltRight;
+		static constexpr KeyModFlags System(KeyModFlags::merge<KeyMod::ShiftLeft, KeyMod::SystemRight>());
+		static constexpr KeyModFlags Shift(KeyModFlags::merge<KeyMod::ShiftLeft, KeyMod::ShiftRight>());
+		static constexpr KeyModFlags Control(KeyModFlags::merge<KeyMod::ControlLeft, KeyMod::ControlRight>());
+		static constexpr KeyModFlags Alt(KeyModFlags::merge<KeyMod::AltLeft, KeyMod::AltRight>());
 	}
 
 	enum class KeyModCombine : uint8_t

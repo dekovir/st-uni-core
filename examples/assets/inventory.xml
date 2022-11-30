@@ -1,0 +1,50 @@
+<group>
+	<horizontal>
+		<text>Money: </text>
+		<text name="money" />
+	</horizontal>
+
+	<text>Items:</text>
+
+	<table name="item_group" value="4">
+		<tr>
+			<th>Icon</th>
+			<th>Name</th>
+			<th>Price</th>
+			<th>Weight</th>
+		</tr>
+	</table>
+
+	<tr name="item_template" visible="0">
+		<td><image name="icon"/></td>
+		<td><item name="name">Name</item></td>
+		<td><text name="price">0</text></td>
+		<td><text name="weight">0</text></td>
+	</tr>
+
+	<tooltip name="item_tooltip" visible="0">
+		<text name="title">title</text>
+		<!-- Type -->
+		<horizontal>
+			<text>Type:</text>
+			<text name="type">Value</text>
+		</horizontal>
+		<!-- Damage -->
+		<horizontal name="damage_group">
+			<text>Damage:</text>
+			<text name="damage_value">0</text>
+		</horizontal>
+		<!-- Status -->
+		<group type="1" name="status_group">
+			<text>Status:</text>
+			<progress name="status_value" value="0.8" w="80" h="16"/>
+		</group>
+
+		<!-- Armor -->
+		<horizontal name="armor_group">
+			<text>Armor:</text>
+			<text name="armor_value"></text>
+		</horizontal>
+		<text name="desc">description</text>
+	</tooltip>
+</group>

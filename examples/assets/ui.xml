@@ -1,0 +1,126 @@
+<group>
+	<text id="position" />
+	<text>Sample text</text>
+
+	<!-- Button -->
+	<group type="1">
+		<button>Default</button>
+	</group>
+
+	<!-- Inputs -->
+	<horizontal>
+		<text>Input</text>
+		<input value="quick brown fox" />
+	</horizontal>
+
+	<text>Multi line input</text>
+	<textarea height="50" value="first line&#10;second line" />
+
+	<group type="1" tooltip="Tooltip text">
+		<text>Input Int</text>
+		<input type="integer" value="10" />
+	</group>
+
+	<group type="1">
+		<text>Input Float</text>
+		<input type="float" value="10" />
+	</group>
+
+	<group type="1">
+		<text>Slider</text>
+		<slider value="50.50" max="100">Value %.1f</slider>
+	</group>
+
+	<group type="1">
+		<text>Toggle</text>
+		<toggle value="true" />
+		<radio value="true" />
+	</group>
+
+	<group type="1">
+		<text>Vector2</text>
+		<input type="vector2" />
+	</group>
+
+	<group type="1">
+		<text>Vector3</text>
+		<input type="vector3" />
+	</group>
+
+	<group type="1">
+		<text>Color3</text>
+		<input type="color3" />
+	</group>
+
+	<group type="1">
+		<text>Color4</text>
+		<input type="color4" />
+	</group>
+
+	<group type="1">
+		<text>Palette</text>
+		<color value="0xFFFFFF" />
+		<color value="0xFF0000" />
+		<color value="0x00FF00" />
+		<color value="0x0000FF" />
+	</group>
+
+	<!-- Combobox -->
+	<group type="1">
+		<text>Combo 1</text>
+		<combo value="Item 1">
+			<text>Text inside combo</text>
+			<slider />
+			<item>Item 1</item>
+			<item>Item 2</item>
+			<item>Item 3</item>
+			<item>Item 4</item>
+		</combo>
+	</group>
+
+	<group type="1">
+		<text tooltip="Combobox with logic">Combo 2</text>
+		<combo id="combo">
+		</combo>
+	</group>
+
+	<!-- List -->
+	<text>Items</text>
+	<list id="group" />
+	<button id="add_item">Add item</button>
+
+	<!-- Table -->
+	<text>Table</text>
+	<table value="2">
+		<tr>
+			<td><button>Cell 0</button></td>
+			<td>Cell 1</td>
+		</tr>
+		<tr>
+			<td>Cell 2</td>
+			<td>Cell 3</td>
+		</tr>
+		<tr>
+			<td>Cell 4</td>
+			<td><item>Cell 5</item></td>
+		</tr>
+	</table>
+
+	<!-- Tree -->
+	<text>Tree</text>
+	<tree value="1">Item 1
+		<text>Text 1</text>
+		<text>Text 2</text>
+		<tree>Item 2
+			<text>Text 3</text>
+			<text>Text 4</text>
+		</tree>
+	</tree>
+
+	<!-- Progressbar -->
+	<text>Progress bars</text>
+	<progress value="0.2" />
+	<progress value="0" min="-50" max="50"/>
+	<progress value="75" max="100"/>
+	<progress value="1">Completed</progress>
+</group>

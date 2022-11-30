@@ -1,0 +1,67 @@
+<horizontal>
+	<!-- Items list -->
+	<group>
+		<horizontal>
+			<text>Items</text>
+			<button>+</button>
+		</horizontal>
+		<list w="200" h="-1">
+			<table name="item_group" value="3">
+				<tr>
+					<th>Id</th>
+					<th>Ico</th>
+					<th>Name</th>
+				</tr>
+			</table>
+		</list>
+
+		<tr name="item_template" visible="0">
+			<td>
+				<text name="item_id" />
+			</td>
+			<td>
+				<img name="item_icon" />
+			</td>
+			<td>
+				<item name="item_name" />
+			</td>
+		</tr>
+	</group>
+
+	<!-- Edit item -->
+	<group>
+		<text>Inspector</text>
+		<group name="item_edit">
+			<horizontal>
+				<text>Icon</text>
+				<input name="icon" type="image" />
+				<popup name="icon_popup">
+					<flex name="icon_list" w="256" />
+				</popup>
+			</horizontal>
+
+			<horizontal>
+				<text>Title</text>
+				<input name="title" />
+			</horizontal>
+
+			<horizontal>
+				<text>Type</text>
+				<combo name="type" />
+			</horizontal>
+
+			<horizontal>
+				<text>Price</text>
+				<input name="price" type="integer" min="0" max="99999" />
+			</horizontal>
+
+			<horizontal>
+				<text>Weight</text>
+				<input name="weight" type="integer" min="0" max="99999" />
+			</horizontal>
+
+			<text>Description</text>
+			<textarea name="desc" height="50" />
+		</group>
+	</group>
+</horizontal>

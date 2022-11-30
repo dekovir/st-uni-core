@@ -35,6 +35,10 @@
 #include "unicore/ui/UIPlugin.hpp"
 #endif
 
+#if defined(UNICORE_USE_SCENE)
+#include "unicore/scene/ScenePlugin.hpp"
+#endif
+
 namespace unicore
 {
 	void init_plugins(Application& app)
@@ -73,6 +77,10 @@ namespace unicore
 
 #if defined(UNICORE_USE_UI)
 		app.create_plugin<UIPlugin>();
+#endif
+
+#if defined(UNICORE_USE_SCENE)
+		app.create_plugin<ScenePlugin>();
 #endif
 	}
 }

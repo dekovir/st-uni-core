@@ -7,6 +7,8 @@ namespace unicore
 	class InventoryUI
 	{
 	public:
+		InventoryUI(Inventory& inventory, UIDocument& document,
+			const UINode& parent = UINode::Empty, Logger* logger = nullptr);
 		InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger = nullptr);
 
 	protected:
@@ -14,17 +16,22 @@ namespace unicore
 		UIDocument& _document;
 		Logger* _logger;
 
-		Optional<UINode> _money_text;
-		Optional<UINode> _items_group;
-		Optional<UINode> _items_template;
+		Dictionary<InventoryIndex, UINode> _item_nodes;
 
-		void on_change_money(UInt16 value);
-		void on_add_item(unsigned index, const Item& item);
-		void on_remove_item(unsigned index, const Item& item);
+		UINode _money_text;
+		UINode _items_group;
+		UINode _item_template;
+		UINode _item_tooltip;
+
+		void on_add(InventoryIndex index);
+		void on_remove(InventoryIndex index);
+		void on_change(InventoryIndex index);
 
 		void apply_money(UInt16 value);
-		void apply_item(const UINode& node, const Item& item);
+		void apply_item(const UINode& node, InventoryIndex index);
+		void apply_item_value(const UINode& node, InventoryIndex index);
+		void apply_tooltip(InventoryIndex index);
 
-		static StringView type_to_string(ItemType type);
+		static String weight_to_string(UInt16 weight);
 	};
 }

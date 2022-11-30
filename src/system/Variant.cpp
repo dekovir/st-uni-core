@@ -265,23 +265,45 @@ namespace unicore
 	UNICODE_STRING_BUILDER_FORMAT(const Variant&)
 	{
 		builder << "V(";
-
 		builder << value.data().index();
+		builder << ":";
 
-		Bool b;
-		Int64 i64;
-		Double d;
-		String32 s32;
+		if (Bool tmp; value.try_get_bool(tmp))
+			builder << tmp;
+		else if (Int64 tmp; value.try_get_integral(tmp))
+			builder << tmp;
+		else if (Double tmp; value.try_get_floating_point(tmp))
+			builder << tmp;
 
-		if (value.try_get_bool(b))
-			builder << ":" << b;
-		else if (value.try_get_integral(i64))
-			builder << ":" << i64;
-		else if (value.try_get_floating_point(d))
-			builder << ":" << d;
-		else if (value.try_get_string32(s32))
-			builder << ":" << s32;
-		else builder << "<?>";
+		else if (String32 tmp; value.try_get_string32(tmp))
+			builder << tmp;
+
+		else if (Vector2i tmp; value.try_get_vec2i(tmp))
+			builder << "[" << tmp << "]";
+		else if (Vector2f tmp; value.try_get_vec2f(tmp))
+			builder << "[" << tmp << "]";
+		else if (Vector3i tmp; value.try_get_vec3i(tmp))
+			builder << "[" << tmp << "]";
+		else if (Vector3f tmp; value.try_get_vec3f(tmp))
+			builder << "[" << tmp << "]";
+
+		else if (Rangei tmp; value.try_get_rangei(tmp))
+			builder << "[" << tmp << "]";
+		else if (Rangef tmp; value.try_get_rangef(tmp))
+			builder << "[" << tmp << "]";
+
+		else if (Recti tmp; value.try_get_recti(tmp))
+			builder << "[" << tmp << "]";
+		else if (Rectf tmp; value.try_get_rectf(tmp))
+			builder << "[" << tmp << "]";
+
+		else if (Color3b tmp; value.try_get_color3b(tmp))
+			builder << "[" << tmp << "]";
+		else if (Color4b tmp; value.try_get_color4b(tmp))
+			builder << "[" << tmp << "]";
+		else if (Shared<Object> tmp; value.try_get_object(tmp))
+			tmp ? builder << tmp->type() : builder << "null";
+		else builder << "?";
 
 		return builder << ")";
 	}

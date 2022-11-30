@@ -37,6 +37,13 @@ namespace unicore
 		UC_NODISCARD bool is_mouse_over() const;
 
 	protected:
+		enum class LayoutOption
+		{
+			None,
+			SameLine,
+			SameLineFlex,
+		};
+
 		Logger& _logger;
 		ImGuiContext& _context;
 		List<UIEvent> _update_events;
@@ -52,6 +59,7 @@ namespace unicore
 		{
 			String id;
 			String title; // text + id;
+			bool mouse_over = false;
 		};
 
 		Dictionary<UINode::IndexType, CachedInfo> _cached;
@@ -60,17 +68,20 @@ namespace unicore
 
 		void on_create_node(const UINode& node) override;
 		void on_set_attribute(const UINode& node,
-			UIAttributeType type, const Optional<Variant>& value) override;
+			UIAttribute type, const Optional<Variant>& value) override;
 
-		Bool render_node(const UINode& node, Bool same_line = false);
+		Bool render_node(const UINode& node, LayoutOption layout_option = LayoutOption::None);
 
-		void render_node_header(const UINode& node, Bool same_line = false);
+		void render_node_header(const UINode& node, LayoutOption layout_option);
 		void render_node_footer(const UINode& node);
 
 		UC_NODISCARD CachedInfo* get_info(UINode::IndexType index);
 
 	private:
 		unsigned _id;
+
+		static bool get_texture(const Variant& value,
+			ImTextureID& id, ImVec2& size, ImVec2& uv0, ImVec2& uv1);
 	};
 }
 #endif

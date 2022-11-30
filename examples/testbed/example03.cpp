@@ -1,4 +1,6 @@
 #include "example03.hpp"
+#include "unicore/io/Logger.hpp"
+#include "unicore/imgui/ImGuiContext.hpp"
 
 namespace unicore
 {

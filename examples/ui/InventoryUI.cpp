@@ -1,101 +1,193 @@
 #include "InventoryUI.hpp"
 #include "unicore/io/Logger.hpp"
-#include "unicore/ui/UIDocumentParseXML.hpp"
 
 namespace unicore
 {
-	static const auto xml = R"(
-	<group>
-		<text name="money" />
-		<text>Items</text>
-		<group name="item_group">
-		</group>
-		<group name="item_template" value="2" visible="0">
-			<image name="icon" />
-			<item name="name">Name</item>
-			<text name="type">Type</text>
-			<text name="price">0</text>
-		</group>
-	</group>
-	)";
-
-	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger)
+	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document,
+		const UINode& parent, Logger* logger)
 		: _inventory(inventory)
 		, _document(document)
 		, _logger(logger)
 	{
-		UIDocumentParseXML::parse(xml, _document, std::nullopt, _logger);
+		_inventory.on_add() += [&](auto index) { on_add(index); };
+		_inventory.on_remove() += [&](auto index) { on_remove(index); };
+		_inventory.on_changed() += [&](auto index) { on_change(index); };
 
-		_inventory.on_add_item() += [&](auto index, auto& item) { on_add_item(index, item); };
-		_inventory.on_remove_item() += [&](auto index, auto& item) { on_remove_item(index, item); };
+		_money_text = _document.find_by_name("money", parent);
 
-		_money_text = _document.find_by_name("money");
-		_items_group = _document.find_by_name("item_group");
-		_items_template = _document.find_by_name("item_template");
+		_items_group = _document.find_by_name("item_group", parent);
+		_item_template = _document.find_by_name("item_template", parent);
+		_item_tooltip = _document.find_by_name("item_tooltip", parent);
 
-		if (!_items_group) UC_LOG_ERROR(_logger) << "Group not found";
-		if (!_items_template) UC_LOG_ERROR(_logger) << "Item template not found";
+		if (_items_group.empty()) UC_LOG_ERROR(_logger) << "Group not found";
+		if (_item_template.empty()) UC_LOG_ERROR(_logger) << "Item template not found";
 
-		apply_money(_inventory.money());
+		apply_money(0);
 	}
 
-	void InventoryUI::on_change_money(UInt16 value)
+	InventoryUI::InventoryUI(Inventory& inventory, UIDocument& document, Logger* logger)
+		: InventoryUI(inventory, document, UINode::Empty, logger)
 	{
-		apply_money(value);
 	}
 
-	void InventoryUI::on_add_item(unsigned index, const Item& item)
+	void InventoryUI::on_add(InventoryIndex index)
 	{
-		if (!_items_group.has_value() || !_items_template.has_value())
+		if (_items_group.empty() || _item_template.empty())
 			return;
 
-		UC_LOG_DEBUG(_logger) << "Item " << item.title << " added";
-
-		if (const auto item_node = _document.duplicate(_items_template.value(), _items_group.value()); item_node.has_value())
-			apply_item(item_node.value(), item);
+		if (const auto new_node = _document.duplicate(_item_template, _items_group); !new_node.empty())
+		{
+			_item_nodes[index] = new_node;
+			apply_item(new_node, index);
+		}
 	}
 
-	void InventoryUI::on_remove_item(unsigned index, const Item& item)
+	void InventoryUI::on_remove(InventoryIndex index)
 	{
-		if (!_items_group.has_value() || !_items_template.has_value())
+		const auto it = _item_nodes.find(index);
+		if (it != _item_nodes.end())
+		{
+			_document.remove_node(it->second);
+			_item_nodes.erase(it);
+		}
+	}
+
+	void InventoryUI::on_change(InventoryIndex index)
+	{
+		if (const auto it = _item_nodes.find(index); it != _item_nodes.end())
+		{
+			apply_item_value(it->second, index);
 			return;
+		}
+
+		UC_LOG_ERROR(_logger) << "Invalid index";
 	}
 
 	void InventoryUI::apply_money(UInt16 value)
 	{
-		if (_money_text.has_value())
-		{
-			const auto text = StringBuilder::format("Money: {}", value);
-			_document.set_node_attribute(_money_text.value(), UIAttributeType::Text, text);
-		}
+		if (!_money_text.empty())
+			_document.set_node_attribute(_money_text, UIAttribute::Text, value);
 	}
 
-	void InventoryUI::apply_item(const UINode& node, const Item& item)
+	static std::pair<UINode, UINode> find_node(const UINode& node, StringView name)
 	{
+		if (const auto find = node.find_by_name(name); find.valid())
+			return std::make_pair(find, find);
+
+		return std::make_pair(
+			node.find_by_name(String(name) + "_value"),
+			node.find_by_name(String(name) + "_group")
+		);
+	}
+
+	void InventoryUI::apply_item(const UINode& node, InventoryIndex index)
+	{
+		const auto id = _inventory.get_index_id(index);
+
+		const auto& item = *_inventory.database().get(id);
+		//UC_LOG_DEBUG(_logger) << "Apply item " << item.title << " to " << node;
+
 		_document.set_node_visible(node, true);
 
 		if (const auto find = node.find_by_name("name"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Text, item.title);
+		{
+			const auto tmp_index = index;
+			_document.set_node_action(find, UIActionType::OnMouseEnter,
+				[this, tmp_index] { apply_tooltip(tmp_index); });
+			_document.set_node_action(find, UIActionType::OnMouseLeave,
+				[this] { apply_tooltip(InventoryIndex_Invalid); });
+		}
 
 		if (const auto find = node.find_by_name("icon"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Value, item.sprite);
-
-		if (const auto find = node.find_by_name("type"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Text, type_to_string(item.type));
+			_document.set_node_attribute(find, UIAttribute::Value, item.sprite);
 
 		if (const auto find = node.find_by_name("price"); find.valid())
-			_document.set_node_attribute(find, UIAttributeType::Text, item.price);
+			_document.set_node_attribute(find, UIAttribute::Text, item.price);
+
+		if (const auto find = node.find_by_name("weight"); find.valid())
+			_document.set_node_attribute(find, UIAttribute::Text, weight_to_string(item.weight));
+
+		apply_item_value(node, index);
 	}
 
-	StringView InventoryUI::type_to_string(ItemType type)
+	void InventoryUI::apply_item_value(const UINode& node, InventoryIndex index)
 	{
-		switch (type)
+		const auto id = _inventory.get_index_id(index);
+		const auto& item = *_inventory.database().get(id);
+
+		//UC_LOG_DEBUG(_logger) << "Apply item " << item.title << " to " << node;
+
+		if (const auto find = node.find_by_name("name"); find.valid())
 		{
-		case ItemType::Weapon: return "Weapon";
-		case ItemType::Armor: return "Armor";
-		case ItemType::Accessory: return "Accessory";
-		case ItemType::Consumable: return "Consumable";
+			if (item.is_stackable())
+			{
+				const auto amount = _inventory.get_index_value(index);
+				const auto str = StringBuilder::format("{} ({})", item.title, amount);
+				_document.set_node_attribute(find, UIAttribute::Text, str);
+			}
+			else _document.set_node_attribute(find, UIAttribute::Text, item.title);
 		}
-		return "Error";
+	}
+
+	void InventoryUI::apply_tooltip(InventoryIndex index)
+	{
+		if (_item_tooltip.empty()) return;
+
+		const auto id = _inventory.get_index_id(index);
+		const auto item = _inventory.database().get(id);
+
+		if (item == nullptr)
+		{
+			_document.set_node_visible(_item_tooltip, false);
+			return;
+		}
+
+		_document.set_node_visible(_item_tooltip, true);
+
+		if (const auto find = _item_tooltip.find_by_name("title"); find.valid())
+			_document.set_node_attribute(find, UIAttribute::Text, item->title);
+
+		if (const auto find = _item_tooltip.find_by_name("type"); find.valid())
+			_document.set_node_attribute(find, UIAttribute::Text, Item::type_to_string(item->item_type));
+
+		if (const auto [find, group] = find_node(_item_tooltip, "damage"); find.valid())
+		{
+			if (item->damage != RangeConsti::Zero)
+			{
+				const auto str = StringBuilder::format(U"{}-{}", item->damage.min, item->damage.max);
+
+				_document.set_node_visible(group, true);
+				_document.set_node_attribute(find, UIAttribute::Text, str);
+			}
+			else _document.set_node_visible(group, false);
+		}
+
+		if (const auto [find, group] = find_node(_item_tooltip, "armor"); find.valid())
+		{
+			if (item->armor > 0)
+			{
+				const auto str = StringBuilder::format(U"+{}", item->armor);
+
+				_document.set_node_visible(group, true);
+				_document.set_node_attribute(find, UIAttribute::Text, str);
+			}
+			else _document.set_node_visible(group, false);
+		}
+
+		if (const auto find = _item_tooltip.find_by_name("desc"); find.valid())
+			_document.set_node_visible(find, false);
+
+		if (const auto [find, group] = find_node(_item_tooltip, "status"); find.valid())
+		{
+			_document.set_node_visible(group, item->has_status());
+			const auto value = Math::inverse_lerp_numeric(_inventory.get_index_value(index));
+			_document.set_node_attribute(find, UIAttribute::Value, value);
+		}
+	}
+
+	String InventoryUI::weight_to_string(UInt16 weight)
+	{
+		const auto value = static_cast<float>(weight) / 1000.0f;
+		return StringBuilder::format("{}", value);
 	}
 }
