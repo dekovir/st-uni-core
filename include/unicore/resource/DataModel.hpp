@@ -26,7 +26,7 @@ namespace unicore
 	using DataModel1 = DataModelTyped<TData, Size>;
 
 	template<typename TData>
-	using DataModel2 = DataModelTyped<TData, Vector2<Size>>;
+	using DataModel2 = DataModelTyped<TData, Vector2i>;
 
 	template<typename TKey, typename TValue>
 	class DictionaryDataModel : public DataModel1<TKey>

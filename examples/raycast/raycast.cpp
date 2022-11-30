@@ -11,6 +11,32 @@ namespace unicore
 	constexpr Vector2i WindowSize = Vector2i(1024, 768);
 	constexpr DisplayWindowFlags WindowFlags = DisplayWindowFlag::Resizable;
 
+	class MapModel : public RaycastModel
+	{
+	public:
+		explicit MapModel(const Map& map)
+			: _map(map)
+		{
+		}
+
+		UC_NODISCARD Size get_system_memory_use() const override { return 0; }
+		UC_NODISCARD IndexArg size() const override { return _map.size(); }
+		UC_NODISCARD DataType get_at(IndexArg index) const override
+		{
+			Cell cell;
+			if (_map.get(index.x, index.y, cell))
+			{
+				if (cell.type == CellType::Wall)
+					return true;
+			}
+
+			return false;
+		}
+
+	protected:
+		Map _map;
+	};
+
 	MyCore::MyCore(const CoreSettings& settings)
 		: SDLApplication(create_settings(settings, "Raycast", { false, WindowSize, WindowFlags }))
 	{
@@ -28,9 +54,13 @@ namespace unicore
 		canvas.draw_line_h({ 7, 5 }, 5, wall);
 		canvas.draw_line_h({ 13, 5 }, 5, wall);
 
+		_model = std::make_shared<MapModel>(*_map);
+
 		_player = std::make_shared<Player>();
 		_player->position = { 3.5f, 3.5f };
-		_player->angle = 45_deg;
+		//_player->angle = 45_deg;
+
+		_raycast = std::make_shared<RaycastRenderer>();
 	}
 
 	void MyCore::on_init()
@@ -119,6 +149,23 @@ namespace unicore
 				_graphics.set_color(ColorConst4b::Green);
 				_graphics.draw_circle(pos, scale / 4, false, 16);
 				_graphics.draw_line(pos, pos + _player->forward() * (scale / 2));
+
+				constexpr int rays_count = 60;
+				constexpr Radians fov = 70_deg;
+				constexpr Radians step = fov / rays_count;
+
+				for (int i = 0; i < rays_count; i++)
+				{
+					const Vector2f dir = VectorConst2f::AxisX.rotate(_player->angle - fov /2 + step * i);
+					const Ray2 ray{ _player->position, dir };
+
+					RaycastRenderer::HitInfo hit;
+					if (RaycastRenderer::raycast(*_model, ray, hit))
+					{
+						_graphics.set_color(ColorConst4b::Red);
+						_graphics.draw_line(pos, hit.point * scale);
+					}
+				}
 			}
 		}
 

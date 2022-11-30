@@ -124,7 +124,7 @@ namespace unicore
 		template<typename T>
 		static constexpr T max(T a, T b) { return a > b ? a : b; }
 
-		// SIN, COS, ASIN, ACOS ////////////////////////////////////////////////////
+		// SIN, COS, ASIN, ACOS, ATAN //////////////////////////////////////////////
 		template<typename T,
 			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T sin(T value) { return std::sin(value); }
@@ -140,6 +140,10 @@ namespace unicore
 		template<typename T,
 			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
 		static inline T acos(T value) { return std::acos(value); }
+
+		template<typename T,
+			std::enable_if_t<std::is_floating_point_v<T>>* = nullptr>
+		static inline T atan(T value) { return std::atan(value); }
 
 		// POW, SQRT ///////////////////////////////////////////////////////////////
 		// TODO: Replace with constexpr

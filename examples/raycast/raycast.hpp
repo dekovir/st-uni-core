@@ -3,6 +3,7 @@
 #include "unicore/system/Buffer2.hpp"
 #include "unicore/renderer/PrimitiveBatch.hpp"
 #include "unicore/renderer/SpriteBatch.hpp"
+#include "unicore/raycast/RaycastRenderer.hpp"
 
 namespace unicore
 {
@@ -55,6 +56,10 @@ namespace unicore
 		Shared<Font> _font;
 
 		Shared<Map> _map;
+		Shared<RaycastModel> _model;
+
+		Shared<RaycastRenderer> _raycast;
+
 		Shared<Player> _player;
 
 		void on_init() override;
