@@ -1,4 +1,6 @@
 #include "example09.hpp"
+
+#include <utility>
 #include "unicore/io/Logger.hpp"
 #include "unicore/resource/ResourceCache.hpp"
 #include "unicore/imgui/ImGuiContext.hpp"
@@ -41,6 +43,121 @@ namespace unicore
 	protected:
 		Size _count;
 	};
+
+	namespace test
+	{
+		struct Element;
+
+		static constexpr StringView key_children = "children";
+
+		using ChildrenType = Element;
+		using ChildrenList = List<ChildrenType>;
+
+		using PropsValue = StdVariant<Variant, ChildrenType, ChildrenList>;
+		using Props = Dictionary<StringView, PropsValue>;
+
+		using NodeRender = Function<UINode, const Props&, UIDocument&, const UINode&>;
+		using ElementRender = Function<Element, const Props&>;
+
+		using RenderFunc = StdVariant<NodeRender, ElementRender>;
+
+		struct Element
+		{
+			Props props;
+			RenderFunc render;
+		};
+
+		using ElementType = StdVariant<ChildrenType, ChildrenList>;
+
+		extern Element createElement(const RenderFunc& render, const Props& props,
+			const std::initializer_list<ChildrenType> children = {})
+		{
+			Element element;
+			element.props = props;
+			element.render = render;
+
+			if (children.size() > 0)
+				element.props[key_children] = children;
+
+			return element;
+		}
+
+		template<UIGroupType Type>
+		struct node_group_render
+		{
+			auto operator()(const Props& props, UIDocument& doc, const UINode& parent) const
+			{
+				UINodeOptions options;
+				options.attributes[UIAttribute::Type] = Type;
+				return doc.create_node(UINodeTag::Group, {}, parent);
+			}
+		};
+
+		enum class Tag
+		{
+			VBox,
+			HBox,
+		};
+
+		static const Dictionary<Tag, RenderFunc> s_tag_factory =
+		{
+			{Tag::VBox, node_group_render<UIGroupType::Vertical>()},
+			{Tag::HBox, node_group_render<UIGroupType::Horizontal>()},
+		};
+
+		extern Element createElement(Tag tag, const Props& props,
+			const std::initializer_list<ChildrenType> children = {})
+		{
+			const auto it = s_tag_factory.find(tag);
+			if (it == s_tag_factory.end())
+				return {};
+
+			return createElement(it->second, props, children);
+		}
+
+		class Document
+		{
+		public:
+			Document(UIDocument& document, Element element, Logger* logger = nullptr)
+				: _document(document), _element({ std::move(element) }), _logger(logger)
+			{
+				render_element(_element);
+			}
+
+		protected:
+			struct ElementInfo
+			{
+				Element element;
+
+				UINode parent = UINode::Empty;
+				UINode node = UINode::Empty;
+			};
+
+			UIDocument& _document;
+			ElementInfo _element;
+			Logger* _logger;
+
+			void render_element(ElementInfo& info)
+			{
+				if (const auto render = std::get_if<NodeRender>(&info.element.render))
+				{
+					info.node = (*render)(info.element.props, _document, info.parent);
+					return;
+				}
+
+				if (const auto render = std::get_if<ElementRender>(&info.element.render))
+				{
+					const auto child = (*render)(info.element.props);
+					ElementInfo child_info;
+					child_info.element = child;
+					child_info.parent = info.node;
+
+					render_element(child_info);
+					return;
+				}
+			}
+		};
+	}
 
 	class TestTableModel : public ui::TableModel
 	{
