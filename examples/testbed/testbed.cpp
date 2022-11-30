@@ -15,8 +15,8 @@ namespace unicore
 	static const auto xml = R"(
 	<group>
 		<text>Examples</text>
-		<list id="group" w="-1" h="-1" />
-		<group id="template" visible="0">
+		<list name="group" w="-1" h="-1" />
+		<group name="template" visible="0">
 			<item name="name">Title</item>
 		</group>
 	</group>
@@ -57,8 +57,8 @@ namespace unicore
 
 		if (UIDocumentParseXML::parse(xml, *_ui_document, UINode::Empty, &_ui_logger))
 		{
-			const auto group_node = _ui_document->find_by_id("group");
-			const auto template_node = _ui_document->find_by_id("template");
+			const auto group_node = _ui_document->find_by_name("group");
+			const auto template_node = _ui_document->find_by_name("template");
 			if (!group_node.empty() && !template_node.empty())
 			{
 				const auto& example_infos = ExampleCatalog::get_all();
@@ -67,7 +67,7 @@ namespace unicore
 					const auto node = _ui_document->duplicate(template_node, group_node);
 					if (!node.empty())
 					{
-						_ui_document->set_node_visible(node, true);
+						_ui_document->set_node_attribute(node, UIAttribute::Hidden, false);
 
 						auto& info = example_infos[i];
 
@@ -83,6 +83,10 @@ namespace unicore
 				}
 			}
 		}
+
+		//set_example(0);
+		//set_example(6);
+		//set_example(ExampleCatalog::get_all().size() - 1);
 	}
 
 	void MyApp::on_update()
