@@ -135,6 +135,16 @@ namespace unicore
 			return { Math::snap(x, value.x), Math::snap(y, value.y) };
 		}
 
+		constexpr Vector2<T> operator+() const
+		{
+			return { x, y };
+		}
+
+		constexpr Vector2<T> operator-() const
+		{
+			return { -x, -y };
+		}
+
 		static T constexpr dot(const Vector2<T>& a, const Vector2<T>& b)
 		{
 			return a.x * b.x + a.y * b.y;

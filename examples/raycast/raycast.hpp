@@ -58,8 +58,6 @@ namespace unicore
 		Shared<Map> _map;
 		Shared<RaycastModel> _model;
 
-		Shared<RaycastRenderer> _raycast;
-
 		Shared<Player> _player;
 
 		void on_init() override;

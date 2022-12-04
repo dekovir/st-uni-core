@@ -15,7 +15,7 @@ namespace unicore
 		constexpr Ray(const TVector& pos_, const TVector& dir_)
 			: origin(pos_), direction(dir_) {}
 
-		UC_NODISCARD constexpr TVector point(const Float distance) const
+		UC_NODISCARD constexpr TVector get_point(const Float distance) const
 		{
 			return origin + direction * distance;
 		}

@@ -5,6 +5,7 @@
 #include "unicore/platform/Time.hpp"
 #include "unicore/renderer/Canvas.hpp"
 #include "unicore/renderer/Font.hpp"
+#include "unicore/raycast/Raycast.hpp"
 
 namespace unicore
 {
@@ -59,8 +60,6 @@ namespace unicore
 		_player = std::make_shared<Player>();
 		_player->position = { 3.5f, 3.5f };
 		//_player->angle = 45_deg;
-
-		_raycast = std::make_shared<RaycastRenderer>();
 	}
 
 	void MyCore::on_init()
@@ -150,22 +149,42 @@ namespace unicore
 				_graphics.draw_circle(pos, scale / 4, false, 16);
 				_graphics.draw_line(pos, pos + _player->forward() * (scale / 2));
 
-				constexpr int rays_count = 60;
+#if false
+				_graphics.set_color(ColorConst4b::Red);
+				const Ray2 ray{ _player->position, _player->forward() };
+				Raycast::cast_ray(ray, [&](const Vector2i& index, float distance)
+				{
+					Cell cell;
+					if (distance < 100 && _map->get(index.x, index.y, cell) && cell.type != CellType::Wall)
+						return true;
+
+					const auto point = ray.get_point(distance);
+					_graphics.draw_line(ray.origin * scale, point * scale);
+					return false;
+				});
+#else
+				constexpr int rays_count = 320;
 				constexpr Radians fov = 70_deg;
 				constexpr Radians step = fov / rays_count;
 
+				_graphics.set_color(ColorConst4b::Red);
 				for (int i = 0; i < rays_count; i++)
 				{
-					const Vector2f dir = VectorConst2f::AxisX.rotate(_player->angle - fov /2 + step * i);
+					const Vector2f dir = VectorConst2f::AxisX.rotate(_player->angle - fov / 2 + step * i);
 					const Ray2 ray{ _player->position, dir };
 
-					RaycastRenderer::HitInfo hit;
-					if (RaycastRenderer::raycast(*_model, ray, hit))
+					Raycast::cast_ray(ray, [&](const Vector2i& index, float distance)
 					{
-						_graphics.set_color(ColorConst4b::Red);
-						_graphics.draw_line(pos, hit.point * scale);
-					}
+						Cell cell;
+						if (distance < 100 && _map->get(index.x, index.y, cell) && cell.type != CellType::Wall)
+							return true;
+
+						const auto point = ray.get_point(distance);
+						_graphics.draw_line(ray.origin * scale, point * scale);
+						return false;
+					});
 				}
+#endif
 			}
 		}
 
