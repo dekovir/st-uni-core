@@ -56,8 +56,6 @@ namespace unicore
 		Shared<Font> _font;
 
 		Shared<Map> _map;
-		Shared<RaycastModel> _model;
-
 		Shared<Player> _player;
 
 		void on_init() override;

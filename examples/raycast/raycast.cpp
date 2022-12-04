@@ -12,32 +12,6 @@ namespace unicore
 	constexpr Vector2i WindowSize = Vector2i(1024, 768);
 	constexpr DisplayWindowFlags WindowFlags = DisplayWindowFlag::Resizable;
 
-	class MapModel : public RaycastModel
-	{
-	public:
-		explicit MapModel(const Map& map)
-			: _map(map)
-		{
-		}
-
-		UC_NODISCARD Size get_system_memory_use() const override { return 0; }
-		UC_NODISCARD IndexArg size() const override { return _map.size(); }
-		UC_NODISCARD DataType get_at(IndexArg index) const override
-		{
-			Cell cell;
-			if (_map.get(index.x, index.y, cell))
-			{
-				if (cell.type == CellType::Wall)
-					return true;
-			}
-
-			return false;
-		}
-
-	protected:
-		Map _map;
-	};
-
 	MyCore::MyCore(const CoreSettings& settings)
 		: SDLApplication(create_settings(settings, "Raycast", { false, WindowSize, WindowFlags }))
 	{
@@ -45,17 +19,24 @@ namespace unicore
 
 		constexpr int side = 20;
 
-		const Cell wall = { CellType::Wall };
+		constexpr Cell f = { CellType::Floor };
+		constexpr Cell w = { CellType::Wall };
 
 		_map = std::make_shared<Map>(side, side);
 		Canvas canvas(*_map);
 		canvas.fill(Cell{ CellType::Floor });
-		canvas.draw_rect({ 0, 0, side, side }, wall);
-		canvas.draw_line_h({ 1, 5 }, 5, wall);
-		canvas.draw_line_h({ 7, 5 }, 5, wall);
-		canvas.draw_line_h({ 13, 5 }, 5, wall);
+		canvas.draw_rect({ 0, 0, side, side }, w);
+		canvas.draw_line_h({ 1, 5 }, 5, w);
+		canvas.draw_line_h({ 7, 5 }, 5, w);
+		canvas.draw_line_h({ 13, 5 }, 5, w);
 
-		_model = std::make_shared<MapModel>(*_map);
+		canvas.draw_rect({ 2, 7, 5, 5 }, w);
+		canvas.draw_rect({ 13, 7, 5, 5 }, w);
+		canvas.draw_line_h({ 2, 9 }, 16, f);
+
+		canvas.draw_rect({ 2, 7+6, 5, 5 }, w);
+		canvas.draw_rect({ 13, 7+6, 5, 5 }, w);
+		canvas.draw_line_h({ 2, 9+6 }, 16, f);
 
 		_player = std::make_shared<Player>();
 		_player->position = { 3.5f, 3.5f };
@@ -161,7 +142,7 @@ namespace unicore
 					const auto point = ray.get_point(distance);
 					_graphics.draw_line(ray.origin * scale, point * scale);
 					return false;
-				});
+			});
 #else
 				constexpr int rays_count = 320;
 				constexpr Radians fov = 70_deg;
@@ -185,15 +166,15 @@ namespace unicore
 					});
 				}
 #endif
-			}
 		}
+	}
 
 		if (_font)
 			_sprite_batch.print(_font, { 0, 0 }, U"Raycast example");
 
 		_graphics.flush();
 		_sprite_batch.flush();
-	}
+}
 
 	void MyCore::on_draw()
 	{
