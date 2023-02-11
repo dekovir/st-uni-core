@@ -259,5 +259,20 @@ namespace unicore
 				std::numeric_limits<T>::min(),
 				std::numeric_limits<T>::max(), value);
 		}
+
+		// MAP_VALUE ///////////////////////////////////////////////////////////////
+		template<typename T, typename U>
+		static constexpr T remap(T value, T old_min, T old_max, U new_min, U new_max)
+		{
+			constexpr auto t = clamp_01(inverse_lerp(old_min, old_max, value));
+			return lerp(new_min, new_max, t);
+		}
+
+		template<typename T, typename U>
+		static constexpr T remap_unclamped(T value, T old_min, T old_max, U new_min, U new_max)
+		{
+			constexpr auto t = inverse_lerp(old_min, old_max, value);
+			return lerp(new_min, new_max, t);
+		}
 	}
 }

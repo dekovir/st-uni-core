@@ -12,6 +12,27 @@ namespace unicore
 	constexpr Vector2i WindowSize = Vector2i(1024, 768);
 	constexpr DisplayWindowFlags WindowFlags = DisplayWindowFlag::Resizable;
 
+	constexpr int rays_count = 320;
+	static float scene_z[rays_count];
+
+	class MapRaycastWorld : public IRaycastWorld
+	{
+	public:
+		explicit MapRaycastWorld(const Map& map)
+			: _map(map)
+		{
+		}
+
+		UC_NODISCARD bool is_solid(const Vector2i& index) const override
+		{
+			Cell cell;
+			return !_map.get(index.x, index.y, cell) || cell.type != CellType::Wall;
+		}
+
+	protected:
+		const Map& _map;
+	};
+
 	MyCore::MyCore(const CoreSettings& settings)
 		: SDLApplication(create_settings(settings, "Raycast", { false, WindowSize, WindowFlags }))
 	{
@@ -34,9 +55,9 @@ namespace unicore
 		canvas.draw_rect({ 13, 7, 5, 5 }, w);
 		canvas.draw_line_h({ 2, 9 }, 16, f);
 
-		canvas.draw_rect({ 2, 7+6, 5, 5 }, w);
-		canvas.draw_rect({ 13, 7+6, 5, 5 }, w);
-		canvas.draw_line_h({ 2, 9+6 }, 16, f);
+		canvas.draw_rect({ 2, 7 + 6, 5, 5 }, w);
+		canvas.draw_rect({ 13, 7 + 6, 5, 5 }, w);
+		canvas.draw_line_h({ 2, 9 + 6 }, 16, f);
 
 		_player = std::make_shared<Player>();
 		_player->position = { 3.5f, 3.5f };
@@ -142,39 +163,58 @@ namespace unicore
 					const auto point = ray.get_point(distance);
 					_graphics.draw_line(ray.origin * scale, point * scale);
 					return false;
-			});
+				});
 #else
-				constexpr int rays_count = 320;
+
 				constexpr Radians fov = 70_deg;
 				constexpr Radians step = fov / rays_count;
+
+				const MapRaycastWorld world(*_map);
 
 				_graphics.set_color(ColorConst4b::Red);
 				for (int i = 0; i < rays_count; i++)
 				{
-					const Vector2f dir = VectorConst2f::AxisX.rotate(_player->angle - fov / 2 + step * i);
+					const auto angle = _player->angle - fov / 2 + step * i;
+					const Vector2f dir = VectorConst2f::AxisX.rotate(angle);
 					const Ray2 ray{ _player->position, dir };
 
-					Raycast::cast_ray(ray, [&](const Vector2i& index, float distance)
+					auto hit = Raycast::cast_ray(ray, world);
+					if (hit.has_value())
 					{
-						Cell cell;
-						if (distance < 100 && _map->get(index.x, index.y, cell) && cell.type != CellType::Wall)
-							return true;
-
-						const auto point = ray.get_point(distance);
+						const auto point = ray.get_point(hit->distance);
 						_graphics.draw_line(ray.origin * scale, point * scale);
-						return false;
-					});
+
+						const auto dir = (point - _player->position).length();
+						scene_z[i] = dir * (angle - _player->angle).cos();
+					}
+					else scene_z[i] = std::numeric_limits<float>::max();
+				}
+
+				const float max_distance = 10;
+				const int line_width = 2;
+				const auto half_width = rays_count;
+
+				for (int i = 0; i < rays_count; i++)
+				{
+					if (scene_z[i] > max_distance) continue;
+
+					const auto t = Math::inverse_lerp(0.f, max_distance, scene_z[i]);
+					const auto color = Math::lerp(ColorConst4b::White, ColorConst4b::Black, t);
+					const auto h = Math::floor_to_int(half_width / scene_z[i]);
+
+					_graphics.set_color(color);
+					_graphics.draw_rect(Recti(i * line_width + 16 * 20, 400 - h / 2, line_width, h), true);
 				}
 #endif
+			}
 		}
-	}
 
 		if (_font)
 			_sprite_batch.print(_font, { 0, 0 }, U"Raycast example");
 
 		_graphics.flush();
 		_sprite_batch.flush();
-}
+	}
 
 	void MyCore::on_draw()
 	{
