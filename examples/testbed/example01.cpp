@@ -123,7 +123,7 @@ namespace unicore
 		auto color = from_format3<float>(PIXELFORMAT_R8G8B8A8, (uint32_t)0x00FF00FF);
 
 		constexpr auto ray = Ray2({ 100, 100 }, { 0, 1 });
-		const auto p = ray.point(10);
+		const auto p = ray.get_point(10);
 		const auto d = ray.distance({ 200, 100 });
 
 		_font = resources.create<GeometryFont>(EmptyResourceOptions{});
