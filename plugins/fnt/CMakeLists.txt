@@ -9,7 +9,7 @@ file(GLOB_RECURSE UNICORE_FNT_SOURCE
 
 add_library(unicore-fnt STATIC ${UNICORE_FNT_SOURCE})
 unicore_init_target(unicore-fnt)
-unicore_group_sources_by_folder(unicore-fnt)
+#unicore_group_sources_by_folder(unicore-fnt)
 target_include_directories(unicore-fnt PUBLIC "${UNICORE_FNT_INCLUDE}")
 set_target_properties(unicore-fnt PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-fnt PUBLIC unicore unicore-xml)

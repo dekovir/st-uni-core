@@ -21,7 +21,7 @@ file(GLOB_RECURSE UNICORE_STB_SOURCE
 
 add_library(unicore-stb STATIC ${UNICORE_STB_SOURCE})
 unicore_init_target(unicore-stb)
-unicore_group_sources_by_folder(unicore-stb)
+#unicore_group_sources_by_folder(unicore-stb)
 target_include_directories(unicore-stb PUBLIC "${UNICORE_STB_INCLUDE}")
 set_target_properties(unicore-stb PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-stb PUBLIC unicore stb)

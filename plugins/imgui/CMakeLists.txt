@@ -34,7 +34,7 @@ file(GLOB_RECURSE UNICORE_IMGUI_SOURCE
 
 add_library(unicore-imgui STATIC ${UNICORE_IMGUI_SOURCE})
 unicore_init_target(unicore-imgui)
-unicore_group_sources_by_folder(unicore-imgui)
+#unicore_group_sources_by_folder(unicore-imgui)
 target_include_directories(unicore-imgui PUBLIC "${UNICORE_IMGUI_INCLUDE}")
 set_target_properties(unicore-imgui PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-imgui PUBLIC unicore imgui)

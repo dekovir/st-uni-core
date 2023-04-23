@@ -19,7 +19,7 @@ file(GLOB_RECURSE UNICORE_SZIP_SOURCE
 
 add_library(unicore-szip STATIC ${UNICORE_SZIP_SOURCE})
 unicore_init_target(unicore-szip)
-unicore_group_sources_by_folder(unicore-szip)
+#unicore_group_sources_by_folder(unicore-szip)
 target_include_directories(unicore-szip PUBLIC "${UNICORE_SZIP_INCLUDE}")
 set_target_properties(unicore-szip PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-szip PUBLIC unicore 7z)

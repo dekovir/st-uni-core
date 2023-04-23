@@ -10,7 +10,7 @@ file(GLOB_RECURSE UNICORE_SCENE_SOURCE
 
 add_library(unicore-scene STATIC ${UNICORE_SCENE_SOURCE})
 unicore_init_target(unicore-scene)
-unicore_group_sources_by_folder(unicore-scene)
+#unicore_group_sources_by_folder(unicore-scene)
 target_include_directories(unicore-scene PUBLIC "${UNICORE_SCENE_INCLUDE}")
 set_target_properties(unicore-scene PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-scene PUBLIC unicore)

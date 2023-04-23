@@ -15,7 +15,7 @@ file(GLOB_RECURSE UNICORE_WASM_SOURCE
 
 add_library(unicore-wasm STATIC ${UNICORE_WASM_SOURCE})
 unicore_init_target(unicore-wasm)
-unicore_group_sources_by_folder(unicore-wasm)
+#unicore_group_sources_by_folder(unicore-wasm)
 target_include_directories(unicore-wasm PUBLIC "${UNICORE_WASM_INCLUDE}")
 set_target_properties(unicore-wasm PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-wasm PUBLIC unicore m3)

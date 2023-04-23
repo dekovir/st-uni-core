@@ -16,7 +16,7 @@ file(GLOB_RECURSE UNICORE_XML_SOURCE
 
 add_library(unicore-xml STATIC ${UNICORE_XML_SOURCE})
 unicore_init_target(unicore-xml)
-unicore_group_sources_by_folder(unicore-xml)
+#unicore_group_sources_by_folder(unicore-xml)
 target_include_directories(unicore-xml PUBLIC "${UNICORE_XML_INCLUDE}")
 set_target_properties(unicore-xml PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-xml PUBLIC unicore tinyxml2)

@@ -9,7 +9,7 @@ file(GLOB_RECURSE UNICORE_RAYCAST_SOURCE
 
 add_library(unicore-raycast STATIC ${UNICORE_RAYCAST_SOURCE})
 unicore_init_target(unicore-raycast)
-unicore_group_sources_by_folder(unicore-raycast)
+#unicore_group_sources_by_folder(unicore-raycast)
 target_include_directories(unicore-raycast PUBLIC "${UNICORE_RAYCAST_INCLUDE}")
 set_target_properties(unicore-raycast PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-raycast PUBLIC unicore)

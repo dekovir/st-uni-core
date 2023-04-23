@@ -13,7 +13,7 @@ file(GLOB_RECURSE UNICORE_UI_SOURCE
 
 add_library(unicore-remoteui STATIC ${UNICORE_UI_SOURCE})
 unicore_init_target(unicore-remoteui)
-unicore_group_sources_by_folder(unicore-remoteui)
+#unicore_group_sources_by_folder(unicore-remoteui)
 target_include_directories(unicore-remoteui PUBLIC "${UNICORE_UI_INCLUDE}")
 set_target_properties(unicore-remoteui PROPERTIES FOLDER "Plugins")
 target_link_libraries(unicore-remoteui PUBLIC unicore)
